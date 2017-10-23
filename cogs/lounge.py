@@ -36,7 +36,7 @@ class CodeBlock:
             return cmds[language]
         except KeyError as e:
             if language:
-                fmt = f'Unknown language to compile for: {language}'
+                fmt = 'Unknown language to compile for: {}'.format(language)
             else:
                 fmt = 'Could not find a language to compile with.'
             raise commands.BadArgument(fmt) from e
@@ -49,8 +49,12 @@ class Lounge:
 
     def __init__(self, bot):
         self.bot = bot
+        self.session = aiohttp.ClientSession(loop=bot.loop)
 
-    @commands.command()
+    def __unload(self):
+        self.session.close()
+
+    @commands.command(pass_context=True)
     async def coliru(self, ctx, *, code: CodeBlock):
         """Compiles code via Coliru.
 
@@ -76,35 +80,35 @@ class Lounge:
 
         data = json.dumps(payload)
 
-        async with ctx.typing():
-            async with ctx.session.post('http://coliru.stacked-crooked.com/compile', data=data) as resp:
+        await self.bot.type()
+        async with self.session.post('http://coliru.stacked-crooked.com/compile', data=data) as resp:
+            if resp.status != 200:
+                await self.bot.say('Coliru did not respond in time.')
+                return
+            output = await resp.text()
+
+            if len(output) < 1992:
+                fmt = '```\n{}\n```'.format(output)
+                await self.bot.say(fmt)
+                return
+
+            # output is too big so post it in gist
+            async with self.session.post('http://coliru.stacked-crooked.com/share', data=data) as resp:
                 if resp.status != 200:
-                    await ctx.send('Coliru did not respond in time.')
-                    return
-
-                output = await resp.text(encoding='utf-8')
-
-                if len(output) < 1992:
-                    await ctx.send(f'```\n{output}\n```')
-                    return
-
-                # output is too big so post it in gist
-                async with ctx.session.post('http://coliru.stacked-crooked.com/share', data=data) as r:
-                    if r.status != 200:
-                        await ctx.send('Could not create coliru shared link')
-                    else:
-                        shared_id = await r.text()
-                        await ctx.send(f'Output too big. Coliru link: http://coliru.stacked-crooked.com/a/{shared_id}')
+                    await self.bot.say('Could not create coliru shared link')
+                else:
+                    shared_id = await resp.text()
+                    await self.bot.say('Output too big. Coliru link: http://coliru.stacked-crooked.com/a/' + shared_id)
 
     @coliru.error
-    async def coliru_error(self, ctx, error):
+    async def coliru_error(self, error, ctx):
         if isinstance(error, commands.BadArgument):
-            await ctx.send(error)
+            await self.bot.say(error)
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(CodeBlock.missing_error)
+            await self.bot.say(CodeBlock.missing_error)
 
     @commands.command()
-    async def cpp(self, ctx, *, query: str):
+    async def cpp(self, *, query: str):
         """Search something on cppreference"""
 
         url = 'http://en.cppreference.com/w/cpp/index.php'
@@ -113,12 +117,12 @@ class Lounge:
             'search': query
         }
 
-        async with ctx.session.get(url, params=params) as resp:
+        async with self.session.get(url, params=params) as resp:
             if resp.status != 200:
-                return await ctx.send(f'An error occurred (status code: {resp.status}). Retry later.')
+                return await self.bot.say('An error occurred (status code: {0.status}). Retry later.'.format(resp))
 
             if len(resp.history) > 0:
-                return await ctx.send(resp.url)
+                return await self.bot.say(resp.url)
 
             e = discord.Embed()
             root = etree.fromstring(await resp.text(), etree.HTMLParser())
@@ -127,6 +131,8 @@ class Lounge:
 
             description = []
             special_pages = []
+            fmt = '[`{0}`](http://en.cppreference.com{1})'
+            special_fmt = '[{}](http://en.cppreference.com{})'
             for node in nodes:
                 href = node.attrib['href']
                 if not href.startswith('/w/cpp'):
@@ -134,9 +140,9 @@ class Lounge:
 
                 if href.startswith(('/w/cpp/language', '/w/cpp/concept')):
                     # special page
-                    special_pages.append(f'[{node.text}](http://en.cppreference.com{href})')
+                    special_pages.append(special_fmt.format(node.text, href))
                 else:
-                    description.append(f'[`{node.text}`](http://en.cppreference.com{href})')
+                    description.append(fmt.format(node.text, href))
 
             if len(special_pages) > 0:
                 e.add_field(name='Language Results', value='\n'.join(special_pages), inline=False)
@@ -144,12 +150,12 @@ class Lounge:
                     e.add_field(name='Library Results', value='\n'.join(description[:10]), inline=False)
             else:
                 if not len(description):
-                    return await ctx.send('No results found.')
+                    return await self.bot.say('No results found.')
 
                 e.title = 'Search Results'
                 e.description = '\n'.join(description[:15])
 
-            await ctx.send(embed=e)
+            await self.bot.say(embed=e)
 
 def setup(bot):
     bot.add_cog(Lounge(bot))

@@ -2,7 +2,7 @@ import aiohttp
 import json
 import logging
 
-log = logging.getLogger(__name__)
+log = logging.getLogger()
 
 CARBONITEX_API_BOTDATA = 'https://www.carbonitex.net/discord/data/botdata.php'
 DISCORD_BOTS_API       = 'https://bots.discord.pw/api'
@@ -11,19 +11,23 @@ class Carbonitex:
     """Cog for updating carbonitex.net and bots.discord.pw bot information."""
     def __init__(self, bot):
         self.bot = bot
+        self.session = aiohttp.ClientSession()
+
+    def __unload(self):
+        # pray it closes
+        self.bot.loop.create_task(self.session.close())
 
     async def update(self):
-        guild_count = len(self.bot.guilds)
         carbon_payload = {
             'key': self.bot.carbon_key,
-            'servercount': guild_count
+            'servercount': len(self.bot.servers)
         }
 
-        async with self.bot.session.post(CARBONITEX_API_BOTDATA, data=carbon_payload) as resp:
-            log.info(f'Carbon statistics returned {resp.status} for {carbon_payload}')
+        async with self.session.post(CARBONITEX_API_BOTDATA, data=carbon_payload) as resp:
+            log.info('Carbon statistics returned {0.status} for {1}'.format(resp, carbon_payload))
 
         payload = json.dumps({
-            'server_count': guild_count
+            'server_count': len(self.bot.servers)
         })
 
         headers = {
@@ -31,14 +35,14 @@ class Carbonitex:
             'content-type': 'application/json'
         }
 
-        url = f'{DISCORD_BOTS_API}/bots/{self.bot.user.id}/stats'
-        async with self.bot.session.post(url, data=payload, headers=headers) as resp:
-            log.info(f'DBots statistics returned {resp.status} for {payload}')
+        url = '{0}/bots/{1.user.id}/stats'.format(DISCORD_BOTS_API, self.bot)
+        async with self.session.post(url, data=payload, headers=headers) as resp:
+            log.info('DBots statistics returned {0.status} for {1}'.format(resp, payload))
 
-    async def on_guild_join(self, guild):
+    async def on_server_join(self, server):
         await self.update()
 
-    async def on_guild_remove(self, guild):
+    async def on_server_remove(self, server):
         await self.update()
 
     async def on_ready(self):

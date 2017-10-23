@@ -1,249 +1,244 @@
 from discord.ext import commands
-from .utils import checks, db, fuzzy, cache, time
+from .utils import checks, config
 import asyncio
+import aiohttp
 import discord
+import datetime
+import difflib
 import re
 import lxml.etree as etree
 from collections import Counter
 
-DISCORD_API_ID    = 81384788765712384
-DISCORD_BOTS_ID   = 110373943822540800
-USER_BOTS_ROLE    = 178558252869484544
-CONTRIBUTORS_ROLE = 111173097888993280
-DISCORD_PY_ID     = 84319995256905728
+DISCORD_API_ID = '81384788765712384'
+DISCORD_BOTS_ID = '110373943822540800'
+USER_BOTS_ROLE = '178558252869484544'
+CONTRIBUTORS_ROLE = '111173097888993280'
+DISCORD_PY_ID = '84319995256905728'
 
 def is_discord_api():
-    return checks.is_in_guilds(DISCORD_API_ID)
+    return checks.is_in_servers(DISCORD_API_ID)
 
-def contributor_or_higher():
+def can_run_log():
     def predicate(ctx):
-        guild = ctx.guild
-        if guild is None:
+        server = ctx.message.server
+        if server is None:
             return False
 
-        role = discord.utils.find(lambda r: r.id == CONTRIBUTORS_ROLE, guild.roles)
+        if server.id == DISCORD_BOTS_ID:
+            return ctx.message.author.server_permissions.kick_members
+
+        if server.id != DISCORD_API_ID:
+            return False
+
+        role = discord.utils.find(lambda r: r.id == CONTRIBUTORS_ROLE, server.roles)
         if role is None:
             return False
 
-        return ctx.author.top_role >= role
+        return ctx.message.author.top_role >= role
+
     return commands.check(predicate)
 
-class Feeds(db.Table):
-    id = db.PrimaryKeyColumn()
-    channel_id = db.Column(db.Integer(big=True))
-    role_id = db.Column(db.Integer(big=True))
-    name = db.Column(db.String)
+def contributor_or_higher():
+    def predicate(ctx):
+        server = ctx.message.server
+        if server is None:
+            return False
 
-class RTFM(db.Table):
-    id = db.PrimaryKeyColumn()
-    user_id = db.Column(db.Integer(big=True), unique=True, index=True)
-    count = db.Column(db.Integer, default=1)
+        role = discord.utils.find(lambda r: r.id == CONTRIBUTORS_ROLE, server.roles)
+        if role is None:
+            return False
+
+        return ctx.message.author.top_role >= role
+    return commands.check(predicate)
 
 class API:
     """Discord API exclusive things."""
 
     def __init__(self, bot):
         self.bot = bot
+        # config format:
+        # <users>: Counter
+        # <last_use>: datetime.datetime timestamp
+        self.config = config.Config('rtfm.json')
+
+        # channel_id to dict with <name> to <role id> mapping
+        self.feeds = config.Config('feeds.json')
+
+        # regex for Pollr format
+        self.pollr = re.compile(r'\*\*(?P<type>.+?)\*\*\s\|\sCase\s(?P<case>\d+)\n' \
+                                r'\*\*User\*\*:\s(?P<user>.+?)\n' \
+                                r'\*\*Reason\*\*:\s(?P<reason>.+?)\n' \
+                                r'\*\*Responsible Moderator\*\*:\s(?P<mod>.+)')
+
+        # regex for issue format
         self.issue = re.compile(r'##(?P<number>[0-9]+)')
-        self._recently_blocked = set()
 
     async def on_member_join(self, member):
-        if member.guild.id != DISCORD_API_ID:
+        if member.server.id != DISCORD_API_ID:
             return
 
         if member.bot:
             role = discord.Object(id=USER_BOTS_ROLE)
-            await member.add_roles(role)
+            try:
+                await self.bot.add_roles(member, role)
+            except:
+                await asyncio.sleep(10)
+                await self.bot.add_roles(member, role)
 
     async def on_message(self, message):
-        channel = message.channel
-        author = message.author
-
-        if channel.id != DISCORD_PY_ID:
+        if message.channel.id != DISCORD_PY_ID:
             return
 
-        if author.status is discord.Status.offline:
-            fmt = f'{author.mention} has been blocked for being invisible until they change their status or for 5 minutes.'
+        if message.author.status is discord.Status.offline:
+            fmt = '{0} (ID: {0.id}) has been automatically blocked for being invisible for 5 minutes.'
+            overwrite = discord.PermissionOverwrite()
+            overwrite.read_messages = False
+            await self.bot.edit_channel_permissions(message.channel, message.author, overwrite)
+            await self.bot.send_message(message.channel, fmt.format(message.author))
 
             try:
-                await channel.set_permissions(author, read_messages=False, reason='invisible block')
-                self._recently_blocked.add(author.id)
-                await channel.send(fmt)
-                msg = f'Heya. You have been automatically blocked from <#{DISCORD_PY_ID}> for 5 minutes for being ' \
-                       'invisible.\nTry chatting again in 5 minutes or when you change your status. If you\'re curious ' \
-                       'why invisible users are blocked, it is because they tend to break the client and cause them to ' \
-                       'be hard to mention. Since we want to help you usually, we expect mentions to work without ' \
-                       'headaches.\n\nSorry for the trouble.'
-                await author.send(msg)
+                msg = 'Heya. You have been automatically blocked from <#%s> for 5 minutes for being invisible.\n' \
+                      'Try chatting again in 5 minutes when you change your status. If you\'re curious why invisible ' \
+                      'users are blocked, it is because they tend to break the client and cause them to be hard to ' \
+                      'mention. Since we want to help you usually, we expect mentions to work without headaches.\n\n' \
+                      'Sorry for the trouble.'
+                await self.bot.send_message(message.author, msg % DISCORD_PY_ID)
             except discord.HTTPException:
                 pass
 
             await asyncio.sleep(300)
-            self._recently_blocked.discard(author.id)
-            await channel.set_permissions(author, overwrite=None, reason='invisible unblock')
+            overwrite.read_messages = None
+            await self.bot.edit_channel_permissions(message.channel, message.author, overwrite)
             return
 
         m = self.issue.search(message.content)
         if m is not None:
             url = 'https://github.com/Rapptz/discord.py/issues/'
-            await channel.send(url + m.group('number'))
+            await self.bot.send_message(message.channel, url + m.group('number'))
 
-    async def on_member_update(self, before, after):
-        if after.guild.id != DISCORD_API_ID:
-            return
-
-        if before.status is discord.Status.offline and after.status is not discord.Status.offline:
-            if after.id in self._recently_blocked:
-                self._recently_blocked.discard(after.id)
-                channel = after.guild.get_channel(DISCORD_PY_ID)
-                await channel.set_permissions(after, overwrite=None, reason='invisible unblock')
-
-    async def build_rtfm_lookup_table(self):
-        cache = {}
-
-        page_types = {
-            'rewrite': (
-                'http://discordpy.rtfd.io/en/rewrite/api.html',
-                'http://discordpy.rtfd.io/en/rewrite/ext/commands/api.html'
-            ),
-            'latest': (
-                'http://discordpy.rtfd.io/en/latest/api.html',
-            )
-        }
-
-        for key, pages in page_types.items():
-            sub = cache[key] = {}
-            for page in pages:
-                async with self.bot.session.get(page) as resp:
-                    if resp.status != 200:
-                        raise RuntimeError('Cannot build rtfm lookup table, try again later.')
-
-                    text = await resp.text(encoding='utf-8')
-                    root = etree.fromstring(text, etree.HTMLParser())
-                    nodes = root.findall(".//dt/a[@class='headerlink']")
-
-                    for node in nodes:
-                        href = node.get('href', '')
-                        as_key = href.replace('#discord.', '').replace('ext.commands.', '')
-                        sub[as_key] = page + href
-
-        self._rtfm_cache = cache
-
-    async def do_rtfm(self, ctx, key, obj):
-        base_url = f'http://discordpy.rtfd.io/en/{key}/'
-
-        if obj is None:
-            await ctx.send(base_url)
-            return
-
-        if not hasattr(self, '_rtfm_cache'):
-            await ctx.trigger_typing()
-            await self.build_rtfm_lookup_table()
-
-        # identifiers don't have spaces
-        obj = obj.replace(' ', '_')
-
-        if key == 'rewrite':
-            pit_of_success_helpers = {
-                'vc': 'VoiceClient',
-                'msg': 'Message',
-                'color': 'Colour',
-                'perm': 'Permissions',
-                'channel': 'TextChannel',
-                'chan': 'TextChannel',
-            }
-
-            # point the abc.Messageable types properly:
-            q = obj.lower()
-            for name in dir(discord.abc.Messageable):
-                if name[0] == '_':
-                    continue
-                if q == name:
-                    obj = f'abc.Messageable.{name}'
-                    break
-
-            def replace(o):
-                return pit_of_success_helpers.get(o.group(0), '')
-
-            pattern = re.compile('|'.join(fr'\b{k}\b' for k in pit_of_success_helpers.keys()))
-            obj = pattern.sub(replace, obj)
-
-        cache = list(self._rtfm_cache[key].items())
-        def transform(tup):
-            return tup[0]
-
-        matches = fuzzy.finder(obj, cache, key=lambda t: t[0], lazy=False)[:5]
-
-        e = discord.Embed(colour=discord.Colour.blurple())
-        if len(matches) == 0:
-            return await ctx.send('Could not find anything. Sorry.')
-
-        e.description = '\n'.join(f'[{key}]({url})' for key, url in matches)
-        await ctx.send(embed=e)
-
-        if ctx.guild and ctx.guild.id == DISCORD_API_ID:
-            query = 'INSERT INTO rtfm (user_id) VALUES ($1) ON CONFLICT (user_id) DO UPDATE SET count = rtfm.count + 1;'
-            await ctx.db.execute(query, ctx.author.id)
-
-    @commands.group(aliases=['rtfd'], invoke_without_command=True)
-    async def rtfm(self, ctx, *, obj: str = None):
+    @commands.group(pass_context=True, aliases=['rtfd'], invoke_without_command=True)
+    @is_discord_api()
+    async def rtfm(self, ctx, *, obj : str = None):
         """Gives you a documentation link for a discord.py entity.
 
         Events, objects, and functions are all supported through a
         a cruddy fuzzy algorithm.
         """
-        await self.do_rtfm(ctx, 'latest', obj)
 
-    @rtfm.command(name='rewrite')
-    async def rtfm_rewrite(self, ctx, *, obj: str = None):
-        """Gives you a documentation link for a rewrite discord.py entity."""
-        await self.do_rtfm(ctx, 'rewrite', obj)
-
-    async def _member_stats(self, ctx, member, total_uses):
-        e = discord.Embed(title='RTFM Stats')
-        e.set_author(name=str(member), icon_url=member.avatar_url)
-
-        query = 'SELECT count FROM rtfm WHERE user_id=$1;'
-        record = await ctx.db.fetchrow(query, member.id)
-
-        if record is None:
-            count = 0
+        # update the stats
+        invoker = ctx.message.author.id
+        counter = self.config.get('users', {})
+        if invoker not in counter:
+            counter[invoker] = 1
         else:
-            count = record['count']
+            counter[invoker] += 1
 
-        e.add_field(name='Uses', value=count)
-        e.add_field(name='Percentage', value=f'{count/total_uses:.2%} out of {total_uses}')
-        e.colour = discord.Colour.blurple()
-        await ctx.send(embed=e)
+        await self.config.put('users', counter)
+        await self.config.put('last_use', datetime.datetime.utcnow().timestamp())
+
+        transformations = {
+            'client': discord.Client,
+            'vc': discord.VoiceClient,
+            'voiceclient': discord.VoiceClient,
+            'voice_client': discord.VoiceClient,
+            'voice': discord.VoiceClient,
+            'message': discord.Message,
+            'msg': discord.Message,
+            'user': discord.User,
+            'member': discord.Member,
+            'game': discord.Game,
+            'invite': discord.Invite,
+            'role': discord.Role,
+            'server': discord.Server,
+            'color': discord.Colour,
+            'colour': discord.Colour,
+            'perm': discord.Permissions,
+            'permissions': discord.Permissions,
+            'perms': discord.Permissions,
+            'channel': discord.Channel,
+            'chan': discord.Channel,
+            'obj': discord.Object,
+            'object': discord.Object,
+            'embed': discord.Embed,
+        }
+
+        base_url = 'http://discordpy.rtfd.io/en/latest/api.html'
+
+        if obj is None:
+            await self.bot.say(base_url)
+            return
+
+        portions = obj.split('.')
+        if portions[0] == 'discord':
+            portions = portions[1:]
+
+        if len(portions) == 0:
+            # we only said 'discord'... uh... ok.
+            await self.bot.say(base_url)
+            return
+
+        base = transformations.get(portions[0].lower())
+        anchor = ''
+
+        if base is not None:
+            # check if it's a fuzzy match
+            anchor = 'discord.' + base.__name__
+
+            # get the attribute associated with it
+            if len(portions) > 1:
+                attribute = portions[1]
+                if getattr(base, attribute, None):
+                    anchor = anchor + '.' + attribute
+
+        elif portions[0].startswith('on_'):
+            # an event listener...
+            anchor = 'discord.' + portions[0]
+        else:
+            # probably a direct attribute access.
+            obj = discord
+            for attr in portions:
+                try:
+                    obj = getattr(obj, attr)
+                except AttributeError:
+                    await self.bot.say('{0.__name__} has no attribute {1}'.format(obj, attr))
+                    return
+            anchor = 'discord.' + '.'.join(portions)
+
+        await self.bot.say(base_url + '#' + anchor)
 
     @rtfm.command()
-    async def stats(self, ctx, *, member: discord.Member = None):
+    @is_discord_api()
+    async def stats(self):
         """Tells you stats about the ?rtfm command."""
-        query = 'SELECT SUM(count) AS total_uses FROM rtfm;'
-        record = await ctx.db.fetchrow(query)
-        total_uses = record['total_uses']
 
-        if member is not None:
-            return await self._member_stats(ctx, member, total_uses)
-
-        query = 'SELECT user_id, count FROM rtfm ORDER BY count DESC LIMIT 10;'
-        records = await ctx.db.fetch(query)
+        counter = Counter(self.config.get('users', {}))
+        last_use = self.config.get('last_use', None)
+        server = self.bot.get_server(DISCORD_API_ID)
 
         output = []
-        output.append(f'**Total uses**: {total_uses}')
+        if last_use:
+            last_use = datetime.datetime.fromtimestamp(last_use)
+            output.append('**Last RTFM**: {:%Y/%m/%d on %I:%M:%S %p UTC}'.format(last_use))
+        else:
+            output.append('**Last RTFM**: Never')
+
+        total_uses = sum(counter.values())
+        output.append('**Total uses**: ' + str(total_uses))
+
 
         # first we get the most used users
-        if records:
-            output.append(f'**Top {len(records)} users**:')
+        top_ten = counter.most_common(10)
+        if top_ten:
+            output.append('**Top {} users**:'.format(len(top_ten)))
 
-            for rank, (user_id, count) in enumerate(records, 1):
-                user = self.bot.get_user(user_id)
+            for rank, (user, uses) in enumerate(top_ten, 1):
+                member = server.get_member(user)
                 if rank != 10:
-                    output.append(f'{rank}\u20e3 {user}: {count}')
+                    output.append('{}\u20e3 {}: {}'.format(rank, member, uses))
                 else:
-                    output.append(f'\N{KEYCAP TEN} {user}: {count}')
+                    output.append('\N{KEYCAP TEN} {}: {}'.format(member, uses))
 
-        await ctx.send('\n'.join(output))
+        await self.bot.say('\n'.join(output))
 
     def library_name(self, channel):
         # language_<name>
@@ -253,98 +248,26 @@ class API:
             name = name[index + 1:]
         return name.replace('-', '.')
 
-    @commands.command()
+    @commands.command(no_pm=True, pass_context=True)
     @commands.has_permissions(manage_roles=True)
     @is_discord_api()
     async def block(self, ctx, *, member: discord.Member):
         """Blocks a user from your channel."""
 
-        reason = f'Block by {ctx.author} (ID: {ctx.author.id})'
+        overwrite = discord.PermissionOverwrite()
+        overwrite.read_messages = False
+        overwrite.send_messages = False
 
+        channel = ctx.message.channel
         try:
-            await ctx.channel.set_permissions(member, send_messages=False, reason=reason)
+            await self.bot.edit_channel_permissions(channel, member, overwrite)
         except:
-            await ctx.send('\N{THUMBS DOWN SIGN}')
+            await self.bot.say('\N{THUMBS DOWN SIGN}')
         else:
-            await ctx.send('\N{THUMBS UP SIGN}')
+            await self.bot.say('\N{THUMBS UP SIGN}')
 
-    @commands.command()
-    @commands.has_permissions(manage_roles=True)
+    @commands.group(name='feeds', pass_context=True, invoke_without_command=True)
     @is_discord_api()
-    async def tempblock(self, ctx, duration: time.FutureTime, *, member: discord.Member):
-        """Temporarily blocks a user from your channel.
-
-        The duration can be a a short time form, e.g. 30d or a more human
-        duration such as "until thursday at 3PM" or a more concrete time
-        such as "2017-12-31".
-
-        Note that times are in UTC.
-        """
-
-        reminder = self.bot.get_cog('Reminder')
-        if reminder is None:
-            return await ctx.send('Sorry, this functionality is currently unavailable. Try again later?')
-
-        timer = await reminder.create_timer(duration.dt, 'tempblock', ctx.guild.id, ctx.author.id,
-                                                                      ctx.channel.id, member.id,
-                                                                      connection=ctx.db)
-
-        reason = f'Tempblock by {ctx.author} (ID: {ctx.author.id}) until {duration.dt}'
-
-        try:
-            await ctx.channel.set_permissions(member, send_messages=False, reason=reason)
-        except:
-            await ctx.send('\N{THUMBS DOWN SIGN}')
-        else:
-            await ctx.send(f'Blocked {member} for {time.human_timedelta(duration.dt)}.')
-
-    async def on_tempblock_timer_complete(self, timer):
-        guild_id, mod_id, channel_id, member_id = timer.args
-
-        guild = self.bot.get_guild(guild_id)
-        if guild is None:
-            # RIP
-            return
-
-        channel = guild.get_channel(channel_id)
-        if channel is None:
-            # RIP x2
-            return
-
-        to_unblock = guild.get_member(member_id)
-        if to_unblock is None:
-            # RIP x3
-            return
-
-        moderator = guild.get_member(mod_id)
-        if moderator is None:
-            try:
-                moderator = await self.bot.get_user_info(mod_id)
-            except:
-                # request failed somehow
-                moderator = f'Mod ID {mod_id}'
-            else:
-                moderator = f'{moderator} (ID: {mod_id})'
-        else:
-            moderator = f'{moderator} (ID: {mod_id})'
-
-
-        reason = f'Automatic unblock from timer made on {timer.created_at} by {moderator}.'
-
-        try:
-            await channel.set_permissions(to_unblock, send_messages=None, reason=reason)
-        except:
-            pass
-
-    @cache.cache()
-    async def get_feeds(self, channel_id, *, connection=None):
-        con = connection or self.bot.pool
-        query = 'SELECT name, role_id FROM feeds WHERE channel_id=$1;'
-        feeds = await con.fetch(query, channel_id)
-        return {f['name']: f['role_id'] for f in feeds}
-
-    @commands.group(name='feeds', invoke_without_command=True)
-    @commands.guild_only()
     async def _feeds(self, ctx):
         """Shows the list of feeds that the channel has.
 
@@ -353,180 +276,210 @@ class API:
         the `sub` command (and opt-out by doing the `unsub` command).
         You can publish to a feed by using the `publish` command.
         """
-
-        feeds = await self.get_feeds(ctx.channel.id)
-
+        channel = ctx.message.channel
+        feeds = self.feeds.get(channel.id, {})
         if len(feeds) == 0:
-            await ctx.send('This channel has no feeds.')
+            await self.bot.say('This channel has no feeds.')
             return
 
-        names = '\n'.join(f'- {r}' for r in feeds)
-        await ctx.send(f'Found {len(feeds)} feeds.\n{names}')
+        fmt = 'Found {} feeds.\n{}'
+        await self.bot.say(fmt.format(len(feeds), '\n'.join('- ' + r for r in feeds)))
 
-    @_feeds.command(name='create')
+    @_feeds.command(name='create', pass_context=True)
     @commands.has_permissions(manage_roles=True)
-    @commands.guild_only()
-    async def feeds_create(self, ctx, *, name: str):
+    @is_discord_api()
+    async def feeds_create(self, ctx, *, name : str):
         """Creates a feed with the specified name.
 
         You need Manage Roles permissions to create a feed.
         """
-
+        channel = ctx.message.channel
+        server = channel.server
+        feeds = self.feeds.get(channel.id, {})
         name = name.lower()
-
-        if name in ('@everyone', '@here'):
-            return await ctx.send('That is an invalid feed name.')
-
-        query = 'SELECT role_id FROM feeds WHERE channel_id=$1 AND name=$2;'
-
-        exists = await ctx.db.fetchrow(query, ctx.channel.id, name)
-        if exists is not None:
-            await ctx.send('This feed already exists.')
+        if name in feeds:
+            await self.bot.say('This feed already exists.')
             return
 
-        # create the role
-        if ctx.guild.id == DISCORD_API_ID:
-            role_name = self.library_name(ctx.channel) + ' ' + name
-        else:
-            role_name = name
+        # create the default role
+        role_name = self.library_name(channel) + ' ' + name
+        role = await self.bot.create_role(server, name=role_name, permissions=discord.Permissions.none())
+        feeds[name] = role.id
+        await self.feeds.put(channel.id, feeds)
+        await self.bot.say('\u2705')
 
-        role = await ctx.guild.create_role(name=role_name, permissions=discord.Permissions.none())
-        query = 'INSERT INTO feeds (role_id, channel_id, name) VALUES ($1, $2, $3);'
-        await ctx.db.execute(query, role.id, ctx.channel.id, name)
-        self.get_feeds.invalidate(self, ctx.channel.id)
-        await ctx.send(f'{ctx.tick(True)} Successfully created feed.')
-
-    @_feeds.command(name='delete', aliases=['remove'])
+    @_feeds.command(name='delete', aliases=['remove'], pass_context=True)
     @commands.has_permissions(manage_roles=True)
-    @commands.guild_only()
-    async def feeds_delete(self, ctx, *, feed: str):
+    @is_discord_api()
+    async def feeds_delete(self, ctx, *, feed : str):
         """Removes a feed from the channel.
 
         This will also delete the associated role so this
         action is irreversible.
         """
+        channel = ctx.message.channel
+        server = channel.server
+        feeds = self.feeds.get(channel.id, {})
+        feed = feed.lower()
+        if feed not in feeds:
+            await self.bot.say('This feed does not exist.')
+            return
 
-        query = 'DELETE FROM feeds WHERE channel_id=$1 AND name=$2 RETURNING *;'
-        records = await ctx.db.fetch(query, ctx.channel.id, feed)
-        self.get_feeds.invalidate(self, ctx.channel.id)
-
-        if len(records) == 0:
-            return await ctx.send('This feed does not exist.')
-
-        for record in records:
-            role = discord.utils.find(lambda r: r.id == record['role_id'], ctx.guild.roles)
-            if role is not None:
-                try:
-                    await role.delete()
-                except discord.HTTPException:
-                    continue
-
-        await ctx.send(f'{ctx.tick(True)} Removed feed.')
+        role = feeds.pop(feed)
+        try:
+            await self.bot.delete_role(server, discord.Object(id=role))
+        except discord.HTTPException:
+            await self.bot.say('\U0001F52B')
+        else:
+            await self.feeds.put(channel.id, feeds)
+            await self.bot.say('\U0001F6AE')
 
     async def do_subscription(self, ctx, feed, action):
-        feeds = await self.get_feeds(ctx.channel.id)
+        channel = ctx.message.channel
+        member = ctx.message.author
+        feeds = self.feeds.get(channel.id, {})
+        feed = feed.lower()
+
         if len(feeds) == 0:
-            await ctx.send('This channel has no feeds set up.')
+            await self.bot.say('This channel has no feeds set up.')
             return
 
         if feed not in feeds:
-            await ctx.send(f'This feed does not exist.\nValid feeds: {", ".join(feeds)}')
+            await self.bot.say('This feed does not exist.\nValid feeds: ' + ', '.join(feeds))
             return
 
-        role_id = feeds[feed]
-        role = discord.utils.find(lambda r: r.id == role_id, ctx.guild.roles)
-        if role is not None:
-            await action(role)
-            await ctx.message.add_reaction(ctx.tick(True).strip('<:>'))
+        role = feeds[feed]
+        function = getattr(self.bot, action)
+        try:
+            await function(member, discord.Object(id=role))
+        except discord.HTTPException:
+            # muh rate limit
+            await asyncio.sleep(10)
+            await function(member, discord.Object(id=role))
         else:
-            await ctx.message.add_reaction(ctx.tick(False).strip('<:>'))
+            await self.bot.send_message(channel, '\u2705')
 
-    @commands.command()
-    @commands.guild_only()
-    async def sub(self, ctx, *, feed: str):
+    @commands.command(pass_context=True)
+    @is_discord_api()
+    async def sub(self, ctx, *, feed : str):
         """Subscribes to the publication of a feed.
 
         This will allow you to receive updates from the channel
         owner. To unsubscribe, see the `unsub` command.
         """
-        await self.do_subscription(ctx, feed, ctx.author.add_roles)
+        await self.do_subscription(ctx, feed, 'add_roles')
 
-    @commands.command()
-    @commands.guild_only()
-    async def unsub(self, ctx, *, feed: str):
+    @commands.command(pass_context=True)
+    @is_discord_api()
+    async def unsub(self, ctx, *, feed : str):
         """Unsubscribe to the publication of a feed.
 
         This will remove you from notifications of a feed you
         are no longer interested in. You can always sub back by
         using the `sub` command.
         """
-        await self.do_subscription(ctx, feed, ctx.author.remove_roles)
+        await self.do_subscription(ctx, feed, 'remove_roles')
 
-    @commands.command()
+    @commands.command(pass_context=True)
     @commands.has_permissions(manage_roles=True)
-    @commands.guild_only()
-    async def publish(self, ctx, feed: str, *, content: str):
+    @is_discord_api()
+    async def publish(self, ctx, feed : str, *, content : str):
         """Publishes content to a feed.
 
         Everyone who is subscribed to the feed will be notified
         with the content. Use this to notify people of important
         events or changes.
         """
-        feeds = await self.get_feeds(ctx.channel.id)
+        channel = ctx.message.channel
+        server = channel.server
+        feeds = self.feeds.get(channel.id, {})
         feed = feed.lower()
         if feed not in feeds:
-            await ctx.send('This feed does not exist.')
+            await self.bot.say('This feed does not exist.')
             return
 
-        role = discord.utils.get(ctx.guild.roles, id=feeds[feed])
+        role = discord.utils.get(server.roles, id=feeds[feed])
         if role is None:
             fmt = 'Uh.. a fatal error occurred here. The role associated with ' \
                   'this feed has been removed or not found. ' \
                   'Please recreate the feed.'
-            await ctx.send(fmt)
+            await self.bot.say(fmt)
             return
 
         # delete the message we used to invoke it
-        try:
-            await ctx.message.delete()
-        except:
-            pass
+        await self.bot.delete_message(ctx.message)
 
         # make the role mentionable
-        await role.edit(mentionable=True)
+        await self.bot.edit_role(server, role, mentionable=True)
 
         # then send the message..
-        await ctx.send(f'{role.mention}: {content}'[:2000])
+        msg = '{0.mention}: {1}'.format(role, content)[:2000]
+        await self.bot.say(msg)
 
         # then make the role unmentionable
-        await role.edit(mentionable=False)
+        await self.bot.edit_role(server, role, mentionable=False)
+
+    @commands.command(pass_context=True)
+    @can_run_log()
+    async def log(self, ctx, *, user: str):
+        """Shows mod log entries for a user.
+
+        Only searches the past 1000 cases.
+        """
+
+        server = ctx.message.server
+        if server.id == DISCORD_API_ID:
+            mod_log = server.get_channel('173201159761297408')
+        else:
+            mod_log = server.get_channel('124622509881425920')
+
+        entries = []
+        entry_fmt = '**{type} #{case}** {user}\n{mod}: {reason}'
+        async for m in self.bot.logs_from(mod_log, limit=1000):
+            entry = self.pollr.match(m.content)
+            if entry is None:
+                continue
+
+            if user in entry.group('user'):
+                entries.append(entry_fmt.format(**entry.groupdict()))
+
+        fmt = 'Found {} entries:\n{}'
+        await self.bot.say(fmt.format(len(entries), '\n\n'.join(entries)))
 
     async def refresh_faq_cache(self):
         self.faq_entries = {}
-        base_url = 'http://discordpy.readthedocs.io/en/latest/faq.html'
-        async with self.bot.session.get(base_url) as resp:
+        async with aiohttp.get('http://discordpy.readthedocs.io/en/latest/faq.html') as resp:
             text = await resp.text(encoding='utf-8')
 
             root = etree.fromstring(text, etree.HTMLParser())
             nodes = root.findall(".//div[@id='questions']/ul[@class='simple']//ul/li/a")
             for node in nodes:
-                self.faq_entries[''.join(node.itertext()).strip()] = base_url + node.get('href').strip()
+                self.faq_entries[''.join(node.itertext()).strip()] = node.get('href').strip()
 
     @commands.command()
-    async def faq(self, ctx, *, query: str = None):
+    @is_discord_api()
+    async def faq(self, *, query: str = None):
         """Shows an FAQ entry from the discord.py documentation"""
         if not hasattr(self, 'faq_entries'):
             await self.refresh_faq_cache()
 
         if query is None:
-            return await ctx.send('http://discordpy.readthedocs.io/en/latest/faq.html')
+            return await self.bot.say('http://discordpy.readthedocs.io/en/latest/faq.html')
 
-        matches = fuzzy.extract_matches(query, self.faq_entries, scorer=fuzzy.partial_ratio, score_cutoff=40)
-        if len(matches) == 0:
-            return await ctx.send('Nothing found...')
+        query = query.lower()
+        seq = difflib.SequenceMatcher(lambda x: x == ' ', None, query)
+        def key(s):
+            o = s.lower()
+            seq.set_seq1(o)
+            m = seq.find_longest_match(0, len(o), 0, len(query))
+            return m.size
 
-        fmt = '\n'.join(f'**{key}**\n{value}' for key, _, value in matches)
-        await ctx.send(fmt)
+        key = max(self.faq_entries, key=key)
+        if key is None:
+            return await self.bot.say('No matches found...')
+
+        value = self.faq_entries[key]
+        await self.bot.say('**%s**\nhttp://discordpy.readthedocs.io/en/latest/faq.html%s' % (key, value))
 
 def setup(bot):
     bot.add_cog(API(bot))

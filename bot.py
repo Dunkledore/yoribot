@@ -1,26 +1,26 @@
 from discord.ext import commands
 import discord
-from cogs.utils import checks, context, db
-from cogs.utils.config import Config
+from cogs.utils import checks
 import datetime, re
 import json, asyncio
 import copy
 import logging
 import traceback
-import aiohttp
 import sys
 from collections import Counter
-
-import config
-import asyncpg
 
 description = """
 Hello! I am a bot written by Danny to provide some nice utilities.
 """
 
-log = logging.getLogger(__name__)
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-initial_extensions = (
+initial_extensions = [
     'cogs.meta',
     'cogs.splatoon',
     'cogs.rng',
@@ -28,120 +28,105 @@ initial_extensions = (
     'cogs.profile',
     'cogs.tags',
     'cogs.lounge',
+    'cogs.repl',
     'cogs.carbonitex',
+    'cogs.mentions',
     'cogs.api',
     'cogs.stars',
     'cogs.admin',
     'cogs.buttons',
-    'cogs.reminder',
+    'cogs.pokemon',
+    'cogs.permissions',
     'cogs.stats',
     'cogs.emoji',
-    'cogs.config',
-    'cogs.tournament',
-)
+    'cogs.poll',
+]
 
-def _prefix_callable(bot, msg):
-    user_id = bot.user.id
-    base = [f'<@!{user_id}> ', f'<@{user_id}> ']
-    if msg.guild is None:
-        base.append('!')
-        base.append('?')
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.CRITICAL)
+log = logging.getLogger()
+log.setLevel(logging.INFO)
+handler = logging.FileHandler(filename='rdanny.log', encoding='utf-8', mode='w')
+log.addHandler(handler)
+
+help_attrs = dict(hidden=True)
+
+prefix = ['?', '!', '\N{HEAVY EXCLAMATION MARK SYMBOL}']
+bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
+
+@bot.event
+async def on_command_error(error, ctx):
+    if isinstance(error, commands.NoPrivateMessage):
+        await bot.send_message(ctx.message.author, 'This command cannot be used in private messages.')
+    elif isinstance(error, commands.DisabledCommand):
+        await bot.send_message(ctx.message.author, 'Sorry. This command is disabled and cannot be used.')
+    elif isinstance(error, commands.CommandInvokeError):
+        print('In {0.command.qualified_name}:'.format(ctx), file=sys.stderr)
+        traceback.print_tb(error.original.__traceback__)
+        print('{0.__class__.__name__}: {0}'.format(error.original), file=sys.stderr)
+
+@bot.event
+async def on_ready():
+    print('Logged in as:')
+    print('Username: ' + bot.user.name)
+    print('ID: ' + bot.user.id)
+    print('------')
+    if not hasattr(bot, 'uptime'):
+        bot.uptime = datetime.datetime.utcnow()
+
+@bot.event
+async def on_resumed():
+    print('resumed...')
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    await bot.process_commands(message)
+
+@bot.command(pass_context=True, hidden=True)
+@checks.is_owner()
+async def do(ctx, times : int, *, command):
+    """Repeats a command a specified number of times."""
+    msg = copy.copy(ctx.message)
+    msg.content = command
+    for i in range(times):
+        await bot.process_commands(msg)
+
+@bot.command()
+async def changelog():
+    """Gives a URL to the current bot changelog."""
+    await bot.say('https://discord.gg/0118rJdtd1rVJJfuI')
+
+def load_credentials():
+    with open('credentials.json') as f:
+        return json.load(f)
+
+if __name__ == '__main__':
+    credentials = load_credentials()
+    debug = any('debug' in arg.lower() for arg in sys.argv)
+    if debug:
+        bot.command_prefix = '$'
+        token = credentials.get('debug_token', credentials['token'])
     else:
-        base.extend(bot.prefixes.get(msg.guild.id, ['?', '!']))
-    return base
+        token = credentials['token']
 
-class RoboDanny(commands.AutoShardedBot):
-    def __init__(self):
-        super().__init__(command_prefix=_prefix_callable, description=description,
-                         pm_help=None, help_attrs=dict(hidden=True))
+    bot.client_id = credentials['client_id']
+    bot.carbon_key = credentials['carbon_key']
+    bot.bots_key = credentials['bots_key']
 
-        self.client_id = config.client_id
-        self.carbon_key = config.carbon_key
-        self.bots_key = config.bots_key
-        self.challonge_api_key = config.challonge_api_key
-        self.session = aiohttp.ClientSession(loop=self.loop)
+    if debug:
+        initial_extensions.remove('cogs.carbonitex')
 
-        self.add_command(self.do)
+    for extension in initial_extensions:
+        try:
+            bot.load_extension(extension)
+        except Exception as e:
+            print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
 
-        # guild_id: list
-        self.prefixes = Config('prefixes.json')
-
-        for extension in initial_extensions:
-            try:
-                self.load_extension(extension)
-            except Exception as e:
-                print(f'Failed to load extension {extension}.', file=sys.stderr)
-                traceback.print_exc()
-
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.author.send('This command cannot be used in private messages.')
-        elif isinstance(error, commands.DisabledCommand):
-            await ctx.author.send('Sorry. This command is disabled and cannot be used.')
-        elif isinstance(error, commands.CommandInvokeError):
-            print(f'In {ctx.command.qualified_name}:', file=sys.stderr)
-            traceback.print_tb(error.original.__traceback__)
-            print(f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
-
-    def get_guild_prefixes(self, guild, *, local_inject=_prefix_callable):
-        proxy_msg = discord.Object(id=None)
-        proxy_msg.guild = guild
-        return local_inject(self, proxy_msg)
-
-    def get_raw_guild_prefixes(self, guild_id):
-        return self.prefixes.get(guild_id, ['?', '!'])
-
-    async def set_guild_prefixes(self, guild, prefixes):
-        if len(prefixes) == 0:
-            await self.prefixes.put(guild.id, [])
-        elif len(prefixes) > 10:
-            raise RuntimeError('Cannot have more than 10 custom prefixes.')
-        else:
-            await self.prefixes.put(guild.id, sorted(set(prefixes), reverse=True))
-
-    async def on_ready(self):
-        if not hasattr(self, 'uptime'):
-            self.uptime = datetime.datetime.utcnow()
-
-        print(f'Ready: {self.user} (ID: {self.user.id})')
-
-    async def on_resumed(self):
-        print('resumed...')
-
-    async def process_commands(self, message):
-        ctx = await self.get_context(message, cls=context.Context)
-
-        if ctx.command is None:
-            return
-
-        async with ctx.acquire():
-            await self.invoke(ctx)
-
-    async def on_message(self, message):
-        if message.author.bot:
-            return
-        await self.process_commands(message)
-
-    async def close(self):
-        await super().close()
-        await self.session.close()
-
-    def run(self):
-        super().run(config.token, reconnect=True)
-
-    @property
-    def config(self):
-        return __import__('config')
-
-    @commands.command(hidden=True)
-    @commands.is_owner()
-    async def do(self, ctx, times: int, *, command):
-        """Repeats a command a specified number of times."""
-        msg = copy.copy(ctx.message)
-        msg.content = command
-
-        new_ctx = await self.get_context(msg, cls=context.Context)
-        new_ctx.db = ctx.db
-
-        for i in range(times):
-            await new_ctx.reinvoke()
+    bot.run(token)
+    handlers = log.handlers[:]
+    for hdlr in handlers:
+        hdlr.close()
+        log.removeHandler(hdlr)

@@ -1,96 +1,35 @@
 from discord.ext import commands
-from .utils import checks, db, cache
-from .utils.formats import Plural, human_join
-from .utils.paginator import Pages
-from collections import Counter, defaultdict
-
 import discord
 import datetime
-import time
+from .utils import checks, config
 import json
+import copy
 import random
 import asyncio
-import asyncpg
 import logging
 import weakref
-import re
+from collections import Counter
 
 log = logging.getLogger(__name__)
 
-class StarError(commands.CheckFailure):
+class StarError(commands.CommandError):
+    pass
+
+class MockContext:
     pass
 
 def requires_starboard():
-    async def predicate(ctx):
-        if ctx.guild is None:
-            return False
+    def predicate(ctx):
+        if ctx.cog is None or ctx.message.server is None:
+            return True
 
-        cog = ctx.bot.get_cog('Stars')
-
-        ctx.starboard = await cog.get_starboard(ctx.guild.id, connection=ctx.db)
-        if ctx.starboard.channel is None:
+        ctx.guild_id = ctx.message.server.id
+        ctx.db = ctx.cog.stars.get(ctx.guild_id, {})
+        ctx.starboard = ctx.bot.get_channel(ctx.db.get('channel'))
+        if ctx.starboard is None:
             raise StarError('\N{WARNING SIGN} Starboard channel not found.')
-
         return True
     return commands.check(predicate)
-
-def MessageID(argument):
-    try:
-        return int(argument, base=10)
-    except ValueError:
-        raise StarError(f'"{argument}" is not a valid message ID. Use Developer Mode to get the Copy ID option.')
-
-class Starboard(db.Table):
-    id = db.Column(db.Integer(big=True), primary_key=True)
-
-    channel_id = db.Column(db.Integer(big=True))
-    threshold = db.Column(db.Integer, default=1, nullable=False)
-    locked = db.Column(db.Boolean, default=False)
-    max_age = db.Column(db.Interval, default="'7 days'::interval", nullable=False)
-
-class StarboardEntry(db.Table, table_name='starboard_entries'):
-    id = db.PrimaryKeyColumn()
-
-    bot_message_id = db.Column(db.Integer(big=True), index=True)
-    message_id = db.Column(db.Integer(big=True), index=True, unique=True, nullable=False)
-    channel_id = db.Column(db.Integer(big=True))
-    author_id = db.Column(db.Integer(big=True))
-    guild_id = db.Column(db.ForeignKey('starboard', 'id', sql_type=db.Integer(big=True)), index=True, nullable=False)
-
-class Starrers(db.Table):
-    id = db.PrimaryKeyColumn()
-    author_id = db.Column(db.Integer(big=True), nullable=False)
-    entry_id = db.Column(db.ForeignKey('starboard_entries', 'id'), index=True, nullable=False)
-
-    @classmethod
-    def create_table(cls, *, exists_ok=True):
-        statement = super().create_table(exists_ok=exists_ok)
-        sql = "CREATE UNIQUE INDEX IF NOT EXISTS starrers_uniq_idx ON starrers (author_id, entry_id);"
-        return statement + '\n' + sql
-
-class StarboardConfig:
-    __slots__ = ('bot', 'id', 'channel_id', 'threshold', 'locked', 'needs_migration', 'max_age')
-
-    def __init__(self, *, guild_id, bot, record=None):
-        self.id = guild_id
-        self.bot = bot
-
-        if record:
-            self.channel_id = record['channel_id']
-            self.threshold = record['threshold']
-            self.locked = record['locked']
-            self.needs_migration = self.locked is None
-            if self.needs_migration:
-                self.locked = True
-
-            self.max_age = record['max_age']
-        else:
-            self.channel_id = None
-
-    @property
-    def channel(self):
-        guild = self.bot.get_guild(self.id)
-        return guild and guild.get_channel(self.channel_id)
 
 class Stars:
     """A starboard to upvote posts obviously.
@@ -107,43 +46,80 @@ class Stars:
     def __init__(self, bot):
         self.bot = bot
 
+        # config format: (yeah, it's not ideal or really any good but whatever)
+        # <guild_id> : <data> where <data> is
+        # channel: <starboard channel id>
+        # locked: <boolean indicating locked status>
+        # message_id: [bot_message, [starred_user_ids]]
+        self.stars = config.Config('stars.json')
+
         # cache message objects to save Discord some HTTP requests.
         self._message_cache = {}
         self._cleaner = self.bot.loop.create_task(self.clean_message_cache())
 
-        # if it's in this set,
-        self._about_to_be_deleted = set()
-
         self._locks = weakref.WeakValueDictionary()
+
+        self.janitor_tasks = {
+            guild_id: self.bot.loop.create_task(self.janitor(guild_id))
+            for guild_id in self.stars.all()
+            if self.stars.get(guild_id).get('janitor') is not None
+        }
 
     def __unload(self):
         self._cleaner.cancel()
-
-    async def __error(self, ctx, error):
-        if isinstance(error, StarError):
-            await ctx.send(error)
+        for task in self.janitor_tasks.values():
+            try:
+                task.cancel()
+            except:
+                pass
 
     async def clean_message_cache(self):
         try:
-            while not self.bot.is_closed():
+            while not self.bot.is_closed:
                 self._message_cache.clear()
                 await asyncio.sleep(3600)
         except asyncio.CancelledError:
             pass
 
-    @cache.cache(strategy=cache.Strategy.raw)
-    async def get_starboard(self, guild_id, *, connection=None):
-        connection = connection or self.bot.pool
-        query = "SELECT * FROM starboard WHERE id=$1;"
-        record = await connection.fetchrow(query, guild_id)
-        return StarboardConfig(guild_id=guild_id, bot=self.bot, record=record)
+    async def clean_starboard(self, ctx, stars):
+        dead_messages = {
+            data[0]
+            for _, data in ctx.db.items()
+            if isinstance(data, list) and len(data[1]) <= stars and data[0] is not None
+        }
+
+        # delete all the keys from the dict
+        for msg_id in dead_messages:
+            ctx.db.pop(msg_id, None)
+
+        await self.stars.put(ctx.guild_id, ctx.db)
+        await self.bot.purge_from(ctx.starboard, limit=100, check=lambda m: m.id in dead_messages)
+
+    async def run_janitor(self, guild_id):
+        ctx = MockContext()
+        ctx.guild_id = guild_id
+        try:
+            ctx.db = self.stars[guild_id]
+            ctx.starboard = self.bot.get_channel(ctx.db.get('channel'))
+            await self.clean_starboard(ctx, 1)
+            await asyncio.sleep(ctx.db['janitor'])
+        except KeyError:
+            pass
+
+    async def janitor(self, guild_id):
+        try:
+            await self.bot.wait_until_ready()
+            while not self.bot.is_closed:
+                await self.run_janitor(guild_id)
+        except asyncio.CancelledError:
+            pass
 
     def star_emoji(self, stars):
-        if 5 > stars >= 0:
+        if 5 >= stars >= 0:
             return '\N{WHITE MEDIUM STAR}'
-        elif 10 > stars >= 5:
+        elif 10 >= stars >= 6:
             return '\N{GLOWING STAR}'
-        elif 25 > stars >= 10:
+        elif 25 >= stars >= 11:
             return '\N{DIZZY SYMBOL}'
         else:
             return '\N{SPARKLES}'
@@ -165,519 +141,506 @@ class Stars:
         blue = int((12 * p) + (247 * (1 - p)))
         return (red << 16) + (green << 8) + blue
 
-    def get_emoji_message(self, message, stars):
-        emoji = self.star_emoji(stars)
+    def emoji_message(self, msg, starrers):
+        emoji = self.star_emoji(starrers)
+        # base = '%s ID: %s' % (msg.channel.mention, msg.id)
 
-        if stars > 1:
-            content = f'{emoji} **{stars}** {message.channel.mention} ID: {message.id}'
+        if starrers > 1:
+            base = '%s **%s** %s ID: %s' % (emoji, starrers, msg.channel.mention, msg.id)
         else:
-            content = f'{emoji} {message.channel.mention} ID: {message.id}'
+            base = '%s %s ID: %s' % (emoji, msg.channel.mention, msg.id)
 
 
-        embed = discord.Embed(description=message.content)
-        if message.embeds:
-            data = message.embeds[0]
+        content = msg.content
+        e = discord.Embed(description=content)
+        if msg.embeds:
+            data = discord.Embed.from_data(msg.embeds[0])
             if data.type == 'image':
-                embed.set_image(url=data.url)
+                e.set_image(url=data.url)
 
-        if message.attachments:
-            file = message.attachments[0]
-            if file.url.lower().endswith(('png', 'jpeg', 'jpg', 'gif')):
-                embed.set_image(url=file.url)
+        if msg.attachments:
+            url = msg.attachments[0]['url']
+            if url.lower().endswith(('png', 'jpeg', 'jpg', 'gif')):
+                e.set_image(url=url)
             else:
-                embed.add_field(name='Attachment', value=f'[{file.filename}]({file.url})', inline=False)
+                attachments = '[Attachment](%s)' % url
+                if content:
+                    e.description = content + '\n' + attachments
+                else:
+                    e.description = attachments
 
-        embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url_as(format='png'))
-        embed.timestamp = message.created_at
-        embed.colour = self.star_gradient_colour(stars)
-        return content, embed
+        # build the embed
+        author = msg.author
+        avatar = author.default_avatar_url if not author.avatar else author.avatar_url
+        avatar = avatar.replace('.gif', '.jpg')
+        e.set_author(name=author.display_name, icon_url=avatar)
+        e.timestamp = msg.timestamp
+        e.colour = self.star_gradient_colour(starrers)
+        return base, e
 
-    async def get_message(self, channel, message_id):
-        try:
-            return self._message_cache[message_id]
-        except KeyError:
-            try:
-                o = discord.Object(id=message_id + 1)
-                pred = lambda m: m.id == message_id
-                # don't wanna use get_message due to poor rate limit (1/1s) vs (50/1s)
-                msg = await channel.history(limit=1, before=o).next()
-
-                if msg.id != message_id:
-                    return None
-
-                self._message_cache[message_id] = msg
-                return msg
-            except Exception:
-                return None
-
-    async def reaction_action(self, fmt, emoji, message_id, channel_id, user_id):
-        if str(emoji) != '\N{WHITE MEDIUM STAR}':
-            return
-
-        channel = self.bot.get_channel(channel_id)
-        if not isinstance(channel, discord.TextChannel):
-            return
-
-        method = getattr(self, f'{fmt}_message')
-
-        user = self.bot.get_user(user_id)
-        if user is None or user.bot:
-            return
-
-        async with self.bot.pool.acquire() as con:
-            config = self.bot.get_cog('Config')
-            if config:
-                plonked = await config.is_plonked(channel.guild.id, user_id, channel_id=channel_id, connection=con)
-                if plonked:
-                    return
-
-            try:
-                await method(channel, message_id, user_id, connection=con)
-            except StarError:
-                pass
-
-    async def on_guild_channel_delete(self, channel):
-        if not isinstance(channel, discord.TextChannel):
-            return
-
-        starboard = await self.get_starboard(channel.guild.id)
-        if starboard.channel is None or starboard.channel.id != channel.id:
-            return
-
-        # the starboard channel got deleted, so let's clear it from the database.
-        async with self.bot.pool.acquire() as con:
-            query = "DELETE FROM starboard WHERE id=$1;"
-            await con.execute(query, channel.guild.id)
-
-    async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
-        await self.reaction_action('star', emoji, message_id, channel_id, user_id)
-
-    async def on_raw_reaction_remove(self, emoji, message_id, channel_id, user_id):
-        await self.reaction_action('unstar', emoji, message_id, channel_id, user_id)
-
-    async def on_raw_message_delete(self, message_id, channel_id):
-        if message_id in self._about_to_be_deleted:
-            # we triggered this deletion ourselves and
-            # we don't need to drop it from the database
-            self._about_to_be_deleted.discard(message_id)
-            return
-
-        channel = self.bot.get_channel(channel_id)
-        if channel is None or not isinstance(channel, discord.TextChannel):
-            return
-
-        starboard = await self.get_starboard(channel.guild.id)
-        if starboard.channel is None or starboard.channel.id != channel_id:
-            return
-
-        # at this point a message got deleted in the starboard
-        # so just delete it from the database
-        async with self.bot.pool.acquire() as con:
-            query = "DELETE FROM starboard_entries WHERE bot_message_id=$1;"
-            await con.execute(query, message_id)
-
-    async def on_raw_bulk_message_delete(self, message_ids, channel_id):
-        if message_ids <= self._about_to_be_deleted:
-            # see comment above
-            self._about_to_be_deleted.difference_update(message_ids)
-            return
-
-        channel = self.bot.get_channel(channel_id)
-        if channel is None or not isinstance(channel, discord.TextChannel):
-            return
-
-        starboard = await self.get_starboard(channel.guild.id)
-        if starboard.channel is None or starboard.channel.id != channel_id:
-            return
-
-        async with self.bot.pool.acquire() as con:
-            query = "DELETE FROM starboard_entries WHERE bot_message_id=ANY($1::bigint[]);"
-            await con.execute(query, list(message_ids))
-
-    async def on_raw_reaction_clear(self, message_id, channel_id):
-        channel = self.bot.get_channel(channel_id)
-        if channel is None or not isinstance(channel, discord.TextChannel):
-            return
-
-        async with self.bot.pool.acquire() as con:
-            starboard = await self.get_starboard(channel.guild.id, connection=con)
-            if starboard.channel is None:
-                return
-
-            query = "DELETE FROM starboard_entries WHERE message_id=$1 RETURNING bot_message_id;"
-            bot_message_id = await con.fetchrow(query, message_id)
-
-            if bot_message_id is None:
-                return
-
-
-            bot_message_id = bot_message_id[0]
-            msg = await self.get_message(starboard.channel, bot_message_id)
-            if msg is not None:
-                await msg.delete()
-
-    async def star_message(self, channel, message_id, starrer_id, *, connection):
-        guild_id = channel.guild.id
-        lock = self._locks.get(guild_id)
-        if lock is None:
-            self._locks[guild_id] = lock = asyncio.Lock(loop=self.bot.loop)
-
-        async with lock:
-            await self._star_message(channel, message_id, starrer_id, connection=connection)
-
-    async def _star_message(self, channel, message_id, starrer_id, *, connection):
-        """Stars a message.
-
-        Parameters
-        ------------
-        channel: :class:`TextChannel`
-            The channel that the starred message belongs to.
-        message_id: int
-            The message ID of the message being starred.
-        starrer_id: int
-            The ID of the person who starred this message.
-        connection: asyncpg.Connection
-            The connection to use.
-        """
-
-        guild_id = channel.guild.id
-        starboard = await self.get_starboard(guild_id)
-        if starboard.channel is None:
+    async def _star_message(self, message, starrer_id, message_id, *, reaction=True):
+        guild_id = message.server.id
+        db = self.stars.get(guild_id, {})
+        starboard = self.bot.get_channel(db.get('channel'))
+        if starboard is None:
             raise StarError('\N{WARNING SIGN} Starboard channel not found.')
 
-        if starboard.locked:
+        if db.get('locked'):
             raise StarError('\N{NO ENTRY SIGN} Starboard is locked.')
 
-        if channel.id == starboard.channel.id:
-            # special case redirection code goes here
-            # ergo, when we add a reaction from starboard we want it to star
-            # the original message
+        stars = db.get(message_id, [None, []]) # ew, I know.
+        starrers = stars[1]
 
-            query = "SELECT channel_id, message_id FROM starboard_entries WHERE bot_message_id=$1;"
-            record = await connection.fetchrow(query, message_id)
-            if record is None:
-                raise StarError('Could not find message in the starboard.')
+        if starrer_id in starrers:
+            raise StarError('\N{NO ENTRY SIGN} You already starred this message.')
 
-            ch = channel.guild.get_channel(record['channel_id'])
-            if ch is None:
-                raise StarError('Could not find original channel.')
+        if reaction:
+            mod = self.bot.get_cog('Mod')
+            if mod:
+                member = message.server.get_member(starrer_id)
+                if member and mod.is_plonked(message.server, member):
+                    raise StarError('\N{NO ENTRY SIGN} Plonked Member')
 
-            return await self._star_message(ch, record['message_id'], starrer_id, connection=connection)
+        # if the IDs are the same, then they were probably starred using the reaction interface
+        if message.id != message_id:
+            msg = await self.get_message(message.channel, message_id)
+            if msg is None:
+                raise StarError('\N{BLACK QUESTION MARK ORNAMENT} This message could not be found.')
+        else:
+            msg = message
 
-        msg = await self.get_message(channel, message_id)
+        if msg.channel.id == starboard.id:
+            if not reaction:
+                raise StarError('\N{NO ENTRY SIGN} Cannot star messages in the starboard without reacting.')
 
-        if msg is None:
-            raise StarError('\N{BLACK QUESTION MARK ORNAMENT} This message could not be found.')
+            # If we star a message in the starboard then we can do a reverse lookup to check
+            # what message to star in reality.
 
-        if msg.author.id == starrer_id:
-            raise StarError('\N{NO ENTRY SIGN} You cannot star your own message.')
+            # first remove the reaction if applicable:
+            try:
+                await self.bot.http.remove_reaction(msg.id, msg.channel.id, '\N{WHITE MEDIUM STAR}', starrer_id)
+            except:
+                pass # oh well
+
+            # do the reverse lookup and update the references
+            tup = discord.utils.find(lambda t: isinstance(t[1], list) and t[1][0] == message_id, db.items())
+            if tup is None:
+                raise StarError('\N{NO ENTRY SIGN} Could not find this message ID in the starboard.')
+
+            msg = await self.get_message(msg.channel_mentions[0], tup[0])
+            if msg is None:
+                raise StarError('\N{BLACK QUESTION MARK ORNAMENT} This message could not be found.')
+
+            # god bless recursion
+            return await self._star_message(msg, starrer_id, msg.id, reaction=True)
 
         if (len(msg.content) == 0 and len(msg.attachments) == 0) or msg.type is not discord.MessageType.default:
             raise StarError('\N{NO ENTRY SIGN} This message cannot be starred.')
 
-        oldest_allowed = datetime.datetime.utcnow() - starboard.max_age
-        if msg.created_at < oldest_allowed:
-            raise StarError('\N{NO ENTRY SIGN} This message is too old.')
+        if starrer_id == msg.author.id:
+            raise StarError('\N{NO ENTRY SIGN} You cannot star your own message.')
 
-        # check if this is freshly starred
-        # originally this was a single query but it seems
-        # WHERE ... = (SELECT ... in some_cte) is bugged
-        # so I'm going to do two queries instead
-        query = """WITH to_insert AS (
-                       INSERT INTO starboard_entries AS entries (message_id, channel_id, guild_id, author_id)
-                       VALUES ($1, $2, $3, $4)
-                       ON CONFLICT (message_id) DO NOTHING
-                       RETURNING entries.id
-                   )
-                   INSERT INTO starrers (author_id, entry_id)
-                   SELECT $5, entry.id
-                   FROM (
-                       SELECT id FROM to_insert
-                       UNION ALL
-                       SELECT id FROM starboard_entries WHERE message_id=$1
-                       LIMIT 1
-                   ) AS entry
-                   RETURNING entry_id;
-                """
 
-        try:
-            record = await connection.fetchrow(query, message_id, channel.id, guild_id, msg.author.id, starrer_id)
-        except asyncpg.UniqueViolationError:
-            raise StarError('\N{NO ENTRY SIGN} You already starred this message.')
+        # check if the message is older than 7 days
+        seven_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+        if msg.timestamp < seven_days_ago:
+            raise StarError('\N{NO ENTRY SIGN} This message is older than 7 days.')
 
-        entry_id = record[0]
+        # at this point we can assume that the user did not star the message
+        # and that it is relatively safe to star
+        content, embed = self.emoji_message(msg, len(starrers) + 1)
 
-        query = "SELECT COUNT(*) FROM starrers WHERE entry_id=$1;"
-        record = await connection.fetchrow(query, entry_id)
+        # try to remove the star message since it's 'spammy'
+        if not reaction:
+            try:
+                await self.bot.delete_message(message)
+            except:
+                pass
 
-        count = record[0]
-        if count < starboard.threshold:
+        starrers.append(starrer_id)
+        db[message_id] = stars
+
+        # freshly starred
+        if stars[0] is None:
+            sent = await self.bot.send_message(starboard, content, embed=embed)
+            stars[0] = sent.id
+            await self.stars.put(guild_id, db)
             return
 
-        # at this point, we either edit the message or we create a message
-        # with our star info
-        content, embed = self.get_emoji_message(msg, count)
+        bot_msg = await self.get_message(starboard, stars[0])
+        if bot_msg is None:
+            await self.bot.say('\N{BLACK QUESTION MARK ORNAMENT} Expected to be in {0.mention} but is not.'.format(starboard))
 
-        # get the message ID to edit:
-        query = "SELECT bot_message_id FROM starboard_entries WHERE message_id=$1;"
-        record = await connection.fetchrow(query, message_id)
-        bot_message_id = record[0]
+            # remove the entry from the starboard cache since someone deleted it.
+            # i.e. they did a 'clear' on the stars.
+            # they can go through this process again if they *truly* want to star it.
+            db.pop(message_id, None)
+            await self.stars.put(guild_id, db)
+            return
 
-        if bot_message_id is None:
-            new_msg = await starboard.channel.send(content, embed=embed)
-            query = "UPDATE starboard_entries SET bot_message_id=$1 WHERE message_id=$2;"
-            await connection.execute(query, new_msg.id, message_id)
-        else:
-            new_msg = await self.get_message(starboard.channel, bot_message_id)
-            if new_msg is None:
-                # deleted? might as well purge the data
-                query = "DELETE FROM starboard_entries WHERE message_id=$1;"
-                await connection.execute(query, message_id)
-            else:
-                await new_msg.edit(content=content, embed=embed)
+        await self.stars.put(guild_id, db)
+        await self.bot.edit_message(bot_msg, content, embed=embed)
 
-    async def unstar_message(self, channel, message_id, starrer_id, *, connection):
-        guild_id = channel.guild.id
-        lock = self._locks.get(guild_id)
+    async def star_message(self, message, starrer_id, message_id, *, reaction=True):
+        lock = self._locks.get(message.server.id)
         if lock is None:
-            self._locks[guild_id] = lock = asyncio.Lock(loop=self.bot.loop)
+            self._locks[message.server.id] = lock = asyncio.Lock(loop=self.bot.loop)
 
         async with lock:
-            await self._unstar_message(channel, message_id, starrer_id, connection=connection)
+            await self._star_message(message, starrer_id, message_id, reaction=reaction)
 
-    async def _unstar_message(self, channel, message_id, starrer_id, *, connection):
-        """Unstars a message.
-
-        Parameters
-        ------------
-        channel: :class:`TextChannel`
-            The channel that the starred message belongs to.
-        message_id: int
-            The message ID of the message being unstarred.
-        starrer_id: int
-            The ID of the person who unstarred this message.
-        connection: asyncpg.Connection
-            The connection to use.
-        """
-
-        guild_id = channel.guild.id
-        starboard = await self.get_starboard(guild_id)
-        if starboard.channel is None:
+    async def _unstar_message(self, message, starrer_id, message_id):
+        guild_id = message.server.id
+        db = self.stars.get(guild_id, {})
+        starboard = self.bot.get_channel(db.get('channel'))
+        if starboard is None:
             raise StarError('\N{WARNING SIGN} Starboard channel not found.')
 
-        if starboard.locked:
+        if db.get('locked'):
             raise StarError('\N{NO ENTRY SIGN} Starboard is locked.')
 
-        if channel.id == starboard.channel.id:
-            query = "SELECT channel_id, message_id FROM starboard_entries WHERE bot_message_id=$1;"
-            record = await connection.fetchrow(query, message_id)
-            if record is None:
-                raise StarError('Could not find message in the starboard.')
+        stars = db.get(message_id)
+        if stars is None:
+            raise StarError('\N{NO ENTRY SIGN} This message has no stars.')
 
-            ch = channel.guild.get_channel(record['channel_id'])
-            if ch is None:
-                raise StarError('Could not find original channel.')
-
-            return await self._unstar_message(ch, record['message_id'], starrer_id, connection=connection)
-
-        query = """DELETE FROM starrers USING starboard_entries entry
-                   WHERE entry.message_id=$1
-                   AND   entry.id=starrers.entry_id
-                   AND   starrers.author_id=$2
-                   RETURNING starrers.entry_id, entry.bot_message_id
-                """
-
-        record = await connection.fetchrow(query, message_id, starrer_id)
-        if record is None:
+        starrers = stars[1]
+        try:
+            starrers.remove(starrer_id)
+        except ValueError:
             raise StarError('\N{NO ENTRY SIGN} You have not starred this message.')
 
-        entry_id = record[0]
-        bot_message_id = record[1]
+        db[message_id] = stars
+        bot_msg = await self.get_message(starboard, stars[0])
+        if bot_msg is not None:
+            if len(starrers) == 0:
+                # no more stars, so it's gone from the board
+                db.pop(message_id, None)
+                await self.stars.put(guild_id, db)
+                await self.bot.delete_message(bot_msg)
+            else:
+                # if the IDs are the same, then they were probably starred using the reaction interface
+                if message.id != message_id:
+                    msg = await self.get_message(message.channel, message_id)
+                    if msg is None:
+                        raise StarError('\N{BLACK QUESTION MARK ORNAMENT} This message could not be found.')
+                else:
+                    msg = message
 
-        query = "SELECT COUNT(*) FROM starrers WHERE entry_id=$1;"
-        count = await connection.fetchrow(query, entry_id)
-        count = count[0]
+                content, e = self.emoji_message(msg, len(starrers))
+                await self.stars.put(guild_id, db)
+                await self.bot.edit_message(bot_msg, content, embed=e)
 
-        if count == 0:
-            # delete the entry if we have no more stars
-            query = "DELETE FROM starboard_entries WHERE id=$1;"
-            await connection.execute(query, entry_id)
+    async def unstar_message(self, message, starrer_id, message_id):
+        lock = self._locks.get(message.server.id)
+        if lock is None:
+            self._locks[message.server.id] = lock = asyncio.Lock(loop=self.bot.loop)
 
-        if bot_message_id is None:
-            return
+        async with lock:
+            await self._unstar_message(message, starrer_id, message_id)
 
-        bot_message = await self.get_message(starboard.channel, bot_message_id)
-        if bot_message is None:
-            return
-
-        if count < starboard.threshold:
-            self._about_to_be_deleted.add(bot_message_id)
-            if count:
-                # update the bot_message_id to be NULL in the table since we're deleting it
-                query = "UPDATE starboard_entries SET bot_message_id=NULL WHERE id=$1;"
-                await connection.execute(query, entry_id)
-
-            await bot_message.delete()
-        else:
-            msg = await self.get_message(channel, message_id)
-            if msg is None:
-                raise StarError('\N{BLACK QUESTION MARK ORNAMENT} This message could not be found.')
-
-            content, embed = self.get_emoji_message(msg, count)
-            await bot_message.edit(content=content, embed=embed)
-
-    @commands.command()
-    @checks.is_mod()
+    @commands.command(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_server=True)
     async def starboard(self, ctx, *, name='starboard'):
         """Sets up the starboard for this server.
 
         This creates a new channel with the specified name
         and makes it into the server's "starboard". If no
         name is passed in then it defaults to "starboard".
+        If the channel is deleted then the starboard is
+        deleted as well.
 
-        You must have Manage Server permission to use this.
+        You must have Manage Server permissions to use this
+        command or the Bot Admin role.
         """
 
-        # bypass the cache just in case someone used the star
-        # reaction earlier before having it set up, or they
-        # decided to use the ?star command
-        self.get_starboard.invalidate(self, ctx.guild.id)
+        server = ctx.message.server
 
-        starboard = await self.get_starboard(ctx.guild.id, connection=ctx.db)
-        if starboard.channel is not None:
-            return await ctx.send(f'This server already has a starboard ({starboard.channel.mention}).')
+        stars = self.stars.get(server.id, {})
+        old_starboard = self.bot.get_channel(stars.get('channel'))
+        if old_starboard is not None:
+            fmt = 'This server already has a starboard ({.mention})'
+            await self.bot.say(fmt.format(old_starboard))
+            return
 
-        if hasattr(starboard, 'locked'):
-            try:
-                confirm = await ctx.prompt('Apparently, a previously configured starboard channel was deleted. Is this true?')
-            except RuntimeError as e:
-                await ctx.send(e)
-            else:
-                if confirm:
-                    await ctx.db.execute('DELETE FROM starboard WHERE id=$1;', ctx.guild.id)
-                else:
-                    return await ctx.send('Aborting starboard creation. Join the bot support server for more questions.')
+        # an old channel might have been deleted and thus we should clear all its star data
+        stars = {}
 
-        perms = ctx.channel.permissions_for(ctx.me)
+        my_permissions = ctx.message.channel.permissions_for(server.me)
+        args = [server, name]
 
-        if not perms.manage_roles or not perms.manage_channels:
-            return await ctx.send('\N{NO ENTRY SIGN} I do not have proper permissions (Manage Roles and Manage Channel)')
-
-        overwrites = {
-            ctx.me: discord.PermissionOverwrite(read_messages=True, send_messages=True, manage_messages=True,
-                                                embed_links=True, read_message_history=True),
-            ctx.guild.default_role: discord.PermissionOverwrite(read_messages=True, send_messages=False,
-                                                                read_message_history=True)
-        }
-
-        reason = f'{ctx.author} (ID: {ctx.author.id}) has created the starboard channel.'
+        if my_permissions.manage_roles:
+            mine = discord.PermissionOverwrite(send_messages=True, manage_messages=True, embed_links=True)
+            everyone = discord.PermissionOverwrite(read_messages=True, send_messages=False, read_message_history=True)
+            args.append((server.me, mine))
+            args.append((server.default_role, everyone))
 
         try:
-            channel = await ctx.guild.create_text_channel(name=name, overwrites=overwrites, reason=reason)
+            channel = await self.bot.create_channel(*args)
         except discord.Forbidden:
-            return await ctx.send('\N{NO ENTRY SIGN} I do not have permissions to create a channel.')
+            await self.bot.say('\N{NO ENTRY SIGN} I do not have permissions to create a channel.')
         except discord.HTTPException:
-            return await ctx.send('\N{NO ENTRY SIGN} This channel name is bad or an unknown error happened.')
-
-        query = "INSERT INTO starboard (id, channel_id) VALUES ($1, $2);"
-        try:
-            await ctx.db.execute(query, ctx.guild.id, channel.id)
-        except:
-            await channel.delete(reason='Failure to commit to create the ')
-            await ctx.send('Could not create the channel due to an internal error. Join the bot support server for help.')
+            await self.bot.say('\N{PISTOL} This channel name is bad or an unknown error happened.')
         else:
-            self.get_starboard.invalidate(self, ctx.guild.id)
-            await ctx.send(f'\N{GLOWING STAR} Starboard created at {channel.mention}.')
+            stars['channel'] = channel.id
+            await self.stars.put(server.id, stars)
+            await self.bot.say('\N{GLOWING STAR} Starboard created at ' + channel.mention)
 
-    @commands.group(invoke_without_command=True, ignore_extra=False)
-    @commands.guild_only()
-    async def star(self, ctx, message: MessageID):
+    async def get_message(self, channel, mid):
+        try:
+            return self._message_cache[mid]
+        except KeyError:
+            try:
+                msg = self._message_cache[mid] = await self.bot.get_message(channel, mid)
+            except discord.HTTPException:
+                return None
+            else:
+                return msg
+
+    async def on_command_error(self, error, ctx):
+        if isinstance(error, StarError):
+            await self.bot.send_message(ctx.message.channel, error)
+
+    # a custom message events
+    async def on_socket_raw_receive(self, data):
+        # no binary frames
+        if isinstance(data, bytes):
+            return
+
+        data = json.loads(data)
+        event = data.get('t')
+        payload = data.get('d')
+        if event not in ('MESSAGE_DELETE', 'MESSAGE_REACTION_ADD',
+                         'MESSAGE_REACTION_REMOVE', 'MESSAGE_REACTION_REMOVE_ALL'):
+            return
+
+        is_message_delete = event == 'MESSAGE_DELETE'
+        is_reaction_clear = event == 'MESSAGE_REACTION_REMOVE_ALL'
+        is_reaction = event == 'MESSAGE_REACTION_ADD'
+
+        # make sure the reaction is proper
+        if not is_message_delete and not is_reaction_clear:
+            emoji = payload['emoji']
+            if emoji['name'] != '\N{WHITE MEDIUM STAR}':
+                return # not a star reaction
+
+        channel = self.bot.get_channel(payload.get('channel_id'))
+        if channel is None or channel.is_private:
+            return
+
+        # everything past this point is pointless if we're adding a reaction,
+        # so let's just see if we can star the message and get it over with.
+        if not is_message_delete and not is_reaction_clear:
+            message = await self.get_message(channel, payload['message_id'])
+            member = channel.server.get_member(payload['user_id'])
+            if member is None or member.bot:
+                return # denied
+
+            verb = 'star' if is_reaction else 'unstar'
+            coro = getattr(self, '%s_message' % verb)
+            try:
+                await coro(message, member.id, message.id)
+                log.info('User ID %s has %sred Message ID %s' % (payload['user_id'], verb, message.id))
+            except StarError:
+                pass
+            finally:
+                return
+
+        server = channel.server
+        db = self.stars.get(server.id)
+        if db is None:
+            return
+
+        starboard = self.bot.get_channel(db.get('channel'))
+        if starboard is None or (is_message_delete and channel.id != starboard.id):
+            # the starboard might have gotten deleted?
+            # or it might not be a delete worth dealing with
+            return
+
+        # see if the message being deleted is in the starboard
+        if is_message_delete:
+            msg_id = payload['id']
+            exists = discord.utils.find(lambda k: isinstance(db[k], list) and db[k][0] == msg_id, db)
+            if exists:
+                db.pop(exists)
+                await self.stars.put(server.id, db)
+        else:
+            msg_id = payload['message_id']
+            try:
+                value = db.pop(msg_id)
+            except KeyError:
+                pass
+            else:
+                await self.bot.http.delete_message(starboard.id, value[0], guild_id=server.id)
+                await self.stars.put(server.id, db)
+
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    async def star(self, ctx, message: int):
         """Stars a message via message ID.
 
-        To star a message you should right click on the on a message and then
-        click "Copy ID". You must have Developer Mode enabled to get that
-        functionality.
+        To star a message you should right click on the
+        on a message and then click "Copy ID". You must have
+        Developer Mode enabled to get that functionality.
 
-        It is recommended that you react to a message with \N{WHITE MEDIUM STAR} instead.
+        It is recommended that you react to a message with
+        '\N{WHITE MEDIUM STAR}' instead since this will
+        make it easier.
 
-        You can only star a message once.
+        You can only star a message once. You cannot star
+        messages older than 7 days.
         """
-
         try:
-            await self.star_message(ctx.channel, message, ctx.author.id, connection=ctx.db)
+            await self.star_message(ctx.message, ctx.message.author.id, str(message), reaction=False)
         except StarError as e:
-            await ctx.send(e)
-        else:
-            await ctx.message.delete()
+            await self.bot.say(e)
 
-    @commands.command()
-    @commands.guild_only()
-    async def unstar(self, ctx, message: MessageID):
+    @star.error
+    async def star_error(self, error, ctx):
+        if isinstance(error, commands.BadArgument):
+            await self.bot.say('That is not a valid message ID. Use Developer Mode to get the Copy ID option.')
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def unstar(self, ctx, message: int):
         """Unstars a message via message ID.
 
-        To unstar a message you should right click on the on a message and then
-        click "Copy ID". You must have Developer Mode enabled to get that
-        functionality.
+        To unstar a message you should right click on the
+        on a message and then click "Copy ID". You must have
+        Developer Mode enabled to get that functionality.
+
+        You cannot unstar messages older than 7 days.
         """
         try:
-            await self.unstar_message(ctx.channel, message, ctx.author.id, connection=ctx.db)
+            await self.unstar_message(ctx.message, ctx.message.author.id, str(message))
         except StarError as e:
-            return await ctx.send(e)
+            return await self.bot.say(e)
         else:
-            await ctx.message.delete()
+            await self.bot.delete_message(ctx.message)
 
-    @star.command(name='clean')
-    @checks.is_mod()
+    @star.command(name='janitor', pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_server=True)
     @requires_starboard()
-    async def star_clean(self, ctx, stars=1):
+    async def star_janitor(self, ctx, minutes: float = 0.0):
+        """Set the starboard's janitor clean rate.
+
+        The clean rate allows the starboard to cleared from single star
+        messages. By setting a clean rate, every N minutes the bot will
+        routinely cleanup single starred messages from the starboard.
+
+        Setting the janitor's clean rate to 0 (or below) disables it.
+
+        This command requires the Manage Server permission or the Bot
+        Admin role.
+        """
+        def cleanup_task():
+            task = self.janitor_tasks.pop(ctx.guild_id, None)
+            if task:
+                task.cancel()
+            ctx.db.pop('janitor', None)
+
+        if minutes <= 0.0:
+            cleanup_task()
+            await self.bot.say('\N{SQUARED OK} No more cleaning up.')
+        else:
+            if 'janitor' in ctx.db:
+                cleanup_task()
+
+            ctx.db['janitor'] = minutes * 60.0
+            self.janitor_tasks[ctx.guild_id] = self.bot.loop.create_task(self.janitor(ctx.guild_id))
+            await self.bot.say('Remember to \N{PUT LITTER IN ITS PLACE SYMBOL}')
+
+        await self.stars.put(ctx.guild_id, ctx.db)
+
+    @star.command(name='clean', pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_server=True)
+    @requires_starboard()
+    async def star_clean(self, ctx, stars:int = 1):
         """Cleans the starboard
 
         This removes messages in the starboard that only have less
         than or equal to the number of specified stars. This defaults to 1.
 
-        Note that this only checks the last 100 messages in the starboard.
+        To continuously do this over a period of time see
+        the `janitor` subcommand.
 
-        This command requires the Manage Server permission.
+        This command requires the Manage Server permission or the
+        Bot Admin role.
         """
 
-        stars = max(stars, 1)
-        channel = ctx.starboard.channel
+        stars = 1 if stars < 0 else stars
+        await self.clean_starboard(ctx, stars)
+        await self.bot.say('\N{PUT LITTER IN ITS PLACE SYMBOL}')
 
-        last_messages = await channel.history(limit=100).map(lambda m: m.id).flatten()
+    @star.command(name='update', no_pm=True, pass_context=True, hidden=True)
+    @checks.admin_or_permissions(manage_server=True)
+    @requires_starboard()
+    @commands.cooldown(rate=1, per=5.0*60, type=commands.BucketType.server)
+    async def star_update(self, ctx):
+        """Updates the starboard's content to the latest format.
 
-        query = """WITH bad_entries AS (
-                       SELECT entry_id
-                       FROM starrers
-                       INNER JOIN starboard_entries
-                       ON starboard_entries.id = starrers.entry_id
-                       WHERE starboard_entries.guild_id=$1
-                       AND   starboard_entries.bot_message_id = ANY($2::bigint[])
-                       GROUP BY entry_id
-                       HAVING COUNT(*) >= $3
-                   )
-                   DELETE FROM starboard_entries USING bad_entries
-                   WHERE starboard_entries.id = bad_entries.entry_id
-                   RETURNING starboard_entries.bot_message_id
-                """
+        If a message referred in the starboard was deleted then
+        the message will be untouched.
 
-        to_delete = await ctx.db.fetch(query, ctx.guild.id, last_messages, stars)
+        To prevent abuse, only the last 100 messages are updated.
 
-        # we cannot bulk delete entries over 14 days old
-        min_snowflake = int((time.time() - 14 * 24 * 60 * 60) * 1000.0 - 1420070400000) << 22
-        to_delete = [discord.Object(id=r[0]) for r in to_delete if r[0] > min_snowflake]
+        Warning: This operation takes a long time. As a consequence,
+        only those with Manage Server permission can use this command
+        and it has a cooldown of one use per 5 minutes.
+        """
+        reconfigured_cache = {
+            v[0]: (k, v[1]) for k, v in ctx.db.items()
+        }
+
+        async for msg in self.bot.logs_from(ctx.starboard, limit=100):
+            try:
+                original_id, starrers = reconfigured_cache[msg.id]
+                original_channel = msg.channel_mentions[0]
+            except Exception:
+                continue
+
+            original_message = await self.get_message(original_channel, original_id)
+            if original_message is None:
+                continue
+
+            content, embed = self.emoji_message(original_message, len(starrers))
+            try:
+                await self.bot.edit_message(msg, content, embed=embed)
+            except:
+                pass # somehow this failed, so ignore it
+
+        await self.bot.say('\N{BLACK UNIVERSAL RECYCLING SYMBOL}')
+
+    @star_update.error
+    async def star_update_error(self, error, ctx):
+        if isinstance(error, commands.CommandOnCooldown):
+            if checks.is_owner_check(ctx.message):
+                await ctx.invoke(self.star_update)
+            else:
+                await self.bot.say(error)
+
+    async def show_message(self, ctx, key, value):
+        # Unfortunately, we don't store the channel_id internally, so this
+        # requires an extra lookup to parse the channel mentions to get the
+        # original channel. A consequence of mediocre design I suppose.
+        bot_message = await self.get_message(ctx.starboard, value[0])
+        if bot_message is None:
+            raise RuntimeError('Somehow referring to a deleted message in the starboard?')
 
         try:
-            self._about_to_be_deleted.update(o.id for o in to_delete)
-            await channel.delete_messages(to_delete)
-        except discord.HTTPException:
-            await ctx.send('Could not delete messages.')
-        else:
-            await ctx.send(f'\N{PUT LITTER IN ITS PLACE SYMBOL} Deleted {Plural(message=len(to_delete))}.')
+            original_channel = bot_message.channel_mentions[0]
+            msg = await self.get_message(original_channel, key)
+        except Exception as e:
+            raise RuntimeError('An error occurred while fetching message.')
 
-    @star.command(name='show')
+        if msg is None:
+            raise RuntimeError('Could not find message. Possibly deleted.')
+
+        content, embed = self.emoji_message(msg, len(value[1]))
+        await self.bot.say(content, embed=embed)
+
+    @star.command(name='show', no_pm=True, pass_context=True)
+    @commands.cooldown(rate=1, per=10.0, type=commands.BucketType.user)
     @requires_starboard()
-    async def star_show(self, ctx, message: MessageID):
-        """Shows a starred message via its ID.
+    async def star_show(self, ctx, message: int):
+        """Shows a starred via message ID.
 
         To get the ID of a message you should right click on the
         message and then click "Copy ID". You must have
@@ -685,469 +648,99 @@ class Stars:
 
         You can only use this command once per 10 seconds.
         """
+        message = str(message)
 
-        query = """SELECT entry.channel_id,
-                          entry.message_id,
-                          entry.bot_message_id,
-                          COUNT(*) OVER(PARTITION BY entry_id) AS "Stars"
-                   FROM starrers
-                   INNER JOIN starboard_entries entry
-                   ON entry.id = starrers.entry_id
-                   WHERE entry.guild_id=$1
-                   AND (entry.message_id=$2 OR entry.bot_message_id=$2)
-                   LIMIT 1
-                """
+        try:
+            entry = ctx.db[message]
+        except KeyError:
+            return await self.bot.say('This message has not been starred.')
 
-        record = await ctx.db.fetchrow(query, ctx.guild.id, message)
-        if record is None:
-            return await ctx.send('This message has not been starred.')
+        try:
+            await self.show_message(ctx, message, entry)
+        except Exception as e:
+            await self.bot.say(e)
 
-        bot_message_id = record['bot_message_id']
-        if bot_message_id is not None:
-            # "fast" path, just redirect the message
-            msg = await self.get_message(ctx.starboard.channel, bot_message_id)
-            if msg is not None:
-                embed = msg.embeds[0] if msg.embeds else None
-                return await ctx.send(msg.content, embed=embed)
+    @star_show.error
+    async def star_show_error(self, error, ctx):
+        if isinstance(error, commands.CommandOnCooldown):
+            if checks.is_owner_check(ctx.message):
+                await ctx.invoke(self.star_show)
             else:
-                # somehow it got deleted, so just delete the entry
-                query = "DELETE FROM starboard_entries WHERE message_id=$1;"
-                await ctx.db.execute(query, record['message_id'])
-                return
+                await self.bot.say(error)
+        elif isinstance(error, commands.BadArgument):
+            await self.bot.say('That is not a valid message ID. Use Developer Mode to get the Copy ID option.')
 
-        # slow path, try to fetch the content
-        channel = ctx.guild.get_channel(record['channel_id'])
-        if channel is None:
-            return await ctx.send("The message's channel has been deleted.")
-
-        msg = await self.get_message(channel, record['message_id'])
-        if msg is None:
-            return await ctx.send('The message has been deleted.')
-
-        content, embed = self.get_emoji_message(msg, record['Stars'])
-        await ctx.send(content, embed=embed)
-
-    @star.command(name='who')
-    @requires_starboard()
-    async def star_who(self, ctx, message: MessageID):
+    @star.command(pass_context=True, no_pm=True, name='who')
+    async def star_who(self, ctx, message: int):
         """Show who starred a message.
 
         The ID can either be the starred message ID
         or the message ID in the starboard channel.
         """
 
-        query = """SELECT starrers.author_id
-                   FROM starrers
-                   INNER JOIN starboard_entries entry
-                   ON entry.id = starrers.entry_id
-                   WHERE entry.message_id = $1 OR entry.bot_message_id = $1
-                """
+        server = ctx.message.server
+        db = self.stars.get(server.id, {})
+        message = str(message)
 
-        records = await ctx.db.fetch(query, message)
-        if records is None or len(records) == 0:
-            return await ctx.send('No one starred this message or this is an invalid message ID.')
-
-        members = [str(ctx.guild.get_member(r[0]))
-                   for r in records
-                   if ctx.guild.get_member(r[0])]
-
-        try:
-            p = Pages(ctx, entries=members, per_page=20, show_entry_count=False)
-            base = Plural(star=len(records))
-            if len(records) > len(members):
-                p.embed.title = f'{base} ({len(records) - len(members)} left server)'
-            else:
-                p.embed.title = str(base)
-            await p.paginate()
-        except Exception as e:
-            await ctx.send(e)
-
-    @star.command(name='migrate')
-    @requires_starboard()
-    @checks.is_mod()
-    async def star_migrate(self, ctx):
-        """Migrates the starboard to the newest version.
-
-        If you don't do this, the starboard will be locked
-        for you until you do so.
-
-        Note: This is an **incredibly expensive operation**.
-
-        It will take a very long time.
-
-        You must have Manage Server permissions to use this.
-        """
-
-        if not ctx.starboard.needs_migration:
-            # already migrated so ignore it
-            return await ctx.send('You are already migrated.')
-
-        _avatar_id = re.compile(r'\/avatars\/(?P<id>[0-9]{15,})')
-        start = time.time()
-
-        perms = ctx.starboard.channel.permissions_for(ctx.me)
-        if not perms.read_message_history:
-            return await ctx.send(f'Bot does not have Read Message History in {ctx.starboard.channel.mention}.')
-
-        await ctx.send('Please be patient this will take a while...')
-        async with ctx.typing():
-            channel = ctx.starboard.channel
-
-            # the request below might take a while
-            await ctx.release()
-
-            # the data in the starboard channel is technically 'final' for this version
-            current_messages = await channel.history(limit=None).filter(lambda m: m.channel_mentions).flatten()
-
-            # first, we will delete all the entries that aren't in the channel once and
-            # for all
-
-            message_ids = [m.id for m in current_messages]
-            channel_ids = [m.raw_channel_mentions[0] for m in current_messages]
-
-            await ctx.acquire()
-            query = "DELETE FROM starboard_entries WHERE guild_id=$1 AND NOT (bot_message_id=ANY($2::bigint[]))"
-            status = await ctx.db.execute(query, ctx.guild.id, message_ids)
-
-            _, _, deleted = status.partition(' ') # DELETE <number>
-            deleted = int(deleted)
-
-            # get the up-to-date resolution of bot_message_id -> message_id
-            query = "SELECT bot_message_id, message_id FROM starboard_entries WHERE guild_id=$1;"
-            records = await ctx.db.fetch(query, ctx.guild.id)
-            records = dict(records)
-
-            # so I want to add in a channel_id and an author_id
-            # due to a consequence of bad design I do not have this information stored
-            # luckily, every message in the starboard does have a channel mention resolving
-            # to the channel_id, however getting the author_id is a lot trickier.
-            # More on that later
-
-            # We can fetch the author_id without any extraneous requests by checking
-            # if the message has an embed (starboard v2) and the embed author icon URL
-            # has the author_id embedded in it like so:
-            # https://images-ext-2.discordapp.net/external/{stuff}/{cdn_link}
-            # which {cdn_link} is:
-            # https/cdn.discordapp.com/avatars/{author_id}/{filename}
-            # Note: this fails if there's no URL or the user has a default avatars
-            # when this happens, we would need to do an HTTP request so let's keep track of those
-
-            author_ids = []
-
-            # channel_id: [message_ids]
-            needs_requests = defaultdict(list)
-
-            for index, message in enumerate(current_messages):
-                if message.embeds:
-                    icon_url = message.embeds[0].author.icon_url
-                    if icon_url:
-                        match = _avatar_id.search(icon_url)
-                        if match:
-                            author_ids.append(int(match.group('id')))
-                            continue
-
-                # if any of the steps failed, then let's add None
-                author_ids.append(None)
-                message_id = records.get(message.id)
-                if message_id:
-                    needs_requests[channel_ids[index]].append(message_id)
-
-            query = """UPDATE starboard_entries
-                       SET channel_id=t.channel_id,
-                           author_id=t.author_id
-                       FROM UNNEST($1::bigint[], $2::bigint[], $3::bigint[])
-                       AS t(channel_id, message_id, author_id)
-                       WHERE starboard_entries.guild_id=$4
-                       AND   starboard_entries.bot_message_id=t.message_id
-                    """
-
-            status = await ctx.db.execute(query, channel_ids, message_ids, author_ids, ctx.guild.id)
-            _, _, updated = status.partition(' ')
-            updated = int(updated)
-            await ctx.release()
-
-            # now we need to do requests for the missing info
-            needed_requests = sum(len(a) for a in needs_requests.values())
-            bad_data = 0
-
-            async def send_confirmation():
-                """Sends the confirmation messages."""
-                _log = self.bot.get_channel(309632009427222529)
-                delta = time.time() - start
-
-                await ctx.acquire()
-                query = "UPDATE starboard SET locked = FALSE WHERE id=$1;"
-                await ctx.db.execute(query, ctx.guild.id)
-                self.get_starboard.invalidate(self, ctx.guild.id)
-
-                m = await ctx.send(f'{ctx.author.mention}, we are done migrating!\n' \
-                                   f'Deleted {deleted} out of date entries.\n' \
-                                   f'Updated {updated} entries to the new format ({bad_data} failures).\n' \
-                                   f'Took {delta:.2f}s.')
-
-                e = discord.Embed(title='Starboard Migration', colour=discord.Colour.gold())
-                e.add_field(name='Deleted', value=deleted)
-                e.add_field(name='Updated', value=updated)
-                e.add_field(name='Requests', value=needed_requests)
-
-                e.add_field(name='Name', value=ctx.guild.name)
-                e.add_field(name='ID', value=ctx.guild.id)
-                e.add_field(name='Owner', value=f'{ctx.guild.owner} ID: {ctx.guild.owner.id}', inline=False)
-                e.add_field(name='Failed Updates', value=bad_data)
-
-                e.set_footer(text=f'Took {delta:.2f}s to migrate')
-                e.timestamp = m.created_at
-                await _log.send(embed=e)
-
-            if needed_requests == 0:
-                # we're done migrating if we have successfully ported everything
-                await send_confirmation()
+        if message in db:
+            # starred message ID so this one's rather easy.
+            starrers = db[message][1]
+        else:
+            # this one requires extra look ups...
+            found = discord.utils.find(lambda v: isinstance(v, list) and v[0] == message, db.values())
+            if found is None:
+                await self.bot.say('No one did.')
                 return
+            starrers = found[1]
 
-            # RIP slow path time on top of being O(N^2) lol
+        members = filter(None, map(server.get_member, starrers))
+        await self.bot.say(', '.join(map(str, members)))
 
-            me = ctx.guild.me
-
-            data_to_pass = {} # message_id: author_id
-            for channel_id, messages in needs_requests.items():
-                channel = ctx.guild.get_channel(channel_id)
-                if channel is None:
-                    # deleted channel?
-                    # just ignore it and move on
-                    needed_requests -= len(messages)
-                    bad_data += len(messages)
-                    continue
-
-                perms = channel.permissions_for(me)
-                if not (perms.read_message_history and perms.read_messages):
-                    # same as being deleted
-                    needed_requests -= len(messages)
-                    bad_data += len(messages)
-                    continue
-
-                # it's fine now
-                # let's sort the snowflakes by newest to oldest
-                # so cassandra can handle our requests faster
-                for message_id in sorted(messages):
-                    msg = await self.get_message(channel, message_id)
-                    if msg is not None:
-                        data_to_pass[message_id] = msg.author.id
-                    else:
-                        bad_data += 1
-
-            # actually run the update query now
-            query = """UPDATE starboard_entries
-                       SET author_id=t.author_id
-                       FROM UNNEST($1::bigint[], $2::bigint[])
-                       AS t(message_id, author_id)
-                       WHERE starboard_entries.message_id=t.message_id
-                    """
-
-            await ctx.acquire()
-            status = await ctx.db.execute(query, list(data_to_pass.keys()), list(data_to_pass.values()))
-            _, _, second_update = status.partition(' ')
-            updated += int(second_update)
-            updated = min(updated, len(current_messages))
-
-            # it's finally over lol
-            await ctx.release()
-            await send_confirmation()
-
-    def records_to_value(self, records, fmt=None, default='None!'):
-        if not records:
-            return default
-
-        emoji = 0x1f947 # :first_place:
-        fmt = fmt or (lambda o: o)
-        return '\n'.join(f'{chr(emoji + i)}: {fmt(r["ID"])} ({Plural(star=r["Stars"])})'
-                         for i, r in enumerate(records))
-
-    async def star_guild_stats(self, ctx):
-        e = discord.Embed(title='Server Starboard Stats')
-        e.timestamp = ctx.starboard.channel.created_at
+    @star.command(pass_context=True, no_pm=True, name='stats')
+    @requires_starboard()
+    async def star_stats(self, ctx):
+        """Shows statistics on the starboard usage."""
+        e = discord.Embed()
+        e.timestamp = ctx.starboard.created_at
         e.set_footer(text='Adding stars since')
 
-        # messages starred
-        query = "SELECT COUNT(*) FROM starboard_entries WHERE guild_id=$1;"
+        all_starrers = [(v[1], k) for k, v in ctx.db.items() if isinstance(v, list)]
+        e.add_field(name='Messages Starred', value=str(len(all_starrers)))
+        e.add_field(name='Stars Given', value=str(sum(len(x) for x, _ in all_starrers)))
 
-        record = await ctx.db.fetchrow(query, ctx.guild.id)
-        total_messages = record[0]
+        most_stars = max(all_starrers, key=lambda t: len(t[0]))
+        e.add_field(name='Most Stars Given', value='{} stars\nID: {}'.format(len(most_stars[0]), most_stars[1]))
 
-        # total stars given
-        query = """SELECT COUNT(*)
-                   FROM starrers
-                   INNER JOIN starboard_entries entry
-                   ON entry.id = starrers.entry_id
-                   WHERE entry.guild_id=$1;
-                """
+        c = Counter(author for x, _ in all_starrers for author in x)
+        common = c.most_common(3)
 
-        record = await ctx.db.fetchrow(query, ctx.guild.id)
-        total_stars = record[0]
+        if len(common) >= 1:
+            e.add_field(name='\U0001f947 Starrer', value='<@!%s> with %s stars' % common[0])
+        if len(common) >= 2:
+            e.add_field(name='\U0001f948 Starrer', value='<@!%s> with %s stars' % common[1])
+        if len(common) >= 3:
+            e.add_field(name='\U0001f949 Starrer', value='<@!%s> with %s stars' % common[2])
 
-        e.description = f'{Plural(message=total_messages)} starred with a total of {total_stars} stars.'
-        e.colour = discord.Colour.gold()
+        await self.bot.say(embed=e)
 
-        # this big query fetches 3 things:
-        # top 3 starred posts (Type 3)
-        # top 3 most starred authors  (Type 1)
-        # top 3 star givers (Type 2)
-
-        query = """WITH t AS (
-                       SELECT
-                           entry.author_id AS entry_author_id,
-                           starrers.author_id,
-                           entry.bot_message_id
-                       FROM starrers
-                       INNER JOIN starboard_entries entry
-                       ON entry.id = starrers.entry_id
-                       WHERE entry.guild_id=$1
-                   )
-                   (
-                       SELECT t.entry_author_id AS "ID", 1 AS "Type", COUNT(*) AS "Stars"
-                       FROM t
-                       WHERE t.entry_author_id IS NOT NULL
-                       GROUP BY t.entry_author_id
-                       ORDER BY "Stars" DESC
-                       LIMIT 3
-                   )
-                   UNION ALL
-                   (
-                       SELECT t.author_id AS "ID", 2 AS "Type", COUNT(*) AS "Stars"
-                       FROM t
-                       GROUP BY t.author_id
-                       ORDER BY "Stars" DESC
-                       LIMIT 3
-                   )
-                   UNION ALL
-                   (
-                       SELECT t.bot_message_id AS "ID", 3 AS "Type", COUNT(*) AS "Stars"
-                       FROM t
-                       WHERE t.bot_message_id IS NOT NULL
-                       GROUP BY t.bot_message_id
-                       ORDER BY "Stars" DESC
-                       LIMIT 3
-                   );
-                """
-
-        records = await ctx.db.fetch(query, ctx.guild.id)
-        starred_posts = [r for r in records if r['Type'] == 3]
-        e.add_field(name='Top Starred Posts', value=self.records_to_value(starred_posts), inline=False)
-
-        to_mention = lambda o: f'<@{o}>'
-
-        star_receivers = [r for r in records if r['Type'] == 1]
-        value = self.records_to_value(star_receivers, to_mention, default='No one!')
-        e.add_field(name='Top Star Receivers', value=value, inline=False)
-
-        star_givers = [r for r in records if r['Type'] == 2]
-        value = self.records_to_value(star_givers, to_mention, default='No one!')
-        e.add_field(name='Top Star Givers', value=value, inline=False)
-
-        await ctx.send(embed=e)
-
-    async def star_member_stats(self, ctx, member):
-        e = discord.Embed(colour=discord.Colour.gold())
-        e.set_author(name=member.display_name, icon_url=member.avatar_url_as(format='png'))
-
-        # this query calculates
-        # 1 - stars received,
-        # 2 - stars given
-        # The rest are the top 3 starred posts
-
-        query = """WITH t AS (
-                       SELECT entry.author_id AS entry_author_id,
-                              starrers.author_id,
-                              entry.message_id
-                       FROM starrers
-                       INNER JOIN starboard_entries entry
-                       ON entry.id=starrers.entry_id
-                       WHERE entry.guild_id=$1
-                   )
-                   (
-                       SELECT '0'::bigint AS "ID", COUNT(*) AS "Stars"
-                       FROM t
-                       WHERE t.entry_author_id=$2
-                   )
-                   UNION ALL
-                   (
-                       SELECT '0'::bigint AS "ID", COUNT(*) AS "Stars"
-                       FROM t
-                       WHERE t.author_id=$2
-                   )
-                   UNION ALL
-                   (
-                       SELECT t.message_id AS "ID", COUNT(*) AS "Stars"
-                       FROM t
-                       WHERE t.entry_author_id=$2
-                       GROUP BY t.message_id
-                       ORDER BY "Stars" DESC
-                       LIMIT 3
-                   )
-                """
-
-        records = await ctx.db.fetch(query, ctx.guild.id, member.id)
-        received = records[0]['Stars']
-        given = records[1]['Stars']
-        top_three = records[2:]
-
-        # this query calculates how many of our messages were starred
-        query = """SELECT COUNT(*) FROM starboard_entries WHERE guild_id=$1 AND author_id=$2;"""
-        record = await ctx.db.fetchrow(query, ctx.guild.id, member.id)
-        messages_starred = record[0]
-
-        e.add_field(name='Messages Starred', value=messages_starred)
-        e.add_field(name='Stars Received', value=received)
-        e.add_field(name='Stars Given', value=given)
-
-        e.add_field(name='Top Starred Posts', value=self.records_to_value(top_three), inline=False)
-
-        await ctx.send(embed=e)
-
-    @star.command(name='stats')
-    @requires_starboard()
-    async def star_stats(self, ctx, *, member: discord.Member = None):
-        """Shows statistics on the starboard usage of the server or a member."""
-
-        if member is None:
-            await self.star_guild_stats(ctx)
-        else:
-            await self.star_member_stats(ctx, member)
-
-    @star.command(name='random')
+    @star.command(pass_context=True, no_pm=True, name='random')
     @requires_starboard()
     async def star_random(self, ctx):
-        """Shows a random starred message."""
+        entries = [(k, v) for k, v in ctx.db.items() if isinstance(v, list)]
+        # try at most 5 times to get a non-deleted starboard message
+        for i in range(5):
+            try:
+                (k, v) = random.choice(entries)
+                await self.show_message(ctx, k, v)
+            except Exception:
+                continue
+            else:
+                return
 
-        query = """SELECT bot_message_id
-                   FROM starboard_entries
-                   WHERE guild_id=$1
-                   AND bot_message_id IS NOT NULL
-                   OFFSET FLOOR(RANDOM() * (
-                       SELECT COUNT(*)
-                       FROM starboard_entries
-                       WHERE guild_id=$1
-                       AND bot_message_id IS NOT NULL
-                   ))
-                   LIMIT 1
-                """
+        await self.bot.say('Sorry, all I could find are deleted messages. Try again?')
 
-        record = await ctx.db.fetchrow(query, ctx.guild.id)
-
-        if record is None:
-            return await ctx.send('Could not find anything.')
-
-        message_id = record[0]
-        message = await self.get_message(ctx.starboard.channel, message_id)
-        if message is None:
-            return await ctx.send(f'Message {message_id} has been deleted somehow.')
-
-        if message.embeds:
-            await ctx.send(message.content, embed=message.embeds[0])
-        else:
-            await ctx.send(message.content)
-
-    @star.command(name='lock')
-    @checks.is_mod()
+    @star.command(pass_context=True, no_pm=True, name='lock')
+    @checks.admin_or_permissions(manage_server=True)
     @requires_starboard()
     async def star_lock(self, ctx):
         """Locks the starboard from being processed.
@@ -1159,144 +752,29 @@ class Stars:
         the starboard as the bot will no longer listen to reactions or
         star/unstar commands.
 
-        To unlock the starboard, use the unlock subcommand.
+        To unlock the starboard, use the `unlock` subcommand.
 
-        To use this command you need Manage Server permission.
+        To use this command you need Bot Admin role or Manage Server
+        permission.
         """
 
-        if ctx.starboard.needs_migration:
-            return await ctx.send('Your starboard requires migration!')
+        ctx.db['locked'] = True
+        await self.stars.put(ctx.guild_id, ctx.db)
+        await self.bot.say('Starboard is now locked.')
 
-        query = "UPDATE starboard SET locked=TRUE WHERE id=$1;"
-        await ctx.db.execute(query, ctx.guild.id)
-        self.get_starboard.invalidate(self, ctx.guild.id)
-
-        await ctx.send('Starboard is now locked.')
-
-    @star.command(name='unlock')
-    @checks.is_mod()
+    @star.command(pass_context=True, no_pm=True, name='unlock')
+    @checks.admin_or_permissions(manage_server=True)
     @requires_starboard()
     async def star_unlock(self, ctx):
         """Unlocks the starboard for re-processing.
 
-        To use this command you need Manage Server permission.
+        To use this command you need Bot Admin role or Manage Server
+        permission.
         """
 
-        if ctx.starboard.needs_migration:
-            return await ctx.send('Your starboard requires migration!')
-
-        query = "UPDATE starboard SET locked=FALSE WHERE id=$1;"
-        await ctx.db.execute(query, ctx.guild.id)
-        self.get_starboard.invalidate(self, ctx.guild.id)
-
-        await ctx.send('Starboard is now unlocked.')
-
-    @star.command(name='limit', aliases=['threshold'])
-    @checks.is_mod()
-    @requires_starboard()
-    async def star_limit(self, ctx, stars: int):
-        """Sets the minimum number of stars required to show up.
-
-        When this limit is set, messages must have this number
-        or more to show up in the starboard channel.
-
-        You cannot have a negative number and the maximum
-        star limit you can set is 25.
-
-        Note that messages that previously did not meet the
-        limit but now do will still not show up in the starboard
-        until starred again.
-
-        You must have Manage Server permissions to use this.
-        """
-
-        if ctx.starboard.needs_migration:
-            return await ctx.send('Your starboard requires migration!')
-
-        stars = min(max(stars, 1), 25)
-        query = "UPDATE starboard SET threshold=$2 WHERE id=$1;"
-        await ctx.db.execute(query, ctx.guild.id, stars)
-        self.get_starboard.invalidate(self, ctx.guild.id)
-
-        await ctx.send(f'Messages now require {Plural(star=stars)} to show up in the starboard.')
-
-    @star.command(name='age')
-    @checks.is_mod()
-    @requires_starboard()
-    async def star_age(self, ctx, number: int, units='days'):
-        """Sets the maximum age of a message valid for starring.
-
-        By default, the maximum age is 7 days. Any message older
-        than this specified age is invalid of being starred.
-
-        To set the limit you must specify a number followed by
-        a unit. The valid units are "days", "weeks", "months",
-        or "years". They do not have to be pluralized. The
-        default unit is "days".
-
-        The number cannot be negative, and it must be a maximum
-        of 35. If the unit is years then the cap is 10 years.
-
-        You cannot mix and match units.
-
-        You must have Manage Server permissions to use this.
-        """
-
-        valid_units = ('days', 'weeks', 'months', 'years')
-
-        if units[-1] != 's':
-            units = units + 's'
-
-        if units not in valid_units:
-            return await ctx.send(f'Not a valid unit! I expect only {human_join(valid_units)}.')
-
-        number = min(max(number, 1), 35)
-
-        if units == 'years' and number > 10:
-            return await ctx.send('The maximum is 10 years!')
-
-        # the input is sanitised so this should be ok
-        # only doing this because asyncpg requires a timedelta object but
-        # generating that with these clamp units is overkill
-        query = f"UPDATE starboard SET max_age='{number} {units}'::interval WHERE id=$1;"
-        await ctx.db.execute(query, ctx.guild.id)
-        self.get_starboard.invalidate(self, ctx.guild.id)
-
-        if number == 1:
-            age = f'1 {units[:-1]}'
-        else:
-            age = f'{number} {units}'
-
-        await ctx.send(f'Messages must now be less than {age} old to be starred.')
-
-    @commands.command(hidden=True)
-    @commands.is_owner()
-    async def star_announce(self, ctx, *, message):
-        """Announce stuff to every starboard."""
-        query = "SELECT id, channel_id FROM starboard;"
-        records = await ctx.db.fetch(query)
-        await ctx.release()
-
-        to_send = []
-        for guild_id, channel_id in records:
-            guild = self.bot.get_guild(guild_id)
-            if guild:
-                channel = self.bot.get_channel(channel_id)
-                if channel and channel.permissions_for(guild.me).send_messages:
-                    to_send.append(channel)
-
-        await ctx.send(f'Preparing to send to {len(to_send)} channels (out of {len(records)}).')
-
-        success = 0
-        for channel in to_send:
-            try:
-                await channel.send(message)
-            except:
-                pass
-            else:
-                success += 1
-
-        await ctx.send(f'Successfully sent to {success} channels (out of {len(to_send)}).')
+        ctx.db['locked'] = False
+        await self.stars.put(ctx.guild_id, ctx.db)
+        await self.bot.say('Starboard is now unlocked.')
 
 def setup(bot):
     bot.add_cog(Stars(bot))

@@ -1,3 +1,39 @@
+async def entry_to_code(bot, entries):
+    width = max(map(lambda t: len(t[0]), entries))
+    output = ['```']
+    fmt = '{0:<{width}}: {1}'
+    for name, entry in entries:
+        output.append(fmt.format(name, entry, width=width))
+    output.append('```')
+    await bot.say('\n'.join(output))
+
+import datetime
+
+async def indented_entry_to_code(bot, entries):
+    width = max(map(lambda t: len(t[0]), entries))
+    output = ['```']
+    fmt = '\u200b{0:>{width}}: {1}'
+    for name, entry in entries:
+        output.append(fmt.format(name, entry, width=width))
+    output.append('```')
+    await bot.say('\n'.join(output))
+
+async def too_many_matches(bot, msg, matches, entry):
+    check = lambda m: m.content.isdigit()
+    await bot.say('There are too many matches... Which one did you mean? **Only say the number**.')
+    await bot.say('\n'.join(map(entry, enumerate(matches, 1))))
+
+    # only give them 3 tries.
+    for i in range(3):
+        message = await bot.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+        index = int(message.content)
+        try:
+            return matches[index - 1]
+        except:
+            await bot.say('Please give me a valid number. {} tries remaining...'.format(2 - i))
+
+    raise ValueError('Too many tries. Goodbye.')
+
 class Plural:
     def __init__(self, **attr):
         iterator = attr.items()
@@ -5,72 +41,35 @@ class Plural:
 
     def __str__(self):
         v = self.value
-        if v == 0 or v > 1:
-            return f'{v} {self.name}s'
-        return f'{v} {self.name}'
+        if v > 1:
+            return '%s %ss' % (v, self.name)
+        return '%s %s' % (v, self.name)
 
-def human_join(seq, delim=', ', final='or'):
-    size = len(seq)
-    if size == 0:
-        return ''
+def human_timedelta(dt):
+    now = datetime.datetime.utcnow()
+    delta = now - dt
+    hours, remainder = divmod(int(delta.total_seconds()), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    days, hours = divmod(hours, 24)
+    years, days = divmod(days, 365)
 
-    if size == 1:
-        return seq[0]
+    if years:
+        if days:
+            return '%s and %s ago' % (Plural(year=years), Plural(day=days))
+        return '%s ago' % Plural(year=years)
 
-    if size == 2:
-        return f'{seq[0]} {final} {seq[1]}'
+    if days:
+        if hours:
+            return '%s and %s ago' % (Plural(day=days), Plural(hour=hours))
+        return '%s ago' % Plural(day=days)
 
-    return delim.join(seq[:-1]) + f' {final} {seq[-1]}'
+    if hours:
+        if minutes:
+            return '%s and %s ago' % (Plural(hour=hours), Plural(minute=minutes))
+        return '%s ago' % Plural(hour=hours)
 
-class TabularData:
-    def __init__(self):
-        self._widths = []
-        self._columns = []
-        self._rows = []
-
-    def set_columns(self, columns):
-        self._columns = columns
-        self._widths = [len(c) + 2 for c in columns]
-
-    def add_row(self, row):
-        rows = [str(r) for r in row]
-        self._rows.append(rows)
-        for index, element in enumerate(rows):
-            width = len(element) + 2
-            if width > self._widths[index]:
-                self._widths[index] = width
-
-    def add_rows(self, rows):
-        for row in rows:
-            self.add_row(row)
-
-    def render(self):
-        """Renders a table in rST format.
-
-        Example:
-
-        +-------+-----+
-        | Name  | Age |
-        +-------+-----+
-        | Alice | 24  |
-        |  Bob  | 19  |
-        +-------+-----+
-        """
-
-        sep = '+'.join('-' * w for w in self._widths)
-        sep = f'+{sep}+'
-
-        to_draw = [sep]
-
-        def get_entry(d):
-            elem = '|'.join(f'{e:^{self._widths[i]}}' for i, e in enumerate(d))
-            return f'|{elem}|'
-
-        to_draw.append(get_entry(self._columns))
-        to_draw.append(sep)
-
-        for row in self._rows:
-            to_draw.append(get_entry(row))
-
-        to_draw.append(sep)
-        return '\n'.join(to_draw)
+    if minutes:
+        if seconds:
+            return '%s and %s ago' % (Plural(minute=minutes), Plural(second=seconds))
+        return '%s ago' % Plural(minute=minutes)
+    return '%s ago' % Plural(second=seconds)

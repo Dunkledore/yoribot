@@ -2,12 +2,10 @@ from discord.ext import commands
 from datetime import datetime
 import discord
 from .utils import checks
+import aiohttp
+from urllib.parse import parse_qs
 from lxml import etree
 import random
-import logging
-from urllib.parse import quote as uriquote
-
-log = logging.getLogger(__name__)
 
 def date(argument):
     formats = (
@@ -30,31 +28,29 @@ class Buttons:
         self.bot = bot
 
     @commands.command(hidden=True)
-    async def feelgood(self, ctx):
+    async def feelgood(self):
         """press"""
-        await ctx.send('*pressed*')
+        await self.bot.say('*pressed*')
 
     @commands.command(hidden=True)
-    async def feelbad(self, ctx):
+    async def feelbad(self):
         """depress"""
-        await ctx.send('*depressed*')
+        await self.bot.say('*depressed*')
 
     @commands.command()
-    async def love(self, ctx):
+    async def love(self):
         """What is love?"""
-        action = random.choice([ctx.send('https://www.youtube.com/watch?v=HEXWRTEbj1I'),
-                                ctx.invoke(self.g, query='define: love')])
-
-        await action
+        x = random.choice(['https://www.youtube.com/watch?v=HEXWRTEbj1I', 'http://i.imgur.com/JthwtGA.png'])
+        await self.bot.say(x)
 
     @commands.command(hidden=True)
-    async def bored(self, ctx):
+    async def bored(self):
         """boredom looms"""
-        await ctx.send('http://i.imgur.com/BuTKSzf.png')
+        await self.bot.say('http://i.imgur.com/BuTKSzf.png')
 
     @commands.command(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
-    async def nostalgia(self, ctx, date: date, *, channel: discord.TextChannel = None):
+    async def nostalgia(self, ctx, date: date, *, channel: discord.Channel = None):
         """Pins an old message from a specific date.
 
         If a channel is not given, then pins from the channel the
@@ -62,281 +58,190 @@ class Buttons:
 
         The format of the date must be either YYYY-MM-DD or YYYY/MM/DD.
         """
-        channel = channel or ctx.channel
 
-        message = await channel.history(after=date, limit=1).flatten()
+        if channel is None:
+            channel = ctx.message.channel
 
-        if len(message) == 0:
-            return await ctx.send('Could not find message.')
-
-        message = message[0]
-
-        try:
-            await message.pin()
-        except discord.HTTPException:
-            await ctx.send('Could not pin message.')
-        else:
-            await ctx.send('Pinned message.')
+        async for m in self.bot.logs_from(channel, after=date, limit=1):
+            try:
+                await self.bot.pin_message(m)
+            except:
+                await self.bot.say('\N{THUMBS DOWN SIGN} Could not pin message.')
+            else:
+                await self.bot.say('\N{THUMBS UP SIGN} Successfully pinned message.')
 
     @nostalgia.error
-    async def nostalgia_error(self, ctx, error):
+    async def nostalgia_error(self, error, ctx):
         if isinstance(error, commands.BadArgument):
-            await ctx.send(error)
+            await self.bot.say(error)
 
     def parse_google_card(self, node):
-        e = discord.Embed(colour=discord.Colour.blurple())
+        if node is None:
+            return None
+
+        e = discord.Embed(colour=0x738bd7)
 
         # check if it's a calculator card:
-        calculator = node.find(".//span[@class='cwclet']")
+        calculator = node.find(".//table/tr/td/span[@class='nobr']/h2[@class='r']")
         if calculator is not None:
             e.title = 'Calculator'
-            result = node.find(".//span[@class='cwcot']")
-            if result is not None:
-                result = ' '.join((calculator.text, result.text.strip()))
-            else:
-                result = calculator.text + ' ???'
-            e.description = result
+            e.description = ''.join(calculator.itertext())
             return e
 
+        parent = node.getparent()
+
         # check for unit conversion card
-
-        unit_conversions = node.xpath(".//input[contains(@class, '_eif') and @value]")
-        if len(unit_conversions) == 2:
+        unit = parent.find(".//ol//div[@class='_Tsb']")
+        if unit is not None:
             e.title = 'Unit Conversion'
-
-            # the <input> contains our values, first value = second value essentially.
-            # these <input> also have siblings with <select> and <option selected=1>
-            # that denote what units we're using
-
-            # We will get 2 <option selected="1"> nodes by traversing the parent
-            # The first unit being converted (e.g. Miles)
-            # The second unit being converted (e.g. Feet)
-
-            xpath = etree.XPath("parent::div/select/option[@selected='1']/text()")
-            try:
-                first_node = unit_conversions[0]
-                first_unit = xpath(first_node)[0]
-                first_value = float(first_node.get('value'))
-                second_node = unit_conversions[1]
-                second_unit = xpath(second_node)[0]
-                second_value = float(second_node.get('value'))
-                e.description = ' '.join((str(first_value), first_unit, '=', str(second_value), second_unit))
-            except Exception:
-                return None
-            else:
-                return e
+            e.description = ''.join(''.join(n.itertext()) for n in unit)
+            return e
 
         # check for currency conversion card
-        if 'currency' in node.get('class', ''):
-            currency_selectors = node.xpath(".//div[@class='ccw_unit_selector_cnt']")
-            if len(currency_selectors) == 2:
-                e.title = 'Currency Conversion'
-                # Inside this <div> is a <select> with <option selected="1"> nodes
-                # just like the unit conversion card.
+        currency = parent.find(".//ol/table[@class='std _tLi']/tr/td/h2")
+        if currency is not None:
+            e.title = 'Currency Conversion'
+            e.description = ''.join(currency.itertext())
+            return e
 
-                first_node = currency_selectors[0]
-                first_currency = first_node.find("./select/option[@selected='1']")
-
-                second_node = currency_selectors[1]
-                second_currency = second_node.find("./select/option[@selected='1']")
-
-                # The parent of the nodes have a <input class='vk_gy vk_sh ccw_data' value=...>
-                xpath = etree.XPath("parent::td/parent::tr/td/input[@class='vk_gy vk_sh ccw_data']")
-                try:
-                    first_value = float(xpath(first_node)[0].get('value'))
-                    second_value = float(xpath(second_node)[0].get('value'))
-
-                    values = (
-                        str(first_value),
-                        first_currency.text,
-                        f'({first_currency.get("value")})',
-                        '=',
-                        str(second_value),
-                        second_currency.text,
-                        f'({second_currency.get("value")})'
-                    )
-                    e.description = ' '.join(values)
-                except Exception:
-                    return None
-                else:
-                    return e
-
-        # check for generic information card
-        info = node.find(".//div[@class='_f2g']")
-        if info is not None:
+        # check for release date card
+        release = parent.find(".//div[@id='_vBb']")
+        if release is not None:
             try:
-                e.title = ''.join(info.itertext()).strip()
-                actual_information = info.xpath("parent::div/parent::div//div[@class='_XWk' or contains(@class, 'kpd-ans')]")[0]
-                e.description = ''.join(actual_information.itertext()).strip()
-            except Exception:
-                return None
-            else:
+                e.description = ''.join(release[0].itertext()).strip()
+                e.title = ''.join(release[1].itertext()).strip()
                 return e
-
-        # check for translation card
-        translation = node.find(".//div[@id='tw-ob']")
-        if translation is not None:
-            src_text = translation.find(".//pre[@id='tw-source-text']/span")
-            src_lang = translation.find(".//select[@id='tw-sl']/option[@selected='1']")
-
-            dest_text = translation.find(".//pre[@id='tw-target-text']/span")
-            dest_lang = translation.find(".//select[@id='tw-tl']/option[@selected='1']")
-
-            # TODO: bilingual dictionary nonsense?
-
-            e.title = 'Translation'
-            try:
-                e.add_field(name=src_lang.text, value=src_text.text, inline=True)
-                e.add_field(name=dest_lang.text, value=dest_text.text, inline=True)
-            except Exception:
+            except:
                 return None
-            else:
-                return e
-
-        # check for "time in" card
-        time = node.find("./div[@class='vk_bk vk_ans']")
-        if time is not None:
-            date = node.find("./div[@class='vk_gy vk_sh']")
-            try:
-                e.title = node.find('span').text
-                e.description = f'{time.text}\n{"".join(date.itertext()).strip()}'
-            except Exception:
-                return None
-            else:
-                return e
-
-        # time in has an alternative form without spans
-        time = node.find("./div/div[@class='vk_bk vk_ans _nEd']")
-        if time is not None:
-            converted = "".join(time.itertext()).strip()
-            try:
-                # remove the in-between text
-                parent = time.getparent()
-                parent.remove(time)
-                original = "".join(parent.itertext()).strip()
-                e.title = 'Time Conversion'
-                e.description = f'{original}...\n{converted}'
-            except Exception:
-                return None
-            else:
-                return e
 
         # check for definition card
-        words = node.xpath(".//span[@data-dobid='hdw']")
-        if words:
-            lex = etree.XPath(".//div[@class='lr_dct_sf_h']/i/span")
+        words = parent.find(".//ol/div[@class='g']/div/h3[@class='r']/div")
+        if words is not None:
+            try:
+                definition_info = words.getparent().getparent()[1] # yikes
+            except:
+                pass
+            else:
+                try:
+                    # inside is a <div> with two <span>
+                    # the first is the actual word, the second is the pronunciation
+                    e.title = words[0].text
+                    e.description = words[1].text
+                except:
+                    return None
 
-            # this one is derived if we were based on the position from lex
-            xpath = etree.XPath("../../../ol[@class='lr_dct_sf_sens']//" \
-                                "div[not(@class and @class='lr_dct_sf_subsen')]/" \
-                                "div[@class='_Jig']/div[@data-dobid='dfn']/span")
-            for word in words:
-                # we must go two parents up to get the root node
-                root = word.getparent().getparent()
+                # inside the table there's the actual definitions
+                # they're separated as noun/verb/adjective with a list
+                # of definitions
+                for row in definition_info:
+                    if len(row.attrib) != 0:
+                        # definitions are empty <tr>
+                        # if there is something in the <tr> then we're done
+                        # with the definitions
+                        break
 
-                pronunciation = root.find(".//span[@class='lr_dct_ph']/span")
-                if pronunciation is None:
-                    continue
-
-                lexical_category = lex(root)
-                definitions = xpath(root)
-
-                for category in lexical_category:
-                    definitions = xpath(category)
                     try:
-                        descrip = [f'*{category.text}*']
-                        for index, value in enumerate(definitions, 1):
-                            descrip.append(f'{index}. {value.text}')
+                        data = row[0]
+                        lexical_category = data[0].text
+                        body = []
+                        for index, definition in enumerate(data[1], 1):
+                            body.append('%s. %s' % (index, definition.text))
 
-                        e.add_field(name=f'{word.text} /{pronunciation.text}/', value='\n'.join(descrip))
+                        e.add_field(name=lexical_category, value='\n'.join(body), inline=False)
                     except:
                         continue
 
-            return e
+                return e
+
+        # check for "time in" card
+        time_in = parent.find(".//ol//div[@class='_Tsb _HOb _Qeb']")
+        if time_in is not None:
+            try:
+                time_place = ''.join(time_in.find("span[@class='_HOb _Qeb']").itertext()).strip()
+                the_time = ''.join(time_in.find("div[@class='_rkc _Peb']").itertext()).strip()
+                the_date = ''.join(time_in.find("div[@class='_HOb _Qeb']").itertext()).strip()
+            except:
+                return None
+            else:
+                e.title = time_place
+                e.description = '%s\n%s' % (the_time, the_date)
+                return e
 
         # check for weather card
-        location = node.find("./div[@id='wob_loc']")
+        # this one is the most complicated of the group lol
+        # everything is under a <div class="e"> which has a
+        # <h3>{{ weather for place }}</h3>
+        # string, the rest is fucking table fuckery.
+        weather = parent.find(".//ol//div[@class='e']")
+        if weather is None:
+            return None
+
+        location = weather.find('h3')
         if location is None:
             return None
 
+        e.title = ''.join(location.itertext())
 
-        # these units should be metric
-
-        date = node.find("./div[@id='wob_dts']")
-
-        # <img alt="category here" src="cool image">
-        category = node.find(".//img[@id='wob_tci']")
-
-        xpath = etree.XPath(".//div[@id='wob_d']//div[contains(@class, 'vk_bk')]//span[@class='wob_t']")
-        temperatures = xpath(node)
-
-        misc_info_node = node.find(".//div[@class='vk_gy vk_sh wob-dtl']")
-
-        if misc_info_node is None:
+        table = weather.find('table')
+        if table is None:
             return None
 
-        precipitation = misc_info_node.find("./div/span[@id='wob_pp']")
-        humidity = misc_info_node.find("./div/span[@id='wob_hm']")
-        wind = misc_info_node.find("./div/span/span[@id='wob_tws']")
-
-
+        # This is gonna be a bit fucky.
+        # So the part we care about is on the second data
+        # column of the first tr
         try:
-            e.title = 'Weather for ' + location.text.strip()
-            e.description = f'*{category.get("alt")}*'
-            e.set_thumbnail(url='https:' + category.get('src'))
+            tr = table[0]
+            img = tr[0].find('img')
+            category = img.get('alt')
+            image = 'https:' + img.get('src')
+            temperature = tr[1].xpath("./span[@class='wob_t']//text()")[0]
+        except:
+            return None # RIP
+        else:
+            e.set_thumbnail(url=image)
+            e.description = '*%s*' % category
+            e.add_field(name='Temperature', value=temperature)
 
-            if len(temperatures) == 4:
-                first_unit = temperatures[0].text + temperatures[2].text
-                second_unit = temperatures[1].text + temperatures[3].text
-                units = f'{first_unit} | {second_unit}'
-            else:
-                units = 'Unknown'
-
-            e.add_field(name='Temperature', value=units, inline=False)
-
-            if precipitation is not None:
-                e.add_field(name='Precipitation', value=precipitation.text)
-
-            if humidity is not None:
-                e.add_field(name='Humidity', value=humidity.text)
-
-            if wind is not None:
-                e.add_field(name='Wind', value=wind.text)
+        # On the 4th column it tells us our wind speeds
+        try:
+            wind = ''.join(table[3].itertext()).replace('Wind: ', '')
         except:
             return None
+        else:
+            e.add_field(name='Wind', value=wind)
+
+        # On the 5th column it tells us our humidity
+        try:
+            humidity = ''.join(table[4][0].itertext()).replace('Humidity: ', '')
+        except:
+            return None
+        else:
+            e.add_field(name='Humidity', value=humidity)
 
         return e
 
     async def get_google_entries(self, query):
-        url = f'https://www.google.com/search?q={uriquote(query)}'
         params = {
+            'q': query,
             'safe': 'on',
             'lr': 'lang_en',
             'hl': 'en'
         }
-
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) Gecko/20100101 Firefox/53.0'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64)'
         }
 
-        # list of URLs and title tuples
+        # list of URLs
         entries = []
 
         # the result of a google card, an embed
         card = None
 
-        async with self.bot.session.get(url, params=params, headers=headers) as resp:
+        async with aiohttp.get('https://www.google.com/search', params=params, headers=headers) as resp:
             if resp.status != 200:
-                log.info('Google failed to respond with %s status code.', resp.status)
-                raise RuntimeError('Google has failed to respond.')
+                raise RuntimeError('Google somehow failed to respond.')
 
             root = etree.fromstring(await resp.text(), etree.HTMLParser())
-
-            # for bad in root.xpath('//style'):
-            #     bad.getparent().remove(bad)
-
-            # for bad in root.xpath('//script'):
-            #     bad.getparent().remove(bad)
 
             # with open('google.html', 'w', encoding='utf-8') as f:
             #     f.write(etree.tostring(root, pretty_print=True).decode('utf-8'))
@@ -344,63 +249,78 @@ class Buttons:
             """
             Tree looks like this.. sort of..
 
-            <div class="rc">
-                <h3 class="r">
-                    <a href="url here">title here</a>
+            <div class="g">
+                ...
+                <h3>
+                    <a href="/url?q=<url>" ...>title</a>
                 </h3>
+                ...
+                <span class="st">
+                    <span class="f">date here</span>
+                    summary here, can contain <em>tag</em>
+                </span>
             </div>
             """
 
-            card_node = root.xpath(".//div[@id='rso']/div[@class='_NId']//" \
-                                   "div[contains(@class, 'vk_c') or @class='g mnr-c g-blk' or @class='kp-blk']")
+            card_node = root.find(".//div[@id='topstuff']")
+            card = self.parse_google_card(card_node)
 
-            if card_node is None or len(card_node) == 0:
-                card = None
-            else:
-                card = self.parse_google_card(card_node[0])
+            search_nodes = root.findall(".//div[@class='g']")
+            for node in search_nodes:
+                url_node = node.find('.//h3/a')
+                if url_node is None:
+                    continue
 
-            search_results = root.findall(".//div[@class='rc']")
-            # print(len(search_results))
-            for node in search_results:
-                link = node.find("./h3[@class='r']/a")
-                if link is not None:
-                    # print(etree.tostring(link, pretty_print=True).decode())
-                    entries.append((link.get('href'), link.text))
+                url = url_node.attrib['href']
+                if not url.startswith('/url?'):
+                    continue
+
+                url = parse_qs(url[5:])['q'][0] # get the URL from ?q query string
+
+                # if I ever cared about the description, this is how
+                entries.append(url)
+
+                # short = node.find(".//span[@class='st']")
+                # if short is None:
+                #     entries.append((url, ''))
+                # else:
+                #     text = ''.join(short.itertext())
+                #     entries.append((url, text.replace('...', '')))
 
         return card, entries
 
     @commands.command(aliases=['google'])
-    async def g(self, ctx, *, query):
+    async def g(self, *, query):
         """Searches google and gives you top result."""
-        await ctx.trigger_typing()
+        await self.bot.type()
         try:
             card, entries = await self.get_google_entries(query)
         except RuntimeError as e:
-            await ctx.send(str(e))
+            await self.bot.say(str(e))
         else:
             if card:
-                value = '\n'.join(f'[{title}]({url.replace(")", "%29")})' for url, title in entries[:3])
+                value = '\n'.join(entries[:3])
                 if value:
                     card.add_field(name='Search Results', value=value, inline=False)
-                return await ctx.send(embed=card)
+                return await self.bot.say(embed=card)
 
             if len(entries) == 0:
-                return await ctx.send('No results found... sorry.')
+                return await self.bot.say('No results found... sorry.')
 
-            next_two = [x[0] for x in entries[1:3]]
-            first_entry = entries[0][0]
+            next_two = entries[1:3]
+            first_entry = entries[0]
             if first_entry[-1] == ')':
                 first_entry = first_entry[:-1] + '%29'
 
             if next_two:
-                formatted = '\n'.join(f'<{x}>' for x in next_two)
-                msg = f'{first_entry}\n\n**See also:**\n{formatted}'
+                formatted = '\n'.join(map(lambda x: '<%s>' % x, next_two))
+                msg = '{}\n\n**See also:**\n{}'.format(first_entry, formatted)
             else:
                 msg = first_entry
 
-            await ctx.send(msg)
+            await self.bot.say(msg)
 
-    @commands.command()
+    @commands.command(pass_context=True)
     @commands.cooldown(rate=1, per=60.0, type=commands.BucketType.user)
     async def feedback(self, ctx, *, content: str):
         """Gives feedback about the bot.
@@ -415,36 +335,39 @@ class Buttons:
         """
 
         e = discord.Embed(title='Feedback', colour=0x738bd7)
-        channel = self.bot.get_channel(263814407191134218)
+        msg = ctx.message
+
+        channel = self.bot.get_channel('263814407191134218')
         if channel is None:
             return
 
-        e.set_author(name=str(ctx.author), icon_url=ctx.author.avatar_url)
+        e.set_author(name=str(msg.author), icon_url=msg.author.avatar_url or msg.author.default_avatar_url)
         e.description = content
-        e.timestamp = ctx.message.created_at
+        e.timestamp = msg.timestamp
 
-        if ctx.guild is not None:
-            e.add_field(name='Server', value=f'{ctx.guild.name} (ID: {ctx.guild.id})', inline=False)
+        if msg.server is not None:
+            e.add_field(name='Server', value='{0.name} (ID: {0.id})'.format(msg.server), inline=False)
 
-        e.add_field(name='Channel', value=f'{ctx.channel} (ID: {ctx.channel.id})', inline=False)
-        e.set_footer(text=f'Author ID: {ctx.author.id}')
+        e.add_field(name='Channel', value='{0} (ID: {0.id})'.format(msg.channel), inline=False)
+        e.set_footer(text='Author ID: ' + msg.author.id)
 
-        await channel.send(embed=e)
-        await ctx.send(f'{ctx.tick(True)} Successfully sent feedback')
+        await self.bot.send_message(channel, embed=e)
+        await self.bot.send_message(msg.channel, 'Successfully sent feedback \u2705')
 
     @commands.command()
-    @commands.is_owner()
-    async def pm(self, ctx, user_id: int, *, content: str):
-        user = self.bot.get_user(user_id)
+    @checks.is_owner()
+    async def pm(self, user_id: str, *, content: str):
+        user = await self.bot.get_user_info(user_id)
 
         fmt = content + '\n\n*This is a DM sent because you had previously requested feedback or I found a bug' \
                         ' in a command you used, I do not monitor this DM.*'
+
         try:
-            await user.send(fmt)
+            await self.bot.send_message(user, fmt)
         except:
-            await ctx.send(f'Could not PM user by ID {user_id}.')
+            await self.bot.say('Could not PM user by ID ' + user_id)
         else:
-            await ctx.send('PM successfully sent.')
+            await self.bot.say('PM successfully sent.')
 
 def setup(bot):
     bot.add_cog(Buttons(bot))

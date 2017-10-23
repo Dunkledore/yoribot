@@ -1,9 +1,7 @@
 from discord.ext import commands
-import asyncio
 
-def to_emoji(c):
-    base = 0x1f1e6
-    return chr(base + c)
+def to_keycap(c):
+    return '\N{KEYCAP TEN}' if c == 10 else str(c) + '\u20e3'
 
 class Polls:
     """Poll voting system."""
@@ -11,8 +9,7 @@ class Polls:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    @commands.guild_only()
+    @commands.command(pass_context=True, no_pm=True)
     async def poll(self, ctx, *, question):
         """Interactively creates a poll with the following question.
 
@@ -22,69 +19,66 @@ class Polls:
         # a list of messages to delete when we're all done
         messages = [ctx.message]
         answers = []
+        for i in range(1, 11):
+            messages.append(await self.bot.say('Say poll option or {.prefix}cancel to publish poll.'.format(ctx)))
+            entry = await self.bot.wait_for_message(author=ctx.message.author, channel=ctx.message.channel, timeout=60.0,
+                                                    check=lambda m: len(m.content) <= 100)
 
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel and len(m.content) <= 100
-
-        for i in range(20):
-            messages.append(await ctx.send(f'Say poll option or {ctx.prefix}cancel to publish poll.'))
-
-            try:
-                entry = await self.bot.wait_for('message', check=check, timeout=60.0)
-            except asyncio.TimeoutError:
+            if entry is None:
                 break
 
             messages.append(entry)
 
-            if entry.clean_content.startswith(f'{ctx.prefix}cancel'):
+            if entry.clean_content.startswith('%scancel' % ctx.prefix):
                 break
 
-            answers.append((to_emoji(i), entry.clean_content))
+            answers.append((to_keycap(i), entry.clean_content))
 
         try:
-            await ctx.channel.delete_messages(messages)
+            await self.bot.delete_messages(messages)
         except:
             pass # oh well
 
-        answer = '\n'.join(f'{keycap}: {content}' for keycap, content in answers)
-        actual_poll = await ctx.send(f'{ctx.author} asks: {question}\n\n{answer}')
+        answer = '\n'.join(map(lambda t: '%s: %s' % t, answers))
+        actual_poll = await self.bot.say('%s asks: %s\n\n%s' % (ctx.message.author, question, answer))
         for emoji, _ in answers:
-            await actual_poll.add_reaction(emoji)
+            await self.bot.add_reaction(actual_poll, emoji)
 
     @poll.error
-    async def poll_error(self, ctx, error):
+    async def poll_error(self, error, ctx):
         if isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send('Missing the question.')
+            return await self.bot.say('Missing the question.')
 
-    @commands.command()
-    @commands.guild_only()
+    @commands.command(pass_context=True, no_pm=True)
     async def quickpoll(self, ctx, *questions_and_choices: str):
         """Makes a poll quickly.
 
-        The first argument is the question and the rest are the choices.
+        The first argument is the question and the rest
+        are the choices.
         """
 
         if len(questions_and_choices) < 3:
-            return await ctx.send('Need at least 1 question with 2 choices.')
-        elif len(questions_and_choices) > 21:
-            return await ctx.send('You can only have up to 20 choices.')
+            return await self.bot.say('Need at least 1 question with 2 choices.')
+        elif len(questions_and_choices) > 11:
+            return await self.bot.say('You can only have up to 10 choices.')
 
-        perms = ctx.channel.permissions_for(ctx.me)
+        perms = ctx.message.channel.permissions_for(ctx.message.server.me)
         if not (perms.read_message_history or perms.add_reactions):
-            return await ctx.send('Need Read Message History and Add Reactions permissions.')
+            return await self.bot.say('Need Read Message History and Add Reactions permissions.')
 
         question = questions_and_choices[0]
-        choices = [(to_emoji(e), v) for e, v in enumerate(questions_and_choices[1:])]
+        choices = [(to_keycap(e), v) for e, v in enumerate(questions_and_choices[1:], 1)]
 
         try:
-            await ctx.message.delete()
+            await self.bot.delete_message(ctx.message)
         except:
             pass
 
-        body = "\n".join(f"{key}: {c}" for key, c in choices)
-        poll = await ctx.send(f'{ctx.author} asks: {question}\n\n{body}')
+        fmt = '{0} asks: {1}\n\n{2}'
+        answer = '\n'.join('%s: %s' % t for t in choices)
+        poll = await self.bot.say(fmt.format(ctx.message.author, question, answer))
         for emoji, _ in choices:
-            await poll.add_reaction(emoji)
+            await self.bot.add_reaction(poll, emoji)
 
 def setup(bot):
     bot.add_cog(Polls(bot))
