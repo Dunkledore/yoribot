@@ -1,4 +1,4 @@
-git+https://github.com/Rapptz/discord.py@master#egg=discord.py[voice]
-lxml
-requests
-psutil
+pip
+git+git://github.com/Rapptz/discord.py.git#egg=discord.py[voice]
+youtube_dl
+imgurpython

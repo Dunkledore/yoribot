@@ -1,11 +1,20 @@
 from discord.ext import commands
 import discord.utils
+from __main__ import settings
 
-def is_owner_check(message):
-    return message.author.id == '80088516616269824'
+#
+# This is a modified version of checks.py, originally made by Rapptz
+#
+#                 https://github.com/Rapptz
+#          https://github.com/Rapptz/RoboDanny/tree/async
+#
+
+def is_owner_check(ctx):
+    _id = ctx.message.author.id
+    return _id == settings.owner or _id in ctx.bot.settings.co_owners
 
 def is_owner():
-    return commands.check(lambda ctx: is_owner_check(ctx.message))
+    return commands.check(is_owner_check)
 
 # The permission system of the bot is based on a "just works" basis
 # You have permissions and the bot has permissions. If you meet the permissions
@@ -18,12 +27,13 @@ def is_owner():
 # Of course, the owner will always be able to execute commands.
 
 def check_permissions(ctx, perms):
-    msg = ctx.message
-    if is_owner_check(msg):
+    if is_owner_check(ctx):
         return True
+    elif not perms:
+        return False
 
-    ch = msg.channel
-    author = msg.author
+    ch = ctx.message.channel
+    author = ctx.message.author
     resolved = ch.permissions_for(author)
     return all(getattr(resolved, name, None) == value for name, value in perms.items())
 
@@ -41,23 +51,39 @@ def role_or_permissions(ctx, check, **perms):
 
 def mod_or_permissions(**perms):
     def predicate(ctx):
-        return role_or_permissions(ctx, lambda r: r.name in ('Bot Mod', 'Bot Admin'), **perms)
+        server = ctx.message.server
+        mod_role = settings.get_server_mod(server).lower()
+        admin_role = settings.get_server_admin(server).lower()
+        return role_or_permissions(ctx, lambda r: r.name.lower() in (mod_role,admin_role), **perms)
 
     return commands.check(predicate)
 
 def admin_or_permissions(**perms):
     def predicate(ctx):
-        return role_or_permissions(ctx, lambda r: r.name == 'Bot Admin', **perms)
-
-    return commands.check(predicate)
-
-def is_in_servers(*server_ids):
-    def predicate(ctx):
         server = ctx.message.server
-        if server is None:
-            return False
-        return server.id in server_ids
+        admin_role = settings.get_server_admin(server)
+        return role_or_permissions(ctx, lambda r: r.name.lower() == admin_role.lower(), **perms)
+
     return commands.check(predicate)
 
-def is_lounge_cpp():
-    return is_in_servers('145079846832308224')
+def serverowner_or_permissions(**perms):
+    def predicate(ctx):
+        if ctx.message.server is None:
+            return False
+        server = ctx.message.server
+        owner = server.owner
+
+        if ctx.message.author.id == owner.id:
+            return True
+
+        return check_permissions(ctx,perms)
+    return commands.check(predicate)
+
+def serverowner():
+    return serverowner_or_permissions()
+
+def admin():
+    return admin_or_permissions()
+
+def mod():
+    return mod_or_permissions()
