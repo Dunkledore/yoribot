@@ -1,51 +1,57 @@
-# Discord Selfbot
+## R. Danny
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FFDATZ8NFFV6Y) [<img src="https://img.shields.io/github/license/appu1232/Discord-Selfbot.svg?style=flat-square">](https://github.com/appu1232/Discord-Selfbot/blob/master/LICENSE) [![Build Status](https://travis-ci.org/appu1232/Discord-Selfbot.svg?branch=master)](https://travis-ci.org/appu1232/Discord-Selfbot)
+A personal bot that runs on Discord.
 
-Come join the dedicated server for this bot! Ask questions, give suggestions, get help, or just hang out. Don't be shy, we don't bite:
+## Running
 
-[<img src="https://canary.discordapp.com/api/guilds/299293492645986307/widget.png?style=banner2">](https://discord.gg/TBQE72k)
+I would prefer if you don't run an instance of my bot. Just call the join command with an invite URL to have it on your server. The source here is provided for educational purposes for discord.py.
 
-### [**Install guide + list of all commands.**](https://github.com/appu1232/Discord-Selfbot/wiki)
+Nevertheless, the installation steps are as follows:
 
-Takes less than 2 minutes to set up. Has various commands and utilities including a keyword logger/notifier, adding custom commands/reactions, and much more.
+1. **Make sure to get Python 3.5 or higher**
 
-![](http://i.imgur.com/3H9zpop.gif)
+This is required to actually run the bot.
 
-## Features
+2. **Set up venv**
 
-- Google web and image search.
-- Keyword/user logger and notifier. Get notified when keywords you specified are said in any of your server or follow users and get notified when they send a message (with a cooldown). Useful to track someone or see if someone mentioned your name or your favorite show/book/whatever else keywords and you want to stalk— I mean, talk to them about it.
-- Set your game/stream to anything or set up multiple and cycle through them.
-- Cycle through avatars automatically.
-- Save image/gif/webm dumps (urls or attachments) in channels quickly to your computer (checks for duplicates as well).
-- Detailed image/gif source finder using sauce.nao
-- Add custom commands/reactions. The commands get saved to ``commands.json`` which has some sample commands added to start with. Can be used as macros for other commands as well.
-- Custom embeds.
-- Todo list with notifications and a timer (repeatable) as well as ability to send a message to a channel when the timer goes off.
-- Smart MyAnimeList search of anime and manga/LNs using google custom search (and if that fails, using myanimelist's api for search)
-- Save/output the last n number of messages from a chat, including any messages that were deleted.
-- Get detailed information about a server and all of its members.
-- Purge the last n messages you sent in a channel.
-- Simple calculator.
-- Quick commands so you can post pointless stuff as fast as possible like ``lenny``, ``shrug``, ``flip``, ``unflip``, and ``comeatmebro``
-- Meme commands like spacing text, converting text to regional indicator emojis, mass reacting to messages, and converting text to ascii art.
-- Python interpreter. Modeled off of RoboDanny's ?debug command. Does both exec() and eval(). Ability to save and load scripts.
-- Various other misc commands like spoiler tagging text (encrypts the text), creating strawpolls, embeding text, server/user info commands, and more.
+Just do `python3.6 -m venv venv`
 
-## Acknowledgements
+3. **Install dependencies**
 
-- Thanks to [architdate](https://github.com/architdate), [LyricLy](https://github.com/LyricLy), and [chenzw95](https://github.com/chenzw95) for actively participating in development, addition of new features, and other optimizations.
-- Thanks to [Hubcapp](https://github.com/Hubcapp) for the much improved >react command.
-- Thanks to [adjnouobsref](https://github.com/adjnouobsref) for the spoiler tags and various other contributions.
-- Used the code for lockdown commands from [Kurisu](https://github.com/916253/Kurisu/blob/master/addons/lockdown.py) bot. Slight modifications is message sending and contents of messages.
-- Used a lot of [Danny's](https://github.com/Rapptz) code for certain parts, especially parsing Google cards and the debugger.
-- Used [eye-sigil's](https://github.com/eye-sigil) code for the >repl command.
-- Thanks to [IgneelDxD](https://github.com/IgneelDxD) for a lot of suggestions and fixes.
-- Thanks to [Bluscream](https://github.com/Bluscream) for a lot of helpful pull requests and custom cogs.
+This is `pip install -U -r requirements.txt`
 
-## Buy me a cup of coffee
+4. **Create the database in PostgreSQL**
 
-This bot is open source and always will be, even if I don't get donations. That said, I know there are people out there that may still want to donate just to show their appreciation so this is for you guys. Thanks in advance!
+You will need PostgreSQL 9.5 or higher and type the following
+in the `psql` tool:
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FFDATZ8NFFV6Y)
+```sql
+CREATE ROLE rdanny WITH LOGIN PASSWORD 'yourpw';
+CREATE DATABASE rdanny OWNER rdanny;
+CREATE EXTENSION pg_trgm;
+```
+
+5. **Setup configuration**
+
+The next step is just to create a `config.py` file in the root directory where
+the bot is with the following template:
+
+```py
+client_id   = '' # your bot's client ID
+token = '' # your bot's token
+carbon_key = '' # your bot's key on carbon's site
+bots_key = '' # your key on bots.discord.pw
+postgresql = 'postgresql://user:password@host/database' # your postgresql info from above
+challonge_api_key = '...' # for tournament cog
+```
+
+6. **Configuration of database**
+
+To configure the PostgreSQL database for use by the bot, go to the directory where `launcher.py` is located, and run the script by doing `python3.6 launcher.py db init`
+
+## Requirements
+
+- Python 3.6+
+- v1.0.0 of discord.py
+- lxml
+- psutil
