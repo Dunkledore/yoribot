@@ -1,954 +1,1720 @@
-from discord.ext import commands
-from .utils import checks, db, time, cache
-from collections import Counter, defaultdict
-from inspect import cleandoc
-
-import re
-import json
 import discord
-import enum
-import datetime
-import asyncio
-import argparse, shlex
+from discord.ext import commands
+from .utils.dataIO import dataIO
+from .utils import checks
+from __main__ import send_cmd_help, settings
+from datetime import datetime
+from collections import deque, defaultdict
+from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
+import os
+import re
 import logging
+import asyncio
 
-log = logging.getLogger(__name__)
 
-## Misc utilities
+ACTIONS_REPR = {
+    "BAN"     : ("Ban", "\N{HAMMER}"),
+    "KICK"    : ("Kick", "\N{WOMANS BOOTS}"),
+    "CMUTE"   : ("Channel mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
+    "SMUTE"   : ("Server mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
+    "SOFTBAN" : ("Softban", "\N{DASH SYMBOL} \N{HAMMER}"),
+    "HACKBAN" : ("Preemptive ban", "\N{BUST IN SILHOUETTE} \N{HAMMER}"),
+    "UNBAN"   : ("Unban", "\N{DOVE OF PEACE}")
+}
 
-class Arguments(argparse.ArgumentParser):
-    def error(self, message):
-        raise RuntimeError(message)
+ACTIONS_CASES = {
+    "BAN"     : True,
+    "KICK"    : True,
+    "CMUTE"   : False,
+    "SMUTE"   : True,
+    "SOFTBAN" : True,
+    "HACKBAN" : True,
+    "UNBAN"   : True
+}
 
-class RaidMode(enum.Enum):
-    off = 0
-    on = 1
-    strict = 2
+default_settings = {
+    "ban_mention_spam"  : False,
+    "delete_repeats"    : False,
+    "mod-log"           : None,
+    "respect_hierarchy" : False
+}
 
-    def __str__(self):
-        return self.name
 
-## Tables
+for act, enabled in ACTIONS_CASES.items():
+    act = act.lower() + '_cases'
+    default_settings[act] = enabled
 
-class GuildConfig(db.Table, table_name='guild_mod_config'):
-    id = db.Column(db.Integer(big=True), primary_key=True)
-    raid_mode = db.Column(db.Integer(small=True))
-    broadcast_channel = db.Column(db.Integer(big=True))
-    mention_count = db.Column(db.Integer(small=True))
-    safe_mention_channel_ids = db.Column(db.Array(db.Integer(big=True)))
 
-## Configuration
+class ModError(Exception):
+    pass
 
-class ModConfig:
-    __slots__ = ('raid_mode', 'id', 'bot', 'broadcast_channel_id', 'mention_count', 'safe_mention_channel_ids')
 
-    @classmethod
-    async def from_record(cls, record, bot):
-        self = cls()
+class UnauthorizedCaseEdit(ModError):
+    pass
 
-        # the basic configuration
+
+class CaseMessageNotFound(ModError):
+    pass
+
+
+class NoModLogChannel(ModError):
+    pass
+
+
+class NoModLogAccess(ModError):
+    pass
+
+
+class TempCache:
+    """
+    This is how we avoid events such as ban and unban
+    from triggering twice in the mod-log.
+    Kinda hacky but functioning
+    """
+    def __init__(self, bot):
         self.bot = bot
-        self.raid_mode = record['raid_mode']
-        self.id = record['id']
-        self.broadcast_channel_id = record['broadcast_channel']
-        self.mention_count = record['mention_count']
-        self.safe_mention_channel_ids = set(record['safe_mention_channel_ids'] or [])
-        return self
+        self._cache = []
 
-    @property
-    def broadcast_channel(self):
-        guild = self.bot.get_guild(self.id)
-        return guild and guild.get_channel(self.broadcast_channel_id)
+    def add(self, user, server, action, seconds=1):
+        tmp = (user.id, server.id, action)
+        self._cache.append(tmp)
 
-## Converters
+        async def delete_value():
+            await asyncio.sleep(seconds)
+            self._cache.remove(tmp)
 
-class MemberID(commands.Converter):
-    async def convert(self, ctx, argument):
-        try:
-            m = await commands.MemberConverter().convert(ctx, argument)
-        except commands.BadArgument:
-            try:
-                return int(argument, base=10)
-            except ValueError:
-                raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
-        else:
-            can_execute = ctx.author.id == ctx.bot.owner_id or \
-                          ctx.author == ctx.guild.owner or \
-                          ctx.author.top_role > m.top_role
+        self.bot.loop.create_task(delete_value())
 
-            if not can_execute:
-                raise commands.BadArgument('You cannot do this action on this user due to role hierarchy.')
-            return m.id
+    def check(self, user, server, action):
+        return (user.id, server.id, action) in self._cache
 
-class BannedMember(commands.Converter):
-    async def convert(self, ctx, argument):
-        ban_list = await ctx.guild.bans()
-        try:
-            member_id = int(argument, base=10)
-            entity = discord.utils.find(lambda u: u.user.id == member_id, ban_list)
-        except ValueError:
-            entity = discord.utils.find(lambda u: str(u.user) == argument, ban_list)
-
-        if entity is None:
-            raise commands.BadArgument("Not a valid previously-banned member.")
-        return entity
-
-class ActionReason(commands.Converter):
-    async def convert(self, ctx, argument):
-        ret = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
-
-        if len(ret) > 512:
-            reason_max = 512 - len(ret) - len(argument)
-            raise commands.BadArgument(f'reason is too long ({len(argument)}/{reason_max})')
-        return ret
-
-## The actual cog
 
 class Mod:
-    """Moderation related commands."""
+    """Moderation tools."""
 
     def __init__(self, bot):
         self.bot = bot
+        self.ignore_list = dataIO.load_json("data/mod/ignorelist.json")
+        self.filter = dataIO.load_json("data/mod/filter.json")
+        self.past_names = dataIO.load_json("data/mod/past_names.json")
+        self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
+        settings = dataIO.load_json("data/mod/settings.json")
+        self.settings = defaultdict(lambda: default_settings.copy(), settings)
+        self.cache = defaultdict(lambda: deque(maxlen=3))
+        self.cases = dataIO.load_json("data/mod/modlog.json")
+        self.last_case = defaultdict(dict)
+        self.temp_cache = TempCache(bot)
+        perms_cache = dataIO.load_json("data/mod/perms_cache.json")
+        self._perms_cache = defaultdict(dict, perms_cache)
 
-        # guild_id: set(user_id)
-        self._recently_kicked = defaultdict(set)
+    @commands.group(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions(administrator=True)
+    async def modset(self, ctx):
+        """Manages server administration settings."""
+        if ctx.invoked_subcommand is None:
+            server = ctx.message.server
+            await send_cmd_help(ctx)
+            roles = settings.get_server(server).copy()
+            _settings = {**self.settings[server.id], **roles}
+            if "respect_hierarchy" not in _settings:
+                _settings["respect_hierarchy"] = default_settings["respect_hierarchy"]
+            if "delete_delay" not in _settings:
+                _settings["delete_delay"] = "Disabled"
 
-    def __repr__(self):
-        return '<cogs.Mod>'
+            msg = ("Admin role: {ADMIN_ROLE}\n"
+                   "Mod role: {MOD_ROLE}\n"
+                   "Mod-log: {mod-log}\n"
+                   "Delete repeats: {delete_repeats}\n"
+                   "Ban mention spam: {ban_mention_spam}\n"
+                   "Delete delay: {delete_delay}\n"
+                   "Respects hierarchy: {respect_hierarchy}"
+                   "".format(**_settings))
+            await self.bot.say(box(msg))
 
-    async def __error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send(error)
-        elif isinstance(error, commands.CommandInvokeError):
-            original = error.original
-            if isinstance(original, discord.Forbidden):
-                await ctx.send('I do not have permission to execute this action.')
-            elif isinstance(original, discord.NotFound):
-                await ctx.send(f'This entity does not exist: {original.text}')
-            elif isinstance(original, discord.HTTPException):
-                await ctx.send('Somehow, an unexpected error occurred. Try again later?')
+    @modset.command(name="adminrole", pass_context=True, no_pm=True, hidden=True)
+    async def _modset_adminrole(self, ctx):
+        """Use [p]set adminrole instead"""
+        await self.bot.say("This command has been renamed "
+                           "`{}set adminrole`".format(ctx.prefix))
 
-    @cache.cache()
-    async def get_guild_config(self, guild_id):
-        query = """SELECT * FROM guild_mod_config WHERE id=$1;"""
-        async with self.bot.pool.acquire() as con:
-            record = await con.fetchrow(query, guild_id)
-            if record is not None:
-                return await ModConfig.from_record(record, self.bot)
-            return None
+    @modset.command(name="modrole", pass_context=True, no_pm=True, hidden=True)
+    async def _modset_modrole(self, ctx):
+        """Use [p]set modrole instead"""
+        await self.bot.say("This command has been renamed "
+                           "`{}set modrole`".format(ctx.prefix))
 
-    async def check_raid(self, config, guild, member, timestamp):
-        if config.raid_mode != RaidMode.strict.value:
+    @modset.command(pass_context=True, no_pm=True)
+    async def modlog(self, ctx, channel : discord.Channel=None):
+        """Sets a channel as mod log
+
+        Leaving the channel parameter empty will deactivate it"""
+        server = ctx.message.server
+        if channel:
+            self.settings[server.id]["mod-log"] = channel.id
+            await self.bot.say("Mod events will be sent to {}"
+                               "".format(channel.mention))
+        else:
+            if self.settings[server.id]["mod-log"] is None:
+                await send_cmd_help(ctx)
+                return
+            self.settings[server.id]["mod-log"] = None
+            await self.bot.say("Mod log deactivated.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
+    @modset.command(pass_context=True, no_pm=True)
+    async def banmentionspam(self, ctx, max_mentions : int=False):
+        """Enables auto ban for messages mentioning X different people
+
+        Accepted values: 5 or superior"""
+        server = ctx.message.server
+        if max_mentions:
+            if max_mentions < 5:
+                max_mentions = 5
+            self.settings[server.id]["ban_mention_spam"] = max_mentions
+            await self.bot.say("Autoban for mention spam enabled. "
+                               "Anyone mentioning {} or more different people "
+                               "in a single message will be autobanned."
+                               "".format(max_mentions))
+        else:
+            if self.settings[server.id]["ban_mention_spam"] is False:
+                await send_cmd_help(ctx)
+                return
+            self.settings[server.id]["ban_mention_spam"] = False
+            await self.bot.say("Autoban for mention spam disabled.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
+    @modset.command(pass_context=True, no_pm=True)
+    async def deleterepeats(self, ctx):
+        """Enables auto deletion of repeated messages"""
+        server = ctx.message.server
+        if not self.settings[server.id]["delete_repeats"]:
+            self.settings[server.id]["delete_repeats"] = True
+            await self.bot.say("Messages repeated up to 3 times will "
+                               "be deleted.")
+        else:
+            self.settings[server.id]["delete_repeats"] = False
+            await self.bot.say("Repeated messages will be ignored.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
+    @modset.command(pass_context=True, no_pm=True)
+    async def resetcases(self, ctx):
+        """Resets modlog's cases"""
+        server = ctx.message.server
+        self.cases[server.id] = {}
+        dataIO.save_json("data/mod/modlog.json", self.cases)
+        await self.bot.say("Cases have been reset.")
+
+    @modset.command(pass_context=True, no_pm=True)
+    async def deletedelay(self, ctx, time: int=None):
+        """Sets the delay until the bot removes the command message.
+            Must be between -1 and 60.
+
+        A delay of -1 means the bot will not remove the message."""
+        server = ctx.message.server
+        if time is not None:
+            time = min(max(time, -1), 60)  # Enforces the time limits
+            self.settings[server.id]["delete_delay"] = time
+            if time == -1:
+                await self.bot.say("Command deleting disabled.")
+            else:
+                await self.bot.say("Delete delay set to {}"
+                                   " seconds.".format(time))
+            dataIO.save_json("data/mod/settings.json", self.settings)
+        else:
+            try:
+                delay = self.settings[server.id]["delete_delay"]
+            except KeyError:
+                await self.bot.say("Delete delay not yet set up on this"
+                                   " server.")
+            else:
+                if delay != -1:
+                    await self.bot.say("Bot will delete command messages after"
+                                       " {} seconds. Set this value to -1 to"
+                                       " stop deleting messages".format(delay))
+                else:
+                    await self.bot.say("I will not delete command messages.")
+
+    @modset.command(pass_context=True, no_pm=True, name='cases')
+    async def set_cases(self, ctx, action: str = None, enabled: bool = None):
+        """Enables or disables case creation for each type of mod action
+
+        Enabled can be 'on' or 'off'"""
+        server = ctx.message.server
+
+        if action == enabled:  # No args given
+            await self.bot.send_cmd_help(ctx)
+            msg = "Current settings:\n```py\n"
+            maxlen = max(map(lambda x: len(x[0]), ACTIONS_REPR.values()))
+            for action, name in ACTIONS_REPR.items():
+                action = action.lower() + '_cases'
+                value = self.settings[server.id].get(action,
+                                                     default_settings[action])
+                value = 'enabled' if value else 'disabled'
+                msg += '%s : %s\n' % (name[0].ljust(maxlen), value)
+
+            msg += '```'
+            await self.bot.say(msg)
+
+        elif action.upper() not in ACTIONS_CASES:
+            msg = "That's not a valid action. Valid actions are: \n"
+            msg += ', '.join(sorted(map(str.lower, ACTIONS_CASES)))
+            await self.bot.say(msg)
+
+        elif enabled == None:
+            action = action.lower() + '_cases'
+            value = self.settings[server.id].get(action,
+                                                 default_settings[action])
+            await self.bot.say('Case creation for %s is currently %s' %
+                               (action, 'enabled' if value else 'disabled'))
+        else:
+            name = ACTIONS_REPR[action.upper()][0]
+            action = action.lower() + '_cases'
+            value = self.settings[server.id].get(action,
+                                                 default_settings[action])
+            if value != enabled:
+                self.settings[server.id][action] = enabled
+                dataIO.save_json("data/mod/settings.json", self.settings)
+            msg = ('Case creation for %s actions %s %s.' %
+                   (name.lower(),
+                    'was already' if enabled == value else 'is now',
+                    'enabled' if enabled else 'disabled')
+                   )
+            await self.bot.say(msg)
+
+    @modset.command(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions()
+    async def hierarchy(self, ctx):
+        """Toggles role hierarchy check for mods / admins"""
+        server = ctx.message.server
+        toggled = self.settings[server.id].get("respect_hierarchy",
+                                               default_settings["respect_hierarchy"])
+        if not toggled:
+            self.settings[server.id]["respect_hierarchy"] = True
+            await self.bot.say("Role hierarchy will be checked when "
+                               "moderation commands are issued.")
+        else:
+            self.settings[server.id]["respect_hierarchy"] = False
+            await self.bot.say("Role hierarchy will be ignored when "
+                               "moderation commands are issued.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(kick_members=True)
+    async def kick(self, ctx, user: discord.Member, *, reason: str = None):
+        """Kicks user."""
+        author = ctx.message.author
+        server = author.server
+
+        if author == user:
+            await self.bot.say("I cannot let you do that. Self-harm is "
+                               "bad \N{PENSIVE FACE}")
             return
-
-        delta  = (member.joined_at - member.created_at).total_seconds() // 60
-
-        # they must have created their account at most 30 minutes before they joined.
-        if delta > 30:
-            return
-
-        delta = (timestamp - member.joined_at).total_seconds() // 60
-
-        # check if this is their first action in the 30 minutes they joined
-        if delta > 30:
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
             return
 
         try:
-            fmt = f"""Howdy. The server {guild.name} is currently in a raid mode lockdown.
+            await self.bot.kick(user)
+            logger.info("{}({}) kicked {}({})".format(
+                author.name, author.id, user.name, user.id))
+            await self.new_case(server,
+                                action="KICK",
+                                mod=author,
+                                user=user,
+                                reason=reason)
+            await self.bot.say("Done. That felt good.")
+        except discord.errors.Forbidden:
+            await self.bot.say("I'm not allowed to do that.")
+        except Exception as e:
+            print(e)
 
-                   A raid is when a server is being bombarded with trolls or low effort posts.
-                   Unfortunately, what this means is that you have been automatically kicked for
-                   meeting the suspicious thresholds currently set.
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def ban(self, ctx, user: discord.Member, days: str = None, *, reason: str = None):
+        """Bans user and deletes last X days worth of messages.
 
-                   **Do not worry though, as you will be able to join again in the future!**
-                   """
+        If days is not a number, it's treated as the first word of the reason.
+        Minimum 0 days, maximum 7. Defaults to 0."""
+        author = ctx.message.author
+        server = author.server
 
-            fmt = cleandoc(fmt)
-            await member.send(fmt)
-        except discord.HTTPException:
+        if author == user:
+            await self.bot.say("I cannot let you do that. Self-harm is "
+                               "bad \N{PENSIVE FACE}")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
+        if days:
+            if days.isdigit():
+                days = int(days)
+            else:
+                if reason:
+                    reason = days + ' ' + reason
+                else:
+                    reason = days
+                days = 0
+        else:
+            days = 0
+
+        if days < 0 or days > 7:
+            await self.bot.say("Invalid days. Must be between 0 and 7.")
+            return
+
+        try:
+            self.temp_cache.add(user, server, "BAN")
+            await self.bot.ban(user, days)
+            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
+                author.name, author.id, user.name, user.id, str(days)))
+            await self.new_case(server,
+                                action="BAN",
+                                mod=author,
+                                user=user,
+                                reason=reason)
+            await self.bot.say("Done. It was about time.")
+        except discord.errors.Forbidden:
+            await self.bot.say("I'm not allowed to do that.")
+        except Exception as e:
+            print(e)
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def hackban(self, ctx, user_id: int, *, reason: str = None):
+        """Preemptively bans user from the server
+
+        A user ID needs to be provided
+        If the user is present in the server a normal ban will be
+        issued instead"""
+        user_id = str(user_id)
+        author = ctx.message.author
+        server = author.server
+
+        ban_list = await self.bot.get_bans(server)
+        is_banned = discord.utils.get(ban_list, id=user_id)
+
+        if is_banned:
+            await self.bot.say("User is already banned.")
+            return
+
+        user = server.get_member(user_id)
+        if user is not None:
+            await ctx.invoke(self.ban, user=user, reason=reason)
+            return
+
+        try:
+            await self.bot.http.ban(user_id, server.id, 0)
+        except discord.NotFound:
+            await self.bot.say("User not found. Have you provided the "
+                               "correct user ID?")
+        except discord.Forbidden:
+            await self.bot.say("I lack the permissions to do this.")
+        else:
+            logger.info("{}({}) hackbanned {}"
+                        "".format(author.name, author.id, user_id))
+            user = await self.bot.get_user_info(user_id)
+            await self.new_case(server,
+                                action="HACKBAN",
+                                mod=author,
+                                user=user,
+                                reason=reason)
+            await self.bot.say("Done. The user will not be able to join this "
+                               "server.")
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def softban(self, ctx, user: discord.Member, *, reason: str = None):
+        """Kicks the user, deleting 1 day worth of messages."""
+        server = ctx.message.server
+        channel = ctx.message.channel
+        can_ban = channel.permissions_for(server.me).ban_members
+        author = ctx.message.author
+
+        if author == user:
+            await self.bot.say("I cannot let you do that. Self-harm is "
+                               "bad \N{PENSIVE FACE}")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
+        try:
+            invite = await self.bot.create_invite(server, max_age=3600*24)
+            invite = "\nInvite: " + invite
+        except:
+            invite = ""
+        if can_ban:
+            try:
+                try:  # We don't want blocked DMs preventing us from banning
+                    msg = await self.bot.send_message(user, "You have been banned and "
+                              "then unbanned as a quick way to delete your messages.\n"
+                              "You can now join the server again.{}".format(invite))
+                except:
+                    pass
+                self.temp_cache.add(user, server, "BAN")
+                await self.bot.ban(user, 1)
+                logger.info("{}({}) softbanned {}({}), deleting 1 day worth "
+                    "of messages".format(author.name, author.id, user.name,
+                     user.id))
+                await self.new_case(server,
+                                    action="SOFTBAN",
+                                    mod=author,
+                                    user=user,
+                                    reason=reason)
+                self.temp_cache.add(user, server, "UNBAN")
+                await self.bot.unban(server, user)
+                await self.bot.say("Done. Enough chaos.")
+            except discord.errors.Forbidden:
+                await self.bot.say("My role is not high enough to softban that user.")
+                await self.bot.delete_message(msg)
+            except Exception as e:
+                print(e)
+        else:
+            await self.bot.say("I'm not allowed to do that.")
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(manage_nicknames=True)
+    async def rename(self, ctx, user : discord.Member, *, nickname=""):
+        """Changes user's nickname
+
+        Leaving the nickname empty will remove it."""
+        nickname = nickname.strip()
+        if nickname == "":
+            nickname = None
+        try:
+            await self.bot.change_nickname(user, nickname)
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I cannot do that, I lack the "
+                               "\"Manage Nicknames\" permission.")
+
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def mute(self, ctx, user : discord.Member, *, reason: str = None):
+        """Mutes user in the channel/server
+
+        Defaults to channel"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.channel_mute, user=user, reason=reason)
+
+    @checks.mod_or_permissions(administrator=True)
+    @mute.command(name="channel", pass_context=True, no_pm=True)
+    async def channel_mute(self, ctx, user : discord.Member, *, reason: str = None):
+        """Mutes user in the current channel"""
+        author = ctx.message.author
+        channel = ctx.message.channel
+        server = ctx.message.server
+        overwrites = channel.overwrites_for(user)
+
+        if overwrites.send_messages is False:
+            await self.bot.say("That user can't send messages in this "
+                               "channel.")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
+        self._perms_cache[user.id][channel.id] = overwrites.send_messages
+        overwrites.send_messages = False
+        try:
+            await self.bot.edit_channel_permissions(channel, user, overwrites)
+        except discord.Forbidden:
+            await self.bot.say("Failed to mute user. I need the manage roles "
+                               "permission and the user I'm muting must be "
+                               "lower than myself in the role hierarchy.")
+        else:
+            dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+            await self.new_case(server,
+                                action="CMUTE",
+                                channel=channel,
+                                mod=author,
+                                user=user,
+                                reason=reason)
+            await self.bot.say("User has been muted in this channel.")
+
+    @checks.mod_or_permissions(administrator=True)
+    @mute.command(name="server", pass_context=True, no_pm=True)
+    async def server_mute(self, ctx, user : discord.Member, *, reason: str = None):
+        """Mutes user in the server"""
+        author = ctx.message.author
+        server = ctx.message.server
+
+        if not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
+        register = {}
+        for channel in server.channels:
+            if channel.type != discord.ChannelType.text:
+                continue
+            overwrites = channel.overwrites_for(user)
+            if overwrites.send_messages is False:
+                continue
+            register[channel.id] = overwrites.send_messages
+            overwrites.send_messages = False
+            try:
+                await self.bot.edit_channel_permissions(channel, user,
+                                                        overwrites)
+            except discord.Forbidden:
+                await self.bot.say("Failed to mute user. I need the manage roles "
+                                   "permission and the user I'm muting must be "
+                                   "lower than myself in the role hierarchy.")
+                return
+            else:
+                await asyncio.sleep(0.1)
+        if not register:
+            await self.bot.say("That user is already muted in all channels.")
+            return
+        self._perms_cache[user.id] = register
+        dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+        await self.new_case(server,
+                            action="SMUTE",
+                            mod=author,
+                            user=user,
+                            reason=reason)
+        await self.bot.say("User has been muted in this server.")
+
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the channel/server
+
+        Defaults to channel"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.channel_unmute, user=user)
+
+    @checks.mod_or_permissions(administrator=True)
+    @unmute.command(name="channel", pass_context=True, no_pm=True)
+    async def channel_unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the current channel"""
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = ctx.message.server
+        overwrites = channel.overwrites_for(user)
+
+        if overwrites.send_messages:
+            await self.bot.say("That user doesn't seem to be muted "
+                               "in this channel.")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
+        if user.id in self._perms_cache:
+            old_value = self._perms_cache[user.id].get(channel.id)
+        else:
+            old_value = None
+        overwrites.send_messages = old_value
+        is_empty = self.are_overwrites_empty(overwrites)
+        try:
+            if not is_empty:
+                await self.bot.edit_channel_permissions(channel, user,
+                                                        overwrites)
+            else:
+                await self.bot.delete_channel_permissions(channel, user)
+        except discord.Forbidden:
+            await self.bot.say("Failed to unmute user. I need the manage roles"
+                               " permission and the user I'm unmuting must be "
+                               "lower than myself in the role hierarchy.")
+        else:
+            try:
+                del self._perms_cache[user.id][channel.id]
+            except KeyError:
+                pass
+            if user.id in self._perms_cache and not self._perms_cache[user.id]:
+                del self._perms_cache[user.id]  # cleanup
+            dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+            await self.bot.say("User has been unmuted in this channel.")
+
+    @checks.mod_or_permissions(administrator=True)
+    @unmute.command(name="server", pass_context=True, no_pm=True)
+    async def server_unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the server"""
+        server = ctx.message.server
+        author = ctx.message.author
+
+        if user.id not in self._perms_cache:
+            await self.bot.say("That user doesn't seem to have been muted with {0}mute commands. "
+                               "Unmute them in the channels you want with `{0}unmute <user>`"
+                               "".format(ctx.prefix))
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
+        for channel in server.channels:
+            if channel.type != discord.ChannelType.text:
+                continue
+            if channel.id not in self._perms_cache[user.id]:
+                continue
+            value = self._perms_cache[user.id].get(channel.id)
+            overwrites = channel.overwrites_for(user)
+            if overwrites.send_messages is False:
+                overwrites.send_messages = value
+                is_empty = self.are_overwrites_empty(overwrites)
+                try:
+                    if not is_empty:
+                        await self.bot.edit_channel_permissions(channel, user,
+                                                                overwrites)
+                    else:
+                        await self.bot.delete_channel_permissions(channel, user)
+                except discord.Forbidden:
+                    await self.bot.say("Failed to unmute user. I need the manage roles"
+                                       " permission and the user I'm unmuting must be "
+                                       "lower than myself in the role hierarchy.")
+                    return
+                else:
+                    del self._perms_cache[user.id][channel.id]
+                    await asyncio.sleep(0.1)
+        if user.id in self._perms_cache and not self._perms_cache[user.id]:
+            del self._perms_cache[user.id]  # cleanup
+        dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+        await self.bot.say("User has been unmuted in this server.")
+
+    @commands.group(pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def cleanup(self, ctx):
+        """Deletes messages."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @cleanup.command(pass_context=True, no_pm=True)
+    async def text(self, ctx, text: str, number: int):
+        """Deletes last X messages matching the specified text.
+
+        Example:
+        cleanup text \"test\" 5
+
+        Remember to use double quotes."""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = author.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+
+        def check(m):
+            if text in m.content:
+                return True
+            elif m == ctx.message:
+                return True
+            else:
+                return False
+
+        to_delete = [ctx.message]
+
+        if not has_permissions:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) - 1 < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) - 1 < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        logger.info("{}({}) deleted {} messages "
+                    " containing '{}' in channel {}".format(author.name,
+                    author.id, len(to_delete), text, channel.id))
+
+        if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, no_pm=True)
+    async def user(self, ctx, user: discord.Member, number: int):
+        """Deletes last X messages from specified user.
+
+        Examples:
+        cleanup user @\u200bTwentysix 2
+        cleanup user Red 6"""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = author.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+        self_delete = user == self.bot.user
+
+        def check(m):
+            if m.author == user:
+                return True
+            elif m == ctx.message:
+                return True
+            else:
+                return False
+
+        to_delete = [ctx.message]
+
+        if not has_permissions and not self_delete:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) - 1 < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) - 1 < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        logger.info("{}({}) deleted {} messages "
+                    " made by {}({}) in channel {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              user.name, user.id, channel.name))
+
+        if is_bot and not self_delete:
+            # For whatever reason the purge endpoint requires manage_messages
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, no_pm=True)
+    async def after(self, ctx, message_id : int):
+        """Deletes all messages after specified message
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+
+        This command only works on bots running as bot accounts.
+        """
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = channel.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+
+        if not is_bot:
+            await self.bot.say("This command can only be used on bots with "
+                               "bot accounts.")
+            return
+
+        to_delete = []
+
+        after = await self.bot.get_message(channel, message_id)
+
+        if not has_permissions:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+        elif not after:
+            await self.bot.say("Message not found.")
+            return
+
+        async for message in self.bot.logs_from(channel, limit=2000,
+                                                after=after):
+            to_delete.append(message)
+
+        logger.info("{}({}) deleted {} messages in channel {}"
+                    "".format(author.name, author.id,
+                              len(to_delete), channel.name))
+
+        await self.mass_purge(to_delete)
+
+    @cleanup.command(pass_context=True, no_pm=True)
+    async def messages(self, ctx, number: int):
+        """Deletes last X messages.
+
+        Example:
+        cleanup messages 26"""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = author.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+
+        to_delete = []
+
+        if not has_permissions:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+
+        async for message in self.bot.logs_from(channel, limit=number+1):
+            to_delete.append(message)
+
+        logger.info("{}({}) deleted {} messages in channel {}"
+                    "".format(author.name, author.id,
+                              number, channel.name))
+
+        if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, no_pm=True, name='bot')
+    async def cleanup_bot(self, ctx, number: int):
+        """Cleans up command messages and messages from the bot"""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = channel.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+
+        prefixes = self.bot.command_prefix
+        if isinstance(prefixes, str):
+            prefixes = [prefixes]
+        elif callable(prefixes):
+            if asyncio.iscoroutine(prefixes):
+                await self.bot.say('Coroutine prefixes not yet implemented.')
+                return
+            prefixes = prefixes(self.bot, ctx.message)
+
+        # In case some idiot sets a null prefix
+        if '' in prefixes:
+            prefixes.pop('')
+
+        def check(m):
+            if m.author.id == self.bot.user.id:
+                return True
+            elif m == ctx.message:
+                return True
+            p = discord.utils.find(m.content.startswith, prefixes)
+            if p and len(p) > 0:
+                return m.content[len(p):].startswith(tuple(self.bot.commands))
+            return False
+
+        to_delete = [ctx.message]
+
+        if not has_permissions:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) - 1 < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) - 1 < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        logger.info("{}({}) deleted {} "
+                    " command messages in channel {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              channel.name))
+
+        if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, name='self')
+    async def cleanup_self(self, ctx, number: int, match_pattern: str = None):
+        """Cleans up messages owned by the bot.
+
+        By default, all messages are cleaned. If a third argument is specified,
+        it is used for pattern matching: If it begins with r( and ends with ),
+        then it is interpreted as a regex, and messages that match it are
+        deleted. Otherwise, it is used in a simple substring test.
+
+        Some helpful regex flags to include in your pattern:
+        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)
+        """
+        channel = ctx.message.channel
+        author = ctx.message.author
+        is_bot = self.bot.user.bot
+
+        # You can always delete your own messages, this is needed to purge
+        can_mass_purge = False
+        if type(author) is discord.Member:
+            me = channel.server.me
+            can_mass_purge = channel.permissions_for(me).manage_messages
+
+        use_re = (match_pattern and match_pattern.startswith('r(') and
+                  match_pattern.endswith(')'))
+
+        if use_re:
+            match_pattern = match_pattern[1:]  # strip 'r'
+            match_re = re.compile(match_pattern)
+
+            def content_match(c):
+                return bool(match_re.match(c))
+        elif match_pattern:
+            def content_match(c):
+                return match_pattern in c
+        else:
+            def content_match(_):
+                return True
+
+        def check(m):
+            if m.author.id != self.bot.user.id:
+                return False
+            elif content_match(m.content):
+                return True
+            return False
+
+        to_delete = []
+        # Selfbot convenience, delete trigger message
+        if author == self.bot.user:
+            to_delete.append(ctx.message)
+            number += 1
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        if channel.name:
+            channel_name = 'channel ' + channel.name
+        else:
+            channel_name = str(channel)
+
+        logger.info("{}({}) deleted {} messages "
+                    "sent by the bot in {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              channel_name))
+
+        if is_bot and can_mass_purge:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @commands.command(pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def reason(self, ctx, case, *, reason : str=""):
+        """Lets you specify a reason for mod-log's cases
+
+        Defaults to last case assigned to yourself, if available."""
+        author = ctx.message.author
+        server = author.server
+        try:
+            case = int(case)
+            if not reason:
+                await send_cmd_help(ctx)
+                return
+        except:
+            if reason:
+                reason = "{} {}".format(case, reason)
+            else:
+                reason = case
+            case = self.last_case[server.id].get(author.id)
+            if case is None:
+                await send_cmd_help(ctx)
+                return
+        try:
+            await self.update_case(server, case=case, mod=author,
+                                   reason=reason)
+        except UnauthorizedCaseEdit:
+            await self.bot.say("That case is not yours.")
+        except KeyError:
+            await self.bot.say("That case doesn't exist.")
+        except NoModLogChannel:
+            await self.bot.say("There's no mod-log channel set.")
+        except CaseMessageNotFound:
+            await self.bot.say("I couldn't find the case's message.")
+        except NoModLogAccess:
+            await self.bot.say("I'm not allowed to access the mod-log "
+                               "channel (or its message history)")
+        else:
+            await self.bot.say("Case #{} updated.".format(case))
+
+    @commands.group(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_channels=True)
+    async def ignore(self, ctx):
+        """Adds servers/channels to ignorelist"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            await self.bot.say(self.count_ignored())
+
+    @ignore.command(name="channel", pass_context=True)
+    async def ignore_channel(self, ctx, channel: discord.Channel=None):
+        """Ignores channel
+
+        Defaults to current one"""
+        current_ch = ctx.message.channel
+        if not channel:
+            if current_ch.id not in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].append(current_ch.id)
+                dataIO.save_json("data/mod/ignorelist.json", self.ignore_list)
+                await self.bot.say("Channel added to ignore list.")
+            else:
+                await self.bot.say("Channel already in ignore list.")
+        else:
+            if channel.id not in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].append(channel.id)
+                dataIO.save_json("data/mod/ignorelist.json", self.ignore_list)
+                await self.bot.say("Channel added to ignore list.")
+            else:
+                await self.bot.say("Channel already in ignore list.")
+
+    @ignore.command(name="server", pass_context=True)
+    async def ignore_server(self, ctx):
+        """Ignores current server"""
+        server = ctx.message.server
+        if server.id not in self.ignore_list["SERVERS"]:
+            self.ignore_list["SERVERS"].append(server.id)
+            dataIO.save_json("data/mod/ignorelist.json", self.ignore_list)
+            await self.bot.say("This server has been added to the ignore list.")
+        else:
+            await self.bot.say("This server is already being ignored.")
+
+    @commands.group(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_channels=True)
+    async def unignore(self, ctx):
+        """Removes servers/channels from ignorelist"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            await self.bot.say(self.count_ignored())
+
+    @unignore.command(name="channel", pass_context=True)
+    async def unignore_channel(self, ctx, channel: discord.Channel=None):
+        """Removes channel from ignore list
+
+        Defaults to current one"""
+        current_ch = ctx.message.channel
+        if not channel:
+            if current_ch.id in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].remove(current_ch.id)
+                dataIO.save_json("data/mod/ignorelist.json", self.ignore_list)
+                await self.bot.say("This channel has been removed from the ignore list.")
+            else:
+                await self.bot.say("This channel is not in the ignore list.")
+        else:
+            if channel.id in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].remove(channel.id)
+                dataIO.save_json("data/mod/ignorelist.json", self.ignore_list)
+                await self.bot.say("Channel removed from ignore list.")
+            else:
+                await self.bot.say("That channel is not in the ignore list.")
+
+    @unignore.command(name="server", pass_context=True)
+    async def unignore_server(self, ctx):
+        """Removes current server from ignore list"""
+        server = ctx.message.server
+        if server.id in self.ignore_list["SERVERS"]:
+            self.ignore_list["SERVERS"].remove(server.id)
+            dataIO.save_json("data/mod/ignorelist.json", self.ignore_list)
+            await self.bot.say("This server has been removed from the ignore list.")
+        else:
+            await self.bot.say("This server is not in the ignore list.")
+
+    def count_ignored(self):
+        msg = "```Currently ignoring:\n"
+        msg += str(len(self.ignore_list["CHANNELS"])) + " channels\n"
+        msg += str(len(self.ignore_list["SERVERS"])) + " servers\n```\n"
+        return msg
+
+    @commands.group(name="filter", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def _filter(self, ctx):
+        """Adds/removes words from filter
+
+        Use double quotes to add/remove sentences
+        Using this command with no subcommands will send
+        the list of the server's filtered words."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            server = ctx.message.server
+            author = ctx.message.author
+            if server.id in self.filter:
+                if self.filter[server.id]:
+                    words = ", ".join(self.filter[server.id])
+                    words = "Filtered in this server:\n\n" + words
+                    try:
+                        for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                            await self.bot.send_message(author, page)
+                    except discord.Forbidden:
+                        await self.bot.say("I can't send direct messages to you.")
+
+    @_filter.command(name="add", pass_context=True)
+    async def filter_add(self, ctx, *words: str):
+        """Adds words to the filter
+
+        Use double quotes to add sentences
+        Examples:
+        filter add word1 word2 word3
+        filter add \"This is a sentence\""""
+        if words == ():
+            await send_cmd_help(ctx)
+            return
+        server = ctx.message.server
+        added = 0
+        if server.id not in self.filter.keys():
+            self.filter[server.id] = []
+        for w in words:
+            if w.lower() not in self.filter[server.id] and w != "":
+                self.filter[server.id].append(w.lower())
+                added += 1
+        if added:
+            dataIO.save_json("data/mod/filter.json", self.filter)
+            await self.bot.say("Words added to filter.")
+        else:
+            await self.bot.say("Words already in the filter.")
+
+    @_filter.command(name="remove", pass_context=True)
+    async def filter_remove(self, ctx, *words: str):
+        """Remove words from the filter
+
+        Use double quotes to remove sentences
+        Examples:
+        filter remove word1 word2 word3
+        filter remove \"This is a sentence\""""
+        if words == ():
+            await send_cmd_help(ctx)
+            return
+        server = ctx.message.server
+        removed = 0
+        if server.id not in self.filter.keys():
+            await self.bot.say("There are no filtered words in this server.")
+            return
+        for w in words:
+            if w.lower() in self.filter[server.id]:
+                self.filter[server.id].remove(w.lower())
+                removed += 1
+        if removed:
+            dataIO.save_json("data/mod/filter.json", self.filter)
+            await self.bot.say("Words removed from filter.")
+        else:
+            await self.bot.say("Those words weren't in the filter.")
+
+    @commands.group(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(manage_roles=True)
+    async def editrole(self, ctx):
+        """Edits roles settings"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @editrole.command(aliases=["color"], pass_context=True)
+    async def colour(self, ctx, role: discord.Role, value: discord.Colour):
+        """Edits a role's colour
+
+        Use double quotes if the role contains spaces.
+        Colour must be in hexadecimal format.
+        \"http://www.w3schools.com/colors/colors_picker.asp\"
+        Examples:
+        !editrole colour \"The Transistor\" #ff0000
+        !editrole colour Test #ff9900"""
+        author = ctx.message.author
+        try:
+            await self.bot.edit_role(ctx.message.server, role, color=value)
+            logger.info("{}({}) changed the colour of role '{}'".format(
+                author.name, author.id, role.name))
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I need permissions to manage roles first.")
+        except Exception as e:
+            print(e)
+            await self.bot.say("Something went wrong.")
+
+    @editrole.command(name="name", pass_context=True)
+    @checks.admin_or_permissions(administrator=True)
+    async def edit_role_name(self, ctx, role: discord.Role, name: str):
+        """Edits a role's name
+
+        Use double quotes if the role or the name contain spaces.
+        Examples:
+        !editrole name \"The Transistor\" Test"""
+        if name == "":
+            await self.bot.say("Name cannot be empty.")
+            return
+        try:
+            author = ctx.message.author
+            old_name = role.name  # probably not necessary?
+            await self.bot.edit_role(ctx.message.server, role, name=name)
+            logger.info("{}({}) changed the name of role '{}' to '{}'".format(
+                author.name, author.id, old_name, name))
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I need permissions to manage roles first.")
+        except Exception as e:
+            print(e)
+            await self.bot.say("Something went wrong.")
+
+    @commands.command()
+    async def names(self, user : discord.Member):
+        """Show previous names/nicknames of a user"""
+        server = user.server
+        names = self.past_names[user.id] if user.id in self.past_names else None
+        try:
+            nicks = self.past_nicknames[server.id][user.id]
+            nicks = [escape_mass_mentions(nick) for nick in nicks]
+        except:
+            nicks = None
+        msg = ""
+        if names:
+            names = [escape_mass_mentions(name) for name in names]
+            msg += "**Past 20 names**:\n"
+            msg += ", ".join(names)
+        if nicks:
+            if msg:
+                msg += "\n\n"
+            msg += "**Past 20 nicknames**:\n"
+            msg += ", ".join(nicks)
+        if msg:
+            await self.bot.say(msg)
+        else:
+            await self.bot.say("That user doesn't have any recorded name or "
+                               "nickname change.")
+
+    async def mass_purge(self, messages):
+        while messages:
+            if len(messages) > 1:
+                await self.bot.delete_messages(messages[:100])
+                messages = messages[100:]
+            else:
+                await self.bot.delete_message(messages[0])
+                messages = []
+            await asyncio.sleep(1.5)
+
+    async def slow_deletion(self, messages):
+        for message in messages:
+            try:
+                await self.bot.delete_message(message)
+            except:
+                pass
+
+    def is_admin_or_superior(self, obj):
+        if isinstance(obj, discord.Message):
+            user = obj.author
+        elif isinstance(obj, discord.Member):
+            user = obj
+        elif isinstance(obj, discord.Role):
+            pass
+        else:
+            raise TypeError('Only messages, members or roles may be passed')
+
+        server = obj.server
+        admin_role = settings.get_server_admin(server)
+
+        if isinstance(obj, discord.Role):
+            return obj.name == admin_role
+
+        if user.id == settings.owner:
+            return True
+        elif discord.utils.get(user.roles, name=admin_role):
+            return True
+        else:
+            return False
+
+    def is_mod_or_superior(self, obj):
+        if isinstance(obj, discord.Message):
+            user = obj.author
+        elif isinstance(obj, discord.Member):
+            user = obj
+        elif isinstance(obj, discord.Role):
+            pass
+        else:
+            raise TypeError('Only messages, members or roles may be passed')
+
+        server = obj.server
+        admin_role = settings.get_server_admin(server)
+        mod_role = settings.get_server_mod(server)
+
+        if isinstance(obj, discord.Role):
+            return obj.name in [admin_role, mod_role]
+
+        if user.id == settings.owner:
+            return True
+        elif discord.utils.get(user.roles, name=admin_role):
+            return True
+        elif discord.utils.get(user.roles, name=mod_role):
+            return True
+        else:
+            return False
+
+    def is_allowed_by_hierarchy(self, server, mod, user):
+        toggled = self.settings[server.id].get("respect_hierarchy",
+                                               default_settings["respect_hierarchy"])
+        is_special = mod == server.owner or mod.id == self.bot.settings.owner
+
+        if not toggled:
+            return True
+        else:
+            return mod.top_role.position > user.top_role.position or is_special
+
+    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
+        action_type = action.lower() + "_cases"
+        if not self.settings[server.id].get(action_type, default_settings[action_type]):
+            return
+
+        mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
+        if mod_channel is None:
+            return
+
+        if server.id not in self.cases:
+            self.cases[server.id] = {}
+
+        case_n = len(self.cases[server.id]) + 1
+
+        case = {
+            "case"         : case_n,
+            "created"      : datetime.utcnow().timestamp(),
+            "modified"     : None,
+            "action"       : action,
+            "channel"      : channel.id if channel else None,
+            "user"         : str(user),
+            "user_id"      : user.id,
+            "reason"       : reason,
+            "moderator"    : str(mod) if mod is not None else None,
+            "moderator_id" : mod.id if mod is not None else None,
+            "amended_by"   : None,
+            "amended_id"   : None,
+            "message"      : None,
+            "until"        : None,
+        }
+
+        case_msg = self.format_case_msg(case)
+
+        try:
+            msg = await self.bot.send_message(mod_channel, case_msg)
+            case["message"] = msg.id
+        except:
             pass
 
-        # kick anyway
-        try:
-            await member.kick(reason='Strict raid mode')
-        except discord.HTTPException:
-            log.info(f'[Raid Mode] Failed to kick {member} (ID: {member.id}) from server {member.guild} via strict mode.')
+        self.cases[server.id][str(case_n)] = case
+
+        if mod:
+            self.last_case[server.id][mod.id] = case_n
+
+        dataIO.save_json("data/mod/modlog.json", self.cases)
+
+    async def update_case(self, server, *, case, mod=None, reason=None,
+                          until=False):
+        channel = server.get_channel(self.settings[server.id]["mod-log"])
+        if channel is None:
+            raise NoModLogChannel()
+
+        case = str(case)
+        case = self.cases[server.id][case]
+
+        if case["moderator_id"] is not None:
+            if case["moderator_id"] != mod.id:
+                if self.is_admin_or_superior(mod):
+                    case["amended_by"] = str(mod)
+                    case["amended_id"] = mod.id
+                else:
+                    raise UnauthorizedCaseEdit()
         else:
-            log.info(f'[Raid Mode] Kicked {member} (ID: {member.id}) from server {member.guild} via strict mode.')
-            self._recently_kicked[guild.id].add(member.id)
+            case["moderator"] = str(mod)
+            case["moderator_id"] = mod.id
+
+        if case["reason"]:  # Existing reason
+            case["modified"] = datetime.utcnow().timestamp()
+        case["reason"] = reason
+
+        if until is not False:
+            case["until"] = until
+
+        case_msg = self.format_case_msg(case)
+
+        dataIO.save_json("data/mod/modlog.json", self.cases)
+
+        if case["message"] is None:  # The case's message was never sent
+            raise CaseMessageNotFound()
+
+        try:
+            msg = await self.bot.get_message(channel, case["message"])
+        except discord.NotFound:
+            raise CaseMessageNotFound()
+        except discord.Forbidden:
+            raise NoModLogAccess()
+        else:
+            await self.bot.edit_message(msg, case_msg)
+
+
+    def format_case_msg(self, case):
+        tmp = case.copy()
+        if case["reason"] is None:
+            tmp["reason"] = "Type [p]reason %i <reason> to add it" % tmp["case"]
+        if case["moderator"] is None:
+            tmp["moderator"] = "Unknown"
+            tmp["moderator_id"] = "Nobody has claimed responsibility yet"
+        if case["action"] in ACTIONS_REPR:
+            tmp["action"] = ' '.join(ACTIONS_REPR[tmp["action"]])
+
+        channel = case.get("channel")
+        if channel:
+            channel = self.bot.get_channel(channel)
+            tmp["action"] += ' in ' + channel.mention
+
+        case_msg = (
+            "**Case #{case}** | {action}\n"
+            "**User:** {user} ({user_id})\n"
+            "**Moderator:** {moderator} ({moderator_id})\n"
+        ).format(**tmp)
+
+        created = case.get('created')
+        until = case.get('until')
+        if created and until:
+            start = datetime.fromtimestamp(created)
+            end = datetime.fromtimestamp(until)
+            end_fmt = end.strftime('%Y-%m-%d %H:%M:%S UTC')
+            duration = end - start
+            dur_fmt = strfdelta(duration)
+            case_msg += ("**Until:** {}\n"
+                         "**Duration:** {}\n").format(end_fmt, dur_fmt)
+
+        amended = case.get('amended_by')
+        if amended:
+            amended_id = case.get('amended_id')
+            case_msg += "**Amended by:** %s (%s)\n" % (amended, amended_id)
+
+        modified = case.get('modified')
+        if modified:
+            modified = datetime.fromtimestamp(modified)
+            modified_fmt = modified.strftime('%Y-%m-%d %H:%M:%S UTC')
+            case_msg += "**Last modified:** %s\n" % modified_fmt
+
+        case_msg += "**Reason:** %s\n" % tmp["reason"]
+
+        return case_msg
+
+    async def check_filter(self, message):
+        server = message.server
+        if server.id in self.filter.keys():
+            for w in self.filter[server.id]:
+                if w in message.content.lower():
+                    try:
+                        await self.bot.delete_message(message)
+                        logger.info("Message deleted in server {}."
+                                    "Filtered: {}"
+                                    "".format(server.id, w))
+                        return True
+                    except:
+                        pass
+        return False
+
+    async def check_duplicates(self, message):
+        server = message.server
+        author = message.author
+        if server.id not in self.settings:
+            return False
+        if self.settings[server.id]["delete_repeats"]:
+            if not message.content:
+                return False
+            self.cache[author].append(message)
+            msgs = self.cache[author]
+            if len(msgs) == 3 and \
+                    msgs[0].content == msgs[1].content == msgs[2].content:
+                try:
+                    await self.bot.delete_message(message)
+                    return True
+                except:
+                    pass
+        return False
+
+    async def check_mention_spam(self, message):
+        server = message.server
+        author = message.author
+        if server.id not in self.settings:
+            return False
+        if self.settings[server.id]["ban_mention_spam"]:
+            max_mentions = self.settings[server.id]["ban_mention_spam"]
+            mentions = set(message.mentions)
+            if len(mentions) >= max_mentions:
+                try:
+                    self.temp_cache.add(author, server, "BAN")
+                    await self.bot.ban(author, 1)
+                except:
+                    logger.info("Failed to ban member for mention spam in "
+                                "server {}".format(server.id))
+                else:
+                    await self.new_case(server,
+                                        action="BAN",
+                                        mod=server.me,
+                                        user=author,
+                                        reason="Mention spam (Autoban)")
+                    return True
+        return False
+
+    async def on_command(self, command, ctx):
+        """Currently used for:
+            * delete delay"""
+        server = ctx.message.server
+        message = ctx.message
+        try:
+            delay = self.settings[server.id]["delete_delay"]
+        except KeyError:
+            # We have no delay set
+            return
+        except AttributeError:
+            # DM
+            return
+
+        if delay == -1:
+            return
+
+        async def _delete_helper(bot, message):
+            try:
+                await bot.delete_message(message)
+                logger.debug("Deleted command msg {}".format(message.id))
+            except:
+                pass  # We don't really care if it fails or not
+
+        await asyncio.sleep(delay)
+        await _delete_helper(self.bot, message)
 
     async def on_message(self, message):
         author = message.author
-        if author.id in (self.bot.user.id, self.bot.owner_id):
+        if message.server is None or self.bot.user == author:
             return
 
-        if message.guild is None:
+        valid_user = isinstance(author, discord.Member) and not author.bot
+
+        #  Bots and mods or superior are ignored from the filter
+        if not valid_user or self.is_mod_or_superior(message):
             return
 
-        if not isinstance(author, discord.Member):
+        deleted = await self.check_filter(message)
+        if not deleted:
+            deleted = await self.check_duplicates(message)
+        if not deleted:
+            deleted = await self.check_mention_spam(message)
+
+    async def on_message_edit(self, _, message):
+        author = message.author
+        if message.server is None or self.bot.user == author:
             return
 
-        # we're going to ignore members with roles
-        if len(author.roles) > 1:
+        valid_user = isinstance(author, discord.Member) and not author.bot
+
+        if not valid_user or self.is_mod_or_superior(message):
             return
 
-        guild_id = message.guild.id
-        config = await self.get_guild_config(guild_id)
-        if config is None:
-            return
-
-        # check for raid mode stuff
-        await self.check_raid(config, message.guild, author, message.created_at)
-
-        # auto-ban tracking for mention spams begin here
-        if len(message.mentions) <= 3:
-            return
-
-        if not config.mention_count:
-            return
-
-        # check if it meets the thresholds required
-        mention_count = sum(not m.bot for m in message.mentions)
-        if mention_count < config.mention_count:
-            return
-
-        if message.channel.id in config.safe_mention_channel_ids:
-            return
-
-        try:
-            await author.ban(reason=f'Spamming mentions ({mention_count} mentions)')
-        except Exception as e:
-            log.info(f'Failed to autoban member {author} (ID: {author.id}) in guild ID {guild_id}')
-        else:
-            await message.channel.send(f'Banned {author} (ID: {author.id}) for spamming {mention_count} mentions.')
-            log.info(f'Member {author} (ID: {author.id}) has been autobanned from guild ID {guild_id}')
-
-    async def on_voice_state_update(self, user, before, after):
-        if not isinstance(user, discord.Member):
-            return
-
-        # joined a voice channel
-        if before.channel is None and after.channel is not None:
-            config = await self.get_guild_config(user.guild.id)
-            if config is None:
-                return
-
-            await self.check_raid(config, user.guild, user, datetime.datetime.utcnow())
-
-    async def on_member_join(self, member):
-        config = await self.get_guild_config(member.guild.id)
-        if config is None or not config.raid_mode:
-            return
-
-        now = datetime.datetime.utcnow()
-
-        # these are the dates in minutes
-        created = (now - member.created_at).total_seconds() // 60
-        was_kicked = False
-
-        if config.raid_mode == RaidMode.strict.value:
-            was_kicked = self._recently_kicked.get(member.guild.id)
-            if was_kicked is not None:
-                try:
-                    was_kicked.remove(member.id)
-                except KeyError:
-                    was_kicked = False
-                else:
-                    was_kicked = True
-
-        # Do the broadcasted message to the channel
-        if was_kicked:
-            title = 'Member Re-Joined'
-            colour = 0xdd5f53 # red
-        else:
-            title = 'Member Joined'
-            colour = 0x53dda4 # green
-
-            if created < 30:
-                colour = 0xdda453 # yellow
-
-        e = discord.Embed(title=title, colour=colour)
-        e.timestamp = now
-        e.set_footer(text='Created')
-        e.set_author(name=str(member), icon_url=member.avatar_url)
-        e.add_field(name='ID', value=member.id)
-        e.add_field(name='Joined', value=member.joined_at)
-        e.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
-
-        if config.broadcast_channel:
-            await config.broadcast_channel.send(embed=e)
-
-    @commands.command(aliases=['newmembers'])
-    @commands.guild_only()
-    async def newusers(self, ctx, *, count=5):
-        """Tells you the newest members of the server.
-
-        This is useful to check if any suspicious members have
-        joined.
-
-        The count parameter can only be up to 25.
-        """
-        count = max(min(count, 25), 5)
-
-        if not ctx.guild.chunked:
-            await self.bot.request_offline_members(ctx.guild)
-
-        members = sorted(ctx.guild.members, key=lambda m: m.joined_at, reverse=True)[:count]
-
-        e = discord.Embed(title='New Members', colour=discord.Colour.green())
-
-        for member in members:
-            body = f'joined {time.human_timedelta(member.joined_at)}, created {time.human_timedelta(member.created_at)}'
-            e.add_field(name=f'{member} (ID: {member.id})', value=body, inline=False)
-
-        await ctx.send(embed=e)
-
-    @commands.group(aliases=['raids'], invoke_without_command=True)
-    @checks.is_mod()
-    async def raid(self, ctx):
-        """Controls raid mode on the server.
-
-        Calling this command with no arguments will show the current raid
-        mode information.
-
-        You must have Manage Server permissions to use this command or
-        its subcommands.
-        """
-
-        query = "SELECT raid_mode, broadcast_channel FROM guild_mod_config WHERE id=$1;"
-
-        row = await ctx.db.fetchrow(query, ctx.guild.id)
-        if row is None:
-            fmt = 'Raid Mode: off\nBroadcast Channel: None'
-        else:
-            ch = f'<#{row[1]}>' if row[1] else None
-            fmt = f'Raid Mode: {RaidMode(row[0])}\nBroadcast Channel: {ch}'
-
-        await ctx.send(fmt)
-
-    @raid.command(name='on', aliases=['enable', 'enabled'])
-    @checks.is_mod()
-    async def raid_on(self, ctx, *, channel: discord.TextChannel = None):
-        """Enables basic raid mode on the server.
-
-        When enabled, server verification level is set to table flip
-        levels and allows the bot to broadcast new members joining
-        to a specified channel.
-
-        If no channel is given, then the bot will broadcast join
-        messages on the channel this command was used in.
-        """
-
-        channel = channel or ctx.channel
-
-        try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
-        except discord.HTTPException:
-            await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        query = """INSERT INTO guild_mod_config (id, raid_mode, broadcast_channel)
-                   VALUES ($1, $2, $3) ON CONFLICT (id)
-                   DO UPDATE SET
-                        raid_mode = EXCLUDED.raid_mode,
-                        broadcast_channel = EXCLUDED.broadcast_channel;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, RaidMode.on.value, channel.id)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Raid mode enabled. Broadcasting join messages to {channel.mention}.')
-
-    @raid.command(name='off', aliases=['disable', 'disabled'])
-    @checks.is_mod()
-    async def raid_off(self, ctx):
-        """Disables raid mode on the server.
-
-        When disabled, the server verification levels are set
-        back to Low levels and the bot will stop broadcasting
-        join messages.
-        """
-
-        try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.low)
-        except discord.HTTPException:
-            await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        query = """INSERT INTO guild_mod_config (id, raid_mode, broadcast_channel)
-                   VALUES ($1, $2, NULL) ON CONFLICT (id)
-                   DO UPDATE SET
-                        raid_mode = EXCLUDED.raid_mode,
-                        broadcast_channel = NULL;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, RaidMode.off.value)
-        self._recently_kicked.pop(ctx.guild.id, None)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send('Raid mode disabled. No longer broadcasting join messages.')
-
-    @raid.command(name='strict')
-    @checks.is_mod()
-    async def raid_strict(self, ctx, *, channel: discord.TextChannel = None):
-        """Enables strict raid mode on the server.
-
-        Strict mode is similar to regular enabled raid mode, with the added
-        benefit of auto-kicking members that meet the following requirements:
-
-        - Account creation date and join date are at most 30 minutes apart.
-        - First message recorded on the server is 30 minutes apart from join date.
-        - Joining a voice channel within 30 minutes of joining.
-
-        Members who meet these requirements will get a private message saying that the
-        server is currently in lock down.
-
-        If this is considered too strict, it is recommended to fall back to regular
-        raid mode.
-        """
-        channel = channel or ctx.channel
-
-        if not ctx.me.guild_permissions.kick_members:
-            return await ctx.send('\N{NO ENTRY SIGN} I do not have permissions to kick members.')
-
-        try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
-        except discord.HTTPException:
-            await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        query = """INSERT INTO guild_mod_config (id, raid_mode, broadcast_channel)
-                   VALUES ($1, $2, $3) ON CONFLICT (id)
-                   DO UPDATE SET
-                        raid_mode = EXCLUDED.raid_mode,
-                        broadcast_channel = EXCLUDED.broadcast_channel;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, RaidMode.strict.value, ctx.channel.id)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Raid mode enabled strictly. Broadcasting join messages to {channel.mention}.')
-
-    async def _basic_cleanup_strategy(self, ctx, search):
-        count = 0
-        async for msg in ctx.history(limit=search, before=ctx.message):
-            if msg.author == ctx.me:
-                await msg.delete()
-                count += 1
-        return { 'Bot': count }
-
-    async def _complex_cleanup_strategy(self, ctx, search):
-        prefixes = tuple(self.bot.get_guild_prefixes(ctx.guild)) # thanks startswith
-
-        def check(m):
-            return m.author == ctx.me or m.content.startswith(prefixes)
-
-        deleted = await ctx.channel.purge(limit=search, check=check, before=ctx.message)
-        return Counter(m.author.display_name for m in deleted)
-
-    @commands.command()
-    @checks.has_permissions(manage_messages=True)
-    async def cleanup(self, ctx, search=100):
-        """Cleans up the bot's messages from the channel.
-
-        If a search number is specified, it searches that many messages to delete.
-        If the bot has Manage Messages permissions then it will try to delete
-        messages that look like they invoked the bot as well.
-
-        After the cleanup is completed, the bot will send you a message with
-        which people got their messages deleted and their count. This is useful
-        to see which users are spammers.
-
-        You must have Manage Messages permission to use this.
-        """
-
-        strategy = self._basic_cleanup_strategy
-        if ctx.me.permissions_in(ctx.channel).manage_messages:
-            strategy = self._complex_cleanup_strategy
-
-        spammers = await strategy(ctx, search)
-        deleted = sum(spammers.values())
-        messages = [f'{deleted} message{" was" if deleted == 1 else "s were"} removed.']
-        if deleted:
-            messages.append('')
-            spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
-            messages.extend(f'- **{author}**: {count}' for author, count in spammers)
-
-        await ctx.send('\n'.join(messages), delete_after=10)
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, *, reason: ActionReason = None):
-        """Kicks a member from the server.
-
-        In order for this to work, the bot must have Kick Member permissions.
-
-        To use this command you must have Kick Members permission.
-        """
-
-        if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
-
-        await member.kick(reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: MemberID, *, reason: ActionReason = None):
-        """Bans a member from the server.
-
-        You can also ban from ID to ban regardless whether they're
-        in the server or not.
-
-        In order for this to work, the bot must have Ban Member permissions.
-
-        To use this command you must have Ban Members permission.
-        """
-
-        if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
-
-        await ctx.guild.ban(discord.Object(id=member), reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def massban(self, ctx, reason: ActionReason, *members: MemberID):
-        """Mass bans multiple members from the server.
-
-        You can also ban from ID to ban regardless whether they're
-        in the server or not.
-
-        Note that unlike the ban command, the reason comes first
-        and is not optional.
-
-        In order for this to work, the bot must have Ban Member permissions.
-
-        To use this command you must have Ban Members permission.
-        """
-
-        for member_id in members:
-            await ctx.guild.ban(discord.Object(id=member_id), reason=reason)
-
-        await ctx.send('\N{OK HAND SIGN}')
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(kick_members=True)
-    async def softban(self, ctx, member: MemberID, *, reason: ActionReason = None):
-        """Soft bans a member from the server.
-
-        A softban is basically banning the member from the server but
-        then unbanning the member as well. This allows you to essentially
-        kick the member while removing their messages.
-
-        In order for this to work, the bot must have Ban Member permissions.
-
-        To use this command you must have Kick Members permissions.
-        """
-
-        if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
-
-        obj = discord.Object(id=member)
-        await ctx.guild.ban(obj, reason=reason)
-        await ctx.guild.unban(obj, reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def unban(self, ctx, member: BannedMember, *, reason: ActionReason = None):
-        """Unbans a member from the server.
-
-        You can pass either the ID of the banned member or the Name#Discrim
-        combination of the member. Typically the ID is easiest to use.
-
-        In order for this to work, the bot must have Ban Member permissions.
-
-        To use this command you must have Ban Members permissions.
-        """
-
-        if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
-
-        await ctx.guild.unban(member.user, reason=reason)
-        if member.reason:
-            await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.')
-        else:
-            await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}).')
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def tempban(self, ctx, duration: time.FutureTime, member: MemberID, *, reason: ActionReason = None):
-        """Temporarily bans a member for the specified duration.
-
-        The duration can be a a short time form, e.g. 30d or a more human
-        duration such as "until thursday at 3PM" or a more concrete time
-        such as "2017-12-31".
-
-        Note that times are in UTC.
-
-        You can also ban from ID to ban regardless whether they're
-        in the server or not.
-
-        In order for this to work, the bot must have Ban Member permissions.
-
-        To use this command you must have Ban Members permission.
-        """
-
-        if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
-
-        reminder = self.bot.get_cog('Reminder')
-        if reminder is None:
-            return await ctx.send('Sorry, this functionality is currently unavailable. Try again later?')
-
-        await ctx.guild.ban(discord.Object(id=member), reason=reason)
-        timer = await reminder.create_timer(duration.dt, 'tempban', ctx.guild.id, ctx.author.id, member, connection=ctx.db)
-        await ctx.send(f'Banned ID {member} for {time.human_timedelta(duration.dt)}.')
-
-    async def on_tempban_timer_complete(self, timer):
-        guild_id, mod_id, member_id = timer.args
-
-        guild = self.bot.get_guild(guild_id)
-        if guild is None:
-            # RIP
-            return
-
-        moderator = guild.get_member(mod_id)
-        if moderator is None:
-            try:
-                moderator = await self.bot.get_user_info(mod_id)
-            except:
-                # request failed somehow
-                moderator = f'Mod ID {mod_id}'
+        await self.check_filter(message)
+
+    async def on_member_ban(self, member):
+        server = member.server
+        if not self.temp_cache.check(member, server, "BAN"):
+            await self.new_case(server,
+                                user=member,
+                                action="BAN")
+
+    async def on_member_unban(self, server, user):
+        if not self.temp_cache.check(user, server, "UNBAN"):
+            await self.new_case(server,
+                                user=user,
+                                action="UNBAN")
+
+    async def check_names(self, before, after):
+        if before.name != after.name:
+            if before.id not in self.past_names:
+                self.past_names[before.id] = [after.name]
             else:
-                moderator = f'{moderator} (ID: {mod_id})'
-        else:
-            moderator = f'{moderator} (ID: {mod_id})'
+                if after.name not in self.past_names[before.id]:
+                    names = deque(self.past_names[before.id], maxlen=20)
+                    names.append(after.name)
+                    self.past_names[before.id] = list(names)
+            dataIO.save_json("data/mod/past_names.json", self.past_names)
+
+        if before.nick != after.nick and after.nick is not None:
+            server = before.server
+            if server.id not in self.past_nicknames:
+                self.past_nicknames[server.id] = {}
+            if before.id in self.past_nicknames[server.id]:
+                nicks = deque(self.past_nicknames[server.id][before.id],
+                              maxlen=20)
+            else:
+                nicks = []
+            if after.nick not in nicks:
+                nicks.append(after.nick)
+                self.past_nicknames[server.id][before.id] = list(nicks)
+                dataIO.save_json("data/mod/past_nicknames.json",
+                                 self.past_nicknames)
+
+    def are_overwrites_empty(self, overwrites):
+        """There is currently no cleaner way to check if a
+        PermissionOverwrite object is empty"""
+        original = [p for p in iter(overwrites)]
+        empty = [p for p in iter(discord.PermissionOverwrite())]
+        return original == empty
+
+
+def strfdelta(delta):
+    s = []
+    if delta.days:
+        ds = '%i day' % delta.days
+        if delta.days > 1:
+            ds += 's'
+        s.append(ds)
+    hrs, rem = divmod(delta.seconds, 60*60)
+    if hrs:
+        hs = '%i hr' % hrs
+        if hrs > 1:
+            hs += 's'
+        s.append(hs)
+    mins, secs = divmod(rem, 60)
+    if mins:
+        s.append('%i min' % mins)
+    if secs:
+        s.append('%i sec' % secs)
+    return ' '.join(s)
+
+
+def check_folders():
+    folders = ("data", "data/mod/")
+    for folder in folders:
+        if not os.path.exists(folder):
+            print("Creating " + folder + " folder...")
+            os.makedirs(folder)
+
+
+def check_files():
+    ignore_list = {"SERVERS": [], "CHANNELS": []}
+
+    files = {
+        "ignorelist.json"     : ignore_list,
+        "filter.json"         : {},
+        "past_names.json"     : {},
+        "past_nicknames.json" : {},
+        "settings.json"       : {},
+        "modlog.json"         : {},
+        "perms_cache.json"    : {}
+    }
+
+    for filename, value in files.items():
+        if not os.path.isfile("data/mod/{}".format(filename)):
+            print("Creating empty {}".format(filename))
+            dataIO.save_json("data/mod/{}".format(filename), value)
 
-        reason = f'Automatic unban from timer made on {timer.created_at} by {moderator}.'
-        await guild.unban(discord.Object(id=member_id), reason=reason)
-
-    @commands.group(invoke_without_command=True)
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def mentionspam(self, ctx, count: int=None):
-        """Enables auto-banning accounts that spam mentions.
-
-        If a message contains `count` or more mentions then the
-        bot will automatically attempt to auto-ban the member.
-        The `count` must be greater than 3. If the `count` is 0
-        then this is disabled.
-
-        This only applies for user mentions. Everyone or Role
-        mentions are not included.
-
-        To use this command you must have the Ban Members permission.
-        """
-
-        if count is None:
-            query = """SELECT mention_count, COALESCE(safe_mention_channel_ids, '{}') AS channel_ids
-                       FROM guild_mod_config
-                       WHERE id=$1;
-                    """
-
-            row = await ctx.db.fetchrow(query, ctx.guild.id)
-            if row is None or not row['mention_count']:
-                return await ctx.send('This server has not set up mention spam banning.')
-
-            ignores = ', '.join(f'<#{e}>' for e in row['channel_ids']) or 'None'
-            return await ctx.send(f'- Threshold: {row["mention_count"]} mentions\n- Ignored Channels: {ignores}')
-
-        if count == 0:
-            query = """UPDATE guild_mod_config SET mention_count = NULL WHERE id=$1;"""
-            await ctx.db.execute(query, ctx.guild.id)
-            self.get_guild_config.invalidate(self, ctx.guild.id)
-            return await ctx.send('Auto-banning members has been disabled.')
-
-        if count <= 3:
-            await ctx.send('\N{NO ENTRY SIGN} Auto-ban threshold must be greater than three.')
-            return
-
-        query = """INSERT INTO guild_mod_config (id, mention_count, safe_mention_channel_ids)
-                   VALUES ($1, $2, '{}')
-                   ON CONFLICT (id) DO UPDATE SET
-                       mention_count = $2;
-                """
-        await ctx.db.execute(query, ctx.guild.id, count)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Now auto-banning members that mention more than {count} users.')
-
-    @mentionspam.command(name='ignore', aliases=['bypass'])
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def mentionspam_ignore(self, ctx, *channels: discord.TextChannel):
-        """Specifies what channels ignore mentionspam auto-bans.
-
-        If a channel is given then that channel will no longer be protected
-        by auto-banning from mention spammers.
-
-        To use this command you must have the Ban Members permission.
-        """
-
-        query = """UPDATE guild_mod_config
-                   SET safe_mention_channel_ids =
-                       ARRAY(SELECT DISTINCT * FROM unnest(COALESCE(safe_mention_channel_ids, '{}') || $2::bigint[]))
-                   WHERE id = $1;
-                """
-
-        if len(channels) == 0:
-            return await ctx.send('Missing channels to ignore.')
-
-        channel_ids = [c.id for c in channels]
-        await ctx.db.execute(query, ctx.guild.id, channel_ids)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Mentions are now ignored on {", ".join(c.mention for c in channels)}.')
-
-    @mentionspam.command(name='unignore', aliases=['protect'])
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
-    async def mentionspam_unignore(self, ctx, *channels: discord.TextChannel):
-        """Specifies what channels to take off the ignore list.
-
-        To use this command you must have the Ban Members permission.
-        """
-
-        if len(channels) == 0:
-            return await ctx.send('Missing channels to protect.')
-
-        query = """UPDATE guild_mod_config
-                   SET safe_mention_channel_ids =
-                       ARRAY(SELECT element FROM unnest(safe_mention_channel_ids) AS element
-                             WHERE NOT(element = ANY($2::bigint[])))
-                   WHERE id = $1;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, [c.id for c in channels])
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send('Updated mentionspam ignore list.')
-
-    @commands.group(aliases=['purge'])
-    @commands.guild_only()
-    @checks.has_permissions(manage_messages=True)
-    async def remove(self, ctx):
-        """Removes messages that meet a criteria.
-
-        In order to use this command, you must have Manage Messages permissions.
-        Note that the bot needs Manage Messages as well. These commands cannot
-        be used in a private message.
-
-        When the command is done doing its work, you will get a message
-        detailing which users got removed and how many messages got removed.
-        """
-
-        if ctx.invoked_subcommand is None:
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='remove')
-
-    async def do_removal(self, ctx, limit, predicate, *, before=None, after=None):
-        if limit > 2000:
-            return await ctx.send(f'Too many messages to search given ({limit}/2000)')
-
-        if before is None:
-            before = ctx.message
-        else:
-            before = discord.Object(id=before)
-
-        if after is not None:
-            after = discord.Object(id=after)
-
-        try:
-            deleted = await ctx.channel.purge(limit=limit, before=before, after=after, check=predicate)
-        except discord.Forbidden as e:
-            return await ctx.send('I do not have permissions to delete messages.')
-        except discord.HTTPException as e:
-            return await ctx.send(f'Error: {e} (try a smaller search?)')
-
-        spammers = Counter(m.author.display_name for m in deleted)
-        deleted = len(deleted)
-        messages = [f'{deleted} message{" was" if deleted == 1 else "s were"} removed.']
-        if deleted:
-            messages.append('')
-            spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
-            messages.extend(f'**{name}**: {count}' for name, count in spammers)
-
-        to_send = '\n'.join(messages)
-
-        if len(to_send) > 2000:
-            await ctx.send(f'Successfully removed {deleted} messages.', delete_after=10)
-        else:
-            await ctx.send(to_send, delete_after=10)
-
-    @remove.command()
-    async def embeds(self, ctx, search=100):
-        """Removes messages that have embeds in them."""
-        await self.do_removal(ctx, search, lambda e: len(e.embeds))
-
-    @remove.command()
-    async def files(self, ctx, search=100):
-        """Removes messages that have attachments in them."""
-        await self.do_removal(ctx, search, lambda e: len(e.attachments))
-
-    @remove.command()
-    async def images(self, ctx, search=100):
-        """Removes messages that have embeds or attachments."""
-        await self.do_removal(ctx, search, lambda e: len(e.embeds) or len(e.attachments))
-
-    @remove.command(name='all')
-    async def _remove_all(self, ctx, search=100):
-        """Removes all messages."""
-        await self.do_removal(ctx, search, lambda e: True)
-
-    @remove.command()
-    async def user(self, ctx, member: discord.Member, search=100):
-        """Removes all messages by the member."""
-        await self.do_removal(ctx, search, lambda e: e.author == member)
-
-    @remove.command()
-    async def contains(self, ctx, *, substr: str):
-        """Removes all messages containing a substring.
-
-        The substring must be at least 3 characters long.
-        """
-        if len(substr) < 3:
-            await ctx.send('The substring length must be at least 3 characters.')
-        else:
-            await self.do_removal(ctx, 100, lambda e: substr in e.content)
-
-    @remove.command(name='bot')
-    async def _bot(self, ctx, prefix=None, search=100):
-        """Removes a bot user's messages and messages with their optional prefix."""
-
-        def predicate(m):
-            return m.author.bot or (prefix and m.content.startswith(prefix))
-
-        await self.do_removal(ctx, search, predicate)
-
-    @remove.command(name='emoji')
-    async def _emoji(self, ctx, search=100):
-        """Removes all messages containing custom emoji."""
-        custom_emoji = re.compile(r'<:(\w+):(\d+)>')
-        def predicate(m):
-            return custom_emoji.search(m.content)
-
-        await self.do_removal(ctx, search, predicate)
-
-    @remove.command(name='reactions')
-    async def _reactions(self, ctx, search=100):
-        """Removes all reactions from messages that have them."""
-
-        if search > 2000:
-            return await ctx.send(f'Too many messages to search for ({search}/2000)')
-
-        total_reactions = 0
-        async for message in ctx.history(limit=search, before=ctx.message):
-            if len(message.reactions):
-                total_reactions += sum(r.count for r in message.reactions)
-                await message.clear_reactions()
-
-        await ctx.send(f'Successfully removed {total_reactions} reactions.')
-
-    @remove.command()
-    async def custom(self, ctx, *, args: str):
-        """A more advanced purge command.
-
-        This command uses a powerful "command line" syntax.
-        Most options support multiple values to indicate 'any' match.
-        If the value has spaces it must be quoted.
-
-        The messages are only deleted if all options are met unless
-        the `--or` flag is passed, in which case only if any is met.
-
-        The following options are valid.
-
-        `--user`: A mention or name of the user to remove.
-        `--contains`: A substring to search for in the message.
-        `--starts`: A substring to search if the message starts with.
-        `--ends`: A substring to search if the message ends with.
-        `--search`: How many messages to search. Default 100. Max 2000.
-        `--after`: Messages must come after this message ID.
-        `--before`: Messages must come before this message ID.
-
-        Flag options (no arguments):
-
-        `--bot`: Check if it's a bot user.
-        `--embeds`: Check if the message has embeds.
-        `--files`: Check if the message has attachments.
-        `--emoji`: Check if the message has custom emoji.
-        `--reactions`: Check if the message has reactions
-        `--or`: Use logical OR for all options.
-        `--not`: Use logical NOT for all options.
-        """
-        parser = Arguments(add_help=False, allow_abbrev=False)
-        parser.add_argument('--user', nargs='+')
-        parser.add_argument('--contains', nargs='+')
-        parser.add_argument('--starts', nargs='+')
-        parser.add_argument('--ends', nargs='+')
-        parser.add_argument('--or', action='store_true', dest='_or')
-        parser.add_argument('--not', action='store_true', dest='_not')
-        parser.add_argument('--emoji', action='store_true')
-        parser.add_argument('--bot', action='store_const', const=lambda m: m.author.bot)
-        parser.add_argument('--embeds', action='store_const', const=lambda m: len(m.embeds))
-        parser.add_argument('--files', action='store_const', const=lambda m: len(m.attachments))
-        parser.add_argument('--reactions', action='store_const', const=lambda m: len(m.reactions))
-        parser.add_argument('--search', type=int, default=100)
-        parser.add_argument('--after', type=int)
-        parser.add_argument('--before', type=int)
-
-        try:
-            args = parser.parse_args(shlex.split(args))
-        except Exception as e:
-            await ctx.send(str(e))
-            return
-
-        predicates = []
-        if args.bot:
-            predicates.append(args.bot)
-
-        if args.embeds:
-            predicates.append(args.embeds)
-
-        if args.files:
-            predicates.append(args.files)
-
-        if args.reactions:
-            predicates.append(args.reactions)
-
-        if args.emoji:
-            custom_emoji = re.compile(r'<:(\w+):(\d+)>')
-            predicates.append(lambda m: custom_emoji.search(m.content))
-
-        if args.user:
-            users = []
-            converter = commands.MemberConverter()
-            for u in args.user:
-                try:
-                    user = await converter.convert(ctx, u)
-                    users.append(user)
-                except Exception as e:
-                    await ctx.send(str(e))
-                    return
-
-            predicates.append(lambda m: m.author in users)
-
-        if args.contains:
-            predicates.append(lambda m: any(sub in m.content for sub in args.contains))
-
-        if args.starts:
-            predicates.append(lambda m: any(m.content.startswith(s) for s in args.starts))
-
-        if args.ends:
-            predicates.append(lambda m: any(m.content.endswith(s) for s in args.ends))
-
-        op = all if not args._or else any
-        def predicate(m):
-            r = op(p(m) for p in predicates)
-            if args._not:
-                return not r
-            return r
-
-        args.search = max(0, min(2000, args.search)) # clamp from 0-2000
-        await self.do_removal(ctx, args.search, predicate, before=args.before, after=args.after)
 
 def setup(bot):
-    bot.add_cog(Mod(bot))
+    global logger
+    check_folders()
+    check_files()
+    logger = logging.getLogger("mod")
+    # Prevents the logger from being loaded again in case of module reload
+    if logger.level == 0:
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(
+            filename='data/mod/mod.log', encoding='utf-8', mode='a')
+        handler.setFormatter(
+            logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+        logger.addHandler(handler)
+    n = Mod(bot)
+    bot.add_listener(n.check_names, "on_member_update")
+    bot.add_cog(n)
