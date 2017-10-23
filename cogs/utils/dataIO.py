@@ -1,79 +1,97 @@
-import json
-import os
-import logging
 from random import randint
-
-class InvalidFileIO(Exception):
-    pass
+from json import decoder, dump, load
+from os import replace
+from os.path import splitext
 
 class DataIO():
-    def __init__(self):
-        self.logger = logging.getLogger("red")
 
     def save_json(self, filename, data):
-        """Atomically saves json file"""
-        rnd = randint(1000, 9999)
-        path, ext = os.path.splitext(filename)
-        tmp_file = "{}-{}.tmp".format(path, rnd)
-        self._save_json(tmp_file, data)
+        """Atomically save a JSON file given a filename and a dictionary."""
+        path, ext = splitext(filename)
+        tmp_file = "{}.{}.tmp".format(path, randint(1000, 9999))
+        with open(tmp_file, 'w', encoding='utf-8') as f:
+            dump(data, f, indent=4,sort_keys=True,separators=(',',' : '))
         try:
-            self._read_json(tmp_file)
-        except json.decoder.JSONDecodeError:
-            self.logger.exception("Attempted to write file {} but JSON "
+            with open(tmp_file, 'r', encoding='utf-8') as f:
+                data = load(f)
+        except decoder.JSONDecodeError:
+            print("Attempted to write file {} but JSON "
                                   "integrity check on tmp file has failed. "
                                   "The original file is unaltered."
                                   "".format(filename))
             return False
-        os.replace(tmp_file, filename)
+        except Exception as e:
+            print('A issue has occured saving ' + filename + '.\n'
+                  'Traceback:\n'
+                  '{0} {1}'.format(str(e), e.args))
+            return False
+
+        replace(tmp_file, filename)
         return True
 
     def load_json(self, filename):
-        """Loads json file"""
-        return self._read_json(filename)
+        """Load a JSON file and return a dictionary."""
+        try:
+            with open(filename, 'r', encoding='utf-8') as f:
+                data = load(f)
+            return data
+        except Exception as e:
+            print('A issue has occured loading ' + filename + '.\n'
+                  'Traceback:\n'
+                  '{0} {1}'.format(str(e), e.args))
+            return {}
+
+    def append_json(self, filename, data):
+        """Append a value to a JSON file."""
+        try:
+            with open(filename, 'r', encoding='utf-8') as f:
+                file = load(f)
+        except Exception as e:
+            print('A issue has occured loading ' + filename + '.\n'
+                  'Traceback:\n'
+                  '{0} {1}'.format(str(e), e.args))
+            return False
+        try:
+            file.append(data)
+        except Exception as e:
+            print('A issue has occured updating ' + filename + '.\n'
+                  'Traceback:\n'
+                  '{0} {1}'.format(str(e), e.args))
+            return False
+        path, ext = splitext(filename)
+        tmp_file = "{}.{}.tmp".format(path, randint(1000, 9999))
+        with open(tmp_file, 'w', encoding='utf-8') as f:
+            dump(file, f, indent=4,sort_keys=True,separators=(',',' : '))
+        try:
+            with open(tmp_file, 'r', encoding='utf-8') as f:
+                data = load(f)
+        except decoder.JSONDecodeError:
+            print("Attempted to write file {} but JSON "
+                                  "integrity check on tmp file has failed. "
+                                  "The original file is unaltered."
+                                  "".format(filename))
+            return False
+        except Exception as e:
+            print('A issue has occured saving ' + filename + '.\n'
+                  'Traceback:\n'
+                  '{0} {1}'.format(str(e), e.args))
+            return False
+
+        replace(tmp_file, filename)
+        return True
 
     def is_valid_json(self, filename):
-        """Verifies if json file exists / is readable"""
+        """Verify that a JSON file exists and is readable. Take in a filename and return a boolean."""
         try:
-            self._read_json(filename)
+            with open(filename, 'r', encoding='utf-8') as f:
+                data = load(f)
             return True
-        except FileNotFoundError:
+        except (FileNotFoundError, decoder.JSONDecodeError):
             return False
-        except json.decoder.JSONDecodeError:
+        except Exception as e:
+            print('A issue has occured validating ' + filename + '.\n'
+                  'Traceback:\n'
+                  '{0} {1}'.format(str(e), e.args))
             return False
-
-    def _read_json(self, filename):
-        with open(filename, encoding='utf-8', mode="r") as f:
-            data = json.load(f)
-        return data
-
-    def _save_json(self, filename, data):
-        with open(filename, encoding='utf-8', mode="w") as f:
-            json.dump(data, f, indent=4,sort_keys=True,
-                separators=(',',' : '))
-        return data
-
-    def _legacy_fileio(self, filename, IO, data=None):
-        """Old fileIO provided for backwards compatibility"""
-        if IO == "save" and data != None:
-            return self.save_json(filename, data)
-        elif IO == "load" and data == None:
-            return self.load_json(filename)
-        elif IO == "check" and data == None:
-            return self.is_valid_json(filename)
-        else:
-            raise InvalidFileIO("FileIO was called with invalid"
-                " parameters")
-
-def get_value(filename, key):
-    with open(filename, encoding='utf-8', mode="r") as f:
-        data = json.load(f)
-    return data[key]
-
-def set_value(filename, key, value):
-    data = fileIO(filename, "load")
-    data[key] = value
-    fileIO(filename, "save", data)
-    return True
 
 dataIO = DataIO()
-fileIO = dataIO._legacy_fileio # backwards compatibility

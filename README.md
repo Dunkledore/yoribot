@@ -1,54 +1,51 @@
-![intro](http://i.imgur.com/RgGlNpQ.jpg)
+# Discord Selfbot
 
-# Red - A fully customizable Discord bot
-#### *Music, admin, trivia, fun commands and much more!*
-[<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26)  [<img src="https://img.shields.io/badge/discord-py-blue.svg">](https://github.com/Rapptz/discord.py) [<img src="https://discordapp.com/api/guilds/133049272517001216/widget.png?style=shield">](https://discord.gg/red) [![Build Status](https://api.travis-ci.org/Cog-Creators/Red-DiscordBot.svg?branch=develop)](https://travis-ci.org/Cog-Creators/Red-DiscordBot) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FFDATZ8NFFV6Y) [<img src="https://img.shields.io/github/license/appu1232/Discord-Selfbot.svg?style=flat-square">](https://github.com/appu1232/Discord-Selfbot/blob/master/LICENSE) [![Build Status](https://travis-ci.org/appu1232/Discord-Selfbot.svg?branch=master)](https://travis-ci.org/appu1232/Discord-Selfbot)
 
-**Red** is a fully modular bot – meaning all features and commands can be enabled/disabled to your liking, making it completely customizable.  
-This is also a *self-hosted bot* – meaning you will need to host and maintain your own instance. You can turn Red into an admin bot, music bot, trivia bot, new best friend or all of these together!  
-[Installation is easy](https://twentysix26.github.io/Red-Docs/), and you do NOT need to know anything about coding! Aside from installation and updating, every part of the bot can be controlled from within Discord.
+Come join the dedicated server for this bot! Ask questions, give suggestions, get help, or just hang out. Don't be shy, we don't bite:
 
-The default set of modules includes and is not limited to:
-* Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
-* Trivia (lists are included and can be easily added)
-* Music features (YouTube, SoundCloud, local files, playlists, queues)
-* Stream alerts (Twitch, Mixer, Smashcast)
-* Slot machines
-* Custom commands
-* Imgur/gif search
+[<img src="https://canary.discordapp.com/api/guilds/299293492645986307/widget.png?style=banner2">](https://discord.gg/TBQE72k)
 
-Additionally, other modules (cogs) can be easily found and added from our growing community of cog repositories. Including:
-* Cleverbot integration (talk to Red and she talks back)
-* Loggers
-* Welcome messages setup
-* Reminders
-* Raffles
-* Leveler (increase levels for server participation)
-* Sound effects
-* And much, much more!
+### [**Install guide + list of all commands.**](https://github.com/appu1232/Discord-Selfbot/wiki)
 
-Feel free to take a [peek](https://cogs.red/)!
+Takes less than 2 minutes to set up. Has various commands and utilities including a keyword logger/notifier, adding custom commands/reactions, and much more.
 
-# Installation
+![](http://i.imgur.com/3H9zpop.gif)
 
-The installation process is straightforward; all major platforms are supported: 
-* [Windows](https://twentysix26.github.io/Red-Docs/red_install_windows/)
-* [Linux](https://twentysix26.github.io/Red-Docs/red_install_linux/)
-* [macOS](https://twentysix26.github.io/Red-Docs/red_install_mac/)
+## Features
 
-Read the [getting started](https://twentysix26.github.io/Red-Docs/red_getting_started/) guide to quickly learn how to use Red.  
+- Google web and image search.
+- Keyword/user logger and notifier. Get notified when keywords you specified are said in any of your server or follow users and get notified when they send a message (with a cooldown). Useful to track someone or see if someone mentioned your name or your favorite show/book/whatever else keywords and you want to stalk— I mean, talk to them about it.
+- Set your game/stream to anything or set up multiple and cycle through them.
+- Cycle through avatars automatically.
+- Save image/gif/webm dumps (urls or attachments) in channels quickly to your computer (checks for duplicates as well).
+- Detailed image/gif source finder using sauce.nao
+- Add custom commands/reactions. The commands get saved to ``commands.json`` which has some sample commands added to start with. Can be used as macros for other commands as well.
+- Custom embeds.
+- Todo list with notifications and a timer (repeatable) as well as ability to send a message to a channel when the timer goes off.
+- Smart MyAnimeList search of anime and manga/LNs using google custom search (and if that fails, using myanimelist's api for search)
+- Save/output the last n number of messages from a chat, including any messages that were deleted.
+- Get detailed information about a server and all of its members.
+- Purge the last n messages you sent in a channel.
+- Simple calculator.
+- Quick commands so you can post pointless stuff as fast as possible like ``lenny``, ``shrug``, ``flip``, ``unflip``, and ``comeatmebro``
+- Meme commands like spacing text, converting text to regional indicator emojis, mass reacting to messages, and converting text to ascii art.
+- Python interpreter. Modeled off of RoboDanny's ?debug command. Does both exec() and eval(). Ability to save and load scripts.
+- Various other misc commands like spoiler tagging text (encrypts the text), creating strawpolls, embeding text, server/user info commands, and more.
 
-If you have any other questions, feel free to explore the [Docs](https://twentysix26.github.io/Red-Docs/) for guidance.
+## Acknowledgements
 
-If [*after reading the guides*](https://twentysix26.github.io/Red-Docs/) you are still experiencing issues that are not listed on [this page](https://twentysix26.github.io/Red-Docs/red_guide_troubleshooting/) or in the [FAQs](https://twentysix26.github.io/Red-Docs/red_faq/), feel free to join the [official server](https://discord.gg/red) for help.  
-Have fun!
+- Thanks to [architdate](https://github.com/architdate), [LyricLy](https://github.com/LyricLy), and [chenzw95](https://github.com/chenzw95) for actively participating in development, addition of new features, and other optimizations.
+- Thanks to [Hubcapp](https://github.com/Hubcapp) for the much improved >react command.
+- Thanks to [adjnouobsref](https://github.com/adjnouobsref) for the spoiler tags and various other contributions.
+- Used the code for lockdown commands from [Kurisu](https://github.com/916253/Kurisu/blob/master/addons/lockdown.py) bot. Slight modifications is message sending and contents of messages.
+- Used a lot of [Danny's](https://github.com/Rapptz) code for certain parts, especially parsing Google cards and the debugger.
+- Used [eye-sigil's](https://github.com/eye-sigil) code for the >repl command.
+- Thanks to [IgneelDxD](https://github.com/IgneelDxD) for a lot of suggestions and fixes.
+- Thanks to [Bluscream](https://github.com/Bluscream) for a lot of helpful pull requests and custom cogs.
 
-# Join the community!
+## Buy me a cup of coffee
 
-Red is in continuous development, and it’s supported by an active community which produces new content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t [find](https://cogs.red/) what you’re looking for, we are open to suggestions! Stay tuned by [joining the official server](https://discord.gg/red)!
+This bot is open source and always will be, even if I don't get donations. That said, I know there are people out there that may still want to donate just to show their appreciation so this is for you guys. Thanks in advance!
 
-# License
-
-Released under the [GNU GPL v3](LICENSE).
-
-*Red is named after the main character of "Transistor", a videogame by [Supergiant Games](https://www.supergiantgames.com/games/transistor/)*
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FFDATZ8NFFV6Y)
