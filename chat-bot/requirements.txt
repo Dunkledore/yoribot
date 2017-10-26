@@ -1,8 +1,0 @@
-aioredis
-motor
-git+https://github.com/cookkkie/aiomeasures.git
-BeautifulSoup4
-raven
-raven_aiohttp
-git+https://github.com/rg3/youtube-dl.git
-
