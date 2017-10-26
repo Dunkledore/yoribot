@@ -1,0 +1,25 @@
+<div id="navbar" class="navbar-collapse collapse">
+	<ul class="nav navbar-nav pull-left">
+		<li><a href="{{url_for('about')}}"><i class="fa fa-question"></i> About</a></li>
+		<li><a href="{{url_for('donate')}}"><i class="fa fa-gift"></i> Donate</a></li>
+		<li><a target="_blank" href="https://discord.gg/0tOgeGSG9kYFepgL"><i class="fa fa-support"></i> Support</a></li>
+	</ul>
+	<ul class="nav navbar-nav pull-right">
+		<li><a href="http://twitter.com/mee6bot" target="_blank" style="padding-left:5px; padding-right:5px;"><i class="fa fa-twitter"></i></a></li>
+		<li><a href="https://discord.gg/mee6" target="_blank" style="padding-left:5px; padding-right:5px;"><i class="icon-discord"></i></a></li>
+		<li><a href="http://github.com/cookkkie/mee6" target="_blank" style="padding-left:5px; padding-right:5px;"><i class="fa fa-github"></i></a></li>
+		{% if session['user'] is defined %}
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<img src="{{session['user']|avatar}}" class="profile-image img-circle"> {{session['user']['username']}} <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{url_for('donate')}}"><i class="fa fa-gift"></i> {{session['user']['points']}} Points</a></li>
+					<li><a href="{{url_for('select_server')}}"><i class="fa fa-gamepad"></i> Servers</a></li>
+					<li><a href="{{url_for('logout')}}"><i class="fa fa-sign-out"></i> Sign Out</a></li>
+				</ul>
+			</li>
+		{% else %}
+			<li><a href="{{url_for('login')}}"><i class="fa fa-sign-in"></i> Login</a></li>
+		{% endif %}
+	</ul>
+</div>
