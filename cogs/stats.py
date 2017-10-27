@@ -12,7 +12,7 @@ import os
 
 log = logging.getLogger(__name__)
 
-LOGGING_CHANNEL = 309632009427222529
+LOGGING_CHANNEL = 373278494496391178
 
 class Commands(db.Table):
     id = db.PrimaryKeyColumn()
