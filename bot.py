@@ -22,6 +22,7 @@ log = logging.getLogger(__name__)
 
 initial_extensions = (
     'cogs.meta',
+    'cogs.catsanddogs',
     'cogs.mod',
     'cogs.tags',
     'cogs.admin',
