@@ -58,7 +58,7 @@ class Music:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(pass_context=True, no_pm=True)
     async def audiojoin(self, ctx, *, channel: discord.VoiceChannel):
         """Joins a voice channel"""
 
