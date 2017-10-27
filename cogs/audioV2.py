@@ -66,6 +66,7 @@ class Music:
             return await ctx.voice_client.move_to(channel)
 
         await channel.connect()
+        await ctx.send('Joining Channel')
 
     @commands.command(name="local")
     async def play_file(self, ctx, *, query):
