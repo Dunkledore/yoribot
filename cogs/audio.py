@@ -500,7 +500,7 @@ class Audio:
         invalid_downloads = [d for d in downloaders if d.error is not None]
         invalid_number = len(invalid_downloads)
         if(invalid_number > 0):
-            await self.bot.send_message(channel, "The queue contains {} item(s)"
+            await ctx.send(channel, "The queue contains {} item(s)"
                                             " that can not be played.".format(invalid_number))
 
         return songs
@@ -876,7 +876,7 @@ class Audio:
                 message = ("I'm unable to play '{}' because of an error:\n"
                           "'{}'".format(clean_url, str(e)))
                 message = escape(message, mass_mentions=True)
-                await self.bot.send_message(channel, message)
+                await ctx.send(channel, message)
                 return
             except MaximumLength:
                 message = ("I'm unable to play '{}' because it exceeds the "
@@ -1144,7 +1144,7 @@ class Audio:
             return
 
         self.settings["MAX_CACHE"] = size
-        await self.bot.say("Max cache size set to {} MB.".format(size))
+        await ctx.send("Max cache size set to {} MB.".format(size))
         self.save_settings()
 
     @audioset.command(name="emptydisconnect", pass_context=True)
@@ -1228,7 +1228,7 @@ class Audio:
             self.save_settings()
         else:
             msg = "Volume must be between 0 and 100."
-        await self.bot.say(msg)
+        await ctx.send(msg)
 
     @audioset.command(pass_context=True, name="vote", no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
@@ -1394,7 +1394,7 @@ class Audio:
         if playlists:
             playlists = "Available local playlists:\n\n" + playlists
             for page in pagify(playlists, delims=[" "]):
-                await self.bot.say(page)
+                await ctx.send(page)
         else:
             await self.bot.say("There are no playlists.")
 
@@ -1616,7 +1616,7 @@ class Audio:
         if playlists:
             playlists = "Available playlists:\n\n" + playlists
             for page in pagify(playlists, delims=[" "]):
-                await self.bot.say(page)
+                await ctx.send(page)
         else:
             await self.bot.say("There are no playlists.")
 
@@ -1815,7 +1815,7 @@ class Audio:
                 song_info.append("{}. {.webpage_url}".format(num, song))
         msg += "\n***Next up:***\n" + "\n".join(song_info)
 
-        await self.bot.say(msg)
+        await ctx.send(msg)
 
     @commands.group(pass_context=True, no_pm=True)
     async def repeat(self, ctx):
@@ -1827,7 +1827,7 @@ class Audio:
                     msg = "The queue is currently looping."
                 else:
                     msg = "The queue is currently not looping."
-                await self.bot.say(msg)
+                await ctx.send(msg)
                 await self.bot.say(
                     "Do `{}repeat toggle` to change this.".format(ctx.prefix))
             else:
@@ -1985,7 +1985,7 @@ class Audio:
                    "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
                        song.title, song.creator, song.uploader,
                        song.view_count, dur, song.webpage_url))
-            await self.bot.say(msg.replace("**Author:** None\n", "")
+            await ctx.send(msg.replace("**Author:** None\n", "")
                                   .replace("**Views:** None\n", "")
                                   .replace("**Uploader:** None\n", "")
                                   .replace("**Duration:** None\n", ""))

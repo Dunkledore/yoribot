@@ -115,7 +115,7 @@ class Meta:
         except Exception as e:
             await ctx.send(f'{ctx.tick(False)} {e}')
         else:
-            await ctx.send(ctx.tick(True))
+            await ctx.send(f'\N{OK HAND SIGN}')
 
     @prefix_add.error
     async def prefix_add_error(self, ctx, error):
@@ -145,7 +145,7 @@ class Meta:
         except Exception as e:
             await ctx.send(f'{ctx.tick(False)} {e}')
         else:
-            await ctx.send(ctx.tick(True))
+            await ctx.send(f'\N{OK HAND SIGN}')
 
     @prefix.command(name='clear')
     @checks.is_mod()
@@ -158,7 +158,7 @@ class Meta:
         """
 
         await self.bot.set_guild_prefixes(ctx.guild, [])
-        await ctx.send(ctx.tick(True))
+        await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command()
     async def source(self, ctx, *, command: str = None):
