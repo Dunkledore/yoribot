@@ -176,15 +176,15 @@ def human_timedelta(dt, *, source=None):
             continue
 
         if elem > 1:
-            output.append(f'{elem} {attr}')
+            output.append('{elem} {attr}')
         else:
-            output.append(f'{elem} {attr[:-1]}')
+            output.append('{elem} {attr[:-1]}')
 
     if len(output) == 0:
         return 'now'
     elif len(output) == 1:
         return output[0] + suffix
     elif len(output) == 2:
-        return f'{output[0]} and {output[1]}{suffix}'
+        return '{output[0]} and {output[1]}{suffix}'
     else:
-        return f'{output[0]}, {output[1]} and {output[2]}{suffix}'
+        return '{output[0]}, {output[1]} and {output[2]}{suffix}'

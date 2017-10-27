@@ -36,10 +36,10 @@ def cache(maxsize=128, strategy=Strategy.lru):
             # we do care what 'self' parameter is when we __repr__ it
             def _true_repr(o):
                 if o.__class__.__repr__ is object.__repr__:
-                    return f'<{o.__class__.__module__}.{o.__class__.__name__}>'
+                    return '<{o.__class__.__module__}.{o.__class__.__name__}>'
                 return repr(o)
 
-            key = [ f'{func.__module__}.{func.__name__}' ]
+            key = [ '{func.__module__}.{func.__name__}' ]
             key.extend(_true_repr(o) for o in args)
             for k, v in kwargs.items():
                 # note: this only really works for this use case in particular
