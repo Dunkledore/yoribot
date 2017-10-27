@@ -35,7 +35,8 @@ class Admin:
         if e.text is None:
             return f'```py\n{e.__class__.__name__}: {e}\n```'
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
-
+   
+    @commands.command(hidden=True)
     async def load(self, ctx, *, module):
         """Loads a module."""
         try:
