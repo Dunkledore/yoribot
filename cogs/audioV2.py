@@ -58,18 +58,6 @@ class Music:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def audiojoin(self, ctx):
-        """Joins a voice channel"""
-
-        channel = ctx.message.author.voice_channel
-        await ctx.say(ctx.voice_client)
-        if ctx.voice_client is not None:
-            return await ctx.voice_client.move_to(channel)
-
-        await channel.connect()
-
-
     @commands.command(name="local")
     async def play_file(self, ctx, *, query):
         """Plays a file from the local filesystem"""
@@ -119,7 +107,7 @@ class Music:
         await ctx.send("Changed volume to {}%".format(volume))
 
     @commands.command()
-    async def top(self, ctx):
+    async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
 
         await ctx.voice_client.disconnect()
