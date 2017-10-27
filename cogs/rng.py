@@ -11,7 +11,7 @@ class RNG:
     async def random(self, ctx):
         """Displays a random thing you request."""
         if ctx.invoked_subcommand is None:
-            await ctx.send('Incorrect random subcommand passed. Try {ctx.prefix}help random')
+            await ctx.send(f'Incorrect random subcommand passed. Try {ctx.prefix}help random')
 
     @random.command()
     async def weapon(self, ctx, count=1):
@@ -31,7 +31,7 @@ class RNG:
         if weapons:
             if count == 1:
                 weapon = rng.choice(weapons)
-                await ctx.send('{weapon["name"]} with {weapon["sub"]} and {weapon["special"]} special.')
+                await ctx.send(f'{weapon["name"]} with {weapon["sub"]} and {weapon["special"]} special.')
             else:
                 sample = rng.sample(weapons, count)
                 await ctx.send('\n'.join(w['name'] for w in sample))
@@ -59,7 +59,7 @@ class RNG:
                 result.append('')
                 result.append('**Team Bravo**')
 
-            result.append('Player {i + 1}: {weapons[i]["name"]}')
+            result.append(f'Player {i + 1}: {weapons[i]["name"]}')
 
         await ctx.send('\n'.join(result))
 
@@ -77,7 +77,7 @@ class RNG:
         if tag is None:
             return await ctx.send('This server has no tags.')
 
-        await ctx.send('Random tag found: {tag["name"]}\n{tag["content"]}')
+        await ctx.send(f'Random tag found: {tag["name"]}\n{tag["content"]}')
 
     @random.command(name='map')
     async def _map(self, ctx):
@@ -111,7 +111,7 @@ class RNG:
         if maps:
             mode = rng.choice(['Splat Zones', 'Tower Control', 'Rainmaker'])
             stage = rng.choice(maps)
-            await ctx.send('{mode} on {stage}')
+            await ctx.send(f'{mode} on {stage}')
 
         del splatoon
 

@@ -94,7 +94,7 @@ class Reminder:
         await self.bot.pool.execute(query, timer.id)
 
         # dispatch the event
-        event_name = '{timer.event}_timer_complete'
+        event_name = f'{timer.event}_timer_complete'
         self.bot.dispatch(event_name, timer)
 
     async def dispatch_timers(self):
@@ -200,7 +200,7 @@ class Reminder:
 
         timer = await self.create_timer(when.dt, 'reminder', ctx.author.id, ctx.channel.id, when.arg, connection=ctx.db)
         delta = time.human_timedelta(when.dt, source=ctx.message.created_at)
-        await ctx.send("Alright {ctx.author.mention}, in {delta} I'll remind you about {when.arg}.")
+        await ctx.send(f"Alright {ctx.author.mention}, in {delta} I'll remind you about {when.arg}.")
 
     @reminder.command(name='list')
     async def reminder_list(self, ctx):
@@ -223,10 +223,10 @@ class Reminder:
         if len(records) == 5:
             e.set_footer(text='Only showing up to 5 reminders.')
         else:
-            e.set_footer(text='{len(records)} reminder{"s" if len(records) > 1 else ""}')
+            e.set_footer(text=f'{len(records)} reminder{"s" if len(records) > 1 else ""}')
 
         for expires, message in records:
-            e.add_field(name='In {time.human_timedelta(expires)}', value=message, inline=False)
+            e.add_field(name=f'In {time.human_timedelta(expires)}', value=message, inline=False)
 
         await ctx.send(embed=e)
 
@@ -242,7 +242,7 @@ class Reminder:
             except:
                 return
 
-        await channel.send('<@{author_id}>, {timer.human_delta} you asked to be reminded about {message}.')
+        await channel.send(f'<@{author_id}>, {timer.human_delta} you asked to be reminded about {message}.')
 
 def setup(bot):
     bot.add_cog(Reminder(bot))

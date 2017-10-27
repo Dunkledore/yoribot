@@ -25,7 +25,7 @@ class LazyEntity:
         g = self.guild
         resolved = g.get_channel(e) or g.get_member(e)
         if resolved is None:
-            self._cache = '<Not Found: {e}>'
+            self._cache = f'<Not Found: {e}>'
         else:
             self._cache = resolved.mention
         return self._cache

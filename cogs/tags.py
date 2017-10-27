@@ -184,7 +184,7 @@ class Tags:
                 raise RuntimeError('Tag not found. Maybe check the tag box?')
 
             names = '\n'.join(r['name'] for r in rows)
-            raise RuntimeError('Tag not found. Did you mean...\n{names}')
+            raise RuntimeError(f'Tag not found. Did you mean...\n{names}')
 
         con = connection or self.bot.pool
 
@@ -294,9 +294,9 @@ class Tags:
         else:
             # The status returns INSERT N M, where M is the number of rows inserted.
             if status[-1] == '0':
-                await ctx.send('A tag with the name of "{old_name}" does not exist.')
+                await ctx.send(f'A tag with the name of "{old_name}" does not exist.')
             else:
-                await ctx.send('Tag alias "{new_name}" that points to "{old_name}" successfully created.')
+                await ctx.send(f'Tag alias "{new_name}" that points to "{old_name}" successfully created.')
 
     @tag.command(ignore_extra=False)
     @suggest_box()
@@ -328,7 +328,7 @@ class Tags:
             ctx.message = name
             name = await converter.convert(ctx, name.content)
         except commands.BadArgument as e:
-            return await ctx.send('{e}. Redo the command "{ctx.prefix}tag make" to retry.')
+            return await ctx.send(f'{e}. Redo the command "{ctx.prefix}tag make" to retry.')
         finally:
             ctx.message = original
 
@@ -344,7 +344,7 @@ class Tags:
         row = await ctx.db.fetchrow(query, ctx.guild.id, name.lower())
         if row is not None:
             return await ctx.send('Sorry. A tag with that name already exists. ' \
-                                 'Redo the command "{ctx.prefix}tag make" to retry.')
+                                 f'Redo the command "{ctx.prefix}tag make" to retry.')
 
 
         await ctx.send(f'Neat. So the name is {name}. What about the tag\'s content?')
@@ -372,7 +372,7 @@ class Tags:
     @make.error
     async def tag_make_error(self, ctx, error):
         if isinstance(error, commands.TooManyArguments):
-            await self.bot.say('Please call just {ctx.prefix}tag make')
+            await self.bot.say(f'Please call just {ctx.prefix}tag make')
 
     async def guild_tag_stats(self, ctx):
         # I'm not sure on how to do this with a single query
@@ -398,7 +398,7 @@ class Tags:
             e.description = 'No tag statistics here.'
         else:
             total = records[0]
-            e.description = '{total["Count"]} tags, {total["Total Uses"]} tag uses'
+            e.description = f'{total["Count"]} tags, {total["Total Uses"]} tag uses'
 
         if len(records) < 3:
             # fill with data to ensure that we have a minimum of 3
@@ -410,7 +410,7 @@ class Tags:
             for index, value in enumerate(seq):
                 yield chr(emoji + index), value
 
-        value = '\n'.join('{emoji}: {name} ({uses} uses)' if name else f'{emoji}: Nothing!'
+        value = '\n'.join(f'{emoji}: {name} ({uses} uses)' if name else f'{emoji}: Nothing!'
                           for (emoji, (name, uses, _, _)) in emojize(records))
 
         e.add_field(name='Top Tags', value=value, inline=False)
@@ -432,7 +432,7 @@ class Tags:
             # fill with data to ensure that we have a minimum of 3
             records.extend((None, None) for i in range(0, 3 - len(records)))
 
-        value = '\n'.join('{emoji}: <@{author_id}> ({uses} times)' if author_id else f'{emoji}: No one!'
+        value = '\n'.join(f'{emoji}: <@{author_id}> ({uses} times)' if author_id else f'{emoji}: No one!'
                           for (emoji, (uses, author_id)) in emojize(records))
         e.add_field(name='Top Tag Users', value=value, inline=False)
 
@@ -454,7 +454,7 @@ class Tags:
             # fill with data to ensure that we have a minimum of 3
             records.extend((None, None) for i in range(0, 3 - len(records)))
 
-        value = '\n'.join('{emoji}: <@{owner_id}> ({count} tags)' if owner_id else f'{emoji}: No one!'
+        value = '\n'.join(f'{emoji}: <@{owner_id}> ({count} tags)' if owner_id else f'{emoji}: No one!'
                           for (emoji, (count, owner_id)) in emojize(records))
         e.add_field(name='Top Tag Creators', value=value, inline=False)
 
@@ -505,11 +505,11 @@ class Tags:
 
         for (offset, (name, uses, _, _)) in enumerate(records):
             if name:
-                value = '{name} ({uses} uses)'
+                value = f'{name} ({uses} uses)'
             else:
                 value = 'Nothing!'
 
-            e.add_field(name='{chr(emoji + offset)} Owned Tag', value=value)
+            e.add_field(name=f'{chr(emoji + offset)} Owned Tag', value=value)
 
         await ctx.send(embed=e)
 
@@ -564,9 +564,9 @@ class Tags:
             args = [name, ctx.guild.id]
         else:
             args = [name, ctx.guild.id, ctx.author.id]
-            clause = '{clause} AND owner_id=$3'
+            clause = f'{clause} AND owner_id=$3'
 
-        query = 'DELETE FROM tag_lookup WHERE {clause} RETURNING tag_id;'
+        query = f'DELETE FROM tag_lookup WHERE {clause} RETURNING tag_id;'
         deleted = await ctx.db.fetchrow(query, *args)
 
         if deleted is None:
@@ -574,7 +574,7 @@ class Tags:
             return
 
         args.append(deleted[0])
-        query = 'DELETE FROM tags WHERE id=${len(args)} AND {clause};'
+        query = f'DELETE FROM tags WHERE id=${len(args)} AND {clause};'
         status = await ctx.db.execute(query, *args)
 
         # the status returns DELETE <count>, similar to UPDATE above
@@ -595,7 +595,7 @@ class Tags:
         user = self.bot.get_user(owner_id) or (await self.bot.get_user_info(owner_id))
         embed.set_author(name=str(user), icon_url=user.avatar_url)
 
-        embed.add_field(name='Owner', value='<@{owner_id}>')
+        embed.add_field(name='Owner', value=f'<@{owner_id}>')
         embed.add_field(name='Original', value=record['name'])
         await ctx.send(embed=embed)
 
@@ -754,16 +754,16 @@ class Tags:
         count = count[0] # COUNT(*) always returns 0 or higher
 
         if count == 0:
-            return await ctx.send('{member} does not have any tags to purge.')
+            return await ctx.send(f'{member} does not have any tags to purge.')
 
-        confirm = await ctx.prompt('This will delete {count} tags are you sure? **This action cannot be reversed**.')
+        confirm = await ctx.prompt(f'This will delete {count} tags are you sure? **This action cannot be reversed**.')
         if not confirm:
             return await ctx.send('Cancelling tag purge request.')
 
         query = "DELETE FROM tags WHERE location_id=$1 AND owner_id=$2;"
         await ctx.db.execute(query, ctx.guild.id, member.id)
 
-        await ctx.send('Successfully removed all {count} tags that belong to {member}.')
+        await ctx.send(f'Successfully removed all {count} tags that belong to {member}.')
 
     @tag.command()
     @suggest_box()
@@ -809,7 +809,7 @@ class Tags:
         query = "SELECT id, owner_id FROM tags WHERE location_id=$1 AND LOWER(name)=$2;"
         row = await ctx.db.fetchrow(query, ctx.guild.id, tag.lower())
         if row is None:
-            return await ctx.send('A tag with the name of "{tag}" does not exist.')
+            return await ctx.send(f'A tag with the name of "{tag}" does not exist.')
 
         # just to be sure
         if not ctx.guild.chunked:
@@ -961,7 +961,7 @@ class Tags:
         user = self.bot.get_user(owner_id) or (await self.bot.get_user_info(owner_id))
         embed.set_author(name=str(user), icon_url=user.avatar_url)
 
-        embed.add_field(name='Owner', value='<@{owner_id}>')
+        embed.add_field(name='Owner', value=f'<@{owner_id}>')
         embed.add_field(name='Uses', value=data['uses'])
         embed.add_field(name='Rank', value=data['rank'])
 
@@ -1038,13 +1038,13 @@ class Tags:
         emoji = 129351 # ord(':first_place:')
 
         for offset, (name, uses, _, _) in enumerate(top_tags):
-            embed.add_field(name='{chr(emoji + offset)} Tag', value='{name} ({uses} uses)')
+            embed.add_field(name=f'{chr(emoji + offset)} Tag', value=f'{name} ({uses} uses)')
 
         values = []
         for offset, (total, uses, owner_id, _) in enumerate(top_creators):
-            values.append('{chr(emoji + offset)}: {self.bot.get_user(owner_id) or owner_id} -- {total} tags ({uses} uses)')
+            values.append(f'{chr(emoji + offset)}: {self.bot.get_user(owner_id) or owner_id} -- {total} tags ({uses} uses)')
 
-        embed.add_field(name='Tag Creators', value='\n'.join(values), inline=False)
+        embed.add_field(name=f'Tag Creators', value='\n'.join(values), inline=False)
         embed.set_footer(text='These statistics are for the tag box.')
         await ctx.send(embed=embed)
 
@@ -1067,16 +1067,16 @@ class Tags:
         await ctx.release()
 
         if rows:
-            entries = ['{name} ({uses} uses)' for name, uses in rows]
+            entries = [f'{name} ({uses} uses)' for name, uses in rows]
             try:
                 p = Pages(ctx, entries=entries)
                 p.embed.set_author(name=user.display_name, icon_url=user.avatar_url)
-                p.embed.title = '{sum(u for _, u in rows)} total uses'
+                p.embed.title = f'{sum(u for _, u in rows)} total uses'
                 await p.paginate()
             except Exception as e:
                 await ctx.send(e)
         else:
-            await ctx.send('{user} has no tags.')
+            await ctx.send(f'{user} has no tags.')
 
     @tag.command(hidden=True)
     async def config(self, ctx):
