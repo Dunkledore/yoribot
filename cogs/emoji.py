@@ -122,7 +122,7 @@ class Emoji:
 
         ch = self.bot.get_channel(305838206119575552)
         if ch is not None:
-            fmt = 'Suggestion from {message.author}: {message.clean_content}'
+            fmt = f'Suggestion from {message.author}: {message.clean_content}'
             await ch.send(fmt, file=discord.File(data, message.attachments[0].filename))
 
     async def on_message(self, message):
@@ -193,7 +193,7 @@ class Emoji:
         def elem_to_string(key, count):
             elem = blob_ids.get(key)
             per_day = usage_per_day(elem.created_at, count)
-            return '{elem}: {count} times, {per_day:.2f}/day ({count / total_count:.2%})'
+            return f'{elem}: {count} times, {per_day:.2f}/day ({count / total_count:.2%})'
 
         top = [elem_to_string(key, count) for key, count in blob_usage[0:7]]
         bottom = [elem_to_string(key, count) for key, count in blob_usage[-7:]]
@@ -214,7 +214,7 @@ class Emoji:
         usage = usage[0]
 
         e.add_field(name='Emoji', value=emoji)
-        e.add_field(name='Usage', value='{usage}, {usage_per_day(emoji.created_at, usage):.2f}/day')
+        e.add_field(name='Usage', value=f'{usage}, {usage_per_day(emoji.created_at, usage):.2f}/day')
         await ctx.send(embed=e)
 
     @commands.group(hidden=True, invoke_without_command=True)
@@ -235,10 +235,10 @@ class Emoji:
         pages = [emojis[i:i + 30] for i in range(0, len(emojis), 30)]
 
         for number, page in enumerate(pages, 1):
-            fmt = 'Page {number}\n'
+            fmt = f'Page {number}\n'
             fp.write(fmt.encode('utf-8'))
             for emoji in page:
-                fmt = ':{emoji}: = `:{emoji}:`\n'
+                fmt = f':{emoji}: = `:{emoji}:`\n'
                 fp.write(fmt.encode('utf-8'))
 
             fp.write(b'\n')
@@ -263,7 +263,7 @@ class Emoji:
         total = record['Count']
         emoji_used = record['Emoji']
         per_day = usage_per_day(ctx.me.joined_at, total)
-        e.set_footer(text='{total} uses over {emoji_used} emoji for {per_day:.2f} uses per day.')
+        e.set_footer(text=f'{total} uses over {emoji_used} emoji for {per_day:.2f} uses per day.')
 
         query = """SELECT emoji_id, total
                    FROM emoji_stats
@@ -277,21 +277,21 @@ class Emoji:
         def to_string(emoji_id, count):
             emoji = self.bot.get_emoji(emoji_id)
             if emoji is None:
-                name = '[Unknown Emoji](https://cdn.discordapp.com/emojis/{emoji_id}.png)'
+                name = f'[Unknown Emoji](https://cdn.discordapp.com/emojis/{emoji_id}.png)'
                 emoji = discord.Object(id=emoji_id)
             else:
                 name = str(emoji)
 
             per_day = usage_per_day(emoji.created_at, count)
             p = count / total
-            return '{name}: {count} uses ({p:.2%}), {per_day:.2f} uses/day.'
+            return f'{name}: {count} uses ({p:.2%}), {per_day:.2f} uses/day.'
 
-        e.description = '\n'.join('{i}. {to_string(emoji, total)}' for i, (emoji, total) in enumerate(top, 1))
+        e.description = '\n'.join(f'{i}. {to_string(emoji, total)}' for i, (emoji, total) in enumerate(top, 1))
         await ctx.send(embed=e)
 
     async def get_emoji_stats(self, ctx, emoji_id):
         e = discord.Embed(title='Emoji Stats')
-        cdn = 'https://cdn.discordapp.com/emojis/{emoji_id}.png'
+        cdn = f'https://cdn.discordapp.com/emojis/{emoji_id}.png'
 
         # first verify it's a real ID
         async with ctx.session.get(cdn) as resp:
@@ -319,7 +319,7 @@ class Emoji:
         try:
             count = transformed[ctx.guild.id]
             per_day = usage_per_day(dt, count)
-            value = '{count} uses ({count / total:.2%} of global uses), {per_day:.2f} uses/day'
+            value = f'{count} uses ({count / total:.2%} of global uses), {per_day:.2f} uses/day'
         except KeyError:
             value = 'Not used here.'
 
@@ -327,7 +327,7 @@ class Emoji:
 
         # global stats
         per_day = usage_per_day(dt, total)
-        value = '{total} uses, {per_day:.2f} uses/day'
+        value = f'{total} uses, {per_day:.2f} uses/day'
         e.add_field(name='Global Stats', value=value, inline=False)
         e.set_footer(text='These statistics are for servers I am in')
         await ctx.send(embed=e)

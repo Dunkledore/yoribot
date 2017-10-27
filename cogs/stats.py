@@ -60,7 +60,7 @@ class Stats:
 
     async def log_error(self, *, ctx=None, extra=None):
         e = discord.Embed(title='Error', colour=0xdd5f53)
-        e.description = '```py\n{traceback.format_exc()}\n```'
+        e.description = f'```py\n{traceback.format_exc()}\n```'
         e.add_field(name='Extra', value=extra, inline=False)
         e.timestamp = datetime.datetime.utcnow()
 
@@ -93,9 +93,9 @@ class Stats:
         else:
             common = counter.most_common()[limit:]
 
-        output = '\n'.join('{k:<{width}}: {c}' for k, c in common)
+        output = '\n'.join(f'{k:<{width}}: {c}' for k, c in common)
 
-        await ctx.send('```\n{output}\n```')
+        await ctx.send(f'```\n{output}\n```')
 
     @commands.command(hidden=True)
     async def socketstats(self, ctx):
@@ -103,7 +103,7 @@ class Stats:
         minutes = delta.total_seconds() / 60
         total = sum(self.bot.socket_stats.values())
         cpm = total / minutes
-        await ctx.send('{total} socket events observed ({cpm:.2f}/minute):\n{self.bot.socket_stats}')
+        await ctx.send(f'{total} socket events observed ({cpm:.2f}/minute):\n{self.bot.socket_stats}')
 
     def get_bot_uptime(self, *, brief=False):
         now = datetime.datetime.utcnow()
@@ -127,7 +127,7 @@ class Stats:
     @commands.command()
     async def uptime(self, ctx):
         """Tells you how long the bot has been up for."""
-        await ctx.send('Uptime: **{self.get_bot_uptime()}**')
+        await ctx.send(f'Uptime: **{self.get_bot_uptime()}**')
 
     @commands.command()
     async def about(self, ctx):
@@ -161,12 +161,12 @@ class Stats:
         text = len(text_channels)
         voice = len(voice_channels)
 
-        embed.add_field(name='Members', value='{total_members} total\n{total_unique} unique\n{total_online} unique online')
-        embed.add_field(name='Channels', value='{text + voice} total\n{text} text\n{voice} voice')
+        embed.add_field(name='Members', value=f'{total_members} total\n{total_unique} unique\n{total_online} unique online')
+        embed.add_field(name='Channels', value=f'{text + voice} total\n{text} text\n{voice} voice')
 
         memory_usage = self.process.memory_full_info().uss / 1024**2
         cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
-        embed.add_field(name='Process', value='{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
+        embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
 
 
         embed.add_field(name='Guilds', value=len(self.bot.guilds))
@@ -190,7 +190,7 @@ class Stats:
         query = "SELECT COUNT(*), MIN(used) FROM commands WHERE guild_id=$1;"
         count = await ctx.db.fetchrow(query, ctx.guild.id)
 
-        embed.description = '{count[0]} commands used.'
+        embed.description = f'{count[0]} commands used.'
         embed.set_footer(text='Tracking command usage since').timestamp = count[1] or datetime.datetime.utcnow()
 
         query = """SELECT command,
@@ -204,7 +204,7 @@ class Stats:
 
         records = await ctx.db.fetch(query, ctx.guild.id)
 
-        value = '\n'.join('{lookup[index]}: {command} ({uses} uses)'
+        value = '\n'.join(f'{lookup[index]}: {command} ({uses} uses)'
                           for (index, (command, uses)) in enumerate(records)) or 'No Commands'
 
         embed.add_field(name='Top Commands', value=value, inline=True)
@@ -221,7 +221,7 @@ class Stats:
 
         records = await ctx.db.fetch(query, ctx.guild.id)
 
-        value = '\n'.join('{lookup[index]}: {command} ({uses} uses)'
+        value = '\n'.join(f'{lookup[index]}: {command} ({uses} uses)'
                           for (index, (command, uses)) in enumerate(records)) or 'No Commands.'
         embed.add_field(name='Top Commands Today', value=value, inline=True)
         embed.add_field(name='\u200b', value='\u200b', inline=True)
@@ -238,7 +238,7 @@ class Stats:
 
         records = await ctx.db.fetch(query, ctx.guild.id)
 
-        value = '\n'.join('{lookup[index]}: <@!{author_id}> ({uses} bot uses)'
+        value = '\n'.join(f'{lookup[index]}: <@!{author_id}> ({uses} bot uses)'
                           for (index, (author_id, uses)) in enumerate(records)) or 'No bot users.'
 
         embed.add_field(name='Top Command Users', value=value, inline=True)
@@ -256,7 +256,7 @@ class Stats:
 
         records = await ctx.db.fetch(query, ctx.guild.id)
 
-        value = '\n'.join('{lookup[index]}: <@!{author_id}> ({uses} bot uses)'
+        value = '\n'.join(f'{lookup[index]}: <@!{author_id}> ({uses} bot uses)'
                           for (index, (author_id, uses)) in enumerate(records)) or 'No command users.'
 
         embed.add_field(name='Top Command Users Today', value=value, inline=True)
@@ -278,7 +278,7 @@ class Stats:
         query = "SELECT COUNT(*), MIN(used) FROM commands WHERE guild_id=$1 AND author_id=$2;"
         count = await ctx.db.fetchrow(query, ctx.guild.id, member.id)
 
-        embed.description = '{count[0]} commands used.'
+        embed.description = f'{count[0]} commands used.'
         embed.set_footer(text='First command used').timestamp = count[1] or datetime.datetime.utcnow()
 
         query = """SELECT command,
@@ -292,7 +292,7 @@ class Stats:
 
         records = await ctx.db.fetch(query, ctx.guild.id, member.id)
 
-        value = '\n'.join('{lookup[index]}: {command} ({uses} uses)'
+        value = '\n'.join(f'{lookup[index]}: {command} ({uses} uses)'
                           for (index, (command, uses)) in enumerate(records)) or 'No Commands'
 
         embed.add_field(name='Most Used Commands', value=value, inline=False)
@@ -310,7 +310,7 @@ class Stats:
 
         records = await ctx.db.fetch(query, ctx.guild.id, member.id)
 
-        value = '\n'.join('{lookup[index]}: {command} ({uses} uses)'
+        value = '\n'.join(f'{lookup[index]}: {command} ({uses} uses)'
                           for (index, (command, uses)) in enumerate(records)) or 'No Commands'
 
         embed.add_field(name='Most Used Commands Today', value=value, inline=False)
@@ -334,7 +334,7 @@ class Stats:
         total = await ctx.db.fetchrow(query)
 
         e = discord.Embed(title='Command Stats', colour=discord.Colour.blurple())
-        e.description = '{total[0]} commands used.'
+        e.description = f'{total[0]} commands used.'
 
         lookup = (
             '\N{FIRST PLACE MEDAL}',
@@ -352,7 +352,7 @@ class Stats:
                 """
 
         records = await ctx.db.fetch(query)
-        value = '\n'.join('{lookup[index]}: {command} ({uses} uses)' for (index, (command, uses)) in enumerate(records))
+        value = '\n'.join(f'{lookup[index]}: {command} ({uses} uses)' for (index, (command, uses)) in enumerate(records))
         e.add_field(name='Top Commands', value=value, inline=False)
 
         query = """SELECT guild_id, COUNT(*) AS "uses"
@@ -368,10 +368,10 @@ class Stats:
             if guild_id is None:
                 guild = 'Private Message'
             else:
-                guild = self.bot.get_guild(guild_id) or '<Unknown {guild_id}>'
+                guild = self.bot.get_guild(guild_id) or f'<Unknown {guild_id}>'
 
             emoji = lookup[index]
-            value.append('{emoji}: {guild} ({uses} uses)')
+            value.append(f'{emoji}: {guild} ({uses} uses)')
 
         e.add_field(name='Top Guilds', value='\n'.join(value), inline=False)
 
@@ -385,9 +385,9 @@ class Stats:
         records = await ctx.db.fetch(query)
         value = []
         for (index, (author_id, uses)) in enumerate(records):
-            user = self.bot.get_user(author_id) or '<Unknown {author_id}>'
+            user = self.bot.get_user(author_id) or f'<Unknown {author_id}>'
             emoji = lookup[index]
-            value.append('{emoji}: {user} ({uses} uses)')
+            value.append(f'{emoji}: {user} ({uses} uses)')
 
         e.add_field(name='Top Users', value='\n'.join(value), inline=False)
         await ctx.send(embed=e)
@@ -400,7 +400,7 @@ class Stats:
         total = await ctx.db.fetchrow(query)
 
         e = discord.Embed(title='Last 24 Hour Command Stats', colour=discord.Colour.blurple())
-        e.description = '{total[0]} commands used today.'
+        e.description = f'{total[0]} commands used today.'
 
         lookup = (
             '\N{FIRST PLACE MEDAL}',
@@ -419,7 +419,7 @@ class Stats:
                 """
 
         records = await ctx.db.fetch(query)
-        value = '\n'.join('{lookup[index]}: {command} ({uses} uses)' for (index, (command, uses)) in enumerate(records))
+        value = '\n'.join(f'{lookup[index]}: {command} ({uses} uses)' for (index, (command, uses)) in enumerate(records))
         e.add_field(name='Top Commands', value=value, inline=False)
 
         query = """SELECT guild_id, COUNT(*) AS "uses"
@@ -438,7 +438,7 @@ class Stats:
             else:
                 guild = self.bot.get_guild(guild_id) or f'<Unknown {guild_id}>'
             emoji = lookup[index]
-            value.append('{emoji}: {guild} ({uses} uses)')
+            value.append(f'{emoji}: {guild} ({uses} uses)')
 
         e.add_field(name='Top Guilds', value='\n'.join(value), inline=False)
 
@@ -453,9 +453,9 @@ class Stats:
         records = await ctx.db.fetch(query)
         value = []
         for (index, (author_id, uses)) in enumerate(records):
-            user = self.bot.get_user(author_id) or '<Unknown {author_id}>'
+            user = self.bot.get_user(author_id) or f'<Unknown {author_id}>'
             emoji = lookup[index]
-            value.append('{emoji}: {user} ({uses} uses)')
+            value.append(f'{emoji}: {user} ({uses} uses)')
 
         e.add_field(name='Top Users', value='\n'.join(value), inline=False)
         await ctx.send(embed=e)
@@ -463,14 +463,14 @@ class Stats:
     async def send_guild_stats(self, e, guild):
         e.add_field(name='Name', value=guild.name)
         e.add_field(name='ID', value=guild.id)
-        e.add_field(name='Owner', value='{guild.owner} (ID: {guild.owner.id})')
+        e.add_field(name='Owner', value=f'{guild.owner} (ID: {guild.owner.id})')
 
         bots = sum(m.bot for m in guild.members)
         total = guild.member_count
         online = sum(m.status is discord.Status.online for m in guild.members)
         e.add_field(name='Members', value=str(total))
-        e.add_field(name='Bots', value='{bots} ({bots/total:.2%})')
-        e.add_field(name='Online', value='{online} ({online/total:.2%})')
+        e.add_field(name='Bots', value=f'{bots} ({bots/total:.2%})')
+        e.add_field(name='Online', value=f'{online} ({online/total:.2%})')
 
         if guild.icon:
             e.set_thumbnail(url=guild.icon_url)
@@ -500,14 +500,14 @@ class Stats:
         e.add_field(name='Name', value=ctx.command.qualified_name)
         e.add_field(name='Author', value=f'{ctx.author} (ID: {ctx.author.id})')
 
-        fmt = 'Channel: {ctx.channel} (ID: {ctx.channel.id})'
+        fmt = f'Channel: {ctx.channel} (ID: {ctx.channel.id})'
         if ctx.guild:
-            fmt = '{fmt}\nGuild: {ctx.guild} (ID: {ctx.guild.id})'
+            fmt = f'{fmt}\nGuild: {ctx.guild} (ID: {ctx.guild.id})'
 
         e.add_field(name='Location', value=fmt, inline=False)
 
         exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
-        e.description = '```py\n{exc}\n```'
+        e.description = f'```py\n{exc}\n```'
         e.timestamp = datetime.datetime.utcnow()
         await self.webhook.send(embed=e)
 
@@ -516,7 +516,7 @@ old_on_error = commands.Bot.on_error
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
     e.add_field(name='Event', value=event)
-    e.description = '```py\n{traceback.format_exc()}\n```'
+    e.description = f'```py\n{traceback.format_exc()}\n```'
     e.timestamp = datetime.datetime.utcnow()
 
     hook = self.get_cog('Stats').webhook

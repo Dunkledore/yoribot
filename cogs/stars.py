@@ -38,7 +38,7 @@ def MessageID(argument):
     try:
         return int(argument, base=10)
     except ValueError:
-        raise StarError('"{argument}" is not a valid message ID. Use Developer Mode to get the Copy ID option.')
+        raise StarError(f'"{argument}" is not a valid message ID. Use Developer Mode to get the Copy ID option.')
 
 class Starboard(db.Table):
     id = db.Column(db.Integer(big=True), primary_key=True)
@@ -169,9 +169,9 @@ class Stars:
         emoji = self.star_emoji(stars)
 
         if stars > 1:
-            content = '{emoji} **{stars}** {message.channel.mention} ID: {message.id}'
+            content = f'{emoji} **{stars}** {message.channel.mention} ID: {message.id}'
         else:
-            content = '{emoji} {message.channel.mention} ID: {message.id}'
+            content = f'{emoji} {message.channel.mention} ID: {message.id}'
 
 
         embed = discord.Embed(description=message.content)
@@ -185,7 +185,7 @@ class Stars:
             if file.url.lower().endswith(('png', 'jpeg', 'jpg', 'gif')):
                 embed.set_image(url=file.url)
             else:
-                embed.add_field(name='Attachment', value='[{file.filename}]({file.url})', inline=False)
+                embed.add_field(name='Attachment', value=f'[{file.filename}]({file.url})', inline=False)
 
         embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url_as(format='png'))
         embed.timestamp = message.created_at
@@ -218,7 +218,7 @@ class Stars:
         if not isinstance(channel, discord.TextChannel):
             return
 
-        method = getattr(self, '{fmt}_message')
+        method = getattr(self, f'{fmt}_message')
 
         user = self.bot.get_user(user_id)
         if user is None or user.bot:
@@ -545,7 +545,7 @@ class Stars:
 
         starboard = await self.get_starboard(ctx.guild.id, connection=ctx.db)
         if starboard.channel is not None:
-            return await ctx.send('This server already has a starboard ({starboard.channel.mention}).')
+            return await ctx.send(f'This server already has a starboard ({starboard.channel.mention}).')
 
         if hasattr(starboard, 'locked'):
             try:
@@ -587,7 +587,7 @@ class Stars:
             await ctx.send('Could not create the channel due to an internal error. Join the bot support server for help.')
         else:
             self.get_starboard.invalidate(self, ctx.guild.id)
-            await ctx.send('\N{GLOWING STAR} Starboard created at {channel.mention}.')
+            await ctx.send(f'\N{GLOWING STAR} Starboard created at {channel.mention}.')
 
     @commands.group(invoke_without_command=True, ignore_extra=False)
     @commands.guild_only()
@@ -672,7 +672,7 @@ class Stars:
         except discord.HTTPException:
             await ctx.send('Could not delete messages.')
         else:
-            await ctx.send('\N{PUT LITTER IN ITS PLACE SYMBOL} Deleted {Plural(message=len(to_delete))}.')
+            await ctx.send(f'\N{PUT LITTER IN ITS PLACE SYMBOL} Deleted {Plural(message=len(to_delete))}.')
 
     @star.command(name='show')
     @requires_starboard()
@@ -755,7 +755,7 @@ class Stars:
             p = Pages(ctx, entries=members, per_page=20, show_entry_count=False)
             base = Plural(star=len(records))
             if len(records) > len(members):
-                p.embed.title = '{base} ({len(records) - len(members)} left server)'
+                p.embed.title = f'{base} ({len(records) - len(members)} left server)'
             else:
                 p.embed.title = str(base)
             await p.paginate()
@@ -787,7 +787,7 @@ class Stars:
 
         perms = ctx.starboard.channel.permissions_for(ctx.me)
         if not perms.read_message_history:
-            return await ctx.send('Bot does not have Read Message History in {ctx.starboard.channel.mention}.')
+            return await ctx.send(f'Bot does not have Read Message History in {ctx.starboard.channel.mention}.')
 
         await ctx.send('Please be patient this will take a while...')
         async with ctx.typing():
@@ -880,10 +880,10 @@ class Stars:
                 await ctx.db.execute(query, ctx.guild.id)
                 self.get_starboard.invalidate(self, ctx.guild.id)
 
-                m = await ctx.send('{ctx.author.mention}, we are done migrating!\n' \
-                                   'Deleted {deleted} out of date entries.\n' \
-                                   'Updated {updated} entries to the new format ({bad_data} failures).\n' \
-                                   'Took {delta:.2f}s.')
+                m = await ctx.send(f'{ctx.author.mention}, we are done migrating!\n' \
+                                   f'Deleted {deleted} out of date entries.\n' \
+                                   f'Updated {updated} entries to the new format ({bad_data} failures).\n' \
+                                   f'Took {delta:.2f}s.')
 
                 e = discord.Embed(title='Starboard Migration', colour=discord.Colour.gold())
                 e.add_field(name='Deleted', value=deleted)
@@ -895,7 +895,7 @@ class Stars:
                 e.add_field(name='Owner', value=f'{ctx.guild.owner} ID: {ctx.guild.owner.id}', inline=False)
                 e.add_field(name='Failed Updates', value=bad_data)
 
-                e.set_footer(text='Took {delta:.2f}s to migrate')
+                e.set_footer(text=f'Took {delta:.2f}s to migrate')
                 e.timestamp = m.created_at
                 await _log.send(embed=e)
 
@@ -959,7 +959,7 @@ class Stars:
 
         emoji = 0x1f947 # :first_place:
         fmt = fmt or (lambda o: o)
-        return '\n'.join('{chr(emoji + i)}: {fmt(r["ID"])} ({Plural(star=r["Stars"])})'
+        return '\n'.join(f'{chr(emoji + i)}: {fmt(r["ID"])} ({Plural(star=r["Stars"])})'
                          for i, r in enumerate(records))
 
     async def star_guild_stats(self, ctx):
@@ -1033,7 +1033,7 @@ class Stars:
         starred_posts = [r for r in records if r['Type'] == 3]
         e.add_field(name='Top Starred Posts', value=self.records_to_value(starred_posts), inline=False)
 
-        to_mention = lambda o: '<@{o}>'
+        to_mention = lambda o: f'<@{o}>'
 
         star_receivers = [r for r in records if r['Type'] == 1]
         value = self.records_to_value(star_receivers, to_mention, default='No one!')
@@ -1139,7 +1139,7 @@ class Stars:
         message_id = record[0]
         message = await self.get_message(ctx.starboard.channel, message_id)
         if message is None:
-            return await ctx.send('Message {message_id} has been deleted somehow.')
+            return await ctx.send(f'Message {message_id} has been deleted somehow.')
 
         if message.embeds:
             await ctx.send(message.content, embed=message.embeds[0])
@@ -1218,7 +1218,7 @@ class Stars:
         await ctx.db.execute(query, ctx.guild.id, stars)
         self.get_starboard.invalidate(self, ctx.guild.id)
 
-        await ctx.send('Messages now require {Plural(star=stars)} to show up in the starboard.')
+        await ctx.send(f'Messages now require {Plural(star=stars)} to show up in the starboard.')
 
     @star.command(name='age')
     @checks.is_mod()
@@ -1248,7 +1248,7 @@ class Stars:
             units = units + 's'
 
         if units not in valid_units:
-            return await ctx.send('Not a valid unit! I expect only {human_join(valid_units)}.')
+            return await ctx.send(f'Not a valid unit! I expect only {human_join(valid_units)}.')
 
         number = min(max(number, 1), 35)
 
@@ -1258,16 +1258,16 @@ class Stars:
         # the input is sanitised so this should be ok
         # only doing this because asyncpg requires a timedelta object but
         # generating that with these clamp units is overkill
-        query = "UPDATE starboard SET max_age='{number} {units}'::interval WHERE id=$1;"
+        query = f"UPDATE starboard SET max_age='{number} {units}'::interval WHERE id=$1;"
         await ctx.db.execute(query, ctx.guild.id)
         self.get_starboard.invalidate(self, ctx.guild.id)
 
         if number == 1:
-            age = '1 {units[:-1]}'
+            age = f'1 {units[:-1]}'
         else:
-            age = '{number} {units}'
+            age = f'{number} {units}'
 
-        await ctx.send('Messages must now be less than {age} old to be starred.')
+        await ctx.send(f'Messages must now be less than {age} old to be starred.')
 
     @commands.command(hidden=True)
     @commands.is_owner()
@@ -1296,7 +1296,7 @@ class Stars:
             else:
                 success += 1
 
-        await ctx.send('Successfully sent to {success} channels (out of {len(to_send)}).')
+        await ctx.send(f'Successfully sent to {success} channels (out of {len(to_send)}).')
 
 def setup(bot):
     bot.add_cog(Stars(bot))
