@@ -59,7 +59,6 @@ class Music:
         self.bot = bot
 
     @commands.command()
-    @commands.is_mod()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
         """Joins a voice channel"""
 
@@ -69,7 +68,6 @@ class Music:
         await channel.connect()
 
     @commands.command(name="local")
-    @commands.is_mod()
     async def play_file(self, ctx, *, query):
         """Plays a file from the local filesystem"""
 
@@ -89,7 +87,6 @@ class Music:
         await ctx.send('Now playing: {}'.format(query))
 
     @commands.command()
-    @commands.is_mod()
     async def play(self, ctx, *, url):
         """Streams from a url (almost anything youtube_dl supports)"""
 
@@ -109,7 +106,6 @@ class Music:
         await ctx.send('Now playing: {}'.format(player.title))
 
     @commands.command()
-    @commands.is_mod()
     async def volume(self, ctx, volume: float):
         """Changes the player's volume"""
 
@@ -120,7 +116,6 @@ class Music:
         await ctx.send("Changed volume to {}%".format(volume))
 
     @commands.command()
-    @commands.is_mod()
     async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
 
