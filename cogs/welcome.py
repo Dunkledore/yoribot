@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
-from __main__ import send_cmd_help
 import os
 import asyncio
 
@@ -28,7 +27,6 @@ class Welcome:
             self.settings[server.id]["CHANNEL"] = server.default_channel.id
             fileIO("data/welcome/settings.json","save",self.settings)
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
             msg = "```"
             msg += "GREETING: {}\n".format(self.settings[server.id]["GREETING"])
             msg += "CHANNEL: #{}\n".format(self.get_welcome_channel(server)) 
@@ -101,7 +99,6 @@ class Welcome:
         if choice == None:
             self.settings[server.id]["WHISPER"] = not self.settings[server.id]["WHISPER"]
         elif choice.lower() not in options:
-            await send_cmd_help(ctx)
             return
         else:
             self.settings[server.id]["WHISPER"] = options[choice.lower()]
