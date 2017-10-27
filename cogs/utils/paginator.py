@@ -430,7 +430,7 @@ class HelpPaginator(Pages):
 
         if hasattr(self, '_is_bot'):
             value ='**Yato Bot**'
-            self.embed.add_field(name='Support', value=value, inline=False)
+            #self.embed.add_field(name='Support', value=value, inline=False)
 
         self.embed.set_footer(text=f'Use "{self.prefix}help command" for more info on a command.')
 
