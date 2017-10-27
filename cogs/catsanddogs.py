@@ -18,7 +18,7 @@ class CatsandDogsImages:
 
         async with aiohttp.get(self.url_cat) as response:
             img = json.loads(await response.text())["file"].replace("\\/","/")
-            await self.bot.say(img)
+            await ctx.send(img)
 
     @commands.command(pass_context=True, no_pm=True)
     async def woof(self, ctx: commands.Context):
@@ -26,7 +26,7 @@ class CatsandDogsImages:
 
         async with aiohttp.get(self.url_dog) as response:
             img = json.loads(await response.text())["url"]
-            await self.bot.say(img)
+            await ctx.send(img)
 
 def setup(bot: commands.Bot):
     bot.add_cog(CatsandDogsImages(bot))
