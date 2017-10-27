@@ -12,7 +12,7 @@ import os
 
 log = logging.getLogger(__name__)
 
-LOGGING_CHANNEL = 309632009427222529
+LOGGING_CHANNEL = 373278494496391178
 
 class Commands(db.Table):
     id = db.PrimaryKeyColumn()
@@ -39,14 +39,14 @@ class Stats:
             destination = 'Private Message'
             guild_id = None
         else:
-            destination = '#{message.channel} ({message.guild})'
+            destination = f'#{message.channel} ({message.guild})'
             guild_id = ctx.guild.id
 
         query = """INSERT INTO commands (guild_id, channel_id, author_id, used, prefix, command)
                    VALUES ($1, $2, $3, $4, $5, $6)
                 """
 
-        log.info('{message.created_at}: {message.author} in {destination}: {message.content}')
+        log.info(f'{message.created_at}: {message.author} in {destination}: {message.content}')
         await self.bot.pool.execute(query, guild_id, ctx.channel.id, ctx.author.id, message.created_at, ctx.prefix, command)
 
     async def on_socket_response(self, msg):
