@@ -149,11 +149,11 @@ class Buttons:
                     values = (
                         str(first_value),
                         first_currency.text,
-                        f'({first_currency.get("value")})',
+                        '({first_currency.get("value")})',
                         '=',
                         str(second_value),
                         second_currency.text,
-                        f'({second_currency.get("value")})'
+                        '({second_currency.get("value")})'
                     )
                     e.description = ' '.join(values)
                 except Exception:
@@ -199,7 +199,7 @@ class Buttons:
             date = node.find("./div[@class='vk_gy vk_sh']")
             try:
                 e.title = node.find('span').text
-                e.description = f'{time.text}\n{"".join(date.itertext()).strip()}'
+                e.description = '{time.text}\n{"".join(date.itertext()).strip()}'
             except Exception:
                 return None
             else:
@@ -215,7 +215,7 @@ class Buttons:
                 parent.remove(time)
                 original = "".join(parent.itertext()).strip()
                 e.title = 'Time Conversion'
-                e.description = f'{original}...\n{converted}'
+                e.description = '{original}...\n{converted}'
             except Exception:
                 return None
             else:
@@ -244,11 +244,11 @@ class Buttons:
                 for category in lexical_category:
                     definitions = xpath(category)
                     try:
-                        descrip = [f'*{category.text}*']
+                        descrip = ['*{category.text}*']
                         for index, value in enumerate(definitions, 1):
                             descrip.append(f'{index}. {value.text}')
 
-                        e.add_field(name=f'{word.text} /{pronunciation.text}/', value='\n'.join(descrip))
+                        e.add_field(name='{word.text} /{pronunciation.text}/', value='\n'.join(descrip))
                     except:
                         continue
 
@@ -282,13 +282,13 @@ class Buttons:
 
         try:
             e.title = 'Weather for ' + location.text.strip()
-            e.description = f'*{category.get("alt")}*'
+            e.description = '*{category.get("alt")}*'
             e.set_thumbnail(url='https:' + category.get('src'))
 
             if len(temperatures) == 4:
                 first_unit = temperatures[0].text + temperatures[2].text
                 second_unit = temperatures[1].text + temperatures[3].text
-                units = f'{first_unit} | {second_unit}'
+                units = '{first_unit} | {second_unit}'
             else:
                 units = 'Unknown'
 
@@ -308,7 +308,7 @@ class Buttons:
         return e
 
     async def get_google_entries(self, query):
-        url = f'https://www.google.com/search?q={uriquote(query)}'
+        url = 'https://www.google.com/search?q={uriquote(query)}'
         params = {
             'safe': 'on',
             'lr': 'lang_en',
@@ -379,7 +379,7 @@ class Buttons:
             await ctx.send(str(e))
         else:
             if card:
-                value = '\n'.join(f'[{title}]({url.replace(")", "%29")})' for url, title in entries[:3])
+                value = '\n'.join('[{title}]({url.replace(")", "%29")})' for url, title in entries[:3])
                 if value:
                     card.add_field(name='Search Results', value=value, inline=False)
                 return await ctx.send(embed=card)
@@ -393,8 +393,8 @@ class Buttons:
                 first_entry = first_entry[:-1] + '%29'
 
             if next_two:
-                formatted = '\n'.join(f'<{x}>' for x in next_two)
-                msg = f'{first_entry}\n\n**See also:**\n{formatted}'
+                formatted = '\n'.join('<{x}>' for x in next_two)
+                msg = '{first_entry}\n\n**See also:**\n{formatted}'
             else:
                 msg = first_entry
 
@@ -424,13 +424,13 @@ class Buttons:
         e.timestamp = ctx.message.created_at
 
         if ctx.guild is not None:
-            e.add_field(name='Server', value=f'{ctx.guild.name} (ID: {ctx.guild.id})', inline=False)
+            e.add_field(name='Server', value='{ctx.guild.name} (ID: {ctx.guild.id})', inline=False)
 
-        e.add_field(name='Channel', value=f'{ctx.channel} (ID: {ctx.channel.id})', inline=False)
-        e.set_footer(text=f'Author ID: {ctx.author.id}')
+        e.add_field(name='Channel', value='{ctx.channel} (ID: {ctx.channel.id})', inline=False)
+        e.set_footer(text='Author ID: {ctx.author.id}')
 
         await channel.send(embed=e)
-        await ctx.send(f'{ctx.tick(True)} Successfully sent feedback')
+        await ctx.send('{ctx.tick(True)} Successfully sent feedback')
 
     @commands.command()
     @commands.is_owner()
@@ -442,7 +442,7 @@ class Buttons:
         try:
             await user.send(fmt)
         except:
-            await ctx.send(f'Could not PM user by ID {user_id}.')
+            await ctx.send('Could not PM user by ID {user_id}.')
         else:
             await ctx.send('PM successfully sent.')
 

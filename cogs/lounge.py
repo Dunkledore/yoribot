@@ -1,4 +1,4 @@
-from discord.ext import commands
+ from discord.ext import commands
 from .utils import checks
 import aiohttp
 import json
@@ -36,7 +36,7 @@ class CodeBlock:
             return cmds[language]
         except KeyError as e:
             if language:
-                fmt = f'Unknown language to compile for: {language}'
+                fmt = 'Unknown language to compile for: {language}'
             else:
                 fmt = 'Could not find a language to compile with.'
             raise commands.BadArgument(fmt) from e
@@ -85,7 +85,7 @@ class Lounge:
                 output = await resp.text(encoding='utf-8')
 
                 if len(output) < 1992:
-                    await ctx.send(f'```\n{output}\n```')
+                    await ctx.send('```\n{output}\n```')
                     return
 
                 # output is too big so post it in gist
@@ -94,7 +94,7 @@ class Lounge:
                         await ctx.send('Could not create coliru shared link')
                     else:
                         shared_id = await r.text()
-                        await ctx.send(f'Output too big. Coliru link: http://coliru.stacked-crooked.com/a/{shared_id}')
+                        await ctx.send('Output too big. Coliru link: http://coliru.stacked-crooked.com/a/{shared_id}')
 
     @coliru.error
     async def coliru_error(self, ctx, error):
@@ -115,7 +115,7 @@ class Lounge:
 
         async with ctx.session.get(url, params=params) as resp:
             if resp.status != 200:
-                return await ctx.send(f'An error occurred (status code: {resp.status}). Retry later.')
+                return await ctx.send('An error occurred (status code: {resp.status}). Retry later.')
 
             if len(resp.history) > 0:
                 return await ctx.send(resp.url)
@@ -134,9 +134,9 @@ class Lounge:
 
                 if href.startswith(('/w/cpp/language', '/w/cpp/concept')):
                     # special page
-                    special_pages.append(f'[{node.text}](http://en.cppreference.com{href})')
+                    special_pages.append('[{node.text}](http://en.cppreference.com{href})')
                 else:
-                    description.append(f'[`{node.text}`](http://en.cppreference.com{href})')
+                    description.append('[`{node.text}`](http://en.cppreference.com{href})')
 
             if len(special_pages) > 0:
                 e.add_field(name='Language Results', value='\n'.join(special_pages), inline=False)

@@ -70,7 +70,7 @@ class MemberID(commands.Converter):
             try:
                 return int(argument, base=10)
             except ValueError:
-                raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
+                raise commands.BadArgument("{argument} is not a valid member or member ID.") from None
         else:
             can_execute = ctx.author.id == ctx.bot.owner_id or \
                           ctx.author == ctx.guild.owner or \
@@ -95,11 +95,11 @@ class BannedMember(commands.Converter):
 
 class ActionReason(commands.Converter):
     async def convert(self, ctx, argument):
-        ret = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
+        ret = '{ctx.author} (ID: {ctx.author.id}): {argument}'
 
         if len(ret) > 512:
             reason_max = 512 - len(ret) - len(argument)
-            raise commands.BadArgument(f'reason is too long ({len(argument)}/{reason_max})')
+            raise commands.BadArgument('reason is too long ({len(argument)}/{reason_max})')
         return ret
 
 ## The actual cog
@@ -172,9 +172,9 @@ class Mod:
         try:
             await member.kick(reason='Strict raid mode')
         except discord.HTTPException:
-            log.info(f'[Raid Mode] Failed to kick {member} (ID: {member.id}) from server {member.guild} via strict mode.')
+            log.info('[Raid Mode] Failed to kick {member} (ID: {member.id}) from server {member.guild} via strict mode.')
         else:
-            log.info(f'[Raid Mode] Kicked {member} (ID: {member.id}) from server {member.guild} via strict mode.')
+            log.info('[Raid Mode] Kicked {member} (ID: {member.id}) from server {member.guild} via strict mode.')
             self._recently_kicked[guild.id].add(member.id)
 
     async def on_message(self, message):
@@ -216,12 +216,12 @@ class Mod:
             return
 
         try:
-            await author.ban(reason=f'Spamming mentions ({mention_count} mentions)')
+            await author.ban(reason='Spamming mentions ({mention_count} mentions)')
         except Exception as e:
-            log.info(f'Failed to autoban member {author} (ID: {author.id}) in guild ID {guild_id}')
+            log.info('Failed to autoban member {author} (ID: {author.id}) in guild ID {guild_id}')
         else:
-            await message.channel.send(f'Banned {author} (ID: {author.id}) for spamming {mention_count} mentions.')
-            log.info(f'Member {author} (ID: {author.id}) has been autobanned from guild ID {guild_id}')
+            await message.channel.send('Banned {author} (ID: {author.id}) for spamming {mention_count} mentions.')
+            log.info('Member {author} (ID: {author.id}) has been autobanned from guild ID {guild_id}')
 
     async def on_voice_state_update(self, user, before, after):
         if not isinstance(user, discord.Member):
@@ -298,7 +298,7 @@ class Mod:
         e = discord.Embed(title='New Members', colour=discord.Colour.green())
 
         for member in members:
-            body = f'joined {time.human_timedelta(member.joined_at)}, created {time.human_timedelta(member.created_at)}'
+            body = 'joined {time.human_timedelta(member.joined_at)}, created {time.human_timedelta(member.created_at)}'
             e.add_field(name=f'{member} (ID: {member.id})', value=body, inline=False)
 
         await ctx.send(embed=e)
@@ -321,8 +321,8 @@ class Mod:
         if row is None:
             fmt = 'Raid Mode: off\nBroadcast Channel: None'
         else:
-            ch = f'<#{row[1]}>' if row[1] else None
-            fmt = f'Raid Mode: {RaidMode(row[0])}\nBroadcast Channel: {ch}'
+            ch = '<#{row[1]}>' if row[1] else None
+            fmt = 'Raid Mode: {RaidMode(row[0])}\nBroadcast Channel: {ch}'
 
         await ctx.send(fmt)
 
@@ -355,7 +355,7 @@ class Mod:
 
         await ctx.db.execute(query, ctx.guild.id, RaidMode.on.value, channel.id)
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Raid mode enabled. Broadcasting join messages to {channel.mention}.')
+        await ctx.send('Raid mode enabled. Broadcasting join messages to {channel.mention}.')
 
     @raid.command(name='off', aliases=['disable', 'disabled'])
     @checks.is_mod()
@@ -421,7 +421,7 @@ class Mod:
 
         await ctx.db.execute(query, ctx.guild.id, RaidMode.strict.value, ctx.channel.id)
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Raid mode enabled strictly. Broadcasting join messages to {channel.mention}.')
+        await ctx.send('Raid mode enabled strictly. Broadcasting join messages to {channel.mention}.')
 
     async def _basic_cleanup_strategy(self, ctx, search):
         count = 0
@@ -462,11 +462,11 @@ class Mod:
 
         spammers = await strategy(ctx, search)
         deleted = sum(spammers.values())
-        messages = [f'{deleted} message{" was" if deleted == 1 else "s were"} removed.']
+        messages = ['{deleted} message{" was" if deleted == 1 else "s were"} removed.']
         if deleted:
             messages.append('')
             spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
-            messages.extend(f'- **{author}**: {count}' for author, count in spammers)
+            messages.extend('- **{author}**: {count}' for author, count in spammers)
 
         await ctx.send('\n'.join(messages), delete_after=10)
 
@@ -502,7 +502,7 @@ class Mod:
         """
 
         if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+            reason = 'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
         await ctx.send('\N{OK HAND SIGN}')
@@ -545,7 +545,7 @@ class Mod:
         """
 
         if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+            reason = 'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         obj = discord.Object(id=member)
         await ctx.guild.ban(obj, reason=reason)
@@ -567,13 +567,13 @@ class Mod:
         """
 
         if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+            reason = 'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         await ctx.guild.unban(member.user, reason=reason)
         if member.reason:
-            await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.')
+            await ctx.send('Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.')
         else:
-            await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}).')
+            await ctx.send('Unbanned {member.user} (ID: {member.user.id}).')
 
     @commands.command()
     @commands.guild_only()
@@ -596,7 +596,7 @@ class Mod:
         """
 
         if reason is None:
-            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
+            reason = 'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         reminder = self.bot.get_cog('Reminder')
         if reminder is None:
@@ -604,7 +604,7 @@ class Mod:
 
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
         timer = await reminder.create_timer(duration.dt, 'tempban', ctx.guild.id, ctx.author.id, member, connection=ctx.db)
-        await ctx.send(f'Banned ID {member} for {time.human_timedelta(duration.dt)}.')
+        await ctx.send('Banned ID {member} for {time.human_timedelta(duration.dt)}.')
 
     async def on_tempban_timer_complete(self, timer):
         guild_id, mod_id, member_id = timer.args
@@ -620,13 +620,13 @@ class Mod:
                 moderator = await self.bot.get_user_info(mod_id)
             except:
                 # request failed somehow
-                moderator = f'Mod ID {mod_id}'
+                moderator = 'Mod ID {mod_id}'
             else:
-                moderator = f'{moderator} (ID: {mod_id})'
+                moderator = '{moderator} (ID: {mod_id})'
         else:
-            moderator = f'{moderator} (ID: {mod_id})'
+            moderator = '{moderator} (ID: {mod_id})'
 
-        reason = f'Automatic unban from timer made on {timer.created_at} by {moderator}.'
+        reason = 'Automatic unban from timer made on {timer.created_at} by {moderator}.'
         await guild.unban(discord.Object(id=member_id), reason=reason)
 
     @commands.group(invoke_without_command=True)
@@ -656,8 +656,8 @@ class Mod:
             if row is None or not row['mention_count']:
                 return await ctx.send('This server has not set up mention spam banning.')
 
-            ignores = ', '.join(f'<#{e}>' for e in row['channel_ids']) or 'None'
-            return await ctx.send(f'- Threshold: {row["mention_count"]} mentions\n- Ignored Channels: {ignores}')
+            ignores = ', '.join('<#{e}>' for e in row['channel_ids']) or 'None'
+            return await ctx.send('- Threshold: {row["mention_count"]} mentions\n- Ignored Channels: {ignores}')
 
         if count == 0:
             query = """UPDATE guild_mod_config SET mention_count = NULL WHERE id=$1;"""
@@ -676,7 +676,7 @@ class Mod:
                 """
         await ctx.db.execute(query, ctx.guild.id, count)
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Now auto-banning members that mention more than {count} users.')
+        await ctx.send('Now auto-banning members that mention more than {count} users.')
 
     @mentionspam.command(name='ignore', aliases=['bypass'])
     @commands.guild_only()
@@ -702,7 +702,7 @@ class Mod:
         channel_ids = [c.id for c in channels]
         await ctx.db.execute(query, ctx.guild.id, channel_ids)
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Mentions are now ignored on {", ".join(c.mention for c in channels)}.')
+        await ctx.send('Mentions are now ignored on {", ".join(c.mention for c in channels)}.')
 
     @mentionspam.command(name='unignore', aliases=['protect'])
     @commands.guild_only()
@@ -747,7 +747,7 @@ class Mod:
 
     async def do_removal(self, ctx, limit, predicate, *, before=None, after=None):
         if limit > 2000:
-            return await ctx.send(f'Too many messages to search given ({limit}/2000)')
+            return await ctx.send('Too many messages to search given ({limit}/2000)')
 
         if before is None:
             before = ctx.message
@@ -762,20 +762,20 @@ class Mod:
         except discord.Forbidden as e:
             return await ctx.send('I do not have permissions to delete messages.')
         except discord.HTTPException as e:
-            return await ctx.send(f'Error: {e} (try a smaller search?)')
+            return await ctx.send('Error: {e} (try a smaller search?)')
 
         spammers = Counter(m.author.display_name for m in deleted)
         deleted = len(deleted)
-        messages = [f'{deleted} message{" was" if deleted == 1 else "s were"} removed.']
+        messages = ['{deleted} message{" was" if deleted == 1 else "s were"} removed.']
         if deleted:
             messages.append('')
             spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
-            messages.extend(f'**{name}**: {count}' for name, count in spammers)
+            messages.extend('**{name}**: {count}' for name, count in spammers)
 
         to_send = '\n'.join(messages)
 
         if len(to_send) > 2000:
-            await ctx.send(f'Successfully removed {deleted} messages.', delete_after=10)
+            await ctx.send('Successfully removed {deleted} messages.', delete_after=10)
         else:
             await ctx.send(to_send, delete_after=10)
 
@@ -838,7 +838,7 @@ class Mod:
         """Removes all reactions from messages that have them."""
 
         if search > 2000:
-            return await ctx.send(f'Too many messages to search for ({search}/2000)')
+            return await ctx.send('Too many messages to search for ({search}/2000)')
 
         total_reactions = 0
         async for message in ctx.history(limit=search, before=ctx.message):
@@ -846,7 +846,7 @@ class Mod:
                 total_reactions += sum(r.count for r in message.reactions)
                 await message.clear_reactions()
 
-        await ctx.send(f'Successfully removed {total_reactions} reactions.')
+        await ctx.send('Successfully removed {total_reactions} reactions.')
 
     @remove.command()
     async def custom(self, ctx, *, args: str):

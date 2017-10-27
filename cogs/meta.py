@@ -12,7 +12,7 @@ import inspect
 class Prefix(commands.Converter):
     async def convert(self, ctx, argument):
         user_id = ctx.bot.user.id
-        if argument.startswith((f'<@{user_id}>', f'<@!{user_id}>')):
+        if argument.startswith(('<@{user_id}>', f'<@!{user_id}>')):
             raise commands.BadArgument('That is a reserved prefix already in use.')
         return argument
 
@@ -62,7 +62,7 @@ class Meta:
         """
 
         if len(characters) > 25:
-            return await ctx.send(f'Too many characters ({len(characters)}/25)')
+            return await ctx.send('Too many characters ({len(characters)}/25)')
 
         def to_string(c):
             digit = f'{ord(c):x}'
@@ -87,8 +87,8 @@ class Meta:
         del prefixes[1]
 
         e = discord.Embed(title='Prefixes', colour=discord.Colour.blurple())
-        e.set_footer(text=f'{len(prefixes)} prefixes')
-        e.description = '\n'.join(f'{index}. {elem}' for index, elem in enumerate(prefixes, 1))
+        e.set_footer(text='{len(prefixes)} prefixes')
+        e.description = '\n'.join('{index}. {elem}' for index, elem in enumerate(prefixes, 1))
         await ctx.send(embed=e)
 
     @prefix.command(name='add', ignore_extra=False)
@@ -113,7 +113,7 @@ class Meta:
         try:
             await self.bot.set_guild_prefixes(ctx.guild, current_prefixes)
         except Exception as e:
-            await ctx.send(f'{ctx.tick(False)} {e}')
+            await ctx.send('{ctx.tick(False)} {e}')
         else:
             await ctx.send(ctx.tick(True))
 
@@ -143,7 +143,7 @@ class Meta:
         try:
             await self.bot.set_guild_prefixes(ctx.guild, current_prefixes)
         except Exception as e:
-            await ctx.send(f'{ctx.tick(False)} {e}')
+            await ctx.send('{ctx.tick(False)} {e}')
         else:
             await ctx.send(ctx.tick(True))
 
@@ -187,7 +187,7 @@ class Meta:
             location = obj.callback.__module__.replace('.', '/') + '.py'
             source_url = 'https://github.com/Rapptz/discord.py'
 
-        final_url = f'<{source_url}/blob/rewrite/{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}>'
+        final_url = '<{source_url}/blob/rewrite/{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}>'
         await ctx.send(final_url)
 
     @commands.command(name='quit', hidden=True)
@@ -215,7 +215,7 @@ class Meta:
         if voice is not None:
             vc = voice.channel
             other_people = len(vc.members) - 1
-            voice = f'{vc.name} with {other_people} others' if other_people else f'{vc.name} by themselves'
+            voice = '{vc.name} with {other_people} others' if other_people else f'{vc.name} by themselves'
         else:
             voice = 'Not connected.'
 
@@ -288,11 +288,11 @@ class Meta:
         fmt = f'Text {text_channels} ({secret_channels} secret)\nVoice {voice_channels} ({secret_voice} locked)'
         e.add_field(name='Channels', value=fmt)
 
-        fmt = f'<:online:316856575413321728> {member_by_status["online"]} ' \
-              f'<:idle:316856575098880002> {member_by_status["idle"]} ' \
-              f'<:dnd:316856574868193281> {member_by_status["dnd"]} ' \
-              f'<:offline:316856575501402112> {member_by_status["offline"]}\n' \
-              f'Total: {guild.member_count}'
+        fmt = '<:online:316856575413321728> {member_by_status["online"]} ' \
+              '<:idle:316856575098880002> {member_by_status["idle"]} ' \
+              '<:dnd:316856574868193281> {member_by_status["dnd"]} ' \
+              '<:offline:316856575501402112> {member_by_status["offline"]}\n' \
+              'Total: {guild.member_count}'
 
         e.add_field(name='Members', value=fmt)
         e.add_field(name='Roles', value=', '.join(roles) if len(roles) < 10 else f'{len(roles)} roles')

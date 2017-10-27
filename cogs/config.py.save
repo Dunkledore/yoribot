@@ -1,0 +1,187 @@
+
+from discord.ext import commands
+from .utils import db, checks, cache
+from .utils.paginator import Pages
+
+from collections import defaultdict
+
+class LazyEntity:
+    """This is meant for use with the Paginator.
+
+    It lazily computes __str__ when requested and
+    caches it so it doesn't do the lookup again.
+    """
+    __slots__ = ('entity_id', 'guild', '_cache')
+
+    def __init__(self, guild, entity_id):
+        self.entity_id = entity_id
+        self.guild = guild
+        self._cache = None
+
+    def __str__(self):
+        if self._cache:
+            return self._cache
+
+        e = self.entity_id
+        g = self.guild
+        resolved = g.get_channel(e) or g.get_member(e)
+        if resolved is None:
+            self._cache = f'<Not Found: {e}>'
+        else:
+            self._cache = resolved.mention
+        return self._cache
+
+class ChannelOrMember(commands.Converter):
+    async def convert(self, ctx, argument):
+        try:
+            return await commands.TextChannelConverter().convert(ctx, argument)
+        except commands.BadArgument:
+            return await commands.MemberConverter().convert(ctx, argument)
+
+class Plonks(db.Table):
+    id = db.PrimaryKeyColumn()
+    guild_id = db.Column(db.Integer(big=True), index=True)
+
+    # this can either be a channel_id or an author_id
+    entity_id = db.Column(db.Integer(big=True), index=True, unique=True)
+
+class CommandConfig(db.Table, table_name='command_config'):
+    id = db.PrimaryKeyColumn()
+
+    guild_id = db.Column(db.Integer(big=True), index=True)
+    channel_id = db.Column(db.Integer(big=True))
+
+    name = db.Column(db.String)
+    whitelist = db.Column(db.Boolean)
+
+    @classmethod
+    def create_table(cls, *, exists_ok=True):
+        statement = super().create_table(exists_ok=exists_ok)
+        # create the unique index
+        sql = "CREATE UNIQUE INDEX IF NOT EXISTS command_config_uniq_idx ON command_config (channel_id, name, whitelist);"
+        return statement + '\n' + sql
+
+class CommandName(commands.Converter):
+    async def convert(self, ctx, argument):
+        lowered = argument.lower()
+
+        valid_commands = {
+            c.qualified_name
+            for c in ctx.bot.walk_commands()
+            if c.cog_name not in ('Config', 'Admin')
+        }
+
+        if lowered not in valid_commands:
+            raise commands.BadArgument('That command name is not valid.')
+
+        return lowered
+
+class ResolvedCommandPermissions:
+    class _Entry:
+        __slots__ = ('allow', 'deny')
+        def __init__(self):
+            self.allow = set()
+            self.deny = set()
+
+    def __init__(self, guild_id, records):
+        self.guild_id = guild_id
+
+        self._lookup = defaultdict(self._Entry)
+
+        # channel_id: { allow: [commands], deny: [commands] }
+
+        for name, channel_id, whitelist in records:
+            entry = self._lookup[channel_id]
+            if whitelist:
+                entry.allow.add(name)
+            else:
+                entry.deny.add(name)
+
+    def _split(self, obj):
+        # "hello there world" -> ["hello", "hello there", "hello there world"]
+        from itertools import accumulate
+        return list(accumulate(obj.split(), lambda x, y: f'{x} {y}'))
+
+    def is_blocked(self, ctx):
+        # fast path
+        if len(self._lookup) == 0:
+            return False
+
+        if ctx.author.guild_permissions.manage_guild:
+            return False
+
+        command_names = self._split(ctx.command.qualified_name)
+
+        guild = self._lookup[None] # no special channel_id
+        channel = self._lookup[ctx.channel.id]
+
+        blocked = None
+
+        # apply guild-level denies first
+        # then guild-level allow
+        # then channel-level deny
+        # then channel-level allow
+
+        # use ?foo bar
+        # ?foo bar <- guild allow
+        # ?foo <- channel block
+        # result: blocked
+        # this is why the two for loops are separate
+
+        for command in command_names:
+            if command in guild.deny:
+                blocked = True
+
+            if command in guild.allow:
+                blocked = False
+
+        for command in command_names:
+            if command in channel.deny:
+                blocked = True
+
+            if command in channel.allow:
+                blocked = False
+
+        return blocked
+
+class Config:
+    """Handles the bot's configuration system.
+
+    This is how you disable or enable certain commands
+    for your server or block certain channels or members.
+    """
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    async def is_plonked(self, guild_id, member_id, *, channel_id=None, connection=None, check_bypass=True):
+        if check_bypass:
+            guild = self.bot.get_guild(guild_id)
+            if guild is not None:
+                member = guild.get_member(member_id)
+                if member is not None and member.guild_permissions.manage_guild:
+                    return False
+
+        connection = connection or self.bot.pool
+
+        if channel_id is None:
+            query = "SELECT 1 FROM plonks WHERE guild_id=$1 AND entity_id=$2;"
+            row = await connection.fetchrow(query, guild_id, member_id)
+        else:
+            query = "SELECT 1 FROM plonks WHERE guild_id=$1 AND entity_id IN ($2, $3);"
+            row = await connection.fetchrow(query, guild_id, member_id, channel_id)
+
+        return row is not None
+
+    async def __global_check_once(self, ctx):
+        if ctx.guild is None:
+            return True
+
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        if is_owner:
+            return True
+
+        # see if they can bypass:
+        bypass = ctx.author.guild_permissions.manage_guild
+        if bypass:
+
