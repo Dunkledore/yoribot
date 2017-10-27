@@ -42,7 +42,7 @@ initial_extensions = (
 
 def _prefix_callable(bot, msg):
     user_id = bot.user.id
-    base = [f'<@!{user_id}> ', f'<@{user_id}> ']
+    base = ['<@!{user_id}> ', '<@{user_id}> ']
     if msg.guild is None:
         base.append('!')
         base.append('?')
@@ -70,7 +70,7 @@ class RoboDanny(commands.AutoShardedBot):
             try:
                 self.load_extension(extension)
             except Exception as e:
-                print(f'Failed to load extension {extension}.', file=sys.stderr)
+                print('Failed to load extension {extension}.', file=sys.stderr)
                 traceback.print_exc()
 
     async def on_command_error(self, ctx, error):
@@ -79,9 +79,9 @@ class RoboDanny(commands.AutoShardedBot):
         elif isinstance(error, commands.DisabledCommand):
             await ctx.author.send('Sorry. This command is disabled and cannot be used.')
         elif isinstance(error, commands.CommandInvokeError):
-            print(f'In {ctx.command.qualified_name}:', file=sys.stderr)
+            print('In {ctx.command.qualified_name}:', file=sys.stderr)
             traceback.print_tb(error.original.__traceback__)
-            print(f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
+            print('{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
 
     def get_guild_prefixes(self, guild, *, local_inject=_prefix_callable):
         proxy_msg = discord.Object(id=None)
