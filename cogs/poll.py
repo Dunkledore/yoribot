@@ -14,7 +14,7 @@ class Polls:
     @commands.command()
     @commands.guild_only()
     async def poll(self, ctx, *, question):
-        """Interactively creates a poll with the following question.
+        """Ask a question and later add choices for members to vote on.
 
         To vote, use reactions!
         """

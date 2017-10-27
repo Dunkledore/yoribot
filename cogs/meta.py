@@ -52,7 +52,7 @@ class Meta:
     @commands.command(hidden=True)
     async def hello(self, ctx):
         """Displays my intro message."""
-        await ctx.send('Hello! I\'m a robot! Danny#0007 made me.')
+        await ctx.send('Hello! I\'m a robot!')
 
     @commands.command()
     async def charinfo(self, ctx, *, characters: str):
