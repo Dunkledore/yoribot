@@ -28,7 +28,7 @@ class Context(commands.Context):
         width = max(len(a) for a, b in entries)
         output = ['```']
         for name, entry in entries:
-            output.append(f'{name:<{width}}: {entry}')
+            output.append('{name:<{width}}: {entry}')
         output.append('```')
         await self.send('\n'.join(output))
 
@@ -36,7 +36,7 @@ class Context(commands.Context):
         width = max(len(a) for a, b in entries)
         output = ['```']
         for name, entry in entries:
-            output.append(f'\u200b{name:>{width}}: {entry}')
+            output.append('\u200b{name:>{width}}: {entry}')
         output.append('```')
         await self.send('\n'.join(output))
 
@@ -56,7 +56,7 @@ class Context(commands.Context):
             return matches[0]
 
         await self.send('There are too many matches... Which one did you mean? **Only say the number**.')
-        await self.send('\n'.join(f'{index}: {entry(item)}' for index, item in enumerate(matches, 1)))
+        await self.send('\n'.join('{index}: {entry(item)}' for index, item in enumerate(matches, 1)))
 
         def check(m):
             return m.content.isdigit() and m.author.id == self.author.id and m.channel.id == self.channel.id
@@ -75,7 +75,7 @@ class Context(commands.Context):
                 try:
                     return matches[index - 1]
                 except:
-                    await self.send(f'Please give me a valid number. {2 - i} tries remaining...')
+                    await self.send('Please give me a valid number. {2 - i} tries remaining...')
 
             raise ValueError('Too many tries. Goodbye.')
         finally:
@@ -110,7 +110,7 @@ class Context(commands.Context):
         if not self.channel.permissions_for(self.me).add_reactions:
             raise RuntimeError('Bot does not have Add Reactions permission.')
 
-        fmt = f'{message}\n\nReact with \N{WHITE HEAVY CHECK MARK} to confirm or \N{CROSS MARK} to deny.'
+        fmt = '{message}\n\nReact with \N{WHITE HEAVY CHECK MARK} to confirm or \N{CROSS MARK} to deny.'
 
         author_id = author_id or self.author.id
         msg = await self.send(fmt)
@@ -157,7 +157,7 @@ class Context(commands.Context):
     def tick(self, opt, label=None):
         emoji = '<:greenTick:330090705336664065>' if opt else '<:redTick:330090723011592193>'
         if label is not None:
-            return f'{emoji}: {label}'
+            return '{emoji}: {label}'
         return emoji
 
     async def _acquire(self, timeout):
