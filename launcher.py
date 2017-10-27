@@ -83,31 +83,31 @@ def init(cogs, quiet):
     try:
         run(Table.create_pool(config.postgresql))
     except Exception:
-        click.echo(f'Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
         return
 
     if not cogs:
         cogs = initial_extensions
     else:
-        cogs = [f'cogs.{e}' if not e.startswith('cogs.') else e for e in cogs]
+        cogs = ['cogs.{e}' if not e.startswith('cogs.') else e for e in cogs]
 
     for ext in cogs:
         try:
             importlib.import_module(ext)
         except Exception:
-            click.echo(f'Could not load {ext}.\n{traceback.format_exc()}', err=True)
+            click.echo('Could not load {ext}.\n{traceback.format_exc()}', err=True)
             return
 
     for table in Table.all_tables():
         try:
             created = run(table.create(verbose=not quiet, run_migrations=False))
         except Exception:
-            click.echo(f'Could not create {table.__tablename__}.\n{traceback.format_exc()}', err=True)
+            click.echo('Could not create {table.__tablename__}.\n{traceback.format_exc()}', err=True)
         else:
             if created:
-                click.echo(f'[{table.__module__}] Created {table.__tablename__}.')
+                click.echo('[{table.__module__}] Created {table.__tablename__}.')
             else:
-                click.echo(f'[{table.__module__}] No work needed for {table.__tablename__}.')
+                click.echo('[{table.__module__}] No work needed for {table.__tablename__}.')
 
 @db.command(short_help='migrates the databases')
 @click.argument('cog', nargs=1, metavar='[cog]')
@@ -117,19 +117,19 @@ def migrate(ctx, cog, quiet):
     """Update the migration file with the newest schema."""
 
     if not cog.startswith('cogs.'):
-        cog = f'cogs.{cog}'
+        cog = 'cogs.{cog}'
 
     try:
         importlib.import_module(cog)
     except Exception:
-        click.echo(f'Could not load {ext}.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not load {ext}.\n{traceback.format_exc()}', err=True)
         return
 
     def work(table, *, invoked=False):
         try:
             actually_migrated = table.write_migration()
         except RuntimeError as e:
-            click.echo(f'Could not migrate {table.__tablename__}: {e}', err=True)
+            click.echo('Could not migrate {table.__tablename__}: {e}', err=True)
             if not invoked:
                 click.confirm('do you want to create the table?', abort=True)
                 ctx.invoke(init, cogs=[cog], quiet=quiet)
@@ -137,29 +137,29 @@ def migrate(ctx, cog, quiet):
             sys.exit(-1)
         else:
             if actually_migrated:
-                click.echo(f'Successfully updated migrations for {table.__tablename__}.')
+                click.echo('Successfully updated migrations for {table.__tablename__}.')
             else:
-                click.echo(f'Found no changes for {table.__tablename__}.')
+                click.echo('Found no changes for {table.__tablename__}.')
 
     for table in Table.all_tables():
         work(table)
 
-    click.echo(f'Done migrating {cog}.')
+    click.echo('Done migrating {cog}.')
 
 async def apply_migration(cog, quiet, index, *, downgrade=False):
     try:
         pool = await Table.create_pool(config.postgresql)
     except Exception:
-        click.echo(f'Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
         return
 
     if not cog.startswith('cogs.'):
-        cog = f'cogs.{cog}'
+        cog = 'cogs.{cog}'
 
     try:
         importlib.import_module(cog)
     except Exception:
-        click.echo(f'Could not load {cog}.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not load {cog}.\n{traceback.format_exc()}', err=True)
         return
 
     async with pool.acquire() as con:
@@ -169,7 +169,7 @@ async def apply_migration(cog, quiet, index, *, downgrade=False):
             try:
                 await table.migrate(index=index, downgrade=downgrade, verbose=not quiet, connection=con)
             except RuntimeError as e:
-                click.echo(f'Could not migrate {table.__tablename__}: {e}', err=True)
+                click.echo('Could not migrate {table.__tablename__}: {e}', err=True)
                 await tr.rollback()
                 break
         else:
@@ -201,14 +201,14 @@ async def remove_databases(pool, cog, quiet):
             try:
                 await table.drop(verbose=not quiet, connection=con)
             except RuntimeError as e:
-                click.echo(f'Could not drop {table.__tablename__}: {e}', err=True)
+                click.echo('Could not drop {table.__tablename__}: {e}', err=True)
                 await tr.rollback()
                 break
             else:
-                click.echo(f'Dropped {table.__tablename__}.')
+                click.echo('Dropped {table.__tablename__}.')
         else:
             await tr.commit()
-            click.echo(f'successfully removed {cog} tables.')
+            click.echo('successfully removed {cog} tables.')
 
 @db.command(short_help="removes a cog's table", options_metavar='[options]')
 @click.argument('cog',  metavar='<cog>')
@@ -229,16 +229,16 @@ def drop(cog, quiet):
     try:
         pool = run(Table.create_pool(config.postgresql))
     except Exception:
-        click.echo(f'Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
         return
 
     if not cog.startswith('cogs.'):
-        cog = f'cogs.{cog}'
+        cog = 'cogs.{cog}'
 
     try:
         importlib.import_module(cog)
     except Exception:
-        click.echo(f'Could not load {cog}.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not load {cog}.\n{traceback.format_exc()}', err=True)
         return
 
     run(remove_databases(pool, cog, quiet))
@@ -274,7 +274,7 @@ def convertjson(ctx, cogs):
             try:
                 elem = getattr(data_migrators, 'migrate_' + cog)
             except AttributeError:
-                click.echo(f'invalid cog name given, {cog}.', err=True)
+                click.echo('invalid cog name given, {cog}.', err=True)
                 return
 
             to_run.append((elem, cog))
@@ -285,14 +285,14 @@ def convertjson(ctx, cogs):
     try:
         pool = run(make_pool())
     except Exception:
-        click.echo(f'Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
+        click.echo('Could not create PostgreSQL connection pool.\n{traceback.format_exc()}', err=True)
         return
 
     client = discord.AutoShardedClient()
 
     @client.event
     async def on_ready():
-        click.echo(f'successfully booted up bot {client.user} (ID: {client.user.id})')
+        click.echo('successfully booted up bot {client.user} (ID: {client.user.id})')
         await client.logout()
 
     try:
@@ -308,10 +308,10 @@ def convertjson(ctx, cogs):
         try:
             run(migrator(pool, client))
         except Exception:
-            click.echo(f'[error] {migrator.__name__} has failed, terminating\n{traceback.format_exc()}', err=True)
+            click.echo('[error] {migrator.__name__} has failed, terminating\n{traceback.format_exc()}', err=True)
             return
         else:
-            click.echo(f'[{migrator.__name__}] completed successfully')
+            click.echo('[{migrator.__name__}] completed successfully')
 
 if __name__ == '__main__':
     main()
