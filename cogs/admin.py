@@ -44,7 +44,7 @@ class Admin:
         except Exception as e:
             await ctx.send(f'```py\n{traceback.format_exc()}\n```')
         else:
-            await ctx.send('\N{OK HAND SIGN}')
+            await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(hidden=True)
     async def unload(self, ctx, *, module):
@@ -54,7 +54,7 @@ class Admin:
         except Exception as e:
             await ctx.send(f'```py\n{traceback.format_exc()}\n```')
         else:
-            await ctx.send('\N{OK HAND SIGN}')
+            await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(name='reload', hidden=True)
     async def _reload(self, ctx, *, module):
