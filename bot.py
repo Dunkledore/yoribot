@@ -15,7 +15,7 @@ import config
 import asyncpg
 
 description = """
-Hello! I am a bot written by Danny to provide some nice utilities.
+Hello! I am a premium Discord bot.
 """
 
 log = logging.getLogger(__name__)
