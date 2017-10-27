@@ -68,6 +68,12 @@ class Music:
         await channel.connect()
         await ctx.send('Joining Channel')
 
+    @commands.command()
+    async def musictest(self, ctx):
+        """Test if music commands are being executed"""
+
+        await ctx.send('Test Complete')
+
     @commands.command(name="local")
     async def play_file(self, ctx, *, query):
         """Plays a file from the local filesystem"""
