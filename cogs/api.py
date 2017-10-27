@@ -63,13 +63,13 @@ class API:
             return
 
         if author.status is discord.Status.offline:
-            fmt = f'{author.mention} has been blocked for being invisible until they change their status or for 5 minutes.'
+            fmt = '{author.mention} has been blocked for being invisible until they change their status or for 5 minutes.'
 
             try:
                 await channel.set_permissions(author, read_messages=False, reason='invisible block')
                 self._recently_blocked.add(author.id)
                 await channel.send(fmt)
-                msg = f'Heya. You have been automatically blocked from <#{DISCORD_PY_ID}> for 5 minutes for being ' \
+                msg = 'Heya. You have been automatically blocked from <#{DISCORD_PY_ID}> for 5 minutes for being ' \
                        'invisible.\nTry chatting again in 5 minutes or when you change your status. If you\'re curious ' \
                        'why invisible users are blocked, it is because they tend to break the client and cause them to ' \
                        'be hard to mention. Since we want to help you usually, we expect mentions to work without ' \
@@ -130,7 +130,7 @@ class API:
         self._rtfm_cache = cache
 
     async def do_rtfm(self, ctx, key, obj):
-        base_url = f'http://discordpy.rtfd.io/en/{key}/'
+        base_url = 'http://discordpy.rtfd.io/en/{key}/'
 
         if obj is None:
             await ctx.send(base_url)
@@ -159,7 +159,7 @@ class API:
                 if name[0] == '_':
                     continue
                 if q == name:
-                    obj = f'abc.Messageable.{name}'
+                    obj = 'abc.Messageable.{name}'
                     break
 
             def replace(o):
@@ -178,7 +178,7 @@ class API:
         if len(matches) == 0:
             return await ctx.send('Could not find anything. Sorry.')
 
-        e.description = '\n'.join(f'[{key}]({url})' for key, url in matches)
+        e.description = '\n'.join('[{key}]({url})' for key, url in matches)
         await ctx.send(embed=e)
 
         if ctx.guild and ctx.guild.id == DISCORD_API_ID:
@@ -230,18 +230,18 @@ class API:
         records = await ctx.db.fetch(query)
 
         output = []
-        output.append(f'**Total uses**: {total_uses}')
+        output.append('**Total uses**: {total_uses}')
 
         # first we get the most used users
         if records:
-            output.append(f'**Top {len(records)} users**:')
+            output.append('**Top {len(records)} users**:')
 
             for rank, (user_id, count) in enumerate(records, 1):
                 user = self.bot.get_user(user_id)
                 if rank != 10:
-                    output.append(f'{rank}\u20e3 {user}: {count}')
+                    output.append('{rank}\u20e3 {user}: {count}')
                 else:
-                    output.append(f'\N{KEYCAP TEN} {user}: {count}')
+                    output.append('\N{KEYCAP TEN} {user}: {count}')
 
         await ctx.send('\n'.join(output))
 
@@ -296,7 +296,7 @@ class API:
         except:
             await ctx.send('\N{THUMBS DOWN SIGN}')
         else:
-            await ctx.send(f'Blocked {member} for {time.human_timedelta(duration.dt)}.')
+            await ctx.send('Blocked {member} for {time.human_timedelta(duration.dt)}.')
 
     async def on_tempblock_timer_complete(self, timer):
         guild_id, mod_id, channel_id, member_id = timer.args
@@ -322,14 +322,14 @@ class API:
                 moderator = await self.bot.get_user_info(mod_id)
             except:
                 # request failed somehow
-                moderator = f'Mod ID {mod_id}'
+                moderator = 'Mod ID {mod_id}'
             else:
-                moderator = f'{moderator} (ID: {mod_id})'
+                moderator = '{moderator} (ID: {mod_id})'
         else:
-            moderator = f'{moderator} (ID: {mod_id})'
+            moderator = '{moderator} (ID: {mod_id})'
 
 
-        reason = f'Automatic unblock from timer made on {timer.created_at} by {moderator}.'
+        reason = 'Automatic unblock from timer made on {timer.created_at} by {moderator}.'
 
         try:
             await channel.set_permissions(to_unblock, send_messages=None, reason=reason)
@@ -360,8 +360,8 @@ class API:
             await ctx.send('This channel has no feeds.')
             return
 
-        names = '\n'.join(f'- {r}' for r in feeds)
-        await ctx.send(f'Found {len(feeds)} feeds.\n{names}')
+        names = '\n'.join('- {r}' for r in feeds)
+        await ctx.send('Found {len(feeds)} feeds.\n{names}')
 
     @_feeds.command(name='create')
     @commands.has_permissions(manage_roles=True)
@@ -394,7 +394,7 @@ class API:
         query = 'INSERT INTO feeds (role_id, channel_id, name) VALUES ($1, $2, $3);'
         await ctx.db.execute(query, role.id, ctx.channel.id, name)
         self.get_feeds.invalidate(self, ctx.channel.id)
-        await ctx.send(f'{ctx.tick(True)} Successfully created feed.')
+        await ctx.send('{ctx.tick(True)} Successfully created feed.')
 
     @_feeds.command(name='delete', aliases=['remove'])
     @commands.has_permissions(manage_roles=True)
@@ -430,7 +430,7 @@ class API:
             return
 
         if feed not in feeds:
-            await ctx.send(f'This feed does not exist.\nValid feeds: {", ".join(feeds)}')
+            await ctx.send('This feed does not exist.\nValid feeds: {", ".join(feeds)}')
             return
 
         role_id = feeds[feed]
@@ -496,7 +496,7 @@ class API:
         await role.edit(mentionable=True)
 
         # then send the message..
-        await ctx.send(f'{role.mention}: {content}'[:2000])
+        await ctx.send('{role.mention}: {content}'[:2000])
 
         # then make the role unmentionable
         await role.edit(mentionable=False)
@@ -525,7 +525,7 @@ class API:
         if len(matches) == 0:
             return await ctx.send('Nothing found...')
 
-        fmt = '\n'.join(f'**{key}**\n{value}' for key, _, value in matches)
+        fmt = '\n'.join('**{key}**\n{value}' for key, _, value in matches)
         await ctx.send(fmt)
 
 def setup(bot):

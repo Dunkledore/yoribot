@@ -33,8 +33,8 @@ class Admin:
 
     def get_syntax_error(self, e):
         if e.text is None:
-            return f'```py\n{e.__class__.__name__}: {e}\n```'
-        return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
+            return '```py\n{e.__class__.__name__}: {e}\n```'
+        return '```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
 
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
@@ -86,12 +86,12 @@ class Admin:
         body = self.cleanup_code(body)
         stdout = io.StringIO()
 
-        to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
+        to_compile = 'async def func():\n{textwrap.indent(body, "  ")}'
 
         try:
             exec(to_compile, env)
         except Exception as e:
-            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+            return await ctx.send('```py\n{e.__class__.__name__}: {e}\n```')
 
         func = env['func']
         try:
@@ -99,7 +99,7 @@ class Admin:
                 ret = await func()
         except Exception as e:
             value = stdout.getvalue()
-            await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+            await ctx.send('```py\n{value}{traceback.format_exc()}\n```')
         else:
             value = stdout.getvalue()
             try:
@@ -109,10 +109,10 @@ class Admin:
 
             if ret is None:
                 if value:
-                    await ctx.send(f'```py\n{value}\n```')
+                    await ctx.send('```py\n{value}\n```')
             else:
                 self._last_result = ret
-                await ctx.send(f'```py\n{value}{ret}\n```')
+                await ctx.send('```py\n{value}{ret}\n```')
 
     @commands.command(pass_context=True, hidden=True)
     async def repl(self, ctx):
@@ -183,14 +183,14 @@ class Admin:
                         result = await result
             except Exception as e:
                 value = stdout.getvalue()
-                fmt = f'```py\n{value}{traceback.format_exc()}\n```'
+                fmt = '```py\n{value}{traceback.format_exc()}\n```'
             else:
                 value = stdout.getvalue()
                 if result is not None:
-                    fmt = f'```py\n{value}{result}\n```'
+                    fmt = '```py\n{value}{result}\n```'
                     variables['_'] = result
                 elif value:
-                    fmt = f'```py\n{value}\n```'
+                    fmt = '```py\n{value}\n```'
 
             try:
                 if fmt is not None:
@@ -201,7 +201,7 @@ class Admin:
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
-                await ctx.send(f'Unexpected error: `{e}`')
+                await ctx.send('Unexpected error: `{e}`')
 
 
     @commands.command(hidden=True)
@@ -228,11 +228,11 @@ class Admin:
             results = await strategy(query)
             dt = (time.perf_counter() - start) * 1000.0
         except Exception:
-            return await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+            return await ctx.send('```py\n{traceback.format_exc()}\n```')
 
         rows = len(results)
         if is_multistatement or rows == 0:
-            return await ctx.send(f'`{dt:.2f}ms: {results}`')
+            return await ctx.send('`{dt:.2f}ms: {results}`')
 
         headers = list(results[0].keys())
         table = TabularData()

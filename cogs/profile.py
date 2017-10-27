@@ -56,7 +56,7 @@ class DisambiguateMember(commands.IDConverter):
 
                 def to_str(m):
                     if m.nick:
-                        return f'{m} (a.k.a {m.nick})'
+                        return '{m} (a.k.a {m.nick})'
                     else:
                         return str(m)
 
@@ -65,7 +65,7 @@ class DisambiguateMember(commands.IDConverter):
             try:
                 result = await ctx.disambiguate(matches, entry)
             except Exception as e:
-                raise commands.BadArgument(f'Could not find this member. {e}') from None
+                raise commands.BadArgument('Could not find this member. {e}') from None
 
         if result is None:
             raise commands.BadArgument("Could not found this member. Note this is case sensitive.")
@@ -104,7 +104,7 @@ def valid_rank(argument, *, _rank=_rank):
     try:
         mode = valid[mode.lower()]
     except KeyError:
-        raise commands.BadArgument(f'Unknown Splatoon 2 mode: {mode}') from None
+        raise commands.BadArgument('Unknown Splatoon 2 mode: {mode}') from None
 
     rank = m.group('rank').upper()
     if rank == 'S-':
@@ -186,8 +186,8 @@ class Profile:
         if record is None:
             if member == ctx.author:
                 await ctx.send('You did not set up a profile.' \
-                              f' If you want to input a switch friend code, type {ctx.prefix}profile switch 1234-5678-9012' \
-                              f' or check {ctx.prefix}help profile')
+                              ' If you want to input a switch friend code, type {ctx.prefix}profile switch 1234-5678-9012' \
+                              ' or check {ctx.prefix}help profile')
             else:
                 await ctx.send('This member did not set up a profile.')
             return
@@ -213,7 +213,7 @@ class Profile:
         rank = extra.get('sp2_rank', {})
         value = 'Unranked'
         if rank:
-            value = '\n'.join(f'{mode}: {data["rank"]}{data["number"]}' for mode, data in rank.items())
+            value = '\n'.join('{mode}: {data["rank"]}{data["number"]}' for mode, data in rank.items())
 
         e.add_field(name='Splatoon 2 Ranks', value=value)
 
@@ -225,7 +225,7 @@ class Profile:
 
     async def edit_fields(self, ctx, **fields):
         keys = ', '.join(fields)
-        values = ', '.join(f'${2 + i}' for i in range(len(fields)))
+        values = ', '.join('${2 + i}' for i in range(len(fields)))
 
         query = f"""INSERT INTO profiles (id, {keys})
                     VALUES ($1, {values})
@@ -276,7 +276,7 @@ class Profile:
                 """
 
         await ctx.db.execute(query, ctx.author.id, weapon)
-        await ctx.send(f'Successfully set weapon to {weapon["name"]}.')
+        await ctx.send('Successfully set weapon to {weapon["name"]}.')
 
     @profile.command(usage='<mode> <rank>')
     async def rank(self, ctx, *, argument: valid_rank):
@@ -302,7 +302,7 @@ class Profile:
 
         mode, data = argument
         await ctx.db.execute(query, ctx.author.id, {mode: data})
-        await ctx.send(f'Successfully set {mode} rank to {data["rank"]}{data["number"]}.')
+        await ctx.send('Successfully set {mode} rank to {data["rank"]}{data["number"]}.')
 
     @profile.command()
     async def delete(self, ctx, *, field=None):
@@ -354,21 +354,21 @@ class Profile:
         if column:
             query = f"UPDATE profiles SET {column} = NULL WHERE id=$1;"
             await ctx.db.execute(query, ctx.author.id)
-            return await ctx.send(f'Successfully deleted {field} field.')
+            return await ctx.send('Successfully deleted {field} field.')
 
         # whole key deletion
         if field in ('weapon', 'rank'):
             key = 'sp2_rank' if field == 'rank' else 'sp2_weapon'
             query = "UPDATE profiles SET extra = extra - $1 WHERE id=$2;"
             await ctx.db.execute(query, key, ctx.author.id)
-            return await ctx.send(f'Successfully deleted {field} field.')
+            return await ctx.send('Successfully deleted {field} field.')
 
         # a little more complicated
         mode = field.replace(' rank', '').title()
         query = "UPDATE profiles SET extra = extra #- $1::text[] WHERE id=$2;"
         key = ['sp2_rank', mode]
         await ctx.db.execute(query, key, ctx.author.id)
-        await ctx.send(f'Successfully deleted {mode} ranking.')
+        await ctx.send('Successfully deleted {mode} ranking.')
 
     @profile.command()
     async def search(self, ctx, *, query):

@@ -27,7 +27,7 @@ class Polls:
             return m.author == ctx.author and m.channel == ctx.channel and len(m.content) <= 100
 
         for i in range(20):
-            messages.append(await ctx.send(f'Say poll option or {ctx.prefix}cancel to publish poll.'))
+            messages.append(await ctx.send('Say poll option or {ctx.prefix}cancel to publish poll.'))
 
             try:
                 entry = await self.bot.wait_for('message', check=check, timeout=60.0)
@@ -36,7 +36,7 @@ class Polls:
 
             messages.append(entry)
 
-            if entry.clean_content.startswith(f'{ctx.prefix}cancel'):
+            if entry.clean_content.startswith('{ctx.prefix}cancel'):
                 break
 
             answers.append((to_emoji(i), entry.clean_content))
@@ -46,8 +46,8 @@ class Polls:
         except:
             pass # oh well
 
-        answer = '\n'.join(f'{keycap}: {content}' for keycap, content in answers)
-        actual_poll = await ctx.send(f'{ctx.author} asks: {question}\n\n{answer}')
+        answer = '\n'.join('{keycap}: {content}' for keycap, content in answers)
+        actual_poll = await ctx.send('{ctx.author} asks: {question}\n\n{answer}')
         for emoji, _ in answers:
             await actual_poll.add_reaction(emoji)
 
@@ -81,8 +81,8 @@ class Polls:
         except:
             pass
 
-        body = "\n".join(f"{key}: {c}" for key, c in choices)
-        poll = await ctx.send(f'{ctx.author} asks: {question}\n\n{body}')
+        body = "\n".join("{key}: {c}" for key, c in choices)
+        poll = await ctx.send('{ctx.author} asks: {question}\n\n{body}')
         for emoji, _ in choices:
             await poll.add_reaction(emoji)
 
