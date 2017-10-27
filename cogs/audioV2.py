@@ -63,7 +63,7 @@ class Music:
         """Joins a voice channel"""
 
         channel = ctx.message.author.voice_channel
-        ctx.say(ctx.voice_client)
+        await ctx.say(ctx.voice_client)
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
 
