@@ -59,7 +59,7 @@ class Music:
         self.bot = bot
 
     @commands.command()
-    async def join(self, ctx, *, channel: discord.VoiceChannel):
+    async def audiojoin(self, ctx, *, channel: discord.VoiceChannel):
         """Joins a voice channel"""
 
         if ctx.voice_client is not None:
@@ -116,7 +116,7 @@ class Music:
         await ctx.send("Changed volume to {}%".format(volume))
 
     @commands.command()
-    async def stop(self, ctx):
+    async def top(self, ctx):
         """Stops and disconnects the bot from voice"""
 
         await ctx.voice_client.disconnect()
