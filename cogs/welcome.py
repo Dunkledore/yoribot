@@ -20,11 +20,11 @@ class Welcome:
 	@commands.command()
 	async def welcome(self, ctx):
 		await ctx.send('trying')
-		query = "SELECT * FROM welcome WHERE guild_id = '1234';"
+		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 				
 
 		await ctx.send(query)
-		array = await ctx.db.fetch(query)
+		array = await ctx.db.fetch(query, ctx.guild.id)
 
 		await ctx.send(query)
 
@@ -35,7 +35,7 @@ class Welcome:
 		else:
 			await ctx.send('there is one')
 			
-def setup(bot: commands.Bot):
+def setup(bot):
     bot.add_cog(Welcome(bot))
 
 
