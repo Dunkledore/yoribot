@@ -19,7 +19,7 @@ class Welcome:
 
 	@commands.command(pass_context=True, no_pm=True)
 	async def welcome(self, ctx :commands.Context):
-		ctx.send('trying')
+		await ctx.send('trying')
 		query = """SELECT * 
 				   FROM welcome
 				   WHERE server_id = $1
@@ -28,11 +28,9 @@ class Welcome:
 
 		if array is None:
 			e = discord.Embed(title='No embed made', color = 0xdd5f53)
-			ctx.send(e)
+			await ctx.send(e)
 		else:
-			ctx.send('there is one')
-	
-
+			await ctx.send('there is one')
 			
 def setup(bot: commands.Bot):
     bot.add_cog(Welcome(bot))
