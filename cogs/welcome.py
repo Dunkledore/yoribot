@@ -18,7 +18,7 @@ class Welcome:
 
 
 	@commands.command(pass_context=True, no_pm=True)
-	async def welcomemessage(self, ctx,):
+	async def welcome(self, ctx):
 		query = """SELECT * 
 				   FROM welcome
 				   WHERE server_id = $1
