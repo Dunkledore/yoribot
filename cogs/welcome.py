@@ -17,7 +17,7 @@ class Welcome:
 		self.bot = bot
 
 
-	@commands.command(pass_context=True, no_pm=True)
+	@commands.command()
 	async def welcome(self, ctx):
 		await ctx.send('trying')
 		query = """SELECT * 
@@ -27,6 +27,8 @@ class Welcome:
 
 		await ctx.send(query)
 		array = await ctx.db.fetch(query, ctx.guild.id)
+
+		await ctx.send(query)
 
 
 		if array is None:
