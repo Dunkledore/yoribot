@@ -22,7 +22,7 @@ class Welcome:
 				   FROM welcome
 				   WHERE server_id = $1
 				"""
-		array = await.con.fetch(query, guild_id)
+		array = await con.fetch(query, guild_id)
 
 		if array is None:
 			e = discord.Embed(title='No embed made', color = 0xdd5f53)
