@@ -26,8 +26,8 @@ class Welcome:
 				"""
 
 		await ctx.send(query)
-		array = await ctx.db.fetch(query, ctx.guild_id)
-		await ctx.send('trying2')
+		array = await ctx.db.fetch(query, ctx.guild.id)
+
 
 		if array is None:
 			e = discord.Embed(title='No embed made', color = 0xdd5f53)
