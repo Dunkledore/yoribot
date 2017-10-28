@@ -18,13 +18,13 @@ class Welcome:
 
 
 	@commands.command(pass_context=True, no_pm=True)
-	async def welcomemessage(self, guild_id, name, * , connection=None):
+	async def welcomemessage(self, ctx, connection=None):
 		con = connection or self.bot.pool
 		query = """SELECT * 
 				   FROM welcome
 				   WHERE server_id = $1
 				"""
-		array = await con.fetch(query, guild_id)
+		array = await con.fetch(query, ctx.guild_id)
 
 		if array is None:
 			e = discord.Embed(title='No embed made', color = 0xdd5f53)
