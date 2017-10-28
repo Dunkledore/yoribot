@@ -18,7 +18,7 @@ class Welcome:
 
 
 	@commands.command(pass_context=True, no_pm=True)
-	async def welcome(self, ctx :commands.Context):
+	async def welcome(self, ctx):
 		await ctx.send('trying')
 		query = """SELECT * 
 				   FROM welcome
@@ -28,7 +28,6 @@ class Welcome:
 		await ctx.send(query)
 		array = await ctx.db.fetch(query, ctx.guild.id)
 
-		await ctx.send(query)
 
 		if array is None:
 			e = discord.Embed(title='No embed made', color = 0xdd5f53)
