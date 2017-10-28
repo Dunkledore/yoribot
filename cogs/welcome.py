@@ -25,7 +25,7 @@ class Welcome:
 				   WHERE server_id = $1
 				"""
 
-		await ctx.send('trying1')
+		await ctx.send(query)
 		array = await ctx.db.fetch(query, ctx.guild_id)
 		await ctx.send('trying2')
 
