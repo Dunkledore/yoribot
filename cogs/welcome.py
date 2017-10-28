@@ -16,7 +16,9 @@ class Welcome:
 	def __init__(self, bot):
 		self.bot = bot
 
-	async def get_welcomemessage(self, guild_id, name, * , connection=None):
+
+	@commands.command(pass_context=True, no_pm=True)
+	async def welcomemessage(self, guild_id, name, * , connection=None):
 		con = connection or self.bot.pool
 		query = """SELECT * 
 				   FROM welcome
@@ -26,9 +28,11 @@ class Welcome:
 
 		if array is None:
 			e = discord.Embed(title='No embed made', color = 0xdd5f53)
-			return e
+			ctx.send(e)
 		else:
-			return None
+			ctx.send('there is one')
+	
+
 			
 def setup(bot: commands.Bot):
     bot.add_cog(Welcome(bot))
