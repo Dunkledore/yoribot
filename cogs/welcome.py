@@ -30,7 +30,8 @@ class Welcome:
 		else:
 			return None
 			
-
+def setup(bot: commands.Bot):
+    bot.add_cog(Welcome(bot))
 
 
 
