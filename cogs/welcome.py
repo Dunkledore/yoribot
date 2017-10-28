@@ -20,13 +20,11 @@ class Welcome:
 	@commands.command()
 	async def welcome(self, ctx):
 		await ctx.send('trying')
-		query = """SELECT * 
-				   FROM welcome
-				   WHERE guild_id = $1;
-				"""
+		query = "SELECT * FROM welcome WHERE guild_id = '1234';"
+				
 
 		await ctx.send(query)
-		array = await ctx.db.fetch(query, ctx.guild.id)
+		array = await ctx.db.fetch(query)
 
 		await ctx.send(query)
 
