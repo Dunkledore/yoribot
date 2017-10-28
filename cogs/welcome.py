@@ -13,12 +13,12 @@ import asyncpg
 class Welcome:
 	"""The Welcome Related Commands"""
 
-	def __init__(self, bot):
+	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
 
 	@commands.command(pass_context=True, no_pm=True)
-	async def welcome(self, ctx):
+	async def welcome(self, ctx :commands.Context):
 		ctx.send('trying')
 		query = """SELECT * 
 				   FROM welcome
