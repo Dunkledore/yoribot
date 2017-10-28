@@ -22,7 +22,7 @@ class Welcome:
 		await ctx.send('trying')
 		query = """SELECT * 
 				   FROM welcome
-				   WHERE server_id = $1
+				   WHERE server_id = $1;
 				"""
 
 		await ctx.send(query)
