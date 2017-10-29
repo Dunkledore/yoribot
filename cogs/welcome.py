@@ -48,7 +48,7 @@ class Welcome:
 		if (arg1 is None) or (arg2 is None):
 			await ctx.send('Please enter both a field and a value')
 		else:
-			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, &3)"
+			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, $3)"
 			await ctx.send(ctx.guild.id)
 			await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
 			await ctx.send('done')
