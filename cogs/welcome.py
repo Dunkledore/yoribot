@@ -78,21 +78,12 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		async with self.bot.pool.acquire() as con:
 			chid = con.fetch(query, member.guild.id)
+			print('channel id')
 			print(chid)
+			await self.bot.wait_until_ready()
 			ch = self.bot.get_channel(chid)
-			print(ch)
+			print(ch)+
 			await ch.send('He joined')
-
-
-	@cache.cache()
-	async def get_guild_config(self, guild_id):
-		query = """SELECT * FROM guild_mod_config WHERE id=$1;"""
-		async with self.bot.pool.acquire() as con:
-			record = await con.fetchrow(query, guild_id)
-			print(record)
-			if record is not None:
-				return await self.from_record(record, self.bot)
-			return None
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
