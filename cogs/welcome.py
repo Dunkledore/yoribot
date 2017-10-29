@@ -29,7 +29,7 @@ class Welcome:
 		await ctx.send('this')
 		embed = discord.Embed(title ='User Joined', colour=discord.Colour.blurple())
 		await ctx.send('this')
-		embed.add_field(name='User', value=ctx.message.author.mention)
+		#embed.add_field(name='User', value=ctx.message.author.mention)
 		await ctx.send('this')
 
 		#for fields in welcome:
