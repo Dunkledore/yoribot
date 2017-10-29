@@ -74,7 +74,6 @@ class Welcome:
 		await ctx.send('Channel set')
 
 	async def on_member_join(self, member):
-		await self.bot.wait_until_login()
 
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		async with self.bot.pool.acquire() as con:
