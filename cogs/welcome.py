@@ -78,6 +78,7 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		async with self.bot.pool.acquire() as con:
 			chid = con.fetch(query, member.guild.id)
+			print(con)
 			print('channel id')
 			print(chid)
 			await self.bot.wait_until_ready()
