@@ -26,8 +26,8 @@ class Welcome:
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 
 		try:
-			welcome = await ctx.db.fetchrow(query, ctx.guild.id)
-			await ctx.send(welcome)
+			welcome = await ctx.db.fetch(query, ctx.guild.id)
+			await ctx.send(welcome[0])
 		except Exception as e:
 			await ctx.send(e)
 		
