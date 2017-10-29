@@ -44,7 +44,8 @@ class Welcome:
 	@commands.command()
 	@checks.is_mod()
 	async def addfield(ctx, arg1, arg2):
-	
+		
+		await ctx.send('testing')
 		if (arg1 is None) or (arg2 is None):
 			await ctx.send('Please enter both a field and a value')
 		else:
