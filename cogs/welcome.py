@@ -66,6 +66,13 @@ class Welcome:
 			await ctx.db.execute(query, ctx.guild.id, arg1)
 			await ctx.send('Field Removed')
 
+	@commands.command()
+	async def setbroadcastchannel(self, ctx):
+
+		query = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
+		await ctx.db.execute(query, ctx.guild.id, ctx.message.channel.id)
+		await ctx.send('Channel set')
+
 	async def on_member_join(self, member):
 
 		config = await self.get_guild_config(member.guild.id)
@@ -82,30 +89,6 @@ class Welcome:
 			if record is not None:
 				return await self.from_record(record, self.bot)
 			return None
-
-	@classmethod
-	async def from_record(cls, record, bot):
-		self = cls()
-
-        # the basic configuration
-		self.bot = bot
-		self.raid_mode = record['raid_mode']
-		self.id = record['id']
-		self.broadcast_channel_id = record['broadcast_channel']
-		self.mention_count = record['mention_count']
-		self.safe_mention_channel_ids = set(record['safe_mention_channel_ids'] or [])
-		return self
-
-
-
-
-
-
-
-	
-
-
-
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
