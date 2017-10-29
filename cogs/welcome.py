@@ -22,8 +22,6 @@ class Welcome:
 		await ctx.send('trying')
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 				
-
-		await ctx.send(query)
 		array = await ctx.db.fetch(query, ctx.guild.id)
 
 		await ctx.send(query)
