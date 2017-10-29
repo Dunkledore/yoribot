@@ -213,7 +213,7 @@ class Tags:
 
         prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
 
-        if message.content[0] not in prefixes:
+        if len([p for p in prefixes if message.content.startswith(p)]) == 0:
             return
 
         try:
