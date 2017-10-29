@@ -69,8 +69,8 @@ class Welcome:
 	 async def on_member_join(self, member):
 
 
-	 	con = connection or self.bot.pool
-	 	await config.broadcast.channel.send('he joined')
+		con = connection or self.bot.pool
+		await config.broadcast.channel.send('he joined')
 
 
 
