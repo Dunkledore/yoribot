@@ -31,7 +31,7 @@ class Welcome:
 
 
 		for fields in welcome:
-			await ctx.send('this')
+			await ctx.send(fields[3])
 			embed.add_field(name=fields[3], value=fields[4])
 		#for fields in welcome:
 		#	embed.addfield(name=welcome[2], value=welcome[3])
