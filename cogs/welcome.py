@@ -26,13 +26,14 @@ class Welcome:
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.Embed(title='User Joined', colour=discord.Colour.blurple())
-		await ctx.send(embed=embed)
-		#embed.add_field(name='User', value=ctx.message.author.mention)
+		
+		embed.add_field(name='User', value=ctx.message.author.mention)
 
 		#for fields in welcome:
 		#	embed.addfield()
-
 		await ctx.send(embed=embed)
+
+
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
