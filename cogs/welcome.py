@@ -78,7 +78,7 @@ class Welcome:
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, ctx.message.channel.id)
 
-		await ctx.say('Channel set')
+		await ctx.send('Channel set')
 
 
 	async def on_member_join(self, member):
