@@ -280,7 +280,7 @@ class Mod:
 
     async def on_reaction_add(self, reaction, user):
         print('triggered')
-        print(ord(reaction.message.reactions[0]))
+        print(ord(reaction.emoji))
         con = self.bot.pool
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
         number = await con.fetchrow(query, reaction.message.guild.id)
