@@ -19,7 +19,7 @@ class Welcome:
 	@commands.group(invoke_without_command=True)
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
-		"""Tells you command usage stats for the server or a member."""s
+		"""Tells you command usage stats for the server or a member."""
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
