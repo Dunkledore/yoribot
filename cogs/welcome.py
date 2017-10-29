@@ -29,7 +29,7 @@ class Welcome:
 		
 		embed.add_field(name='User', value=ctx.message.author.mention)
 
-		await ctx.send(type(welcome))
+		await ctx.send(welcome[0])
 		#for fields in welcome:
 		#	embed.addfield(name=welcome[2], value=welcome[3])
 
