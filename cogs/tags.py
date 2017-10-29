@@ -215,7 +215,7 @@ class Tags:
         except RuntimeError as e:
             return await message.channel.send(e)
 
-        await ctx.send(tag['content'])
+        await message.channel.send(tag['content'])
 
         # update the usage
         query = "UPDATE tags SET uses = uses + 1 WHERE name = $1 AND (location_id=$2 OR location_id IS NULL);"
