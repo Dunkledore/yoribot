@@ -52,7 +52,7 @@ class Welcome:
 
 			
 		try:
-			await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
+			await ctx.db.execute(query, ctx.guild.id, arg1, arg2)
 		except asyncpg.UniqueViolationError:
 			await ctx.send('This tag already exists.')
 		except Exception as e:
