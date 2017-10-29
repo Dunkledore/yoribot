@@ -13,6 +13,7 @@ class Rate:
     async def rate(self, ctx):
         """Rates users. 157% accurate!"""
         mentionlist = ctx.message.mentions
+        await ctx.send(mentionlist)
         user = mentionlist[0]
         random.seed(int(user.id) % int(ctx.message.timestamp.timestamp()),)
         x = ":sparkles:" * random.randint(1, 10)
