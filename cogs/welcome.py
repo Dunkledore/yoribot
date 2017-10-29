@@ -23,7 +23,7 @@ class Welcome:
 
         await self.show_welcome_message(ctx)
 
-     async def show_guild_stats(self, ctx):
+     async def show_welcome_message(self, ctx):
 		embed = discord.Embed(title='Welcome Message', colour=discord.Colour.blurple())
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
