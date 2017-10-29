@@ -24,7 +24,7 @@ class Welcome:
 
 	async def show_welcome_message(self, ctx):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
-		ctx.send('this')
+		await ctx.send('this')
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.embed(title ='User Joined', colour = discord.Colour.blurple())
 		embed.addfield(name='User', Value=ctx.message.author.mention)
@@ -33,12 +33,6 @@ class Welcome:
 			embed.addfield()
 
 		await ctx.send(embed=embed)
-
-
-			
-
-		
-
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
