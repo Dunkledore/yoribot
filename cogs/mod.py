@@ -281,10 +281,13 @@ class Mod:
     async def on_reaction_add(self, reaction, user):
         if ord(reaction.emoji) != 10060:
             return
-
+        print('messy')
         con = self.bot.pool
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
+        print('messy')
         number = await con.fetchrow(query, reaction.message.guild.id)
+
+        print('messy')
 
         if number is None:
             return
