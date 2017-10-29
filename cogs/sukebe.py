@@ -14,6 +14,7 @@ class Rate:
         """Rates users. 157% accurate!"""
         await ctx.send(ctx.message.mentions[0].id)
         await ctx.send(ctx.message.mentions[0])
+        await ctx.send(ctx.message.timestamp)
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.timestamp.timestamp()),)
         x = ":sparkles:" * random.randint(1, 10)
         await ctx.send(x)
