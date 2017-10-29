@@ -299,7 +299,7 @@ class Mod:
     async def reactiondelnumber(self, ctx, number=None):
         if number is None:
             query = "SELECT * FROM mod_confif WHERE guild_id = $1"
-            conf = ctx.db.fetchrow(query, ctx.message.guild.id)
+            conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
             number = conf[2]
             ctx.send(number)
 
