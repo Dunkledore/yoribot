@@ -34,8 +34,6 @@ class Welcome:
 
 		for fields in welcome:
 			embed.add_field(name=fields[2], value=fields[3])
-		#for fields in welcome:
-		#	embed.addfield(name=welcome[2], value=welcome[3])
 
 
 		await ctx.send(embed=embed)
@@ -83,7 +81,19 @@ class Welcome:
 		print(chid[2])
 		ch = self.bot.get_channel(chid[2])
 		print(ch)
-		await ch.send('He joined')
+		
+		query = "SELECT * FROM welcome WHERE guild_id = $1;"
+		welcome = await con.fetch(query, member.guild.id)
+		embed = discord.Embed(title='Welcome to ' + member.guild.name, colour=discord.Colour.blurple())
+		embed.set_author(name=member.name, icon_url=member.avatar_url)
+		embed.add_field(name='User', value=member.mention)
+
+
+		for fields in welcome:
+			embed.add_field(name=fields[2], value=fields[3])
+
+
+		await ch.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
