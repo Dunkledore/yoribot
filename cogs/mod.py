@@ -294,6 +294,7 @@ class Mod:
         print (number[2])
         for sreaction in reaction.message.reactions:
             print(sreaction.count)
+            print(sreaction.count >= number[2])
             if (sreaction.count >= number[2]) and (ord(sreaction.emoji) == 10060):
                 await reaction.message.delete()
 
