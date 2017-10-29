@@ -210,6 +210,12 @@ class Tags:
     async def on_message(self, message):
         if message.author.bot:
             return
+
+        prefixes = tuple(self.bot.get_guild_prefixes(ctx.guild))
+
+        if messgae[0] not in prefixes:
+            return
+
         try:
             tag = await self.get_tag(message.guild.id, message.content, connection=self.bot.pool)
         except RuntimeError as e:
