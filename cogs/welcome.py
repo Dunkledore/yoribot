@@ -76,15 +76,15 @@ class Welcome:
 	async def on_member_join(self, member):
 
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
-		async with self.bot.pool.acquire() as con:
-			chid = con.fetch(query, member.guild.id)
-			print(con)
-			print('channel id')
-			print(chid)
-			await self.bot.wait_until_ready()
-			ch = self.bot.get_channel(chid)
-			print(ch)
-			await ch.send('He joined')
+		con = self.bot.pool
+		chid = con.fetch(query, member.guild.id)
+		print(con)
+		print('channel id')
+		print(chid)
+		await self.bot.wait_until_ready()
+		ch = self.bot.get_channel(chid)
+		print(ch)
+		await ch.send('He joined')
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
