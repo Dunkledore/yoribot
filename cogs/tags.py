@@ -213,19 +213,25 @@ class Tags:
 
         prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
 
-        if len([p for p in prefixes if message.content.startswith(p)]) == 0:
-            return
+        for p in prefixes:
+            if message.content.startswith(p):
+                tag = message.content[len(p):]
 
-        try:
-            tag = await self.get_tag(message.guild.id, message.content[1:], connection=self.bot.pool)
-        except RuntimeError as e:
-            return await message.channel.send(e)
+                if len([p for p in prefixes if message.content.startswith(p)]) == 0:
+                    return
 
-        await message.channel.send(tag['content'])
+                try:
+                    tag = await self.get_tag(message.guild.id, message.content[1:], connection=self.bot.pool)
+                except RuntimeError as e:
+                    return await message.channel.send(e)
 
-        # update the usage
-        query = "UPDATE tags SET uses = uses + 1 WHERE name = $1 AND (location_id=$2 OR location_id IS NULL);"
-        await self.bot.pool.execute(query, tag['name'], ctx.guild.id)
+                await message.channel.send(tag['content'])
+
+                # update the usage
+                query = "UPDATE tags SET uses = uses + 1 WHERE name = $1 AND (location_id=$2 OR location_id IS NULL);"
+                await self.bot.pool.execute(query, tag['name'], ctx.guild.id)
+                return
+            
 
     @commands.group(invoke_without_command=True)
     @suggest_box()
