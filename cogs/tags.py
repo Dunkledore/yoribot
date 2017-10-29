@@ -213,7 +213,7 @@ class Tags:
 
         prefixes = tuple(self.bot.get_guild_prefixes(ctx.guild))
 
-        if messgae[0] not in prefixes:
+        if message[0] not in prefixes:
             return
 
         try:
