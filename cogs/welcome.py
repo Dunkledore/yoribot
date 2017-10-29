@@ -20,7 +20,6 @@ class Welcome:
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Will sennd the """
-		await ctx.send('this')
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
@@ -56,8 +55,8 @@ class Welcome:
 			await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
 		except asyncpg.UniqueViolationError:
 			await ctx.send('This tag already exists.')
-		except:
-			await ctx.send('Could not create tag.')
+		except Exception as e:
+			await ctx.send(e)
 		else:
 			await ctx.send('Tag {name} successfully created.')
 
