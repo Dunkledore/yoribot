@@ -19,7 +19,7 @@ class Welcome:
 	@commands.group(invoke_without_command=True)
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
-		"""Will sennd the """
+		"""Will sennd the welcome message as if the caller just joined"""
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
