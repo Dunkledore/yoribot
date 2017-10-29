@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import datetime
 import random
 
 
@@ -15,7 +16,7 @@ class Rate:
         await ctx.send(ctx.message.mentions[0].id)
         await ctx.send(ctx.message.mentions[0])
         await ctx.send(ctx.message.timestamp)
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.timestamp.timestamp()),)
+        random.seed(int(ctx.message.mentions[0].id) % int(datetime.datetime.utcnow()),)
         x = ":sparkles:" * random.randint(1, 10)
         await ctx.send(x)
         await ctx.send("{} gets a solid: ".format(ctx.message.mentions[0]) + x)
