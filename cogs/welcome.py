@@ -20,6 +20,7 @@ class Welcome:
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Will sennd the """
+		ctx.send('this')
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
