@@ -68,8 +68,7 @@ class Welcome:
 
 	async def on_member_join(self, member):
 
-
-		con = connection or self.bot.pool
+		config = await self.get_guild_config(member.guild.id)
 		await config.broadcast.channel.send('he joined')
 
 
