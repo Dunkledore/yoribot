@@ -20,13 +20,15 @@ class Welcome:
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Tells you command usage stats for the server or a member."""
-
+		await ctx.send('Will ask for message')
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
 		embed = discord.Embed(title='Welcome Message', colour=discord.Colour.blurple())
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
+		await ctx.send('about to query')
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
+		await ctx.send('done')
 		embed.add_field(name='Something', value='value', inline=true)
 		await ctx.send(embed=embed)
 
