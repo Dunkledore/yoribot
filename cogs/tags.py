@@ -211,7 +211,7 @@ class Tags:
         if message.author.bot:
             return
 
-        prefixes = tuple(self.bot.get_guild_prefixes(ctx.guild))
+        prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
 
         if message.content[0] not in prefixes:
             return
