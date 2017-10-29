@@ -75,7 +75,7 @@ class Welcome:
 
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, ctx.message.channel.id)
-		except: asyncpg.UniqueViolationError
+		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, ctx.message.channel.id)
 
 		await ctx.say('Channel set')
