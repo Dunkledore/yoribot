@@ -39,6 +39,7 @@ class Welcome:
 		await ctx.send(embed=embed)
 
 	@commands.command()
+	"""A"dds an embed field onto the welcome message"""
 	async def addfield(self, ctx, arg1=None, arg2=None):
 		
 		if (arg1 is None) or (arg2 is None):
@@ -55,6 +56,7 @@ class Welcome:
 			await ctx.send(f'Field {arg1} successfully created.')
 
 	@commands.command()
+	"""Removes and embed field from the welcome message"""
 	async def removefield(self, ctx, arg1=None):
 
 		if arg1 is None:
@@ -66,6 +68,7 @@ class Welcome:
 
 	@commands.command()
 	async def setbroadcastchannel(self, ctx):
+	"""Use in the channel you want to set as the welcome channel"""
 
 		query = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		await ctx.db.execute(query, ctx.guild.id, ctx.message.channel.id)
