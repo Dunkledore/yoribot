@@ -217,9 +217,6 @@ class Tags:
             if message.content.startswith(p):
                 tagname = message.content[len(p):]
 
-                if len([p for p in prefixes if message.content.startswith(p)]) == 0:
-                    return
-
                 try:
                     tag = await self.get_tag(message.guild.id, tagname, connection=self.bot.pool)
                 except RuntimeError as e:
