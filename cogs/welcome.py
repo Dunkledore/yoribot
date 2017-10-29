@@ -69,6 +69,7 @@ class Welcome:
 	async def on_member_join(self, member):
 
 		config = await self.get_guild_config(member.guild.id)
+		print('here')
 		await config.broadcast.channel.send('he joined')
 
 	@cache.cache()
@@ -78,7 +79,6 @@ class Welcome:
 			record = await con.fetchrow(query, guild_id)
 			if record is not None:
 				return await ModConfig.from_record(record, self.bot)
-			print('here')
 			return None
 
 
