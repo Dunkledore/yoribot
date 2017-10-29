@@ -39,31 +39,31 @@ class Welcome:
 		await ctx.send(embed=embed)
 
 	@commands.command()
-	async def addfield(self, ctx, arg1=None, arg2=None):
+	async def addfield(self, ctx, name=None, value=None):
 		"""Adds an embed field onto the welcome message"""
 		
-		if (arg1 is None) or (arg2 is None):
+		if (name is None) or (value is None):
 			await ctx.send('Please enter both a field and a value')
 		else:
 			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, $3)"
 		
 		try:
-			await ctx.db.execute(query, ctx.guild.id, arg1, arg2)
+			await ctx.db.execute(query, ctx.guild.id, name, value)
 		except Exception as e:
 			await ctx.send('Tag could not be created')
 			await ctx.send(e)
 		else:
-			await ctx.send(f'Field {arg1} successfully created.')
+			await ctx.send(f'Field {name} successfully created.')
 
 	@commands.command()
-	async def removefield(self, ctx, arg1=None):
+	async def removefield(self, ctx, name=None):
 		"""Removes and embed field from the welcome message"""
 
 		if arg1 is None:
 			await ctx.send('Please enter a field to remove')
 		else:
 			query = "DELETE FROM welcome WHERE guild_id =$1 AND name = $2"
-			await ctx.db.execute(query, ctx.guild.id, arg1)
+			await ctx.db.execute(query, ctx.guild.id, name)
 			await ctx.send('Field Removed')
 
 	@commands.command()
