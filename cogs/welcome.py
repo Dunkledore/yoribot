@@ -34,7 +34,7 @@ class Welcome:
 		try:
 			welcome = await ctx.db.fetchrow(query, ctx.guild.id)
 			await ctx.send('done')
-			await ctx.send(welcome[0])
+			await ctx.send(welcome)
 		except Exception as e:
 			await ctx.send(e)
 		
