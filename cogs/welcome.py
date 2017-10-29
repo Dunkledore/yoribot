@@ -50,10 +50,16 @@ class Welcome:
 		else:
 			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, $3)"
 			await ctx.send(ctx.guild.id)
-			await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
-			await ctx.send('done')
-			await ctx.send('added')
 
+			
+		try:
+            await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
+        except asyncpg.UniqueViolationError:
+            await ctx.send('This tag already exists.')
+        except:
+            await ctx.send('Could not create tag.')
+        else:
+            await ctx.send('Tag {name} successfully created.')
 
 
 
