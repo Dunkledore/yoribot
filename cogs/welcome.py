@@ -20,7 +20,7 @@ class Welcome:
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Tells you command usage stats for the server or a member."""
-		await self.show_welcome_message_for(ctx,ctx.author.mention)
+		await self.show_welcome_message_for(ctx,ctx.message.author.mention)
 
 	async def show_welcome_message_for(self, ctxm, mention):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
