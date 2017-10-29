@@ -40,7 +40,7 @@ class Welcome:
 
 		await ctx.send(embed=embed)
 
-	@bot.command()
+	@commands.command()
 	@checks.is_mod()
 	async def addfield(ctx, arg1, arg2):
 	
