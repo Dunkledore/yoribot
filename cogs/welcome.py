@@ -20,16 +20,23 @@ class Welcome:
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Tells you command usage stats for the server or a member."""
-		await self.show_welcome_message(ctx)
+		await self.show_welcome_message_for(ctx,ctx.author.mention)
 
-	async def show_welcome_message(self, ctx):
+	async def show_welcome_message_for(self, ctxm, mention):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 
-		try:
-			welcome = await ctx.db.fetch(query, ctx.guild.id)
-			await ctx.send(welcome[0])
-		except Exception as e:
-			await ctx.send(e)
+		welcome = await ctx.db.fetch(query, ctx.guild.id)
+		embed = discord.embed(title ='User Joined', colour = discord.Colour.blurple())
+		embed.addfield(name='User', Value="mention")
+
+		for fields in welcome:
+			embed.addfield()
+
+		await ctx.send(embed=embed)
+
+
+			
+
 		
 
 
