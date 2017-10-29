@@ -82,7 +82,7 @@ class Welcome:
 			print(chid)
 			await self.bot.wait_until_ready()
 			ch = self.bot.get_channel(chid)
-			print(ch)+
+			print(ch)
 			await ch.send('He joined')
 
 def setup(bot):
