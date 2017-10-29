@@ -29,7 +29,8 @@ class Welcome:
 		
 		embed.add_field(name='User', value=ctx.message.author.mention)
 
-		await ctx.send(welcome[0][3])
+		for fields in welcome:
+			embed.add_field(name=fields[3], value=fields[4])
 		#for fields in welcome:
 		#	embed.addfield(name=welcome[2], value=welcome[3])
 
