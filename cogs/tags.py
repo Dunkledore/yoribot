@@ -207,6 +207,18 @@ class Tags:
         else:
             return row
 
+    async def on_message(self, message):
+        try:
+            tag = await self.get_tag(message.guild.id, message, connection=self.bot.pool)
+        except RuntimeError as e:
+            return await message.channel.send(e)
+
+        await ctx.send(tag['content'])
+
+        # update the usage
+        query = "UPDATE tags SET uses = uses + 1 WHERE name = $1 AND (location_id=$2 OR location_id IS NULL);"
+        await self.bot.pool.execute(query, tag['name'], ctx.guild.id)
+
     @commands.group(invoke_without_command=True)
     @suggest_box()
     async def tag(self, ctx, *, name: TagName(lower=True)):
