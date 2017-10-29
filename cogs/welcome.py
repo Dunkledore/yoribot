@@ -80,7 +80,7 @@ class Welcome:
 		chid = con.fetchrow(query, member.guild.id)
 		print(con)
 		print('channel id')
-		print(chid[0])
+		print(chid)
 		ch = self.bot.get_channel(chid)
 		print(ch)
 		await ch.send('He joined')
