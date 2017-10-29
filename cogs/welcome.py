@@ -19,7 +19,7 @@ class Welcome:
 	@commands.group(invoke_without_command=True)
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
-		"""Tells you command usage stats for the server or a member."""
+		"""Will sennd the """
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
@@ -39,6 +39,23 @@ class Welcome:
 
 
 		await ctx.send(embed=embed)
+
+	@bot.command()
+	@checks.is_mod()
+	async def addfield(ctx, arg1, arg2):
+	
+	if (arg1 is None) or() arg2 is None):
+		ctx.send('Please enter both a field and a value')
+	else:
+		query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, &3)"
+		ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
+		ctx.send('added')
+
+
+
+
+	
+
 
 
 
