@@ -308,7 +308,7 @@ class Mod:
             alterquery = "UPDATE mod_config SET reaction_del_number = $2 WHERE guild_id = $1"
 
             try:
-                await ctx.db.execute(insertquery, ctx.guild.id, number)
+                await ctx.db.execute(insertquery, ctx.guild.id, int(number)
             except asyncpg.UniqueViolationError:
                 await ctx.db.execute(alterquery, ctx.guild.id, number)
             await ctx.send(updated)
