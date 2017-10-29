@@ -290,10 +290,21 @@ class Mod:
 
         if number[2] == 0:
             return
-            
+
         for sreaction in reaction.message.reactions:
             if (sreaction.count >= number[2]) and (ord(sreaction.emoji) == 10060):
                 await reaction.message.delete()
+    
+    @commands.command()
+    async def reactiondelnumber(self, ctx, number=None)
+        if number is None
+            query = "SELECT * FROM mod_confif WHERE guild_id = $1"
+            conf = ctx.db.fetchrow(query, ctx.message.guild.id)
+            number = conf[2]
+            ctx.send(number)
+
+
+
 
                 
 
