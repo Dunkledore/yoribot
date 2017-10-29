@@ -209,7 +209,7 @@ class Tags:
 
     async def on_message(self, message):
         try:
-            tag = await self.get_tag(message.guild.id, message, connection=self.bot.pool)
+            tag = await self.get_tag(message.guild.id, message.content, connection=self.bot.pool)
         except RuntimeError as e:
             return await message.channel.send(e)
 
