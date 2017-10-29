@@ -12,7 +12,7 @@ class Rate:
     @commands.command(pass_context=True)
     async def rate(self, ctx):
         """Rates users. 157% accurate!"""
-        mentionlist = ctx.message.mentions
+        mentionlist = ctx.message.mentions[0]
         await ctx.send(mentionlist)
         user = mentionlist[0]
         random.seed(int(user.id) % int(ctx.message.timestamp.timestamp()),)
