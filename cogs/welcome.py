@@ -42,7 +42,7 @@ class Welcome:
 		await ctx.send(embed=embed)
 
 	@commands.command()
-	async def addfield(self, ctx. arg1, arg2):
+	async def addfield(self, ctx, arg1, arg2):
 		
 		await ctx.send('testing')
 		if (arg1 is None) or (arg2 is None):
