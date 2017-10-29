@@ -208,6 +208,8 @@ class Tags:
             return row
 
     async def on_message(self, message):
+        if message.author.bot:
+            return
         try:
             tag = await self.get_tag(message.guild.id, message.content, connection=self.bot.pool)
         except RuntimeError as e:
