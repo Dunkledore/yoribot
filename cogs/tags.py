@@ -222,6 +222,8 @@ class Tags:
                 except RuntimeError as e:
                     return await message.channel.send(e)
 
+                if(tag['content']) is None:
+                    return
                 await message.channel.send(tag['content'])
 
                 # update the usage
