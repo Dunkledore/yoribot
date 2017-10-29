@@ -217,7 +217,7 @@ class Tags:
             return
 
         try:
-            tag = await self.get_tag(message.guild.id, message.content, connection=self.bot.pool)
+            tag = await self.get_tag(message.guild.id, message.content[1:], connection=self.bot.pool)
         except RuntimeError as e:
             return await message.channel.send(e)
 
