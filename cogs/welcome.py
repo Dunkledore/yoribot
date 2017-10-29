@@ -27,10 +27,14 @@ class Welcome:
 		embed = discord.Embed(title='Welcome Message', colour=discord.Colour.blurple())
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		await ctx.send('about to query')
-		welcome = await ctx.db.fetchrow(query, ctx.guild.id)
-		await ctx.send('done')
-		embed.add_field(name='Something', value='value', inline=true)
-		await ctx.send(embed=embed)
+		try:
+			welcome = await ctx.db.fetchrow(query, ctx.guild.id)
+			await ctx.send('done')
+			embed.add_field(name='Something', value='value', inline=true)
+			await ctx.send(embed=embed)
+		except Exception as e:
+			await ctx.send(e)
+		
 
 
 def setup(bot):
