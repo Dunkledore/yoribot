@@ -298,7 +298,7 @@ class Mod:
     @commands.command()
     async def reactiondelnumber(self, ctx, number=None):
         if number is None:
-            query = "SELECT * FROM mod_confif WHERE guild_id = $1"
+            query = "SELECT * FROM mod_config WHERE guild_id = $1"
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
             number = conf[2]
             ctx.send(number)
