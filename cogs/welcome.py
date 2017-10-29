@@ -44,12 +44,12 @@ class Welcome:
 	@checks.is_mod()
 	async def addfield(ctx, arg1, arg2):
 	
-	if (arg1 is None) or() arg2 is None):
-		ctx.send('Please enter both a field and a value')
-	else:
-		query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, &3)"
-		ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
-		ctx.send('added')
+		if (arg1 is None) or() arg2 is None):
+			ctx.send('Please enter both a field and a value')
+		else:
+			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, &3)"
+			ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
+			ctx.send('added')
 
 
 
