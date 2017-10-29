@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import datetime
 import random
 
 
@@ -10,14 +11,12 @@ class Rate:
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def rate(self, ctx, *, mention):
+    async def rate(self, ctx):
         """Rates users. 157% accurate!"""
-        author = ctx.message.author.id
-        mentionlist = ctx.message.mentions
-        user = mentionlist[0]
-        random.seed(int(user.id) % int(ctx.message.timestamp.timestamp()),)
+
+        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
         x = ":sparkles:" * random.randint(1, 10)
-        await ctx.send("{} gets a solid: ".format(user.name) + x)
+        await ctx.send("{} gets a solid: ".format(ctx.message.mentions[0].name) + x)
 
 
 def setup(bot):
