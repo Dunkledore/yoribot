@@ -279,6 +279,7 @@ class Mod:
             await config.broadcast_channel.send(embed=e)
 
     async def on_reaction_add(reaction, user):
+        print('triggered')
         print(reaction.message.reactions)
         con = self.bot.pool
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
