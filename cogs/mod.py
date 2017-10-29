@@ -311,7 +311,7 @@ class Mod:
                 await ctx.db.execute(insertquery, ctx.guild.id, int(number))
             except asyncpg.UniqueViolationError:
                 await ctx.db.execute(alterquery, ctx.guild.id, int(number))
-            await ctx.send(updated)
+            await ctx.send('updated')
 
 
 
