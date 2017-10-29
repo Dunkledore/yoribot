@@ -34,8 +34,7 @@ class Welcome:
 		try:
 			welcome = await ctx.db.fetchrow(query, ctx.guild.id)
 			await ctx.send('done')
-			embed.add_field(name='Something', value='value', inline=true)
-			await ctx.send(embed=embed)
+			await ctx.send(welcome[0])
 		except Exception as e:
 			await ctx.send(e)
 		
