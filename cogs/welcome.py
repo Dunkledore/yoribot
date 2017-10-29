@@ -22,7 +22,7 @@ class Welcome:
 		"""Tells you command usage stats for the server or a member."""
 		await self.show_welcome_message(ctx)
 
-	async def show_welcome_message(self, ctx, mention):
+	async def show_welcome_message(self, ctx):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		ctx.send('this')
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
