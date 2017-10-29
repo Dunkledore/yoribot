@@ -16,25 +16,24 @@ class Welcome:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
+	@commands.group(invoke_without_command=True)
+    @commands.guild_only()
+    async def welcome(self, ctx, *, member: discord.Member = None):
+        """Tells you command usage stats for the server or a member."""
 
-	@commands.command()
-	async def welcome(self, ctx):
-		await ctx.send('trying')
+        await self.show_welcome_message(ctx)
+
+     async def show_guild_stats(self, ctx):
+		embed = discord.Embed(title='Welcome Message', colour=discord.Colour.blurple())
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
-				
-		array = await ctx.db.fetch(query, ctx.guild.id)
+		welcome = await ctx.db.fetch(query, ctx.guild.id)
+		embed.add_field(name='Something' value='value', inline=true)
+		await ctx.send(embed=embed)
 
-		await ctx.send(query)
 
-
-		if array is None:
-			e = discord.Embed(title='No embed made', color = 0xdd5f53)
-			await ctx.send(e)
-		else:
-			await ctx.send('there is one')
-			
 def setup(bot):
     bot.add_cog(Welcome(bot))
+
 
 
 
