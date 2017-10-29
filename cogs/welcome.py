@@ -27,6 +27,8 @@ class Welcome:
 		embed = discord.Embed(title='Welcome Message', colour=discord.Colour.blurple())
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		await ctx.send('about to query')
+		embed.add_field(name=Testing, value='testin')
+		await ctx.send(embed=embed)
 		try:
 			welcome = await ctx.db.fetchrow(query, ctx.guild.id)
 			await ctx.send('done')
