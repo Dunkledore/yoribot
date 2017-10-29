@@ -14,7 +14,7 @@ class WhoPlays:
             await ctx.send("You need at least 3 characters.")
             return
 
-        user = author
+        user = ctx.message.author
         guild = ctx.message.guild
         members = guild.members
 
@@ -50,7 +50,7 @@ class WhoPlays:
     @commands.command(pass_context=True, no_pm=True)
     async def cgames(self, ctx):
         """Shows the currently most played games"""
-        user = author
+        user = ctx.message.author
         guild = ctx.message.guild
         members = guild.members
 
