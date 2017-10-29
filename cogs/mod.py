@@ -279,23 +279,23 @@ class Mod:
             await config.broadcast_channel.send(embed=e)
 
     async def on_reaction_add(self, reaction, user):
-        if ord(reaction.emoji) != 10060
+        if ord(reaction.emoji) != 10060:
             return
 
         con = self.bot.pool
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
         number = await con.fetchrow(query, reaction.message.guild.id)
 
-        if number is None
+        if number is None:
             return
 
-        if number[2] == 0
+        if number[2] == 0:
             return
 
-        for sreaction in reaction.message.reactions
-            if (sreaction.count >= number) and (ord(sreaction.emoji) == 10060)
+        for sreaction in reaction.message.reactions:
+            if (sreaction.count >= number) and (ord(sreaction.emoji) == 10060):
                 reaction.message.delete()
-            
+
                 
 
         
