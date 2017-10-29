@@ -39,7 +39,7 @@ class Welcome:
 		await ctx.send(embed=embed)
 
 	@commands.command()
-	"""A"dds an embed field onto the welcome message"""
+	"""Adds an embed field onto the welcome message"""
 	async def addfield(self, ctx, arg1=None, arg2=None):
 		
 		if (arg1 is None) or (arg2 is None):
