@@ -301,7 +301,7 @@ class Mod:
             query = "SELECT * FROM mod_config WHERE guild_id = $1"
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
             number = conf[2]
-            ctx.send(number)
+            await ctx.send(number)
 
 
 
