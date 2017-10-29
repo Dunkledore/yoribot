@@ -16,7 +16,7 @@ class Rate:
         await ctx.send(ctx.message.mentions[0].id)
         await ctx.send(ctx.message.mentions[0])
         await ctx.send(ctx.message.timestamp)
-        random.seed(int(ctx.message.mentions[0].id) % int(datetime.datetime.utcnow()),)
+        random.seed(int(ctx.message.mentions[0].id) % int(datetime.datetime.utcnow().timestamp()),)
         x = ":sparkles:" * random.randint(1, 10)
         await ctx.send(x)
         await ctx.send("{} gets a solid: ".format(ctx.message.mentions[0]) + x)
