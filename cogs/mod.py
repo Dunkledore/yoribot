@@ -302,6 +302,18 @@ class Mod:
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
             number = conf[2]
             await ctx.send(number)
+        else:
+            insertquery = "INSERT INTO mod_config (guild_id, reaction_del_number) VALUES ($1, $2)"
+            alterquery = "UPDATE mod_config SET reaction_del_number = $2 WHERE guild_id = $1"
+
+            try:
+                await ctx.db.execute(insertquery, ctx.guild.id, number)
+            except asyncpg.UniqueViolationError:
+                await ctx.db.execute(alterquery, ctx.guild.id, number)
+            await.ctx.send(updated)
+
+
+
 
 
 
