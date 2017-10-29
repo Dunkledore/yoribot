@@ -76,7 +76,8 @@ class Welcome:
 	async def on_member_join(self, member):
 
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
-		con = await con.fetchrow(query, member.guild.id)
+		con = self.bot.pool
+		chid = await con.fetchrow(query, member.guild.id)
 		print(con)
 		print('channel id')
 		print(chid)
