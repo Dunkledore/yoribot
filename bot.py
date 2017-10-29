@@ -15,13 +15,14 @@ import config
 import asyncpg
 
 description = """
-Hello! I am a bot written by Danny to provide some nice utilities.
+Hello! I am a premium Discord bot.
 """
 
 log = logging.getLogger(__name__)
 
 initial_extensions = (
     'cogs.meta',
+    'cogs.catsanddogs',
     'cogs.mod',
     'cogs.tags',
     'cogs.admin',
