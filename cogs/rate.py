@@ -5,8 +5,8 @@ import random
 try:
     from bs4 import BeautifulSoup
     soupAvailable = True
-#except:
-    #soupAvailable = False
+except:
+    soupAvailable = False
 import aiohttp
 
 class Ratings:
@@ -56,7 +56,7 @@ class Ratings:
         await self.bot.say(embed=em)
 
 def setup(bot):
-#    if soupAvailable:
-    bot.add_cog(Rate(bot))
-#    else:
-#        raise RuntimeError("You need to run `pip3 install beautifulsoup4`")
+    if soupAvailable:
+        bot.add_cog(Rate(bot))
+    else:
+        raise RuntimeError("You need to run `pip3 install beautifulsoup4`")
