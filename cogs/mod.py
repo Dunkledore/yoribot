@@ -278,7 +278,7 @@ class Mod:
         if config.broadcast_channel:
             await config.broadcast_channel.send(embed=e)
 
-    async def on_reaction_add(reaction, user):
+    async def on_reaction_add(self, reaction, user):
         print('triggered')
         print(reaction.message.reactions)
         con = self.bot.pool
