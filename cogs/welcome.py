@@ -27,8 +27,8 @@ class Welcome:
 		embed = discord.Embed(title='Welcome Message', colour=discord.Colour.blurple())
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		await ctx.send('about to query')
+		embed.add_field(name='Testing', value='testin')
 		await ctx.send('line')
-		embed.add_field(name=Testing, value='testin')
 		await ctx.send(embed=embed)
 
 		try:
