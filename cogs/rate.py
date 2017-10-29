@@ -25,7 +25,7 @@ class Ratings:
         await ctx.send("{} gets a solid ** {}/10 ** \n {}".format(ctx.message.mentions[0].name, x, y))
     
     @commands.command(aliases=['lovecalc'])
-    async def ship(self, lover: discord.Member, loved: discord.Member):
+    async def ship(self, ctx, lover: discord.Member, loved: discord.Member):
         """Calculate their love!"""
 
         x = lover.display_name
@@ -53,7 +53,7 @@ class Ratings:
             
         description = emoji + ' ' + description + ' ' + emoji
         em = discord.Embed(title=title, description=description, color=discord.Color.red())
-        await self.bot.say(embed=em)
+        await ctx.send(embed=em)
 
 def setup(bot):
     if soupAvailable:
