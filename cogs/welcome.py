@@ -53,13 +53,13 @@ class Welcome:
 
 			
 		try:
-            await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
-        except asyncpg.UniqueViolationError:
-            await ctx.send('This tag already exists.')
-        except:
-            await ctx.send('Could not create tag.')
-        else:
-            await ctx.send('Tag {name} successfully created.')
+			await ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
+		except asyncpg.UniqueViolationError:
+			await ctx.send('This tag already exists.')
+		except:
+			await ctx.send('Could not create tag.')
+		else:
+			await ctx.send('Tag {name} successfully created.')
 
 
 
