@@ -280,7 +280,7 @@ class Mod:
 
     @commands.command()
     @commands.guild_only()
-    async def on_reation_add(rection, user)
+    async def on_reation_add(rection, user):
         con = self.bot.pool
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
         number = await con.fetchrow(query, reaction.message.guild.id)
