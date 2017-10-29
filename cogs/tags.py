@@ -229,7 +229,7 @@ class Tags:
 
                 # update the usage
                 query = "UPDATE tags SET uses = uses + 1 WHERE name = $1 AND (location_id=$2 OR location_id IS NULL);"
-                await self.bot.pool.execute(query, tag['name'], ctx.guild.id)
+                await self.bot.pool.execute(query, tag['name'], message.guild.id)
                 return
 
 
