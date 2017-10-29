@@ -25,7 +25,8 @@ class Welcome:
 	async def show_welcome_message(self, ctx):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
-		embed = discord.Embed(title='Welcome to '+str(ctx.message.server), colour=discord.Colour.blurple())
+		title = 'Welcome to ' + ctx.message.server.name
+		embed = discord.Embed(title=title, colour=discord.Colour.blurple())
 		
 		embed.add_field(name='User', value=ctx.message.author.mention)
 
