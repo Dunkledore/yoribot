@@ -215,13 +215,13 @@ class Tags:
 
         for p in prefixes:
             if message.content.startswith(p):
-                tag = message.content[len(p):]
+                tagname = message.content[len(p):]
 
                 if len([p for p in prefixes if message.content.startswith(p)]) == 0:
                     return
 
                 try:
-                    tag = await self.get_tag(message.guild.id, message.content[1:], connection=self.bot.pool)
+                    tag = await self.get_tag(message.guild.id, tagname, connection=self.bot.pool)
                 except RuntimeError as e:
                     return await message.channel.send(e)
 
@@ -231,7 +231,7 @@ class Tags:
                 query = "UPDATE tags SET uses = uses + 1 WHERE name = $1 AND (location_id=$2 OR location_id IS NULL);"
                 await self.bot.pool.execute(query, tag['name'], ctx.guild.id)
                 return
-            
+
 
     @commands.group(invoke_without_command=True)
     @suggest_box()
