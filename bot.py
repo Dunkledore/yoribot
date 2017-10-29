@@ -21,11 +21,12 @@ Hello! I am a premium Discord bot.
 log = logging.getLogger(__name__)
 
 initial_extensions = (
-    'cogs.meta',
     'cogs.audio',
-    'cogs.welcome',
     'cogs.rate',
+    'cogs.whoplays',
     'cogs.catsanddogs',
+    'cogs.meta',
+    'cogs.welcome',
     'cogs.mod',
     'cogs.tags',
     'cogs.admin',
