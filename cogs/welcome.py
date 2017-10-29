@@ -66,7 +66,7 @@ class Welcome:
 			await ctx.db.execute(query, ctx.guild.id, arg1)
 			await ctx.send('Field Removed')
 
-	 async def on_member_join(self, member):
+	async def on_member_join(self, member):
 
 
 		con = connection or self.bot.pool
