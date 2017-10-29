@@ -78,9 +78,23 @@ class Welcome:
 		query = """SELECT * FROM guild_mod_config WHERE id=$1;"""
 		async with self.bot.pool.acquire() as con:
 			record = await con.fetchrow(query, guild_id)
+			print(record)
 			if record is not None:
-				return await ModConfig.from_record(record, self.bot)
+				return await self.from_record(record, self.bot)
 			return None
+
+	@classmethod
+	async def from_record(cls, record, bot):
+		self = cls()
+
+        # the basic configuration
+		self.bot = bot
+		self.raid_mode = record['raid_mode']
+		self.id = record['id']
+		self.broadcast_channel_id = record['broadcast_channel']
+		self.mention_count = record['mention_count']
+		self.safe_mention_channel_ids = set(record['safe_mention_channel_ids'] or [])
+		return self
 
 
 
