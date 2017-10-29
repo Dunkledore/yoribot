@@ -74,11 +74,14 @@ class Welcome:
 		await ctx.send('Channel set')
 
 	async def on_member_join(self, member):
+		await self.bot.wait_until_login()
 
-		config = await self.get_guild_config(member.guild.id)
-		print('config:')
-		print(config)
-		await config.broadcast.channel.send('he joined')
+		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
+		async with self.bot.pool.acquire() as con:
+		chid = con.fetchrow(query, member.guild.id)
+		ch = self.bot.get_channel(chid)
+		ch.send('He joined')
+
 
 	@cache.cache()
 	async def get_guild_config(self, guild_id):
