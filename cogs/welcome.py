@@ -27,9 +27,9 @@ class Welcome:
 		await ctx.send('this')
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
 		await ctx.send('this')
-		embed = discord.embed(title ='User Joined', colour = discord.Colour.blurple())
+		embed = discord.Embed(title ='User Joined', colour=discord.Colour.blurple())
 		await ctx.send('this')
-		embed.addfield(name='User', value=ctx.message.author.mention)
+		embed.add_field(name='User', value=ctx.message.author.mention)
 		await ctx.send('this')
 
 		for fields in welcome:
