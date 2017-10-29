@@ -11,6 +11,7 @@ import datetime
 import asyncio
 import argparse, shlex
 import logging
+import asyncpg
 
 log = logging.getLogger(__name__)
 
