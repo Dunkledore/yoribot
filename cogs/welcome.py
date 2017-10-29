@@ -71,7 +71,7 @@ class Welcome:
 		"""Use in the channel you want to set as the welcome channel"""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE SET channel_id = $2 WHERE guild_id = $1"
+		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, ctx.message.channel.id)
