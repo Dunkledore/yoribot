@@ -78,6 +78,7 @@ class Welcome:
 			record = await con.fetchrow(query, guild_id)
 			if record is not None:
 				return await ModConfig.from_record(record, self.bot)
+			print('here')
 			return None
 
 
