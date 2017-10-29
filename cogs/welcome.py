@@ -30,6 +30,7 @@ class Welcome:
 		embed.add_field(name='User', value=ctx.message.author.mention)
 
 		for fields in welcome:
+			ctx.send('this')
 			embed.add_field(name=fields[3], value=fields[4])
 		#for fields in welcome:
 		#	embed.addfield(name=welcome[2], value=welcome[3])
