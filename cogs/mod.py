@@ -278,8 +278,6 @@ class Mod:
         if config.broadcast_channel:
             await config.broadcast_channel.send(embed=e)
 
-    @commands.command()
-    @commands.guild_only()
     async def on_reation_add(rection, user):
         print(reaction.message.reactions)
         con = self.bot.pool
