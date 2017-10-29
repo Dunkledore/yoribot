@@ -297,7 +297,7 @@ class Mod:
                 await reaction.message.delete()
     
     @commands.command()
-    @check.is_mod()
+    @checks.is_mod()
     async def reactiondelnumber(self, ctx, number=None):
         """Changes the number of :X: required to delete the message"""
         if number is None:
