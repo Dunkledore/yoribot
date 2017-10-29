@@ -57,7 +57,7 @@ class Welcome:
 			await ctx.send(f'Field {arg1} successfully created.')
 
 	@command.command()
-	async def removefiled(self, ctx, arg1)
+	async def removefield(self, ctx, arg1=None):
 
 		if arg1 is None:
 			await ctx.send('Please enter a field to remove')
