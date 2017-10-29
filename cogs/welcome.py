@@ -20,7 +20,7 @@ class Welcome:
 	@commands.guild_only()
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Will sennd the """
-		ctx.send('this')
+		await ctx.send('this')
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
@@ -46,11 +46,11 @@ class Welcome:
 	async def addfield(ctx, arg1, arg2):
 	
 		if (arg1 is None) or (arg2 is None):
-			ctx.send('Please enter both a field and a value')
+			await ctx.send('Please enter both a field and a value')
 		else:
 			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, &3)"
 			ctx.db.execute(query, ctx.guiild.id, arg1, arg2)
-			ctx.send('added')
+			await ctx.send('added')
 
 
 
