@@ -74,6 +74,7 @@ class Welcome:
 
 	@cache.cache()
 	async def get_guild_config(self, guild_id):
+		print('method')
 		query = """SELECT * FROM guild_mod_config WHERE id=$1;"""
 		async with self.bot.pool.acquire() as con:
 			record = await con.fetchrow(query, guild_id)
