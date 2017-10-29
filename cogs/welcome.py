@@ -81,7 +81,7 @@ class Welcome:
 		print(con)
 		print('channel id')
 		print(chid)
-		ch = self.bot.get_channel(chid)
+		ch = self.bot.get_channel(chid[2])
 		print(ch)
 		await ch.send('He joined')
 
