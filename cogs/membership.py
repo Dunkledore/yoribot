@@ -257,10 +257,8 @@ class Membership:
                           channel: discord.TextChannel=None):
         if not channel:
             channel = self.get_welcome_channel(server)
-            print(self.bot.user.id)
-            print(server.get_member(self.bot.user.id))
-        return await server.get_member(
-            self.bot.user.id).permissions_in(channel).send_messages
+        member  = await server.get_member(self.bot.user.id)
+        return member.permissions_in(channel).send_messages
 
 
 def check_folders():
