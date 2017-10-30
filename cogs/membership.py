@@ -88,24 +88,22 @@ class Membership:
         {1} is the server
         """
 
-        await self.bot.type()
-        server = ctx.message.server
+        server = ctx.message.guild
         self.settings[server.id]["unban_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
-        await self.bot.reply(cf.info("Unban message set."))
+        await ctx.send(cf.info("Unban message set."))
 
     @_membershipset.command(pass_context=True, no_pm=True, name="toggle")
     async def _toggle(self, ctx: commands.Context):
         """Turns membership event commands on or off."""
 
-        await self.bot.type()
-        server = ctx.message.server
+        server = ctx.message.guild
         self.settings[server.id]["on"] = not self.settings[server.id]["on"]
         if self.settings[server.id]["on"]:
-            await self.bot.reply(
+            await ctx.send(
                 cf.info("Membership events will now be announced."))
         else:
-            await self.bot.reply(
+            await ctx.send(
                 cf.info("Membership events will no longer be announced."))
         dataIO.save_json(self.settings_path, self.settings)
 
