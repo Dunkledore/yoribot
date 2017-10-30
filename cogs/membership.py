@@ -146,7 +146,7 @@ class Membership:
             return
 
         
-        ch = self.bot.get_channel(self.settings[member.server.id]["channel"])
+        ch = self.bot.get_channel(self.settings[str(member.guild.id)]["channel"])
         ch.trigger_typing()
 
 
@@ -160,7 +160,7 @@ class Membership:
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
             await self.bot.send_message(channel,
-                                        self.settings[server.id][
+                                        self.settings[str(server.id)][
                                             "join_message"]
                                         .format(member, server))
         else:
