@@ -118,7 +118,7 @@ class Membership:
 
          If none is specified, the default will be used.
          """
-
+        await ctx.send('Command Invoked')
         await self.bot.type()
         server = ctx.message.server
 
