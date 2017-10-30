@@ -64,11 +64,10 @@ class Membership:
         {1} is the server
         """
 
-        await self.bot.type()
-        server = ctx.message.server
-        self.settings[server.id]["leave_message"] = format_str
+        server = ctx.message.guild
+        self.settings[str(server.id)]["leave_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
-        await self.bot.reply(cf.info("Leave message set."))
+        await ctx.send(cf.info("Leave message set."))
 
     @_membershipset.command(pass_context=True, no_pm=True, name="ban")
     async def _ban(self, ctx: commands.Context, *, format_str: str):
