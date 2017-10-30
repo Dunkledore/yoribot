@@ -258,7 +258,7 @@ class Membership:
         return server.get_channel(self.settings[server.id]["channel"])
 
     def speak_permissions(self, server: discord.Server,
-                          channel: discord.Channel=None):
+                          channel: discord.TextChannel=None):
         if not channel:
             channel = self.get_welcome_channel(server)
         return server.get_member(
