@@ -113,7 +113,7 @@ class Membership:
 
     @_membershipset.command(pass_context=True, no_pm=True, name="channel")
     async def _channel(self, ctx: commands.Context,
-                       channel: discord.Channel=None):
+                       channel: discord.TextChannel=None):
         """Sets the text channel to which the announcements will be sent.
 
          If none is specified, the default will be used.
