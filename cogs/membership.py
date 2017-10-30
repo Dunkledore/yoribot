@@ -49,11 +49,11 @@ class Membership:
         {1} is the server
         """
 
-        await self.bot.type()
-        server = ctx.message.server
-        self.settings[server.id]["join_message"] = format_str
+
+        server = ctx.message.guild
+        self.settings[str(server.id)]["join_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
-        await self.bot.reply(cf.info("Join message set."))
+        await ctx.send(cf.info("Join message set."))
 
     @_membershipset.command(pass_context=True, no_pm=True, name="leave",
                             aliases=["farewell"])
