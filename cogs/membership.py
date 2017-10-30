@@ -254,7 +254,7 @@ class Membership:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member.name))
 
-    def get_welcome_channel(self, server: discord.Server):
+    def get_welcome_channel(self, server: discord.Guild):
         return server.get_channel(self.settings[server.id]["channel"])
 
     def speak_permissions(self, server: discord.Server,
