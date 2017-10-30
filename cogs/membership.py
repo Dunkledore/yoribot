@@ -80,7 +80,7 @@ class Membership:
         server = ctx.message.guild
         self.settings[str(server.id)]["ban_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
-        await self.bot.reply(cf.info("Ban message set."))
+        await ctx.send(cf.info("Ban message set."))
 
     @_membershipset.command(pass_context=True, no_pm=True, name="unban")
     async def _unban(self, ctx: commands.Context, *, format_str: str):
