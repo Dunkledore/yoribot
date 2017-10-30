@@ -126,7 +126,7 @@ class Membership:
             channel = server.default_channel
 
         if not self.speak_permissions(server, channel):
-            await self.bot.reply(
+            await ctx.send(
                 "I don't have permission to send messages in {0.mention}."
                 .format(channel))
             return
@@ -134,7 +134,7 @@ class Membership:
         self.settings[server.id]["channel"] = channel.id
         dataIO.save_json(self.settings_path, self.settings)
         channel = self.get_welcome_channel(server)
-        await self.bot.send_message(channel,
+        await ctx.send(channel,
                                     ("{0.mention}, " +
                                      cf.info(
                                          "I will now send membership"
