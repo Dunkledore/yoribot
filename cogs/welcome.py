@@ -50,7 +50,7 @@ class Welcome:
 		try:
 			await ctx.db.execute(query, ctx.guild.id, name, value)
 		except Exception as e:
-			await ctx.send('Tag could not be created')
+			await ctx.send('Field could not be created')
 			await ctx.send(e)
 		else:
 			await ctx.send(f'Field {name} successfully created.')
@@ -86,12 +86,7 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		con = self.bot.pool
 		chid = await con.fetchrow(query, member.guild.id)
-		print(con)
-		print('channel id')
-		print(chid[2])
 		ch = self.bot.get_channel(chid[2])
-		print(ch)
-		
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await con.fetch(query, member.guild.id)
 		embed = discord.Embed(title='Welcome to ' + member.guild.name, colour=discord.Colour.blurple())

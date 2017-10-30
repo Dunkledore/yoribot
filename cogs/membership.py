@@ -232,7 +232,7 @@ class Membership:
             return
 
         await self.bot.send_typing(
-            self.bot.get_channel(self.settings[member.server.id]["channel"]))
+            self.bot.get_channel(self.settings[str(member.server.id)]["channel"]))
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
