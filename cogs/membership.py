@@ -193,34 +193,34 @@ class Membership:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member))
 
-    async def member_ban(self, member: discord.Member):
-        server = member.guild
+    async def member_ban(self, guild, user: discord.User):
+        server = guild
         if str(server.id) not in self.settings:
             self.settings[server.id] = deepcopy(default_settings)
-            self.settings[server.id]["channel"] = server.default_channel.id
+            self.settings[server.id]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
         if not self.settings[str(server.id)]["on"]:
             return
 
-        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
+        ch = self.bot.get_channel(int(self.settings[str(server.id)]["channel"]))
         await ch.trigger_typing()
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
-                  " The user was {}.".format(member.name))
+                  " The user was {}.".format(user.name))
             return
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
             await channel.send(self.settings[str(server.id)]["ban_message"]
-                                        .format(member, server))
+                                        .format(user, server))
         else:
             print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member.name))
+                  " permission. User was {}.".format(user.name))
 
-    async def member_unban(self, member: discord.Member):
-        server = member.server
+    async def member_unban(self, guild, user: discord.User):
+        server = guild
         if str(server.id) not in self.settings:
             self.settings[server.id] = deepcopy(default_settings)
             self.settings[server.id]["channel"] = server.default_channel.id
@@ -229,23 +229,23 @@ class Membership:
         if not self.settings[server.id]["on"]:
             return
 
-        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
+        ch = self.bot.get_channel(int(self.settings[str(server.id)]["channel"]))
         await ch.trigger_typing()
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
                   " The user was {}.".format(
-                      member.name))
+                      user.name))
             return
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
             await channel(self.settings[server.id][
                                             "unban_message"]
-                                        .format(member, server))
+                                        .format(user, server))
         else:
             print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member.name))
+                  " permission. User was {}.".format(user.name))
 
     def get_welcome_channel(self, server: discord.Guild):
         return server.get_channel(int(self.settings[str(server.id)]["channel"]))
