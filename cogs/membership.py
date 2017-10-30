@@ -146,7 +146,7 @@ class Membership:
             return
 
         
-        ch = self.bot.get_channel(self.settings[str(member.guild.id)]["channel"])
+        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
         ch.trigger_typing()
 
 
