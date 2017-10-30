@@ -98,7 +98,7 @@ class Membership:
         """Turns membership event commands on or off."""
 
         server = ctx.message.guild
-        await ctx.send(self.settings[str(server.id)]["on"])
+        await ctx.send(self.settings[str(server.id)]["join_message"])
         self.settings[str(server.id)]["on"] = not self.settings[str(server.id)]["on"]
         await ctx.send(self.settings[str(server.id)]["on"])
         if self.settings[str(server.id)]["on"]:
