@@ -136,17 +136,20 @@ class Membership:
                                     .format(ctx.message.author, channel))
 
     async def member_join(self, member: discord.Member):
-        server = member.server
-        if server.id not in self.settings:
-            self.settings[server.id] = deepcopy(default_settings)
-            self.settings[server.id]["channel"] = server.default_channel.id
+        server = member.guild
+        if str(server.id) not in self.settings:
+            self.settings[str(server.id)] = deepcopy(default_settings)
+            self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[server.id]["on"]:
+        if not self.settings[str(server.id)]["on"]:
             return
 
-        await self.bot.send_typing(
-            self.bot.get_channel(self.settings[member.server.id]["channel"]))
+        
+        ch = self.bot.get_channel(self.settings[member.server.id]["channel"]))
+        ch.trigger_typing()
+
+
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
@@ -184,8 +187,7 @@ class Membership:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await self.bot.send_message(channel,
-                                        self.settings[server.id][
+            await channel.send(self.settings[str(server.id)][
                                             "leave_message"]
                                         .format(member, server))
         else:
