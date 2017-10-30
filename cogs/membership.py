@@ -164,7 +164,7 @@ class Membership:
                                         .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member.name))
+                  " permission. User was {}.".format(member.mention))
 
     async def member_leave(self, member: discord.Member):
         server = member.server
