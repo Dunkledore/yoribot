@@ -32,7 +32,7 @@ class Membership:
     async def _membershipset(self, ctx: commands.Context):
         """Sets membership settings."""
 
-        server = ctx.message.server
+        server = ctx.message.guild
         if server.id not in self.settings:
             self.settings[server.id] = deepcopy(default_settings)
             self.settings[server.id]["channel"] = server.default_channel.id
