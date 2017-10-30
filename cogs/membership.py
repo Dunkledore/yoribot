@@ -119,11 +119,10 @@ class Membership:
          If none is specified, the default will be used.
          """
         await ctx.send('Command Invoked')
-        await self.bot.type()
-        server = ctx.message.server
+        server = ctx.message.guild
 
         if not channel:
-            channel = server.default_channel
+            channel = server.text_channels[0]
 
         if not self.speak_permissions(server, channel):
             await ctx.send(
