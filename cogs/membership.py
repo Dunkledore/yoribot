@@ -222,11 +222,11 @@ class Membership:
     async def member_unban(self, guild, user: discord.User):
         server = guild
         if str(server.id) not in self.settings:
-            self.settings[server.id] = deepcopy(default_settings)
-            self.settings[server.id]["channel"] = server.default_channel.id
+            self.settings[str(server.id)] = deepcopy(default_settings)
+            self.settings[str(server.id)]["channel"] =  str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[server.id]["on"]:
+        if not self.settings[str(server.id)]["on"]:
             return
 
         ch = self.bot.get_channel(int(self.settings[str(server.id)]["channel"]))
