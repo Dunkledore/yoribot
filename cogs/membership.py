@@ -254,7 +254,7 @@ class Membership:
                   " permission. User was {}.".format(member.name))
 
     def get_welcome_channel(self, server: discord.Guild):
-        return server.get_channel(self.settings[server.id]["channel"])
+        return server.get_channel(self.settings[str(server.id)]["channel"])
 
     def speak_permissions(self, server: discord.Guild,
                           channel: discord.TextChannel=None):
