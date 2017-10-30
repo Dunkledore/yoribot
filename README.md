@@ -15,6 +15,7 @@ This is required to actually run the bot.
 2. **Set up venv**
 
 Just do `python3.6 -m venv venv`
+Make sure you have python dev installed. Just do `sudo apt-get install python3.x-dev`
 
 3. **Install dependencies**
 
