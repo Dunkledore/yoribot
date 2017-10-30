@@ -164,7 +164,7 @@ class Membership:
                                         .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member.mention))
+                  " permission. User was {}.".format(member))
 
     async def member_leave(self, member: discord.Member):
         server = member.guild
@@ -191,7 +191,7 @@ class Membership:
                                         .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member.mention))
+                  " permission. User was {}.".format(member))
 
     async def member_ban(self, member: discord.Member):
         server = member.guild
@@ -214,7 +214,7 @@ class Membership:
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
             await channel.send(self.settings[str(server.id)]["ban_message"]
-                                        .format(member.mention, server))
+                                        .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member.name))
@@ -242,7 +242,7 @@ class Membership:
         if self.speak_permissions(server, channel):
             await channel(self.settings[server.id][
                                             "unban_message"]
-                                        .format(member.mention, server))
+                                        .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member.name))
