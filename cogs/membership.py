@@ -257,7 +257,7 @@ class Membership:
     def get_welcome_channel(self, server: discord.Guild):
         return server.get_channel(self.settings[server.id]["channel"])
 
-    def speak_permissions(self, server: discord.Server,
+    def speak_permissions(self, server: discord.Guild,
                           channel: discord.TextChannel=None):
         if not channel:
             channel = self.get_welcome_channel(server)
