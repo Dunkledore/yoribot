@@ -159,8 +159,7 @@ class Membership:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await self.bot.send_message(channel,
-                                        self.settings[str(server.id)][
+            await channel.send(self.settings[str(server.id)][
                                             "join_message"]
                                         .format(member, server))
         else:
