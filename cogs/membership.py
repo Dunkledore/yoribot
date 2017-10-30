@@ -130,7 +130,7 @@ class Membership:
                 .format(channel))
             return
 
-        self.settings[server.id]["channel"] = channel.id
+        self.settings[str(server.id)]["channel"] = channel.id
         dataIO.save_json(self.settings_path, self.settings)
         channel = self.get_welcome_channel(server)
         await ctx.send(channel,
