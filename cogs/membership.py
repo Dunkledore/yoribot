@@ -35,7 +35,7 @@ class Membership:
         server = ctx.message.guild
         if server.id not in self.settings:
             self.settings[str(server.id)] = deepcopy(default_settings)
-            self.settings[str(server.id)]["channel"] = server.text_channels[0].id
+            self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
