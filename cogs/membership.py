@@ -257,7 +257,8 @@ class Membership:
                           channel: discord.TextChannel=None):
         if not channel:
             channel = self.get_welcome_channel(server)
-        member  = await server.get_member(self.bot.user.id)
+        member  =  server.get_member(self.bot.user.id)
+        print(member)
         return member.permissions_in(channel).send_messages
 
 
