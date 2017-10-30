@@ -147,7 +147,7 @@ class Membership:
 
         
         ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
-        ch.trigger_typing()
+        await ch.trigger_typing()
 
 
 
@@ -167,17 +167,17 @@ class Membership:
                   " permission. User was {}.".format(member.mention))
 
     async def member_leave(self, member: discord.Member):
-        server = member.server
+        server = member.guild
         if server.id not in self.settings:
-            self.settings[server.id] = deepcopy(default_settings)
-            self.settings[server.id]["channel"] = server.default_channel.id
+            self.settings[str(server.id)] = deepcopy(default_settings)
+            self.settings[STR(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[server.id]["on"]:
+        if not self.settings[str(server.id)]["on"]:
             return
 
-        await self.bot.send_typing(
-            self.bot.get_channel(self.settings[member.server.id]["channel"]))
+        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
+        await ch.trigger_typing()
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
@@ -191,20 +191,20 @@ class Membership:
                                         .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member.name))
+                  " permission. User was {}.".format(member.mention))
 
     async def member_ban(self, member: discord.Member):
-        server = member.server
+        server = member.guild
         if server.id not in self.settings:
             self.settings[server.id] = deepcopy(default_settings)
             self.settings[server.id]["channel"] = server.default_channel.id
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[server.id]["on"]:
+        if not self.settings[str(server.id)]["on"]:
             return
 
-        await self.bot.send_typing(
-            self.bot.get_channel(self.settings[member.server.id]["channel"]))
+        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
+        await ch.trigger_typing()
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
@@ -213,9 +213,8 @@ class Membership:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await self.bot.send_message(channel,
-                                        self.settings[server.id]["ban_message"]
-                                        .format(member, server))
+            await channel.send(self.settings[str(server.id)]["ban_message"]
+                                        .format(member.mention, server))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member.name))
@@ -230,8 +229,8 @@ class Membership:
         if not self.settings[server.id]["on"]:
             return
 
-        await self.bot.send_typing(
-            self.bot.get_channel(self.settings[str(member.server.id)]["channel"]))
+        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
+        await ch.trigger_typing()
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
@@ -241,10 +240,9 @@ class Membership:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await self.bot.send_message(channel,
-                                        self.settings[server.id][
+            await channel(self.settings[server.id][
                                             "unban_message"]
-                                        .format(member, server))
+                                        .format(member.mention, server))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member.name))
