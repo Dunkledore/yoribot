@@ -133,8 +133,7 @@ class Membership:
         self.settings[str(server.id)]["channel"] = channel.id
         dataIO.save_json(self.settings_path, self.settings)
         channel = self.get_welcome_channel(server)
-        await ctx.send(channel,
-                                    ("{0.mention}, " +
+        await channel.send(  ("{0.mention}, " +
                                      cf.info(
                                          "I will now send membership"
                                          " announcements to {1.mention}."))
