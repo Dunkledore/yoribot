@@ -168,7 +168,7 @@ class Membership:
 
     async def member_leave(self, member: discord.Member):
         server = member.guild
-        if server.id not in self.settings:
+        if str(server.id) not in self.settings:
             self.settings[str(server.id)] = deepcopy(default_settings)
             self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
@@ -195,7 +195,7 @@ class Membership:
 
     async def member_ban(self, member: discord.Member):
         server = member.guild
-        if server.id not in self.settings:
+        if str(server.id) not in self.settings:
             self.settings[server.id] = deepcopy(default_settings)
             self.settings[server.id]["channel"] = server.default_channel.id
             dataIO.save_json(self.settings_path, self.settings)
@@ -221,7 +221,7 @@ class Membership:
 
     async def member_unban(self, member: discord.Member):
         server = member.server
-        if server.id not in self.settings:
+        if str(server.id) not in self.settings:
             self.settings[server.id] = deepcopy(default_settings)
             self.settings[server.id]["channel"] = server.default_channel.id
             dataIO.save_json(self.settings_path, self.settings)
