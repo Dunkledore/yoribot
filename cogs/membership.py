@@ -89,7 +89,7 @@ class Membership:
         """
 
         server = ctx.message.guild
-        self.settings[server.id]["unban_message"] = format_str
+        self.settings[str(server.id)]["unban_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Unban message set."))
 
