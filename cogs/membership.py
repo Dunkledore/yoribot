@@ -161,7 +161,7 @@ class Membership:
         if self.speak_permissions(server, channel):
             await channel.send(self.settings[str(server.id)][
                                             "join_message"]
-                                        .format(member.mention, server))
+                                        .format(member, server))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member.mention))
