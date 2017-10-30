@@ -240,7 +240,7 @@ class Membership:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await channel(self.settings[server.id][
+            await channel.send(self.settings[str(server.id)][
                                             "unban_message"]
                                         .format(user, server))
         else:
