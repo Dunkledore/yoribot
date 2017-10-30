@@ -259,7 +259,7 @@ class Membership:
             channel = self.get_welcome_channel(server)
             print(self.bot.user.id)
             print(server.get_member(self.bot.user.id))
-        return server.get_member(
+        return await server.get_member(
             self.bot.user.id).permissions_in(channel).send_messages
 
 
