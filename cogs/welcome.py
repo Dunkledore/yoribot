@@ -29,7 +29,6 @@ class Welcome:
 		#await ctx.send(title)
 		embed = discord.Embed(title='Welcome to ' + ctx.message.guild.name, colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
-		embed.add_field(name='User', value=ctx.message.author.mention)
 
 
 		for fields in welcome:
