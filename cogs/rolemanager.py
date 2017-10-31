@@ -138,9 +138,7 @@ class RoleManager:
         """Adds multiple addable roles at once, separated by <separator>."""
 
         for rolename in role_names.split(separator):
-            await ctx.send(rolename)
-            await ctx.send(group)
-            self.addrole(ctx, rolename, group, rolename)
+            await self.addrole(ctx, rolename=rolename, group, rolename=rolename)
 
 
     @sar.command(pass_context=True, no_pm=True)
