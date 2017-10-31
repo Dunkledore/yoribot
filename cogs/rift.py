@@ -99,7 +99,7 @@ class Rift:
             for i, channel in enumerate(channels):
                 msg += "{} - {} ({})\n".format(i, channel.guild, channel.id)
             for page in pagify(msg):
-                ctx.send(page)
+                await ctx.send(page)
                 print('3')
             choice = await self.bot.wait_for('message', check=check, timeout=30.0)
             print('4')
