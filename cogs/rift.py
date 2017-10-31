@@ -72,7 +72,6 @@ class Rift:
 
         def check(m):
             try:
-                print('5')
                 if m.author != ctx.message.author:
                     return False
                 if m.channel != ctx.message.channel:
@@ -101,7 +100,7 @@ class Rift:
             for page in pagify(msg):
                 ctx.send(page)
                 print('3')
-            choice = await self.bot.wait_for('message', timeout=30, check=check)
+            choice = await self.bot.wait_for('message', check=check, timeout=30)
             print('4')
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
