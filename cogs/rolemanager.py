@@ -128,7 +128,7 @@ class RoleManager:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
             print (ctx.guild.role_hierarchy)
             for drole in ctx.guild.role_hierarchy:
-                if drole[0] = role:
+                if drole[0] == role:
                     self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole[1])
                     break
                 else:
