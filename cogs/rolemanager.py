@@ -132,7 +132,7 @@ class RoleManager:
         """Adds multiple addable roles at once, separated by <separator>."""
 
         for rolename in role_names.split(separator):
-            self.add(ctx,rolename, group, rolaname)
+            self.add(ctx,rolename, group, rolename)
 
 
     @sar.command(pass_context=True, no_pm=True)
