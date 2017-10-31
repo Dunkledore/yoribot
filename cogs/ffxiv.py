@@ -254,23 +254,23 @@ class FFXIV:
                 if not "_nonmember" in self.settings["characters"].keys():
                     self.settings["characters"]["_nonmember"] = {}
                 if not str(charid) in self.settings["characters"]["_nonmember"].keys() or not isinstance(
-                        self.settings["characters"]["_nonmember"][str(charid)], dict):
-                    self.settings["characters"]["_nonmember"][str(charid)] = {}
+                        self.settings["characters"]["_nonmember"][charid], dict):
+                    self.settings["characters"]["_nonmember"][charid] = {}
                     self.save_settings()
                 charinfo = await self._xivdb("character", id_=charid)
                 if "error" in charinfo.keys():
                     await self.embed(ctx, "FFXIV Character Info: XIVDB Error", charinfo["error"], "red")
                     return
                 draw = 0
-                if not "img_ver" in self.settings["characters"]["_nonmember"][str(charid)].keys() or int(
-                        self.settings["characters"]["_nonmember"][str(charid)]["img_ver"]) != self.IMAGE_VERSION:
+                if not "img_ver" in self.settings["characters"]["_nonmember"][charid].keys() or int(
+                        self.settings["characters"]["_nonmember"][charid]["img_ver"]) != self.IMAGE_VERSION:
                     draw = 1
-                if not "dh" in self.settings["characters"]["_nonmember"][str(charid)].keys() or \
-                                self.settings["characters"]["_nonmember"][str(charid)]["dh"] != charinfo["data_hash"]:
-                    self.settings["characters"]["_nonmember"][str(charid)]["dh"] = charinfo["data_hash"]
+                if not "dh" in self.settings["characters"]["_nonmember"][charid].keys() or \
+                                self.settings["characters"]["_nonmember"][charid]["dh"] != charinfo["data_hash"]:
+                    self.settings["characters"]["_nonmember"][harid]["dh"] = charinfo["data_hash"]
                 if draw == 1:
                     await self.draw_profile(charinfo)
-                    self.settings["characters"]["_nonmember"][str(charid)]["img_ver"] = self.IMAGE_VERSION
+                    self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
                     self.save_settings()
                 with open("data/ffxiv/profiles/{}.png".format(charid), "rb") as f:
                     await self.bot.send_file(ctx.message.channel, f)
