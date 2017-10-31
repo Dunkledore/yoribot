@@ -53,7 +53,7 @@ class RoleManager:
                 role = message.content[len(p):]
                 rolename = role.replace("\"", "")
                 roleinfo = await self._roleinfo(message, rolename)
-                if len(roleinfo) < 2:
+                if roleinfo is None:
                     return
                 role = discord.utils.get(message.guild.roles, id=roleinfo[1])
                 await message.author.add_roles(role)
