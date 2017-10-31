@@ -306,7 +306,7 @@ class FFXIV:
             self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await ctx.message.channel.send(file = f)
+            await ctx.message.channel.send(file = discord.File(f))
 
     @ffxiv.command(pass_context=True)
     async def whois(self, ctx, user: discord.User):
@@ -338,7 +338,7 @@ class FFXIV:
             await self.draw_profile(charinfo)
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await ctx.message.channel.send(file = f)
+            await ctx.message.channel.send(file = discord.File(f))
 
     async def draw_profile(self, cdata):
         regular_fnt = ImageFont.truetype(font_bold_file, 22)
