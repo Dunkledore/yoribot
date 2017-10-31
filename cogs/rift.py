@@ -13,7 +13,7 @@ def formatembed(m):
     avatar = m.author.avatar_url
     author_name = m.author.nick+" ("+m.author.name+")" if m.author.nick else m.author.name
     em.set_author(name=author_name,icon_url=avatar)
-    footer = "- sent from #"+m.channel.name+" in "+m.server.name
+    footer = "- sent from #"+m.channel.name+" in "+m.guild.name
     em.set_footer(text=footer)
     return em
 
