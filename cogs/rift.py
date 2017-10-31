@@ -96,7 +96,7 @@ class Rift:
         if len(channels) > 1:
             msg = "Multiple results found.\nChoose a server:\n"
             for i, channel in enumerate(channels):
-                msg += "{} - {} ({})\n".format(i, channel.server, channel.id)
+                msg += "{} - {} ({})\n".format(i, channel.guild, channel.id)
             for page in pagify(msg):
                 ctx.send(page)
             choice = await self.bot.wait_for('message', timeout=30, check=check)
