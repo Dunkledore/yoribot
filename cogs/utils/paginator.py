@@ -162,8 +162,8 @@ class Pages:
             page = int(msg.content)
             to_delete.append(msg)
             if page != 0 and page <= self.maximum_pages:
-                print('showing page')
                 await self.show_page(page)
+                print('showing page')
             else:
                 to_delete.append(await self.channel.send(f'Invalid page given. ({page}/{self.maximum_pages})'))
                 await asyncio.sleep(5)
