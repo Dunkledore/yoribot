@@ -41,7 +41,7 @@ class Rift:
             for r in settings["open_rifts"].keys():
                 chs = []
                 for rc in settings["open_rifts"][r]:
-                    ch = self.bot.get_channel(rc)
+                    ch = self.bot.get_channel(int(rc)
                     if ch:
                         chs.append(ch)
                     else:
