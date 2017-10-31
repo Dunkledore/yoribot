@@ -126,7 +126,7 @@ class RoleManager:
                 return
             if group not in self.settings[str(ctx.message.guild.id)]['sars']:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
-
+            print('broken')
             for drole in ctx.guild.role_hierarchy:
                 if drole.name == role:
                     print('broken')
@@ -145,7 +145,7 @@ class RoleManager:
     @checks.admin_or_permissions()
     async def _sar_addroles(self, ctx, group, separator:str, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
-
+        print('broken')
         for rolename in role_names.split(separator):
             await self.addrole(ctx, rolename, group, role=rolename)
 
