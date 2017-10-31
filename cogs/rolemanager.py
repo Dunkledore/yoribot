@@ -129,8 +129,11 @@ class RoleManager:
 
             for drole in ctx.guild.role_hierarchy:
                 if drole.name == role:
+                    print('broken')
                     self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole.id)
                     break
+
+            print('not broken')
             
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description="The role has been added to the list!")
