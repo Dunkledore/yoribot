@@ -246,6 +246,8 @@ class FieldPages(Pages):
     tuples having (key, value) to show as embed fields instead.
     """
     async def show_page(self, page, *, first=False):
+        print('showing page')
+
         self.current_page = page
         entries = self.get_page(page)
 
