@@ -52,7 +52,7 @@ class RoleManager:
             if message.content.startswith(p):
                 role = message.content[len(p):]
                 rolename = role.replace("\"", "")
-                roleinfo = await self._roleinfo(ctx.message, rolename)
+                roleinfo = await self._roleinfo(message, rolename)
                 role = discord.utils.get(ctx.message.guild.roles, id=roleinfo[1])
                 await message.author.add_roles(role)
                 em = discord.Embed(color=message.author.color, description="The role has been assigned to you!")
