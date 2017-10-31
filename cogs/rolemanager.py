@@ -76,6 +76,8 @@ class RoleManager:
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
         [p]sar add "role name" name of the role"""
+
+        await ctx.send('command invoked')
         if not ctx.message.guild.me.permissions_in(ctx.message.channel).manage_roles:
             em = discord.Embed(color=ctx.message.author.color,
                                description="I do not have the manage roles permission here,"
