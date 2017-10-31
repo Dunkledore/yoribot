@@ -438,7 +438,7 @@ class HelpPaginator(Pages):
 
         signature = _command_signature
 
-
+        print(entries)
         for entry in entries:
             print(signature(entry))
             print(entry.short_doc)
