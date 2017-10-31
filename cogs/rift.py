@@ -244,7 +244,7 @@ class Rift:
                 for chan in orift[rift]:
                     if chan != msg.channel:
                         #try:
-                        if self.embeds[str(chan)]:
+                        if self.embeds[chan]:
                             await chan.send(embed=formatembed(msg))
                         else:
                             message = escape(msg.content, mass_mentions=True)
