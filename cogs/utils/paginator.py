@@ -81,7 +81,6 @@ class Pages:
         return self.entries[base:base + self.per_page]
 
     async def show_page(self, page, *, first=False):
-        print('showing page')
         self.current_page = page
         entries = self.get_page(page)
         p = []
@@ -161,6 +160,7 @@ class Pages:
             await asyncio.sleep(5)
         else:
             page = int(msg.content)
+            print(page)
             to_delete.append(msg)
             if page != 0 and page <= self.maximum_pages:
                 await self.show_page(page)
