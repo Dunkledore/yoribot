@@ -124,6 +124,15 @@ class RoleManager:
             em.set_author(name=role.name, icon_url="http://bit.ly/2qi2m3a")
             await ctx.send(embed=em)
 
+
+    @sar.command(name="addroles", pass_context=True, no_pm=True)
+    async def _regedit_addroles(self, ctx, group, separator:str, *, role_names: str):
+        """Adds multiple addable roles at once, separated by <separator>."""
+        
+        for rolename in role_names.split(separator):
+            self.add(ctx,rolename, group, rolaname)
+
+
     @sar.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
     async def unlist(self, ctx, role):
