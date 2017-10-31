@@ -137,10 +137,10 @@ class Rift:
                 return False
 
         if riftname not in self.open_rifts:
-            await self.bot.say("That rift doesn't exist.")
+            await ctx.send("That rift doesn't exist.")
             return
         if ctx.message.channel not in self.open_rifts[riftname]:
-            await self.bot.say("This channel doesn't belong to that rift.")
+            await ctx.send("This channel doesn't belong to that rift.")
             return
 
         channels = self.bot.get_all_channels()
