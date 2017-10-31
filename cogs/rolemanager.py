@@ -70,7 +70,7 @@ class RoleManager:
             await ctx.send(embed=em)
             return
 
-    @sar.command(pass_context=True, no_pm=True,)
+    @sar.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
     async def add(self, ctx, name, group: str, *, role: discord.Role):
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
