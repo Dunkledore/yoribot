@@ -463,17 +463,11 @@ class HelpPaginator(Pages):
         """shows this message"""
 
         self.embed.title = 'Help Navigation'
-        self.embed.description = 'This bot uses reactions to navigate through the command list.'
-        argumentinfo = (
-            ('<...>', 'Something is required.'),
-            ('[...]', 'Something is optional.'),
-            ('[A|B]', 'One or the other is required.'),
-            ('[argument...]', 'Multiple items can be entered.\n' \
-                              'Brackets are not required.')
-        )
+        self.embed.description = 'This bot uses reactions to navigate through the command'
+
         messages = [f'{emoji} {func.__doc__}' for emoji, func in self.reaction_emojis]
         self.embed.clear_fields()
-        self.embed.add_field(name='What the reactions do:', value='\n'.join(messages), value='\n'.join(argumentinfo), inline=False)
+        self.embed.add_field(name='What are these reactions for?', value='\n'.join(messages), inline=False)
 
         self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
         await self.message.edit(embed=self.embed)
@@ -487,17 +481,17 @@ class HelpPaginator(Pages):
     async def show_bot_help(self):
         """shows how to use the bot"""
 
-        self.embed.title = 'About the bot'
-        self.embed.description = 'This premium Discord bot was created for select servers.'\
-                                 'Join the bot server for help or to contribute: https://discord.gg/P579kfb'
+        self.embed.title = 'Using the bot'
+        self.embed.description = 'Hello! Welcome to the help page.'
         self.embed.clear_fields()
 
         entries = (
-            ('<...>', 'Something is required.'),
-            ('[...]', 'Something is optional.'),
-            ('[A|B]', 'One or the other is required.'),
-            ('[argument...]', 'Multiple items can be entered.\n' \
-                              'Brackets are not required.')
+            ('<argument>', 'This means the argument is __**required**__.'),
+            ('[argument]', 'This means the argument is __**optional**__.'),
+            ('[A|B]', 'This means the it can be __**either A or B**__.'),
+            ('[argument...]', 'This means you can have multiple arguments.\n' \
+                              'Now that you know the basics, it should be noted that...\n' \
+                              '__**You do not type in the brackets!**__')
         )
 
         self.embed.add_field(name='How do I use this bot?', value='Reading the bot signature is pretty simple.')
