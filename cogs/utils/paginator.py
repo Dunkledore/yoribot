@@ -144,7 +144,7 @@ class Pages:
     async def numbered_page(self):
         """lets you type a page number to go to"""
 
-        print('showing page')
+
         to_delete = []
         to_delete.append(await self.channel.send('What page do you want to go to?'))
 
@@ -159,6 +159,7 @@ class Pages:
             to_delete.append(await self.channel.send('Took too long.'))
             await asyncio.sleep(5)
         else:
+            print('showing page')
             page = int(msg.content)
             to_delete.append(msg)
             if page != 0 and page <= self.maximum_pages:
