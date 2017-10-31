@@ -61,7 +61,7 @@ class FFXIV:
         em = discord.Embed(color=c, description=desc)
         em.set_author(name=authortext, icon_url="https://i.imgur.com/n3tqR2E.png")
         em.set_footer(text=footer)
-        await self.bot.send_message(ctx.message.channel, embed=em)
+        await ctx.message.channel.send(embed=em)
 
     @commands.group(pass_context=True, invoke_without_command=True)
     async def ffxiv(self, ctx):
