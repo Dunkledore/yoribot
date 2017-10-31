@@ -126,12 +126,16 @@ class RoleManager:
                 return
             if group not in self.settings[str(ctx.message.guild.id)]['sars']:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
-            for drole in ctx.guild.role_hierarchy:
-                if drole[0] == role:
-                    self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole[1])
-                    break
-                else:
-                    print("Role:" + role + "Not found")
+            if type(role) != discord.Role:
+                for drole in ctx.guild.role_hierarchy:
+                    if drole[0] == role:
+                        self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole[1])
+                        break
+                    else:
+                        print("Role:" + role + "Not found")
+            else:
+                self.settings[str(ctx.message.guild.id)]['sars'][group][name] = role.id
+
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description="The role has been added to the list!")
             em.set_author(name=role.name, icon_url="http://bit.ly/2qi2m3a")
