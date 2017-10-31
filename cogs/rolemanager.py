@@ -57,7 +57,7 @@ class RoleManager:
                 await message.author.add_roles(role)
                 em = discord.Embed(color=message.author.color, description="The role has been assigned to you!")
                 em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
-                await ctx.send(embed=em)
+                await message.channel.send(embed=em)
                 return
 
 
