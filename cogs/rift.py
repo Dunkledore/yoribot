@@ -209,7 +209,7 @@ class Rift:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
-    async def riftdisconnect(self,ctx,riftname):
+    async def riftdisconnect(self, ctx, riftname):
         """Disconnects this channel from the specified rift."""
         if riftname not in self.open_rifts:
             await ctx.send("That rift doesn't exist.")
