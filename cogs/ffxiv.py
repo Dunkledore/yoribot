@@ -725,9 +725,11 @@ class FFXIV:
                 return {"__ERROR__": "Invalid JSON or no response."}
 
     @fflogs.command(pass_context=True)
-    @checks.is_owner()
     async def setkey(self, ctx, key):
         """Sets which API key the bot should use for getting FFlogs info (provide the public key)."""
+        if not self.bot.is_owner(ctx.author):
+            return
+
         if key == "":
             await self.embed(ctx, "FFlogs Info: Error", "API key cannot be empty.", "red")
             return
