@@ -162,7 +162,7 @@ class FFXIV:
             await self.embed(ctx, "XIVDB Error", recipe["error"], "red")
             return
         await self.draw_recipe(recipe)
-        await ctx.message.channel.send(File = "data/ffxiv/{}.tmp.png".format(recipeid))
+        await ctx.message.channel.send(file = "data/ffxiv/{}.tmp.png".format(recipeid))
         try:
             os.remove("data/ffxiv/{}.tmp.png".format(recipeid))
         except:
@@ -273,7 +273,7 @@ class FFXIV:
                     self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
                     self.save_settings()
                 with open("data/ffxiv/profiles/{}.png".format(charid), "rb") as f:
-                    await self.bot.send_file(ctx.message.channel, f)
+                    await ctx.message.channel.send(file = f)
 
     @ffxiv.command(pass_context=True)
     async def whoami(self, ctx):
@@ -306,7 +306,7 @@ class FFXIV:
             self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await ctx.message.channel.send(File = f)
+            await ctx.message.channel.send(file = f)
 
     @ffxiv.command(pass_context=True)
     async def whois(self, ctx, user: discord.User):
@@ -338,7 +338,7 @@ class FFXIV:
             await self.draw_profile(charinfo)
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await ctx.message.channel.send(File = f)
+            await ctx.message.channel.send(file = f)
 
     async def draw_profile(self, cdata):
         regular_fnt = ImageFont.truetype(font_bold_file, 22)
