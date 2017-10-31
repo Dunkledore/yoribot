@@ -221,19 +221,19 @@ class FFXIV:
                 await self.embed(ctx, "FFXIV Character Info", "I couldn't find that character.", "red")
             else:
                 if not ctx.message.author.id in self.settings["characters"].keys() or not isinstance(
-                        self.settings["characters"][ctx.message.author.id], dict):
-                    self.settings["characters"][ctx.message.author.id] = {"id": charid}
-                self.settings["characters"][ctx.message.author.id]["id"] = charid
+                        self.settings["characters"][str(ctx.message.author.id)], dict):
+                    self.settings["characters"][str(ctx.message.author.id)] = {"id": charid}
+                self.settings["characters"][str(ctx.message.author.id)]["id"] = charid
                 self.save_settings()
                 await self.embed(ctx, "FFXIV Character Info", "Your character has been saved successfully!", "green")
 
     @ffxiv.command(pass_context=True)
     async def deleteme(self, ctx):
         """Forget about your character."""
-        if not ctx.message.author.id in self.settings["characters"].keys():
+        if not str(ctx.message.author.id) in self.settings["characters"].keys():
             await self.embed(ctx, "FFXIV Character Info", "No character saved.", "red")
             return
-        del self.settings["characters"][ctx.message.author.id]
+        del self.settings["characters"][str(ctx.message.author.id)]
         self.save_settings()
         await self.embed(ctx, "FFXIV Character Info", "Character Info deleted. Who were you again?", "green")
 
