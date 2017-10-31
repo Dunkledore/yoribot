@@ -305,6 +305,7 @@ class FFXIV:
             await self.draw_profile(charinfo)
             self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
             self.save_settings()
+            await ctx.message.channel.send(type(open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb")))
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
             await ctx.message.channel.send(type(f))
             await ctx.message.channel.send(file = f)
