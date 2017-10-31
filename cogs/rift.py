@@ -146,7 +146,7 @@ class Rift:
         channels = self.bot.get_all_channels()
         channels = [c for c in channels
                     if c.name.lower() == channel or c.id == channel]
-        channels = [c for c in channels if c.type == discord.ChannelType.text]
+        channels = [c for c in channels if type(c) == discord.TextChannel]
 
         if not channels:
             await ctz.send("No channels found.")
