@@ -52,12 +52,12 @@ class RoleManager:
             if message.content.startswith(p):
                 role = message.content[len(p):]
                 rolename = role.replace("\"", "")
-        		roleinfo = await self._roleinfo(ctx, rolename)
-        		await ctx.message.author.add_roles(role)
-            	em = discord.Embed(color=ctx.message.author.color, description="The role has been assigned to you!")
-            	em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
-            	await ctx.send(embed=em)
-            	return
+                roleinfo = await self._roleinfo(ctx, rolename)
+                await ctx.message.author.add_roles(role)
+                em = discord.Embed(color=ctx.message.author.color, description="The role has been assigned to you!")
+                em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
+                await ctx.send(embed=em)
+                return
 
 
     @sar.command(pass_context=True, no_pm=True)
