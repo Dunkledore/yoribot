@@ -134,10 +134,11 @@ class RoleManager:
 
     @sar.command(name="addroles", pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
-    async def _regedit_addroles(self, ctx, group, separator:str, *, role_names: str):
+    async def _sar_addroles(self, ctx, group, separator:str, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
 
         for rolename in role_names.split(separator):
+            await ctx.send(rolename)
             self.addrole(ctx, rolename, group, rolename)
 
 
