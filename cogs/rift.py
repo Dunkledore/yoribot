@@ -32,7 +32,7 @@ class Rift:
         settings = dataIO.load_json("data/rift/settings.json")
         if "embeds" in settings.keys() and isinstance(settings["embeds"],dict):
             for e in settings["embeds"].keys():
-                ch = self.bot.get_channel(str(e)
+                ch = self.bot.get_channel(str(e))
                 if ch:
                     self.embeds[ch] = settings["embeds"][e]
                 else:
