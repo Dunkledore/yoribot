@@ -78,7 +78,7 @@ class Rift:
                     return False
                 return channels[int(m.content)]
             except:
-                return False
+                return Falsew
 
         if name in self.open_rifts:
             await self.bot.say("A rift with that name already exists. Please use another name.")
@@ -87,7 +87,7 @@ class Rift:
         channels = self.bot.get_all_channels()
         channels = [c for c in channels
                     if c.name.lower() == channel or c.id == channel]
-        channels = [c for c in channels if c.type == discord.ChannelType.text]
+        channels = [c for c in channels if c.type == discord.TextChannel]
 
         if not channels:
             await ctx.send("No channels found.")
