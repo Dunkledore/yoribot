@@ -153,7 +153,7 @@ class RoleManager:
                     return
                 else:
                     role = discord.utils.get(ctx.message.guild.roles, id=roleinfo[1])
-                    await self.bot.remove_roles(ctx.message.author, role)
+                    await ctx.message.author.remove_roles(role)
                     em = discord.Embed(color=ctx.message.author.color, description="Role removed")
                     em.set_author(name=role, icon_url="http://bit.ly/2r2cpXh")
                     await ctx.send(embed=em)
