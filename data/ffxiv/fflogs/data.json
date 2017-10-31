@@ -1,0 +1,207 @@
+{
+    "version": "4.0-2",
+    "numeric-version": 40002,
+    "zones": {
+        "Deltascape V1.0 (Savage)": {
+            "id": 42,
+            "match": "O1S|Alte Roite(\\s+\\(?\\s*S(avage)?\\s*\\)?)?|Deltascape\\s*V?1(\\.0)?(\\s*\\(?S(avage)?\\)?)",
+            "display": "Alte Roite (Savage)"
+        },
+        "Deltascape V2.0 (Savage)": {
+            "id": 43,
+            "match": "O2S|Catastrophe(\\s+\\(?\\s*S(avage)?\\s*\\)?)?|Deltascape\\s*V?2(\\.0)?(\\s*\\(?S(avage)?\\)?)",
+            "display": "Catastrophe (Savage)"
+        },
+        "Deltascape V3.0 (Savage)": {
+            "id": 44,
+            "match": "O3S|Halicarnassus(\\s+\\(?\\s*S(avage)?\\s*\\)?)?|Deltascape\\s*V?3(\\.0)?(\\s*\\(?S(avage)?\\)?)",
+            "display": "Halicarnassus (Savage)"
+        },
+        "Exdeath (Savage)": {
+            "id": 45,
+            "match": "Exdeath(\\s+\\(?\\s*S(avage)?\\s*\\)?)?",
+            "display": "Exdeath (Savage)"
+        },
+        "Neo Exdeath (Savage)": {
+            "id": 46,
+            "match": "Neo\\s*(Exdeath)?(\\s+\\(?\\s*S(avage)?\\s*\\)?)?",
+            "display": "Neo Exdeath"
+        },
+        "Susano (Extreme)": {
+            "id": 1036,
+            "match": "(Susano|(The)?\\s*Pools?\\s*of\\s*Tribute(\\s*\\(?Ex(treme)?\\)?)?",
+            "display": "Susano (Extreme)"
+        },
+        "Lakshmi (Extreme)": {
+            "id": 1037,
+            "match": "(Lakshmi|Emanation)(\\s*\\(?Ex(treme)?\\)?)??",
+            "display": "Lakshmi (Extreme)"
+        },
+        "Bismarck (Extreme)": {
+            "id": 1027,
+            "match": "(Bismarck|(The)?\\s*Limitless?\\s*Blue)(\\s*\\(?Ex(treme)?\\)?)?",
+            "display": "Bismarck (Extreme)"
+        },
+        "Ravana (Extreme)": {
+            "id": 1028,
+            "match": "(Ravana|Thok\\s*ast\\s*Thok)(\\s*\\(?Ex(treme)?\\)?)?",
+            "display": "Ravana (Extreme)"
+        },
+        "Thordan (Extreme)": {
+            "id": 1029,
+            "match": "(Thordan|(The)?\\s*Singularity\\s*Reactor)(\\s*\\(?Ex(treme)?\\)?)?",
+            "display": "Thordan (Extreme)"
+        },
+        "Sephirot (Extreme)": {
+            "id": 1031,
+            "match": "(Sephirot|Containment\\s*Bay\\s*S1T7)(\\s*\\(?Ex(treme)?\\)?)?",
+            "display": "Sephirot (Extreme)"
+        },
+        "Nidhogg (Extreme)": {
+            "id": 1033,
+            "match": "Nidhogg(\\s*\\(?Ex(treme)?\\)?)?|((The)?\\s*Minstrel's\\s*Ballad\\:?Nidhogg's\\s*Rage",
+            "display": "Nidhogg (Extreme)"
+        },
+        "Sophia (Extreme)": {
+            "id": 1034,
+            "match": "(Sophia|Containment\\s*Bay\\s*P1T6)(\\s*\\(?Ex(treme)?\\)?)?",
+            "display": "Sophia (Extreme)"
+        }
+    },
+    "groups": {
+        "Deltascape (Savage)": {
+            "zones": [
+                42,
+                43,
+                44,
+                45,
+                46
+            ],
+            "alt_names": [
+                "Omega Savage",
+                "Deltascape Savage"
+            ],
+            "display": "Omega: Deltascape (Savage)",
+            "id": 17
+        },
+        "Deltascape V4.0 (Savage)": {
+            "zones": [
+                45,
+                46
+            ],
+            "alt_names": [
+                "O4S"
+            ],
+            "display": "Deltascape V4.0 (Savage)",
+            "id": -1
+        },
+        "Trials (Extreme)": {
+            "zones": [
+                1036,
+                1037
+            ],
+            "alt_names": [
+                "Primals",
+                "Extreme Primals",
+                "Trials",
+                "Extreme Trials"
+            ],
+            "display": "Trials (Extreme) - 4.0",
+            "id": 15
+        }
+    },
+    "default_groups": [
+        "Deltascape (Savage)",
+        "Trials (Extreme)"
+    ],
+    "classes": {
+        "1": "Astrologian",
+        "2": "Bard",
+        "3": "Black Mage",
+        "4": "Dark Knight",
+        "5": "Dragoon",
+        "6": "Machinist",
+        "7": "Monk",
+        "8": "Ninja",
+        "9": "Paladin",
+        "10": "Scholar",
+        "11": "Summoner",
+        "12": "Warrior",
+        "13": "White Mage",
+        "14": "Red Mage",
+        "15": "Samurai"
+    },
+    "regions": {
+        "EU": [
+            "Cerberus",
+            "Lich",
+            "Louisoix",
+            "Moogle",
+            "Odin",
+            "Omega",
+            "Phoenix",
+            "Ragnarok",
+            "Shiva",
+            "Zodiark"
+        ],
+        "JP": [
+            "Aegis",
+            "Alexander",
+            "Anima",
+            "Asura",
+            "Atomos",
+            "Bahamut",
+            "Belias",
+            "Carbuncle",
+            "Chocobo",
+            "Durandal",
+            "Fenrir",
+            "Garuda",
+            "Gugnir",
+            "Hades",
+            "Ifrit",
+            "Ixion",
+            "Kujata",
+            "Mandragora",
+            "Masamune",
+            "Pandaemonium",
+            "Ramuh",
+            "Ridill",
+            "Shinryu",
+            "Tiamat",
+            "Titan",
+            "Tonberry",
+            "Typhon",
+            "Unicorn",
+            "Valefor",
+            "Yojimbo",
+            "Zeromus"
+        ],
+        "NA": [
+            "Adamantoise",
+            "Balmung",
+            "Behemoth",
+            "Brynhildr",
+            "Cactuar",
+            "Coeurl",
+            "Diabolos",
+            "Excalibur",
+            "Exodus",
+            "Faerie",
+            "Famfrit",
+            "Gilgamesh",
+            "Goblin",
+            "Hyperion",
+            "Jenova",
+            "Lamia",
+            "Leviathan",
+            "Malboro",
+            "Mateus",
+            "Midgardsormr",
+            "Sargatanas",
+            "Siren",
+            "Ultros",
+            "Zalera"
+        ]
+    }
+}
