@@ -101,9 +101,10 @@ class Rift:
                 ctx.send(page)
                 print('3')
             choice = await self.bot.wait_for('message', timeout=30, check=check)
+                print('4')
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
-                print('4')
+
                 return
             channel = channels[int(choice.content)]
         else:
