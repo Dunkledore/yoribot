@@ -98,7 +98,7 @@ class RoleManager:
 
     @sar.command(pass_context=True, no_pm=True)
     async def add(self, ctx, name, group: str, *, role: discord.Role):
-        self.addrole(ctx, name, group, role)
+        self.addrole(self, ctx, name, group, role)
 
 
     async def addrole(self, ctx, name, group: str, *, role: discord.Role):
