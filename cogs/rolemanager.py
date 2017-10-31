@@ -137,7 +137,9 @@ class RoleManager:
             
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description="The role has been added to the list!")
+            print('not broken1')
             em.set_author(name=role, icon_url="http://bit.ly/2qi2m3a")
+            print('not broken2')
             await ctx.send(embed=em)
 
 
