@@ -146,7 +146,7 @@ class Rift:
         channels = [c for c in channels if type(c) == discord.TextChannel]
 
         if not channels:
-            await ctz.send("No channels found.")
+            await ctx.send("No channels found.")
             return
 
         if len(channels) > 1:
