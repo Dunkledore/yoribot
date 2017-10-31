@@ -81,7 +81,6 @@ class Pages:
         return self.entries[base:base + self.per_page]
 
     async def show_page(self, page, *, first=False):
-        print('showing page')
         self.current_page = page
         entries = self.get_page(page)
         p = []
@@ -161,11 +160,8 @@ class Pages:
             await asyncio.sleep(5)
         else:
             page = int(msg.content)
-            print(page)
             if page != 0 and page <= self.maximum_pages:
-                print('about to show page')
                 await self.show_page(page)
-                print('page shown')
             else:
                 to_delete.append(await self.channel.send(f'Invalid page given. ({page}/{self.maximum_pages})'))
                 await asyncio.sleep(5)
@@ -246,8 +242,6 @@ class FieldPages(Pages):
     tuples having (key, value) to show as embed fields instead.
     """
     async def show_page(self, page, *, first=False):
-        print('showing page')
-
         self.current_page = page
         entries = self.get_page(page)
 
