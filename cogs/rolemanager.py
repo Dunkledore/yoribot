@@ -103,7 +103,7 @@ class RoleManager:
         await self.addrole(ctx, name, group, role=role)
 
 
-    async def addrole(self, ctx, name, group: str, *, role: discord.Role):
+    async def addrole(self, ctx, name, group: str, *, role: str):
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
         [p]sar add "role name" name of the role"""
