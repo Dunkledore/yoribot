@@ -126,6 +126,7 @@ class RoleManager:
                 return
             if group not in self.settings[str(ctx.message.guild.id)]['sars']:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
+            ctx.send(ctx.guild.role_hierarchy)
             self.settings[str(ctx.message.guild.id)]['sars'][group][name] = ctx.guild.role_hierarchy['role'].id
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description="The role has been added to the list!")
