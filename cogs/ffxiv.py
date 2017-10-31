@@ -278,16 +278,16 @@ class FFXIV:
     @ffxiv.command(pass_context=True)
     async def whoami(self, ctx):
         """Don't remember who you are? I'll help you find yourself!"""
-        if not ctx.message.author.id in self.settings["characters"].keys():
+        if not str(ctx.message.author.id) in self.settings["characters"].keys():
             await self.embed(ctx, "FFXIV Character Info", "No character saved.", "red")
             return
-        charinfo = await self._xivdb("character", id_=self.settings["characters"][ctx.message.author.id]["id"])
+        charinfo = await self._xivdb("character", id_=self.settings["characters"][str(ctx.message.author.id)]["id"])
         if "error" in charinfo.keys():
             await self.embed(ctx, "FFXIV Character Info: XIVDB Error", charinfo["error"], "red")
             return
         draw = 0
-        charid = str(self.settings["characters"][ctx.message.author.id]["id"])
-        if not str(self.settings["characters"][ctx.message.author.id]["id"]) in self.settings["characters"][
+        charid = str(self.settings["characters"][str(ctx.message.author.id)]["id"])
+        if not str(self.settings["characters"][str(ctx.message.author.id)]["id"]) in self.settings["characters"][
             "_nonmember"].keys():
             self.settings["characters"]["_nonmember"][charid] = {"dh": charinfo["data_hash"]}
             draw = 1
@@ -306,21 +306,21 @@ class FFXIV:
             self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await self.bot.send_file(ctx.message.channel, f)
+            await ctx.message.channel.send(file = f)
 
     @ffxiv.command(pass_context=True)
-    async def whois(self, ctx, user: discord.Member):
+    async def whois(self, ctx, user: discord.User):
         """Find out who your friend is in-game!"""
-        if not user.id in self.settings["characters"].keys():
+        if not str(user.id) in self.settings["characters"].keys():
             await self.embed(ctx, "FFXIV Character Info", "No character saved.", "red")
             return
-        charinfo = await self._xivdb("character", id_=self.settings["characters"][user.id]["id"])
+        charinfo = await self._xivdb("character", id_=self.settings["characters"][str(user.id)]["id"])
         if "error" in charinfo.keys():
             await self.embed(ctx, "FFXIV Character Info: XIVDB Error", charinfo["error"], "red")
             return
         draw = 0
-        charid = str(self.settings["characters"][user.id]["id"])
-        if not str(self.settings["characters"][user.id]["id"]) in self.settings["characters"]["_nonmember"].keys():
+        charid = str(self.settings["characters"][str(user.id)]["id"])
+        if not str(self.settings["characters"][str(user.id)]["id"]) in self.settings["characters"]["_nonmember"].keys():
             self.settings["characters"]["_nonmember"][charid] = {"dh": charinfo["data_hash"]}
             draw = 1
         if not "dh" in self.settings["characters"]["_nonmember"][charid].keys():
@@ -338,7 +338,7 @@ class FFXIV:
             await self.draw_profile(charinfo)
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await self.bot.send_file(ctx.message.channel, f)
+            await ctx.message.channel.send(file = f)
 
     async def draw_profile(self, cdata):
         regular_fnt = ImageFont.truetype(font_bold_file, 22)
@@ -791,7 +791,7 @@ class FFXIV:
     @fflogs.command(pass_context=True)
     async def me(self, ctx, *, options = ""):
         """Gets current FFlogs rankings for the character you've saved with [p]ffxiv iam."""
-        if not ctx.message.author.id in self.settings["characters"].keys():
+        if not str(ctx.message.author.id) in self.settings["characters"].keys():
             await self.embed(ctx, "FFlogs Info",
                              "No character saved. Please use `[p]ffxiv iam` to save your character.", "red")
             return
