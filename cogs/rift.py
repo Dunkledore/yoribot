@@ -251,7 +251,7 @@ class Rift:
                                 await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.server.name,message))
                         except Exception as baseerr:
                             try:
-                                await msg.channel.send("Couldn't send your message.")
+                                await msg.channel.send("Couldn't send your message." + baseerr)
                             except:
                                 print("Couldn't send the message. An exception occured: ",baseerr)
 
