@@ -88,20 +88,22 @@ class Rift:
         channels = [c for c in channels
                     if c.name.lower() == channel or c.id == channel]
         channels = [c for c in channels if type(c) == discord.TextChannel]
-
+        print('1')
         if not channels:
             await ctx.send("No channels found.")
             return
-
+        print('2')        
         if len(channels) > 1:
             msg = "Multiple results found.\nChoose a server:\n"
             for i, channel in enumerate(channels):
                 msg += "{} - {} ({})\n".format(i, channel.guild, channel.id)
             for page in pagify(msg):
                 ctx.send(page)
+                print('3')
             choice = await self.bot.wait_for('message', timeout=30, check=check)
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
+                print('4')
                 return
             channel = channels[int(choice.content)]
         else:
