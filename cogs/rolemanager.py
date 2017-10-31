@@ -51,7 +51,7 @@ class RoleManager:
             em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
             return
-        elif self.settings[str(ctx.message.server.id)]['sars'] == {}:
+        elif self.settings[str(ctx.message.guild.id)]['sars'] == {}:
             em = discord.Embed(color=ctx.message.author.color,
                                description="There are no self-assignable roles for this server.")
             em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
