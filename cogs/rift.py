@@ -194,7 +194,7 @@ class Rift:
     @checks.mod_or_permissions(manage_channels=True)
     async def riftlist(self, ctx):
         """Lists all the rifts this channel is in. """
-       rnames = []
+        rnames = []
         for r in self.open_rifts.keys():
             if ctx.message.channel in self.open_rifts[r]:
                rnames.append(r)
