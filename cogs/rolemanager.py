@@ -107,8 +107,6 @@ class RoleManager:
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
         [p]sar add "role name" name of the role"""
-        await ctx.send(role)
-        await ctx.send(type(role))
         if not ctx.message.guild.me.permissions_in(ctx.message.channel).manage_roles:
             em = discord.Embed(color=ctx.message.author.color,
                                description="I do not have the manage roles permission here,"
@@ -126,20 +124,14 @@ class RoleManager:
                 return
             if group not in self.settings[str(ctx.message.guild.id)]['sars']:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
-            print('broken')
             for drole in ctx.guild.role_hierarchy:
                 if drole.name == role:
-                    print('broken')
                     self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole.id)
                     break
 
-            print('not broken')
             
             self.save_settings()
-            em = discord.Embed(color=ctx.message.author.color, description="The role has been added to the list!")
-            print('not broken1')
             em.set_author(name=role, icon_url="http://bit.ly/2qi2m3a")
-            print('not broken2')
             await ctx.send(embed=em)
 
 
@@ -147,7 +139,6 @@ class RoleManager:
     @checks.admin_or_permissions()
     async def _sar_addroles(self, ctx, group, separator:str, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
-        print('broken')
         for rolename in role_names.split(separator):
             await self.addrole(ctx, rolename, group, role=rolename)
 
