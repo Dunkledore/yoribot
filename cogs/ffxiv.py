@@ -267,7 +267,7 @@ class FFXIV:
                     draw = 1
                 if not "dh" in self.settings["characters"]["_nonmember"][charid].keys() or \
                                 self.settings["characters"]["_nonmember"][charid]["dh"] != charinfo["data_hash"]:
-                    self.settings["characters"]["_nonmember"][harid]["dh"] = charinfo["data_hash"]
+                    self.settings["characters"]["_nonmember"][charid]["dh"] = charinfo["data_hash"]
                 if draw == 1:
                     await self.draw_profile(charinfo)
                     self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
