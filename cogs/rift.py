@@ -18,7 +18,7 @@ def formatembed(m):
     return em
 
 class Rift:
-
+    """Communicate with other servers/channels!"""
 
     def __init__(self, bot):
         self.bot = bot
@@ -55,7 +55,7 @@ class Rift:
 
     @commands.command(pass_context=True, no_pm=True)
     async def riftembeds(self, ctx, status : str):
-
+        """Toggles Embeds for Rift messages in this channel. Specify on or off."""
         if not status.lower() in ["on","off"]:
             await self.bot.say("Please use `riftembeds on` or `riftembeds off`.")
         else:
@@ -66,6 +66,9 @@ class Rift:
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftopen(self, ctx, name, channel):
+        """Makes you able to communicate with other channels through Red.
+
+        This is cross-server. Specify the name of the rift and a channel to connect it to (name without # or id). More channels can be added to the rift later with riftconnect"""
 
         def check(m):
             try:
@@ -118,7 +121,7 @@ class Rift:
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftconnect(self, ctx, riftname, channel):
-
+        """Connects a channel to the specified rift."""
        
         def check(m):
             try:
@@ -171,7 +174,7 @@ class Rift:
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftclose(self, ctx, riftname):
-
+        """Closes the specified rift. Can only be used from a channel belonging to that rift."""
         if riftname not in self.open_rifts:
             await ctx.send("That rift doesn't exist.")
             return
@@ -190,7 +193,7 @@ class Rift:
     @commands.command(pass_context=True,no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftlist(self, ctx):
-
+        """ Lists all the rifts this channel is in. """
         rnames = []
         for r in self.open_rifts.keys():
             if ctx.message.channel in self.open_rifts[r]:
@@ -207,7 +210,7 @@ class Rift:
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftdisconnect(self, ctx, riftname):
-
+        """Disconnects this channel from the specified rift."""
         if riftname not in self.open_rifts:
             await ctx.send("That rift doesn't exist.")
             return
