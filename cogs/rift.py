@@ -192,7 +192,7 @@ class Rift:
 
     @commands.command(pass_context=True,no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
-    async def riftlist(self,ctx):
+    async def riftlist(self, ctx):
         """ Lists all the rifts this channel is in. """
         rnames = []
         for r in self.open_rifts.keys():
