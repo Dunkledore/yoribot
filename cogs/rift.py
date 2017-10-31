@@ -72,6 +72,7 @@ class Rift:
 
         def check(m):
             try:
+                print('5')
                 if m.author != ctx.message.author:
                     return False
                 if m.channel != ctx.message.channel:
