@@ -422,7 +422,7 @@ class HelpPaginator(Pages):
         return commands
 
     async def show_page(self, page, *, first=False):
-        print('showing page')
+        
         self.current_page = page
         entries = self.get_page(page)
 
@@ -437,7 +437,7 @@ class HelpPaginator(Pages):
         self.embed.set_footer(text=f'Use "{self.prefix}help command" for more info on a command.')
 
         signature = _command_signature
-
+        print('showing page')
         for entry in entries:
             self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
 
