@@ -440,6 +440,8 @@ class HelpPaginator(Pages):
 
 
         for entry in entries:
+            print(signature(entry))
+            print(entry.short_doc)
             self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
             print('showing page')
 
