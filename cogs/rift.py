@@ -78,7 +78,7 @@ class Rift:
                     return False
                 return channels[int(m.content)]
             except:
-                return Falsew
+                return False
 
         if name in self.open_rifts:
             await self.bot.say("A rift with that name already exists. Please use another name.")
