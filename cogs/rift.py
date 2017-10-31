@@ -82,7 +82,7 @@ class Rift:
                 return False
 
         if name in self.open_rifts:
-            await self.bot.say("A rift with that name already exists. Please use another name.")
+            await ctx.send("A rift with that name already exists. Please use another name.")
             return
 
         channels = self.bot.get_all_channels()
@@ -243,17 +243,17 @@ class Rift:
             if msg.channel in orift[rift]:
                 for chan in orift[rift]:
                     if chan != msg.channel:
-                        try:
-                            if self.embeds[chan]:
-                                await chan.send(embed=formatembed(msg))
-                            else:
-                                message = escape(msg.content, mass_mentions=True)
-                                await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
-                        except Exception as baseerr:
-                            try:
-                                await msg.channel.send("Couldn't send your message." + baseerr)
-                            except:
-                                print("Couldn't send the message. An exception occured: ",baseerr)
+                        #try:
+                        if self.embeds[chan]:
+                            await chan.send(embed=formatembed(msg))
+                        else:
+                            message = escape(msg.content, mass_mentions=True)
+                            await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
+                        #except Exception as baseerr:
+                        #    try:
+                        #        await msg.channel.send("Couldn't send your message." + baseerr)
+                        #    except:
+                        #        print("Couldn't send the message. An exception occured: ",baseerr)
 
     def save_settings(self):
         settings = {"open_rifts":{},"embeds":{}}
