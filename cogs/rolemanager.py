@@ -98,11 +98,6 @@ class RoleManager:
             await ctx.send(embed=em)
             return
 
-    @sar.command(pass_context=True, no_pm=True)
-    async def add(self, ctx, name, group: str, *, role: discord.Role):
-        await self.addrole(ctx, name, group, role=role)
-
-
     async def addrole(self, ctx, name, group: str, *, role: str):
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
@@ -128,6 +123,7 @@ class RoleManager:
             for drole in ctx.guild.role_hierarchy:
                 if drole.name == role:
                     self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole.id)
+                    em.add_filed(name = 'Role Added:', value = role)
                     break
 
             
