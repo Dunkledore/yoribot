@@ -662,7 +662,7 @@ class FFXIV:
         ypos = 70
         # Spec
         if rdata["is_specialization_required"] == 1:
-            _right_text("Specialist Recipe", 390, ypos)
+            _right_text("Specialist Recipe", 390, ypos, level_fnt, level_color)
             ypos += 14
 
         # required stats
