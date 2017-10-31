@@ -162,7 +162,7 @@ class FFXIV:
             await self.embed(ctx, "XIVDB Error", recipe["error"], "red")
             return
         await self.draw_recipe(recipe)
-        await ctx.message.channel.send(file = "data/ffxiv/{}.tmp.png".format(recipeid))
+        await ctx.message.channel.send(file = discord.File("data/ffxiv/{}.tmp.png".format(recipeid)))
         try:
             os.remove("data/ffxiv/{}.tmp.png".format(recipeid))
         except:
