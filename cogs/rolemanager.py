@@ -13,11 +13,11 @@ class RoleManager:
         self.settings = dataIO.load_json("data/rolemanager/settings.json")
 
     # Gets the group a role belongs to
-    async def _roleinfo(self, ctx, role: str):
-        for g in self.settings[str(ctx.message.guild.id)]['sars'].keys():
-            for r in self.settings[str(ctx.message.guild.id)]['sars'][g].keys():
+    async def _roleinfo(self, message, role: str):
+        for g in self.settings[str(message.guild.id)]['sars'].keys():
+            for r in self.settings[str(message.guild.id)]['sars'][g].keys():
                 if r.lower() == role.lower():
-                    return g, self.settings[str(ctx.message.guild.id)]['sars'][g][r], r
+                    return g, self.settings[str(message.guild.id)]['sars'][g][r], r
         return None
 
     @commands.group(pass_context=True, invoke_without_command=True, no_pm=True)
@@ -30,7 +30,7 @@ class RoleManager:
             await ctx.send(embed=em)
             return
         rolename = role.replace("\"", "")
-        roleinfo = await self._roleinfo(ctx, rolename)
+        roleinfo = await self._roleinfo(ctx.message, rolename)
         if roleinfo is None:
             em = discord.Embed(color=ctx.message.author.color, description="You cannot add that role. Yet...")
             em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
@@ -52,7 +52,8 @@ class RoleManager:
             if message.content.startswith(p):
                 role = message.content[len(p):]
                 rolename = role.replace("\"", "")
-                roleinfo = await self._roleinfo(ctx, rolename)
+                roleinfo = await self._roleinfo(ctx.message, rolename)
+                role = discord.utils.get(ctx.message.guild.roles, id=roleinfo[1])
                 await message.author.add_roles(role)
                 em = discord.Embed(color=message.author.color, description="The role has been assigned to you!")
                 em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
@@ -105,7 +106,7 @@ class RoleManager:
         else:
             if str(ctx.message.guild.id) not in self.settings:
                 self.settings[str(ctx.message.guild.id)] = {'sars': {}}
-            if await self._roleinfo(ctx, name) is not None:
+            if await self._roleinfo(ctx.message, name) is not None:
                 em = discord.Embed(color=ctx.message.author.color, description="That role is already self-assignable.")
                 em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
                 await ctx.send(embed=em)
@@ -128,7 +129,7 @@ class RoleManager:
             em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
             return
-        roleinfo = await self._roleinfo(ctx, role)
+        roleinfo = await self._roleinfo(ctx.message, role)
         if roleinfo is None:
             em = discord.Embed(color=ctx.message.author.color, description="That is not a valid self-assignable role.")
             em.set_author(name=role, icon_url="http://bit.ly/2qlsl5I")
@@ -152,7 +153,7 @@ class RoleManager:
             em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
             return
-        roleinfo = await self._roleinfo(ctx, role)
+        roleinfo = await self._roleinfo(ctx.message, role)
         if roleinfo is None:
             em = discord.Embed(color=ctx.message.author.color, description="That is not a valid self-assignable role.")
             em.set_author(name=role, icon_url="http://bit.ly/2qlsl5I")
