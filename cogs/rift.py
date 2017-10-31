@@ -248,7 +248,7 @@ class Rift:
                                 await chan.send(embed=formatembed(msg))
                             else:
                                 message = escape(msg.content, mass_mentions=True)
-                                await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.server.name,message))
+                                await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
                         except Exception as baseerr:
                             try:
                                 await msg.channel.send("Couldn't send your message." + baseerr)
