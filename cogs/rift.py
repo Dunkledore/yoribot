@@ -155,10 +155,10 @@ class Rift:
         if len(channels) > 1:
             msg = "Multiple results found.\nChoose a server:\n"
             for i, chan in enumerate(channels):
-                msg += "{} - {} ({})\n".format(i, chan.server, chan.id)
+                msg += "{} - {} ({})\n".format(i, chan.guild, chan.id)
             for page in pagify(msg):
                 await self.bot.say(page)
-            choice = await self.bot.wait_for('message', timeout=30, check=check)
+            choice = await self.bot.wait_for('message', timeout=30.0, check=check)
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
                 return
