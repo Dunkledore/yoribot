@@ -100,7 +100,7 @@ class RoleManager:
 
     @sar.command(pass_context=True, no_pm=True)
     async def add(self, ctx, name, group: str, *, role: discord.Role):
-        self.addrole(self, ctx, name, group, role)
+        self.addrole(ctx, name, group, role)
 
 
     async def addrole(self, ctx, name, group: str, *, role: discord.Role):
@@ -138,7 +138,7 @@ class RoleManager:
         """Adds multiple addable roles at once, separated by <separator>."""
 
         for rolename in role_names.split(separator):
-            self.addrole(self, ctx,rolename, group, rolename)
+            self.addrole(ctx,rolename, group, rolename)
 
 
     @sar.command(pass_context=True, no_pm=True)
