@@ -42,6 +42,24 @@ class RoleManager:
             em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
             await ctx.send(embed=em)
 
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+
+        prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
+
+        for p in prefixes:
+            if message.content.startswith(p):
+                role = message.content[len(p):]
+                rolename = role.replace("\"", "")
+        		roleinfo = await self._roleinfo(ctx, rolename)
+        		await ctx.message.author.add_roles(role)
+            	em = discord.Embed(color=ctx.message.author.color, description="The role has been assigned to you!")
+            	em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
+            	await ctx.send(embed=em)
+            	return
+
+
     @sar.command(pass_context=True, no_pm=True)
     async def list(self, ctx):
         """Lists the self-assignable roles this server has."""
@@ -77,7 +95,6 @@ class RoleManager:
         Example:
         [p]sar add "role name" name of the role"""
 
-        await ctx.send('command invoked')
         if not ctx.message.guild.me.permissions_in(ctx.message.channel).manage_roles:
             em = discord.Embed(color=ctx.message.author.color,
                                description="I do not have the manage roles permission here,"
