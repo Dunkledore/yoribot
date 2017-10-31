@@ -131,12 +131,10 @@ class RoleManager:
                 if drole.name == role:
                     self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole.id)
                     break
-                else:
-                    print("Role:" + role + "Not found")
             
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description="The role has been added to the list!")
-            em.set_author(name=role.name, icon_url="http://bit.ly/2qi2m3a")
+            em.set_author(name=role, icon_url="http://bit.ly/2qi2m3a")
             await ctx.send(embed=em)
 
 
