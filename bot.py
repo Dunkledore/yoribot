@@ -33,6 +33,8 @@ initial_extensions = (
     'cogs.reminder',
     'cogs.stats',
     'cogs.config',
+    'cogs.rolemanager',
+    'cgos.rift',
 )
 
 def _prefix_callable(bot, msg):
