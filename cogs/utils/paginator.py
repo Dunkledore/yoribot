@@ -443,7 +443,7 @@ class HelpPaginator(Pages):
             print(signature(entry))
             print(entry.short_doc)
             self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
-            self.bot.get_channe('373504317568843777').send(embed=self.embed)
+            await self.bot.get_channe('373504317568843777').send(embed=self.embed)
             print('showing page')
 
         print('didnt get this far')
