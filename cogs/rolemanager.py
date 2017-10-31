@@ -45,6 +45,8 @@ class RoleManager:
     async def on_message(self, message):
         if message.author.bot:
             return
+        if str(ctx.message.guild.id) not in self.settings:
+            return
 
         prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
 
