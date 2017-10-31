@@ -59,7 +59,7 @@ class Welcome:
 	async def removefield(self, ctx, name=None):
 		"""Removes and embed field from the welcome message"""
 
-		if arg1 is None:
+		if name is None:
 			await ctx.send('Please enter a field to remove')
 		else:
 			query = "DELETE FROM welcome WHERE guild_id =$1 AND name = $2"
