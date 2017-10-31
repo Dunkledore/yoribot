@@ -27,7 +27,7 @@ class Rift:
         self.ready = False
 
     async def load_settings(self):
-        await self.bot.wait_until_login()
+        await self.bot.wait_until_ready()
         allchannels = self.bot.get_all_channels()
         settings = dataIO.load_json("data/rift/settings.json")
         if "embeds" in settings.keys() and isinstance(settings["embeds"],dict):
@@ -98,7 +98,7 @@ class Rift:
             for i, channel in enumerate(channels):
                 msg += "{} - {} ({})\n".format(i, channel.server, channel.id)
             for page in pagify(msg):
-                await self.bot.say(page)
+                ctx.send(page)
             choice = await self.bot.wait_for('message', timeout=30, check=check)
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
