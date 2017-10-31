@@ -32,7 +32,7 @@ class Rift:
         settings = dataIO.load_json("data/rift/settings.json")
         if "embeds" in settings.keys() and isinstance(settings["embeds"],dict):
             for e in settings["embeds"].keys():
-                ch = self.bot.get_channel(str(e))
+                ch = self.bot.get_channel(e)
                 if ch:
                     self.embeds[ch] = settings["embeds"][e]
                 else:
@@ -41,7 +41,7 @@ class Rift:
             for r in settings["open_rifts"].keys():
                 chs = []
                 for rc in settings["open_rifts"][r]:
-                    ch = self.bot.get_channel(str(rc))
+                    ch = self.bot.get_channel(rc)
                     if ch:
                         chs.append(ch)
                     else:
@@ -89,7 +89,7 @@ class Rift:
         channels = [c for c in channels
                     if c.name.lower() == channel or c.id == channel]
         channels = [c for c in channels if type(c) == discord.TextChannel]
-        
+
         if not channels:
             await ctx.send("No channels found.")
             return       
