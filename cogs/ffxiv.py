@@ -253,7 +253,7 @@ class FFXIV:
             else:
                 if not "_nonmember" in self.settings["characters"].keys():
                     self.settings["characters"]["_nonmember"] = {}
-                if not str(charid) in self.settings["characters"]["_nonmember"].keys() or not isinstance(
+                if not charid in self.settings["characters"]["_nonmember"].keys() or not isinstance(
                         self.settings["characters"]["_nonmember"][charid], dict):
                     self.settings["characters"]["_nonmember"][charid] = {}
                     self.save_settings()
