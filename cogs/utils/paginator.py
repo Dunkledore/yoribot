@@ -81,6 +81,7 @@ class Pages:
         return self.entries[base:base + self.per_page]
 
     async def show_page(self, page, *, first=False):
+        print('showing page')
         self.current_page = page
         entries = self.get_page(page)
         p = []
