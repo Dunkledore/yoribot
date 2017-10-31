@@ -97,8 +97,11 @@ class RoleManager:
             return
 
     @sar.command(pass_context=True, no_pm=True)
-    @checks.admin_or_permissions()
-    async def add(self, ctx, name, group: str, *, role: discord.Role):
+    async def add(self, ctx, name, group: str, *, role: discord.Role)
+        self.addrole(ctx, name, group, role)
+
+
+    async def addrole(self, ctx, name, group: str, *, role: discord.Role):
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
         [p]sar add "role name" name of the role"""
@@ -128,11 +131,12 @@ class RoleManager:
 
 
     @sar.command(name="addroles", pass_context=True, no_pm=True)
+    @checks.admin_or_permissions()
     async def _regedit_addroles(self, ctx, group, separator:str, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
 
         for rolename in role_names.split(separator):
-            self.add(ctx,rolename, group, rolename)
+            self.addrole(ctx,rolename, group, rolename)
 
 
     @sar.command(pass_context=True, no_pm=True)
