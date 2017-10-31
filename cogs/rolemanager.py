@@ -139,6 +139,7 @@ class RoleManager:
 
         for rolename in role_names.split(separator):
             await ctx.send(rolename)
+            await ctx.send(group)
             self.addrole(ctx, rolename, group, rolename)
 
 
