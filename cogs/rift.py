@@ -101,7 +101,7 @@ class Rift:
             for page in pagify(msg):
                 ctx.send(page)
                 print('3')
-            choice = await self.bot.wait_for('message', check=check, timeout=30)
+            choice = await self.bot.wait_for('message', check=check, timeout=30.0)
             print('4')
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
