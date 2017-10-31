@@ -190,22 +190,22 @@ class Rift:
         for e in self.embeds.keys():
             print(e)
 
-    #@commands.command(pass_context=True,no_pm=True)
-    #@checks.mod_or_permissions(manage_channels=True)
-    #async def riftlist(self, ctx):
-    #    """ Lists all the rifts this channel is in. """
-    #   rnames = []
-    #    for r in self.open_rifts.keys():
-    #        if ctx.message.channel in self.open_rifts[r]:
-    #           rnames.append(r)
-    #    if len(rnames) == 0:
-    #        await ctx.send("This channel belongs to no rifts.")
-    #    else:
-    #        s = "This channel belongs to the following rifts: \n"
-    #        for n in rnames:
-    #            s += "**{}**, ".format(n)
-    #        s = s[:-2]
-    #        await ctx.send(s)
+    @commands.command(pass_context=True,no_pm=True)
+    @checks.mod_or_permissions(manage_channels=True)
+    async def riftlist(self, ctx):
+        """Lists all the rifts this channel is in. """
+       rnames = []
+        for r in self.open_rifts.keys():
+            if ctx.message.channel in self.open_rifts[r]:
+               rnames.append(r)
+        if len(rnames) == 0:
+            await ctx.send("This channel belongs to no rifts.")
+        else:
+            s = "This channel belongs to the following rifts: \n"
+            for n in rnames:
+                s += "**{}**, ".format(n)
+            s = s[:-2]
+            await ctx.send(s)
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
