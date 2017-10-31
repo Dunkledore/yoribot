@@ -53,6 +53,8 @@ class RoleManager:
                 role = message.content[len(p):]
                 rolename = role.replace("\"", "")
                 roleinfo = await self._roleinfo(message, rolename)
+                if len(roleinfo) < 2:
+                    return
                 role = discord.utils.get(message.guild.roles, id=roleinfo[1])
                 await message.author.add_roles(role)
                 em = discord.Embed(color=message.author.color, description="The role has been assigned to you!")
@@ -128,7 +130,7 @@ class RoleManager:
     @sar.command(name="addroles", pass_context=True, no_pm=True)
     async def _regedit_addroles(self, ctx, group, separator:str, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
-        
+
         for rolename in role_names.split(separator):
             self.add(ctx,rolename, group, rolaname)
 
