@@ -86,7 +86,7 @@ class RoleManager:
             em = discord.Embed(color=ctx.message.author.color, description=text)
             em.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
             text = ""
-            if str(self.bot.get_guild_prefixes(ctx.message.guild)[2]) is None:
+            if len(self.bot.get_guild_prefixes(ctx.message.guild))<2:
                 text = "To add roles use [p]rolename"
             else:
                 text = "To add roles use " + str(self.bot.get_guild_prefixes(ctx.message.guild)[2])+ "rolename"
