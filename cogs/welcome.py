@@ -18,7 +18,7 @@ class Welcome:
 
 	@commands.command(pass_context=True, no_pm=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def welcome(self, ctx, *, member: discord.Member = None):
+	async def welcome(self, ctx):
 		"""Will sennd the welcome message as if the caller just joined"""
 		await self.show_welcome_message(ctx)
 
@@ -44,6 +44,7 @@ class Welcome:
 		
 		if (name is None) or (value is None):
 			await ctx.send('Please enter both a field and a value')
+			return
 		else:
 			query = "INSERT INTO welcome (guild_id, name, value) VALUES ($1, $2, $3)"
 		
