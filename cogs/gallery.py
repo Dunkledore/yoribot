@@ -92,14 +92,14 @@ class Gallery:
             return DEFAULTS
         return self.settings[cid]
 
-    def update_setting(self, channel: discord.Channel, key: str, val) -> None:
+    def update_setting(self, channel: discord.TextChannel, key: str, val) -> None:
         cid = str(channel.id)
         if cid not in self.settings:
             self.settings[cid] = DEFAULTS
         self.settings[cid][key] = val
         self.save()
 
-    def enabled_in(self, chan: discord.Channel) -> bool:
+    def enabled_in(self, chan: discord.TextChannel) -> bool:
         return str(chan.id) in self.settings and self.settings[str(chan.id)]['ENABLED']
 
     async def message_check(self, message: discord.Message) -> bool:
@@ -145,7 +145,7 @@ class Gallery:
         keep = pinned or attachment and not (priv_only and not privileged)
         return expired and (x_pin or not keep)
 
-    async def cleanup_task(self, channel: discord.Channel) -> None:
+    async def cleanup_task(self, channel: discord.TextChannel) -> None:
         try:
             to_delete = []
             async for message in self.bot.logs_from(channel, limit=100):
