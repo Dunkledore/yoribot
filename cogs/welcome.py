@@ -13,12 +13,12 @@ import asyncpg
 class Welcome:
 	"""The Welcome Related Commands"""
 
-	def __init__(self, bot: commands.Bot, member):
+	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
 	@commands.command(pass_context=True, no_pm=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def welcome(self, ctx):
+	async def welcome(self, ctx, member: discord.Member):
 		"""Will send the welcome message as if the caller just joined"""
 		await self.show_welcome_message(ctx)
 
