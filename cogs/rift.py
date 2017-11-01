@@ -177,9 +177,9 @@ class Rift:
             if choice is None:
                 await ctx.send("You haven't chosen anything.")
                 return
-            ch = channels[int(choice.content)]
+            channel = channels[int(choice.content)]
         else:
-            ch = channels[0]
+            channel = channels[0]
 
         if ch in self.open_rifts[riftname]:
             await ctx.send("The channel already belongs to that rift.")
@@ -192,8 +192,8 @@ class Rift:
             await ctx.send('Requst to open rift denied')
             return
 
-        self.open_rifts[riftname].append(ch)
-        self.embeds.setdefault(ch, True)
+        self.open_rifts[riftname].append(channel)
+        self.embeds.setdefault(channel, True)
         await ctx.send("The channel is now connected to the rift.")
         self.save_settings()
 
