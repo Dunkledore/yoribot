@@ -82,9 +82,9 @@ class Welcome:
 				channel = chan 
 
 		try:
-			await ctx.db.execute(insertquery, ctx.guild.id, channel)
+			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
 		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(alterquery, ctx.guild.id, channel)
+			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
 
 		await ctx.send('Channel set')
 
