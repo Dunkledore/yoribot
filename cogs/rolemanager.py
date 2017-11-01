@@ -123,7 +123,6 @@ class RoleManager:
             for drole in ctx.guild.role_hierarchy:
                 if drole.name == role:
                     self.settings[str(ctx.message.guild.id)]['sars'][group][name] = str(drole.id)
-                    em.add_filed(name = 'Role Added:', value = role)
                     break
 
             
