@@ -87,25 +87,25 @@ class Gallery:
         dataIO.save_json(JSON, self.settings)
 
     def settings_for(self, channel: discord.Channel) -> dict:
-        cid = channel.id
+        cid = str(channel.id)
         if cid not in self.settings:
             return DEFAULTS
         return self.settings[cid]
 
     def update_setting(self, channel: discord.Channel, key: str, val) -> None:
-        cid = channel.id
+        cid = str(channel.id)
         if cid not in self.settings:
             self.settings[cid] = DEFAULTS
         self.settings[cid][key] = val
         self.save()
 
     def enabled_in(self, chan: discord.Channel) -> bool:
-        return chan.id in self.settings and self.settings[chan.id]['ENABLED']
+        return str(chan.id) in self.settings and self.settings[str(chan.id)]['ENABLED']
 
     async def message_check(self, message: discord.Message) -> bool:
         assert self.enabled_in(message.channel)
 
-        server = message.server
+        server = message.guild
         author = message.author
         settings = self.settings_for(message.channel)
         priv_only = settings.get('PRIV_ONLY', False)
@@ -197,34 +197,34 @@ class Gallery:
         channel = ctx.message.channel
         if not emotes:
             em = self.settings_for(channel)['PIN_EMOTES']
-            await self.bot.say('Pin emotes for this channel: ' + ' '.join(em))
+            await ctx.send('Pin emotes for this channel: ' + ' '.join(em))
         else:
             if any(len(x) != 1 for x in emotes):
-                await self.bot.say('Error: You can only use unicode emotes.')
+                await ctx.send('Error: You can only use unicode emotes.')
                 return
             self.update_setting(channel, 'PIN_EMOTES', emotes)
-            await self.bot.say('Updated pin emotes for this channel.')
+            await ctx.send('Updated pin emotes for this channel.')
 
     @galset.command(pass_context=True, allow_dm=False)
     async def turn(self, ctx, on_off: bool = None):
         """Turn gallery message curation on or off"""
         channel = ctx.message.channel
         current = self.settings_for(channel)['ENABLED']
-        perms = channel.permissions_for(channel.server.me).manage_messages
+        perms = channel.permissions_for(channel.guild.me).manage_messages
         adj_bool = current if on_off is None else on_off
         adj = 'enabled' if adj_bool else 'disabled'
         if on_off is None:
-            await self.bot.say('Gallery cog is %s in this channel.' % adj)
+            await ctx.send('Gallery cog is %s in this channel.' % adj)
         else:
             if self.enabled_in(channel) == on_off:
-                await self.bot.say('Already %s.' % adj)
+                await ctx.send('Already %s.' % adj)
             else:
                 if on_off and not perms:
-                    await self.bot.say('I need the "Manage messages" '
+                    await ctx.send('I need the "Manage messages" '
                                        'permission in this channel to work.')
                     return
                 self.update_setting(channel, 'ENABLED', on_off)
-                await self.bot.say('Gallery curation %s.' % adj)
+                await ctx.send('Gallery curation %s.' % adj)
 
     @galset.command(pass_context=True, allow_dm=False)
     async def privonly(self, ctx, on_off: bool = None):
@@ -235,10 +235,10 @@ class Gallery:
         adj = 'enabled' if on_off else 'disabled'
         priv_only = self.settings_for(channel).get('PRIV_ONLY', False)
         if on_off == priv_only:
-            await self.bot.say('Privileged-only posts already %s.' % adj)
+            await ctx.send('Privileged-only posts already %s.' % adj)
         else:
             self.update_setting(channel, 'PRIV_ONLY', on_off)
-            await self.bot.say('Privileged-only posts %s.' % adj)
+            await ctx.send('Privileged-only posts %s.' % adj)
 
     @galset.command(pass_context=True, allow_dm=False)
     async def age(self, ctx, timespec: str = None):
@@ -246,12 +246,12 @@ class Gallery:
         channel = ctx.message.channel
         if not timespec:
             sec = self.settings_for(channel)['EXPIRATION']
-            await self.bot.say('Current maximum age is %s.'
+            await ctx.send('Current maximum age is %s.'
                                % _generate_timespec(sec))
         else:
             sec = _parse_time(timespec)
             self.update_setting(channel, 'EXPIRATION', sec)
-            await self.bot.say('Maximum post age set.')
+            await ctx.send('Maximum post age set.')
 
     @galset.command(pass_context=True, allow_dm=False)
     async def role(self, ctx, role: discord.Role = None):
@@ -259,10 +259,10 @@ class Gallery:
         channel = ctx.message.channel
         if role is None:
             role = self.settings_for(channel)['ARTIST_ROLE']
-            await self.bot.say('Artist role is currently %s' % role)
+            await ctx.send('Artist role is currently %s' % role)
         else:
             self.update_setting(channel, 'ARTIST_ROLE', role.name)
-            await self.bot.say('Artist role set.')
+            await ctx.send('Artist role set.')
 
     # Stolen from mod.py
     async def mass_purge(self, messages):
