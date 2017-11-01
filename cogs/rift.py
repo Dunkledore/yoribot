@@ -204,7 +204,7 @@ class Rift:
             for n in rnames:
                 s += "**{}**, ".format(n)
             s = s[:-2]
-    #       await ctx.send(s)
+           await ctx.send(s)
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
