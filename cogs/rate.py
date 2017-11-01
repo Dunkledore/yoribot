@@ -16,7 +16,7 @@ class Ratings:
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def sparkles(self, ctx):
+    async def sparkles(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
 
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
