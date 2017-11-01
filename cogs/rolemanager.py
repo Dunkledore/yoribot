@@ -114,7 +114,7 @@ class RoleManager:
             if str(ctx.message.guild.id) not in self.settings:
                 self.settings[str(ctx.message.guild.id)] = {'sars': {}}
             if await self._roleinfo(ctx.message, name) is not None:
-                em = discord.Embed(color=ctx.message.author.color, description="That role is already self-assignable.")
+                em = discord.Embed(color=ctx.message.author.color, description="That role: " + role + " is already self-assignable.")
                 em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
                 await ctx.send(embed=em)
                 return
