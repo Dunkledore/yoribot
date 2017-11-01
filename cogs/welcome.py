@@ -20,6 +20,7 @@ class Welcome:
 	@checks.mod_or_permissions(manage_channels=True)
 	async def welcome(self, ctx):
 		"""Will send the welcome message as if the caller just joined"""
+		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
