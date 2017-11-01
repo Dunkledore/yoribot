@@ -100,8 +100,9 @@ class Welcome:
 		ch = self.bot.get_channel(chid[2])
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await con.fetch(query, member.guild.id)
-		embed = discord.Embed(title='Welcome to ' + member.guild.name, colour=discord.Colour.blurple())
-		embed.set_author(name=member.name, icon_url=member.guild.icon_url)
+		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
+		embed.set_author(name='Welcome to ' + ctx.message.guild.name + ' ' + ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
+		embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
 
 		for fields in welcome:
