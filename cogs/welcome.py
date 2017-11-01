@@ -39,7 +39,7 @@ class Welcome:
 
 	@commands.command(pass_context=True, no_pm=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def addfield(self, ctx, name=None, value=None):
+	async def addfield(self, ctx, name=None, *, value=None):
 		"""Adds an embed field onto the welcome message"""
 		
 		if (name is None) or (value is None):
