@@ -86,7 +86,7 @@ class Gallery:
     def save(self):
         dataIO.save_json(JSON, self.settings)
 
-    def settings_for(self, channel: discord.Channel) -> dict:
+    def settings_for(self, channel: discord.TextChannel) -> dict:
         cid = str(channel.id)
         if cid not in self.settings:
             return DEFAULTS
