@@ -27,6 +27,7 @@ class Welcome:
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name='Welcome to ' + ctx.message.guild.name, icon_url=ctx.message.guild.icon_url)
+		embed.set_thumbnail(url=member.avatar_url inline=True)
 
 		for fields in welcome:
 			embed.add_field(name=fields[2], value=fields[3].format(ctx.message.author))
