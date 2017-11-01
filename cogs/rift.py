@@ -151,10 +151,6 @@ class Rift:
             else:
                 return m.channel == channel
 
-        if name in self.open_rifts:
-            await ctx.send("A rift with that name already exists. Please use another name.")
-            return
-
         if riftname not in self.open_rifts:
             await ctx.send("That rift doesn't exist.")
             return
