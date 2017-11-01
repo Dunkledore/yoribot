@@ -53,15 +53,15 @@ class Rift:
         self.save_settings()
         self.ready = True
 
-    #@commands.command(pass_context=True, no_pm=True)
-    #async def riftembeds(self, ctx, status : str):
-    #    """Toggles Embeds for Rift messages in this channel. Specify on or off."""
-    #    if not status.lower() in ["on","off"]:
-    #        await self.bot.say("Please use `riftembeds on` or `riftembeds off`.")
-    #    else:
-    #        self.embeds[ctx.message.channel] = status.lower() == "on"
-    #        self.save_settings()
-    #        await ctx.send("Rift embeds for this channel have been turned "+status+".")
+    @commands.command(pass_context=True, no_pm=True)
+    async def riftembeds(self, ctx, status : str):
+        """Toggles Embeds for Rift messages in this channel. Specify on or off."""
+        if not status.lower() in ["on","off"]:
+            await self.bot.say("Please use `riftembeds on` or `riftembeds off`.")
+        else:
+            self.embeds[ctx.message.channel] = status.lower() == "on"
+            self.save_settings()
+            await ctx.send("Rift embeds for this channel have been turned "+status+".")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
@@ -189,21 +189,21 @@ class Rift:
         for e in self.embeds.keys():
             print(e)
 
-    #@commands.command(pass_context=True,no_pm=True)
-    #@checks.mod_or_permissions(manage_channels=True)
-    #async def riftlist(self, ctx):
-    #    """Lists all the rifts this channel is in. """
-    #    rnames = []
-    #    for r in self.open_rifts.keys():
-    #        if ctx.message.channel in self.open_rifts[r]:
-    #           rnames.append(r)
-    #    if len(rnames) == 0:
-    #        await ctx.send("This channel belongs to no rifts.")
-    #    else:
-    #        s = "This channel belongs to the following rifts: \n"
-    #        for n in rnames:
-    #            s += "**{}**, ".format(n)
-    #        s = s[:-2]
+    @commands.command(pass_context=True,no_pm=True)
+    @checks.mod_or_permissions(manage_channels=True)
+    async def riftlist(self, ctx):
+        """Lists all the rifts this channel is in. """
+        rnames = []
+        for r in self.open_rifts.keys():
+            if ctx.message.channel in self.open_rifts[r]:
+               rnames.append(r)
+        if len(rnames) == 0:
+            await ctx.send("This channel belongs to no rifts.")
+        else:
+            s = "This channel belongs to the following rifts: \n"
+            for n in rnames:
+                s += "**{}**, ".format(n)
+            s = s[:-2]
     #       await ctx.send(s)
 
     @commands.command(pass_context=True, no_pm=True)
