@@ -83,6 +83,8 @@ class Rift:
         if name in self.open_rifts:
             await ctx.send("A rift with that name already exists. Please use another name.")
             return
+        def check2(m):
+            return m.message.channel == channel
 
         channels = self.bot.get_all_channels()
         channels = [c for c in channels
@@ -108,7 +110,7 @@ class Rift:
             channel = channels[0]
 
         await channel.send('A request to open a rift has been sent from: ' + ctx.message.channel.name + "in " + ctx.guild.name + "Reply with Accept or Deny")
-        await  choice = await self.bot.wait_for('message', check = (m.message.channel == channel), timeout = 30.0)
+        await  choice = await self.bot.wait_for('message', check = check2, timeout = 30.0)
         if (choice != 'Accept') and (choice != 'accept'):
             await ctx.send('They said go fuck yourself')
             return
