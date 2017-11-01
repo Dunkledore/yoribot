@@ -19,14 +19,11 @@ class Welcome:
 	@commands.command(pass_context=True, no_pm=True)
 	@checks.mod_or_permissions(manage_channels=True)
 	async def welcome(self, ctx):
-		"""Will sennd the welcome message as if the caller just joined"""
-		await self.show_welcome_message(ctx)
+		"""Will send the welcome message as if the caller just joined"""
 
 	async def show_welcome_message(self, ctx):
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
-		#title = 'Welcome to ' + ctx.message.server.name
-		#await ctx.send(title)
 		embed = discord.Embed(title='Welcome to ' + ctx.message.guild.name, colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 
