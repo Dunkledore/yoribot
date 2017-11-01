@@ -185,7 +185,6 @@ class Rift:
         await ctx.send("Rift closed.")
         self.save_settings()
 
-    @commands.command()
     async def printchannels(self):
         for e in self.embeds.keys():
             print(e)
