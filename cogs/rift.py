@@ -111,9 +111,9 @@ class Rift:
         else:
             channel = channels[0]
 
-        await channel.send('A request to open a rift has been sent from: ' + ctx.message.channel.name + "in " + ctx.guild.name + "Reply with Accept or Deny")
+        await channel.send('A request to open a rift has been sent from: ' + ctx.message.channel.name + "in: " + ctx.guild.name + "Reply with Accept or Deny")
         choice = await self.bot.wait_for('message', check = check2, timeout = 30.0)
-        if (choice != 'Accept') and (choice != 'accept'):
+        if (choice.content != 'Accept') and (choice.content != 'accept'):
             await ctx.send('They said go fuck yourself')
             return
         self.open_rifts[name] = [ctx.message.channel, channel]
