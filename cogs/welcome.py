@@ -77,8 +77,8 @@ class Welcome:
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
-		for chan in ctx.guild.channels
-			if chan.name == channel
+		for chan in ctx.guild.channels:
+			if chan.name == channel:
 				channel = chan 
 
 		try:
