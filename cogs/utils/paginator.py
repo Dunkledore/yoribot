@@ -451,7 +451,7 @@ class HelpPaginator(Pages):
                 await self.bot.get_channel(373504317568843777).send(embed=self.embed)
                 print('showing page')
         except Exception as e:
-            print(e)
+            print(e.__class__.__name__)
 
         print('didnt get this far')
 
