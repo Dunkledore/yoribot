@@ -439,9 +439,11 @@ class HelpPaginator(Pages):
         signature = _command_signature
 
         print(entries)
-
-        for entry in entries:
-            print(signature(entry))
+        try:
+            for entry in entries:
+                print(signature(entry))
+        except Exception as e:
+            print(e)
         for entry in entries:
             print(entry)
             print(signature(entry))
