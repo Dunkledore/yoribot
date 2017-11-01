@@ -81,7 +81,7 @@ class Rift:
                 return False
 
         def check2(m):
-            if m.user.bot:
+            if m.author.bot:
                 return False
             else:
                 return m.channel == channel
