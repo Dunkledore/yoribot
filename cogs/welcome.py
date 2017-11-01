@@ -13,7 +13,7 @@ import asyncpg
 class Welcome:
 	"""The Welcome Related Commands"""
 
-	def __init__(self, bot: commands.Bot):
+	def __init__(self, bot: commands.Bot, member):
 		self.bot = bot
 
 	@commands.command(pass_context=True, no_pm=True)
