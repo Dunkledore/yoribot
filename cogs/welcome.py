@@ -63,6 +63,7 @@ class Welcome:
 
 		if name is None:
 			await ctx.send('Please enter a field to remove')
+			return
 		else:
 			query = "DELETE FROM welcome WHERE guild_id =$1 AND name = $2"
 			await ctx.db.execute(query, ctx.guild.id, name)
