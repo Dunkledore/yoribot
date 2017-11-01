@@ -16,8 +16,8 @@ class Welcome:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
-	@commands.group(invoke_without_command=True)
-	@commands.guild_only()
+	@commands.command(pass_context=True, no_pm=True)
+	@checks.mod_or_permissions(manage_channels=True)
 	async def welcome(self, ctx, *, member: discord.Member = None):
 		"""Will sennd the welcome message as if the caller just joined"""
 		await self.show_welcome_message(ctx)
@@ -37,7 +37,8 @@ class Welcome:
 
 		await ctx.send(embed=embed)
 
-	@commands.command()
+	@commands.command(pass_context=True, no_pm=True)
+	@checks.mod_or_permissions(manage_channels=True)
 	async def addfield(self, ctx, name=None, value=None):
 		"""Adds an embed field onto the welcome message"""
 		
@@ -54,7 +55,8 @@ class Welcome:
 		else:
 			await ctx.send(f'Field {name} successfully created.')
 
-	@commands.command()
+	@commands.command(pass_context=True, no_pm=True)
+	@checks.mod_or_permissions(manage_channels=True)
 	async def removefield(self, ctx, name=None):
 		"""Removes and embed field from the welcome message"""
 
@@ -65,7 +67,8 @@ class Welcome:
 			await ctx.db.execute(query, ctx.guild.id, name)
 			await ctx.send('Field Removed')
 
-	@commands.command()
+	@commands.command(pass_context=True, no_pm=True)
+	@checks.mod_or_permissions(manage_channels=True)
 	async def setbroadcastchannel(self, ctx):
 		"""Use in the channel you want to set as the welcome channel"""
 
