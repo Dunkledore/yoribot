@@ -36,6 +36,10 @@ class Admin:
             return f'```py\n{e.__class__.__name__}: {e}\n```'
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
+    @command.command(hiddne=True)
+    async def ping(self, ctx)
+        await ctx.send(pong)
+
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
         """Loads a module."""
