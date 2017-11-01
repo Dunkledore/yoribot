@@ -37,7 +37,7 @@ class Admin:
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
     @commands.command(hiddne=True)
-    async def ping(self, ctx)
+    async def ping(self, ctx):
         await ctx.send('pong')
 
     @commands.command(hidden=True)
