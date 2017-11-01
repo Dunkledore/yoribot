@@ -103,8 +103,7 @@ class Welcome:
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await con.fetch(query, member.guild.id)
 		embed = discord.Embed(title='Welcome to ' + member.guild.name, colour=discord.Colour.blurple())
-		embed.set_author(name=member.name, icon_url=member.avatar_url)
-		embed.add_field(name='User', value=member.mention)
+		embed.set_author(name=member.name, icon_url=message.guild.icon_url)
 
 
 		for fields in welcome:
