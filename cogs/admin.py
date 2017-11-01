@@ -38,7 +38,7 @@ class Admin:
    
     @commands.command(hiddne=True)
     async def ping(self, ctx):
-        await ctx.send('pong')
+        await ctx.send('Pong')
 
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
