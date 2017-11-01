@@ -71,16 +71,20 @@ class Welcome:
 
 	@commands.command(pass_context=True, no_pm=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def setbroadcastchannel(self, ctx):
+	async def setbroadcastchannel(self, ctx, channel):
 		"""Use in the channel you want to set as the welcome channel"""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
+		for chan in ctx.guild.channels
+			if chan.name == channel
+				channel = chan 
+
 		try:
-			await ctx.db.execute(insertquery, ctx.guild.id, ctx.message.channel.id)
+			await ctx.db.execute(insertquery, ctx.guild.id, channel)
 		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(alterquery, ctx.guild.id, ctx.message.channel.id)
+			await ctx.db.execute(alterquery, ctx.guild.id, channel)
 
 		await ctx.send('Channel set')
 
