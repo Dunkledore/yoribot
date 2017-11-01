@@ -32,7 +32,7 @@ class Welcome:
 
 
 		for fields in welcome:
-			embed.add_field(name=fields[2], value=fields[3])
+			embed.add_field(name=fields[2], value=fields[3]/format(member))
 
 
 		await ctx.send(embed=embed)
