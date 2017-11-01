@@ -35,6 +35,7 @@ initial_extensions = (
     'cogs.config',
     'cogs.rolemanager',
     'cogs.rift',
+    'cogs.membership',
 )
 
 def _prefix_callable(bot, msg):
