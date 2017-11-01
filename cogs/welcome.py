@@ -18,7 +18,7 @@ class Welcome:
 
 	@commands.command(pass_context=True, no_pm=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def welcome(self, ctx, member: discord.Member):
+	async def welcome(self, ctx):
 		"""Will send the welcome message as if the caller just joined"""
 		await self.show_welcome_message(ctx)
 
@@ -27,7 +27,7 @@ class Welcome:
 		welcome = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name='Welcome to ' + ctx.message.guild.name, icon_url=ctx.message.guild.icon_url)
-		embed.set_thumbnail(url=member.avatar_url, inline=True)
+		embed.set_thumbnail(url=ctx.message.author.avatar_url, inline=True)
 
 		for fields in welcome:
 			embed.add_field(name=fields[2], value=fields[3].format(ctx.message.author))
