@@ -134,9 +134,9 @@ class RoleManager:
 
     @sar.command(name="addroles", pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
-    async def _sar_addroles(self, ctx, group, separator:str, *, role_names: str):
+    async def _sar_addroles(self, ctx, group, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
-        for rolename in role_names.split(separator):
+        for rolename in role_names.split('',''):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
 
