@@ -185,8 +185,9 @@ class Rift:
             await ctx.send("The channel already belongs to that rift.")
             return
 
-        await channel.send('A request to connect to a rift has been sent from: **' + ctx.message.channel.name + "** in: **" + ctx.guild.name + "**. Reply with Accept or Deny")
+        await ch.send('A request to connect to a rift has been sent from: **' + ctx.message.channel.name + "** in: **" + ctx.guild.name + "**. Reply with Accept or Deny")
         choice = await self.bot.wait_for('message', check = check2, timeout = 30.0)
+        
         if (choice.content != 'Accept') and (choice.content != 'accept'):
             await ctx.send('Requst to open rift denied')
             return
