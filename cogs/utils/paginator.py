@@ -438,20 +438,11 @@ class HelpPaginator(Pages):
 
         signature = _command_signature
 
-        print(entries)
-        try:
             for entry in entries:
-                print(signature(entry))
-
-            for entry in entries:
-                print(entry)
-                print(signature(entry))
-                print(entry.short_doc)
-                self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
-                await self.bot.get_channel(373504317568843777).send(embed=self.embed)
-                print('showing page')
-        except Exception as e:
-            print(e.__class__.__name__)
+                try:
+                    self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
+                except Exception as e:
+                    print(e.__class__.__name__)
 
         print('didnt get this far')
 
