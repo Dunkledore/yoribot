@@ -80,11 +80,13 @@ class Rift:
             except:
                 return False
 
+        def check2(m):
+            return m.channel == channel
+
         if name in self.open_rifts:
             await ctx.send("A rift with that name already exists. Please use another name.")
             return
-        def check2(m):
-            return m.channel == channel
+       
 
         channels = self.bot.get_all_channels()
         channels = [c for c in channels
