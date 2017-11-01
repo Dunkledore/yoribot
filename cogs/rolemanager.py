@@ -136,7 +136,7 @@ class RoleManager:
     @checks.admin_or_permissions()
     async def _sar_addroles(self, ctx, group, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
-        for rolename in role_names.split('',''):
+        for rolename in role_names.split(','):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
 
