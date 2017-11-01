@@ -77,9 +77,14 @@ class Welcome:
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
+		channelfound = False
 		for chan in ctx.guild.channels:
 			if chan.name == channel:
 				channel = chan 
+				channelfound = True
+		if not channelfound:
+			await ctx.send('Channel not found')
+			return
 
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
