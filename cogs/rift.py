@@ -145,6 +145,16 @@ class Rift:
             except:
                 return False
 
+        def check2(m):
+            if m.author.bot:
+                return False
+            else:
+                return m.channel == channel
+
+        if name in self.open_rifts:
+            await ctx.send("A rift with that name already exists. Please use another name.")
+            return
+
         if riftname not in self.open_rifts:
             await ctx.send("That rift doesn't exist.")
             return
@@ -178,6 +188,13 @@ class Rift:
         if ch in self.open_rifts[riftname]:
             await ctx.send("The channel already belongs to that rift.")
             return
+
+        await channel.send('A request to connect to a rift has been sent from: **' + ctx.message.channel.name + "** in: **" + ctx.guild.name + "**. Reply with Accept or Deny")
+        choice = await self.bot.wait_for('message', check = check2, timeout = 30.0)
+        if (choice.content != 'Accept') and (choice.content != 'accept'):
+            await ctx.send('Requst to open rift denied')
+            return
+
         self.open_rifts[riftname].append(ch)
         self.embeds.setdefault(ch, True)
         await ctx.send("The channel is now connected to the rift.")
