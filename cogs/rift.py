@@ -53,15 +53,15 @@ class Rift:
         self.save_settings()
         self.ready = True
 
-    @commands.command(pass_context=True, no_pm=True)
-    async def riftembeds(self, ctx, status : str):
-        """Toggles Embeds for Rift messages in this channel. Specify on or off."""
-        if not status.lower() in ["on","off"]:
-            await self.bot.say("Please use `riftembeds on` or `riftembeds off`.")
-        else:
-            self.embeds[ctx.message.channel] = status.lower() == "on"
-            self.save_settings()
-            await ctx.send("Rift embeds for this channel have been turned "+status+".")
+    #@commands.command(pass_context=True, no_pm=True)
+    #async def riftembeds(self, ctx, status : str):
+    #    """Toggles Embeds for Rift messages in this channel. Specify on or off."""
+    #    if not status.lower() in ["on","off"]:
+    #        await self.bot.say("Please use `riftembeds on` or `riftembeds off`.")
+    #    else:
+    #        self.embeds[ctx.message.channel] = status.lower() == "on"
+    #        self.save_settings()
+    #        await ctx.send("Rift embeds for this channel have been turned "+status+".")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_channels=True)
