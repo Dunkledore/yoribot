@@ -299,7 +299,7 @@ class Mod:
     @commands.command()
     @checks.is_mod()
     async def reactiondelnumber(self, ctx, number=None):
-        """Changes the number of :X: reactions required to delete the message. Set to 0 to turn off."""
+        """Changes the number of \U0000274c reactions required to delete the message. Set to 0 to turn off."""
         if number is None:
             query = "SELECT * FROM mod_config WHERE guild_id = $1"
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
