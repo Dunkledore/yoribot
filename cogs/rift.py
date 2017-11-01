@@ -181,7 +181,7 @@ class Rift:
         else:
             channel = channels[0]
 
-        if ch in self.open_rifts[riftname]:
+        if channel in self.open_rifts[riftname]:
             await ctx.send("The channel already belongs to that rift.")
             return
 
