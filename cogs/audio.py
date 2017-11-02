@@ -117,7 +117,7 @@ class Music:
 
                 sentmessage = await ctx.send(results)
 
-                await sentmessage.add_reaction(discord.Emoji('\U00000031'))
+                await sentmessage.add_reaction('\U00000031')
                 #await sentmessage.add_reaction()
                 #await sentmessage.add_reaction()
                 #await sentmessage.add_reaction()
