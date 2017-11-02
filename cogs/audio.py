@@ -96,7 +96,7 @@ class Music:
         if not validators.url(searchurl):
             try:
                 url = 'https://www.youtube.com/results?'
-                payload = {'search_query': ''.join(url)}
+                payload = {'search_query': ''.join(searchurl)}
                 headers = {'user-agent': 'Red-cog/1.0'}
                 conn = aiohttp.TCPConnector()
                 session = aiohttp.ClientSession(connector=conn)
