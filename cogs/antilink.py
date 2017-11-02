@@ -40,11 +40,11 @@ class Antilink:
     async def ownerdm(self, ctx):
         """Enable/disables antilink in the server"""
         serverid = ctx.message.guild.id
-        if self.json[str(serverid)]['dm'] is True:
-            self.json[str(serverid)]['dm'] = False
+        if self.json[str(serverid)]['ownerdm'] is True:
+            self.json[str(serverid)]['ownerdm'] = False
             await ctx.send('Owner DM now disabled')
-        elif self.json[str(serverid)]['dm'] is False:
-            self.json[str(serverid)]['dm'] = True
+        elif self.json[str(serverid)]['ownerdm'] is False:
+            self.json[str(serverid)]['ownerdm'] = True
             await ctx.send('Owner DM now enabled')
         dataIO.save_json(self.location, self.json)
 
