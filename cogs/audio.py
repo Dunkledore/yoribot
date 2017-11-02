@@ -97,6 +97,7 @@ class Music:
             reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
             if r not in reactionlist:
                 print('true')
+                await ctx.send(r)
                 return False
             else:
                 print('false')
