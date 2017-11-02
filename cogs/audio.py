@@ -92,6 +92,7 @@ class Music:
 
         
         def check(r):
+            print('I am here')
             async for user in reaction.users():
                 if user != ctx.message.author:
                     return False
