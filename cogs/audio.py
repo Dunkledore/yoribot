@@ -104,6 +104,12 @@ class Music:
                     result = await r.text()
                 session.close()
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
+                
+                results = ''
+                for x in range(0,4):
+                    results += 'https://www.youtube.com/watch?v={}'.format(yt_find[x]) + '\n'
+                await ctx.send(results)
+
                 searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
