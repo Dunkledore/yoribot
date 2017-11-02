@@ -113,7 +113,7 @@ class Antilink:
                         if self.json[str(message.guild.id)]['ownerdm'] is True:
                             if message.guild.owner.dm_channel is None:
                                 await message.guild.owner.create_dm()
-                            await message.guild.owner.dm_channel.send(self.json[str(message.guild.id)]['message'])
+                            await message.guild.owner.dm_channel.send(message.author.mention + " posted " + message.content + " in " + message.channel.name)
 
 
 
