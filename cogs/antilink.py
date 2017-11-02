@@ -92,7 +92,7 @@ class Antilink:
                     #    return
                     else:
                         asyncio.sleep(0.5)
-                        await self.bot.delete_message(message)
+                        await message.delete()
                         if self.json[str(message.server.id)]['dm'] is True:
                             await ctx.send(message.author, self.json[str(message.guild.id)]['message'])
 
