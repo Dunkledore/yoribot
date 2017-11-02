@@ -91,7 +91,7 @@ class Music:
             else:
                 return await ctx.send("Not connected to a voice channel.")
 
-        if not validators.from_url(url):
+        if not validators.url(url):
             try:
                 url = 'https://www.youtube.com/results?'
                 payload = {'search_query': ''.join(url)}
