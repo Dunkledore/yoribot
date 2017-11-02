@@ -117,7 +117,7 @@ class Music:
 
                 sentmessage = await ctx.send(results)
 
-                await sentmessage.add_reaction('\U00000031')
+                await sentmessage.add_reaction('0\u20e3')
                 #await sentmessage.add_reaction()
                 #await sentmessage.add_reaction()
                 #await sentmessage.add_reaction()
