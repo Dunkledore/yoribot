@@ -105,7 +105,7 @@ class Music:
                 url = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
-                await self.bot.say(message)
+                await ctx.send(message)
 
         if ctx.voice_client.is_playing():
             ctx.voice_client.stop()
