@@ -4,6 +4,8 @@ import validators
 import discord
 import youtube_dl
 from discord.ext import commands
+import aiohttp
+import re
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
