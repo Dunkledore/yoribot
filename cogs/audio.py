@@ -90,7 +90,7 @@ class Music:
     async def play(self, ctx, *, searchurl):
         """Streams from a url (almost anything youtube_dl supports)"""
 
-        def check(r):
+        async def check(r):
             users = await reaction.users().flatten()
             reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
             if (ctx.message.author in users) and (r in reactionlist):

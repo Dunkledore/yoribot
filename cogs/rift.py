@@ -70,7 +70,7 @@ class Rift:
 
         This is cross-server. Specify the name of the rift and a channel to connect it to (name without # or id). More channels can be added to the rift later with riftconnect"""
 
-        def check(m):
+        async def check(m):
             try:
                 if m.author != ctx.message.author:
                     return False
