@@ -88,7 +88,7 @@ class Music:
         """Streams from a url (almost anything youtube_dl supports)"""
 
         if ctx.voice_client is None:
-            if ctx.author.voice.channel:
+            if ctx.author.voice.channel is not None:
                 await ctx.author.voice.channel.connect()
             else:
                 return await ctx.send("Not connected to a voice channel.")
