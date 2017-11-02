@@ -92,7 +92,7 @@ class Music:
 
         
         def check(r):
-            async for user in reaction.user():
+            async for user in reaction.users():
                 if user != ctx.message.author:
                     return False
                 reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
