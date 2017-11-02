@@ -95,7 +95,7 @@ class Antilink:
                         await message.delete()
                         if self.json[str(message.guild.id)]['dm'] is True:
                             if message.author.dm_channel is None:
-                                message.author.create_dm()
+                                await message.author.create_dm()
                             await message.author.dm_channel.send(self.json[str(message.guild.id)]['message'])
 
 
