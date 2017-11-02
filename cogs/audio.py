@@ -108,12 +108,11 @@ class Music:
                 session.close()
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
                 
-                results = ''
+                results = '\n'
                 for x in range(0,5):
                     api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
                     gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x*2]+"&key="+api_key+"&part=contentDetails"
                     json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                    await ctx.send(json['items'][0]['snippet']['title'])
                     results += str(x) + ": " + json['items'][0]['snippet']['title'] + '\n'
 
                 await ctx.send(results)
