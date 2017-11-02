@@ -136,7 +136,7 @@ class Music:
                 print('before wait for')
                 choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
                 chosen = ''
-                print(choise.emoji)               
+                print(choice.emoji)               
                 if choice.emoji == '0\u20e3':
                     chosen = 0  
                 elif choice.emoji =='1\u20e3':
