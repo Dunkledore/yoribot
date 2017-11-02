@@ -6,6 +6,9 @@ import youtube_dl
 from discord.ext import commands
 import aiohttp
 import re
+import urllib
+import json as simplejson
+
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -107,9 +110,8 @@ class Music:
                 
                 results = ''
                 for x in range(0,5):
-                    searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[x])
-                    player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-                    results += player.title +'\n'
+                    gurl = 'http://gdata.youtube.com/feeds/api/videos/%s?alt=json&v=2' % yt_find[x]
+                    results += simplejson.load(urllib.urlopen(gurl))['entry']['title']['$t']
 
                 await ctx.send(results)
 
