@@ -107,7 +107,7 @@ class Music:
                 
                 results = ''
                 for x in range(0,5):
-                    search url = 'https://www.youtube.com/watch?v={}'.format(yt_find[x]) + '\n'
+                    searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[x])
                     player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
                     results += player.title +'\n'
 
