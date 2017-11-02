@@ -7,7 +7,6 @@
 import discord
 from discord.ext import commands
 from .utils import checks
-from __main__ import settings
 from cogs.utils.dataIO import dataIO
 import os
 import re
@@ -81,16 +80,16 @@ class Antilink:
             if self.json[str(message.server.id)]['toggle'] is True:
                 if self.regex.search(message.content) is not None or self.regex_discordme.search(message.content) is not None:
                     roles = [r.name for r in user.roles]
-                    bot_admin = settings.get_server_admin(message.server)
-                    bot_mod = settings.get_server_mod(message.server)
-                    if user.id == settings.owner:
+                    #bot_admin = settings.get_server_admin(message.server) add these one day
+                    #bot_mod = settings.get_server_mod(message.server)
+                    if user.id == guild.owner.id:
                         return
-                    elif bot_admin in roles:
-                        return
-                    elif bot_mod in roles:
-                        return
-                    elif user.permissions_in(message.channel).manage_messages is True:
-                        return
+                    #elif bot_admin in roles:
+                    #    return
+                    #elif bot_mod in roles:
+                    #    return
+                    #elif user.permissions_in(message.channel).manage_messages is True:
+                    #    return
                     else:
                         asyncio.sleep(0.5)
                         await self.bot.delete_message(message)
