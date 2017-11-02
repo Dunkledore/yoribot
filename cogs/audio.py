@@ -97,7 +97,7 @@ class Music:
             try:
                 url = 'https://www.youtube.com/results?'
                 payload = {'search_query': ''.join(url)}
-                headers = {'user-agent': 'Yatobot'}
+                headers = {'user-agent': 'Red-cog/1.0'}
                 conn = aiohttp.TCPConnector()
                 session = aiohttp.ClientSession(connector=conn)
                 async with session.get(url, params=payload, headers=headers) as r:
