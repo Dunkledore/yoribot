@@ -111,7 +111,7 @@ class Music:
                 results = ''
                 for x in range(0,5):
                     gurl = 'http://gdata.youtube.com/feeds/api/videos/%s?alt=json&v=2' % yt_find[x]
-                    results += simplejson.load(urllib.urlopen(gurl))['entry']['title']['$t']
+                    results += simplejson.load(urllib.request.urlopen(gurl))['entry']['title']['$t']
 
                 await ctx.send(results)
 
