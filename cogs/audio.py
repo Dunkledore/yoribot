@@ -103,7 +103,6 @@ class Music:
                 async with session.get(url, params=payload, headers=headers) as r:
                     result = await r.text()
                 session.close()
-                await ctx.send(url)
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
                 searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
             except Exception as e:
