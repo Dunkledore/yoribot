@@ -91,16 +91,14 @@ class Music:
         """Streams from a url (almost anything youtube_dl supports)"""
 
         
-        def check(r):
-            print('I am here')
-            async for user in reaction.users():
-                if user != ctx.message.author:
-                    return False
-                reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
-                if r not in reactionlist:
-                    return False
-                else:
-                    return True
+        def check(r, user):
+            if user != ctx.message.author:
+                return False
+            reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
+            if r not in reactionlist:
+                return False
+            else:
+                return True
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
