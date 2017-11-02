@@ -90,6 +90,14 @@ class Music:
     async def play(self, ctx, *, searchurl):
         """Streams from a url (almost anything youtube_dl supports)"""
 
+        def check(r):
+            users = await reaction.users().flatten()
+            reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
+            if (ctx.message.author in users) and (r in reactionlist):
+                return True
+            else:
+                return False
+
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
                 await ctx.author.voice.channel.connect()
@@ -123,13 +131,26 @@ class Music:
                 await sentmessage.add_reaction('3\u20e3')
                 await sentmessage.add_reaction('4\u20e3')
                 
-          
+                choice = await self.bot.wait_for('reaction', check = check, timeout = 30.0)
+                chosen = ''
+                if choice == '0\u20e3':
+                    chosen = 0  
+                elif choice =='1\u20e3':
+                    chosen = 1
+                elif choice =='2\u20e3':
+                    chosen = 2
+                elif choice =='3\u20e3':
+                    chosen = 3
+                elif choice =='4\u20e3':
+                    chosen = 4
+                else:
+                    print("Something broke in audio")
+                    return
 
 
 
 
-
-                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
+                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
