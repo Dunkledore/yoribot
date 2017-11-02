@@ -7,7 +7,7 @@
 import discord
 from discord.ext import commands
 from .utils import checks
-from __main__ import send_cmd_help, settings
+from __main__ import settings
 from cogs.utils.dataIO import dataIO
 import os
 import re
@@ -32,7 +32,7 @@ class Antilink:
         """Manages the settings for antilink."""
         serverid = ctx.message.guild.id
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            #await send_cmd_help(ctx)
         if str(serverid) not in self.json:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False}
 
