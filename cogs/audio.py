@@ -137,15 +137,15 @@ class Music:
                 choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
                 chosen = ''
                 print(choice[0].emoji)               
-                if choice.emoji == '0\u20e3':
+                if choice[0].emoji == '0\u20e3':
                     chosen = 0  
-                elif choice.emoji =='1\u20e3':
+                elif choice[0].emoji =='1\u20e3':
                     chosen = 1
-                elif choice.emoji =='2\u20e3':
+                elif choice[0].emoji =='2\u20e3':
                     chosen = 2
-                elif choice.emoji =='3\u20e3':
+                elif choice[0].emoji =='3\u20e3':
                     chosen = 3
-                elif choice.emoji =='4\u20e3':
+                elif choice[0].emoji =='4\u20e3':
                     chosen = 4
                 else:
                     print("Something broke in audio")
