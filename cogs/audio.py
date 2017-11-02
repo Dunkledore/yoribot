@@ -110,7 +110,9 @@ class Music:
                 
                 results = ''
                 for x in range(0,5):
-                    gurl = 'http://gdata.youtube.com/feeds/api/videos/%s?alt=json&v=2' % yt_find[x]
+                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+                    gurl = "https://www.googleapis.com/youtube/v3/videos?id="+yt_find[x]+"%key-"+api_key+"&part=contentDetails"
+                    print(gurl)
                     results += simplejson.load(urllib.request.urlopen(gurl).read())['entry']['title']['$t']
 
                 await ctx.send(results)
