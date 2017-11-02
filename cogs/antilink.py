@@ -31,7 +31,7 @@ class Antilink:
     async def antilinkset(self, ctx):
         """Manages the settings for antilink."""
         serverid = ctx.message.guild.id
-        if ctx.invoked_subcommand is None:
+        #if ctx.invoked_subcommand is None:
             #await send_cmd_help(ctx)
         if str(serverid) not in self.json:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False}
