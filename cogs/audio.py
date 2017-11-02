@@ -113,7 +113,7 @@ class Music:
                     api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
                     gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x]+"&key="+api_key+"&part=contentDetails"
                     json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                    await ctx.send(json['items'][0]['snippet'])
+                    await ctx.send(json['items'][0]['snippet']['title'])
                     results += json[0]
 
                 await ctx.send(results)
