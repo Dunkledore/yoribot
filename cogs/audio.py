@@ -106,8 +106,11 @@ class Music:
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
                 
                 results = ''
-                for x in range(0,4):
-                    results += 'https://www.youtube.com/watch?v={}'.format(yt_find[x]) + '\n'
+                for x in range(0,5):
+                    search url = 'https://www.youtube.com/watch?v={}'.format(yt_find[x]) + '\n'
+                    player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
+                    results += player.title +'\n'
+
                 await ctx.send(results)
 
                 searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
