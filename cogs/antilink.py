@@ -33,7 +33,20 @@ class Antilink:
         #if ctx.invoked_subcommand is None:
             #await send_cmd_help(ctx)
         if str(serverid) not in self.json:
-            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False}
+            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
+
+    @antilinkset.command(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(administrator=True)
+    async def ownerdm(self, ctx):
+        """Enable/disables antilink in the server"""
+        serverid = ctx.message.guild.id
+        if self.json[str(serverid)]['dm'] is True:
+            self.json[str(serverid)]['dm'] = False
+            await ctx.send('Owner DM now disabled')
+        elif self.json[str(serverid)]['dm'] is False:
+            self.json[str(serverid)]['dm'] = True
+            await ctx.send('Owner DM now enabled')
+        dataIO.save_json(self.location, self.json)
 
     @antilinkset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(administrator=True)
@@ -97,6 +110,11 @@ class Antilink:
                             if message.author.dm_channel is None:
                                 await message.author.create_dm()
                             await message.author.dm_channel.send(self.json[str(message.guild.id)]['message'])
+                        if self.json[str(message.guild.id)]['ownerdm'] is True:
+                            if message.guild.owner.dm_channel is None:
+                                await message.guild.owner.create_dm()
+                            await message.guild.owner.dm_channel.send(self.json[str(message.guild.id)]['message'])
+
 
 
 def check_folder():
