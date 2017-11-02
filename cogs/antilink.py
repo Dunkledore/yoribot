@@ -76,8 +76,8 @@ class Antilink:
         user = message.author
         if message.guild is None:
             return
-        if str(message.server.id) in self.json:
-            if self.json[str(message.server.id)]['toggle'] is True:
+        if str(message.guild.id) in self.json:
+            if self.json[str(message.guild.id)]['toggle'] is True:
                 if self.regex.search(message.content) is not None or self.regex_discordme.search(message.content) is not None:
                     roles = [r.name for r in user.roles]
                     #bot_admin = settings.get_server_admin(message.server) add these one day
