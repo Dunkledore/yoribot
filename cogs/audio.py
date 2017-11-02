@@ -116,9 +116,9 @@ class Music:
                 session = aiohttp.ClientSession(connector=conn)
                 async with session.get(url, params=payload, headers=headers) as r:
                     result = await r.text()
-                print(result)
                 session.close()
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
+                print(yt_find)
                 
                 results = 'Options are\n'
                 for x in range(0,5):
