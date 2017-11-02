@@ -74,7 +74,7 @@ class Antilink:
     async def _new_message(self, message):
         """Finds the message and checks it for regex"""
         user = message.author
-        if message.server is None:
+        if message.guild is None:
             return
         if str(message.server.id) in self.json:
             if self.json[str(message.server.id)]['toggle'] is True:
@@ -94,7 +94,7 @@ class Antilink:
                         asyncio.sleep(0.5)
                         await self.bot.delete_message(message)
                         if self.json[str(message.server.id)]['dm'] is True:
-                            await ctx.send(message.author, self.json[str(message.server.id)]['message'])
+                            await ctx.send(message.author, self.json[str(message.guild.id)]['message'])
 
 
 def check_folder():
