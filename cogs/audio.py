@@ -84,7 +84,7 @@ class Music:
         await ctx.send('Now playing: {}'.format(query))
 
     @commands.command()
-    async def play(self, ctx, *, url):
+    async def play(self, ctx, *, searchurl):
         """Streams from a url (almost anything youtube_dl supports)"""
 
         if ctx.voice_client is None:
@@ -93,7 +93,7 @@ class Music:
             else:
                 return await ctx.send("Not connected to a voice channel.")
 
-        if not validators.url(url):
+        if not validators.url(searchurl):
             try:
                 url = 'https://www.youtube.com/results?'
                 payload = {'search_query': ''.join(url)}
@@ -105,7 +105,7 @@ class Music:
                 session.close()
                 await ctx.send(url)
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
-                url = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
+                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
@@ -113,7 +113,7 @@ class Music:
         if ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
-        player = await YTDLSource.from_url(url, loop=self.bot.loop)
+        player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
         ctx.voice_client.play(player, after=lambda e: print(
             'Player error: %s' % e) if e else None)
 
