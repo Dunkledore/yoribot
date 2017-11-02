@@ -30,46 +30,46 @@ class Antilink:
     @commands.group(pass_context=True, no_pm=True)
     async def antilinkset(self, ctx):
         """Manages the settings for antilink."""
-        serverid = ctx.message.server.id
+        serverid = ctx.message.guild.id
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
-        if serverid not in self.json:
-            self.json[serverid] = {'toggle': False, 'message': '', 'dm': False}
+        if str(serverid) not in self.json:
+            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False}
 
     @antilinkset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(administrator=True)
     async def toggle(self, ctx):
         """Enable/disables antilink in the server"""
-        serverid = ctx.message.server.id
-        if self.json[serverid]['toggle'] is True:
-            self.json[serverid]['toggle'] = False
-            await self.bot.say('Antilink is now disabled')
-        elif self.json[serverid]['toggle'] is False:
-            self.json[serverid]['toggle'] = True
-            await self.bot.say('Antilink is now enabled')
+        serverid = ctx.message.guild.id
+        if self.json[str(serverid)]['toggle'] is True:
+            self.json[str(serverid)]['toggle'] = False
+            await ctx.send('Antilink is now disabled')
+        elif self.json[str(serverid)]['toggle'] is False:
+            self.json[str(serverid)]['toggle'] = True
+            await ctx.send('Antilink is now enabled')
         dataIO.save_json(self.location, self.json)
 
     @antilinkset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(administrator=True)
     async def message(self, ctx, *, text):
         """Set the message for when the user sends a illegal discord link"""
-        serverid = ctx.message.server.id
-        self.json[serverid]['message'] = text
+        serverid = ctx.message.guild.id
+        self.json[str(serverid)]['message'] = text
         dataIO.save_json(self.location, self.json)
-        await self.bot.say('Message is set')
-        if self.json[serverid]['dm'] is False:
-            await self.bot.say('Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinkset toggledm``')
+        await ctx.send('Message is set')
+        if self.json[str(serverid)]['dm'] is False:
+            await ctx.send('Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinkset toggledm``')
 
     @antilinkset.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(administrator=True)
     async def toggledm(self, ctx):
-        serverid = ctx.message.server.id
-        if self.json[serverid]['dm'] is False:
-            self.json[serverid]['dm'] = True
-            await self.bot.say('Enabled DMs on removal of invite links')
-        elif self.json[serverid]['dm'] is True:
-            self.json[serverid]['dm'] = False
-            await self.bot.say('Disabled DMs on removal of invite links')
+        serverid = ctx.message.guild.id
+        if self.json[str(serverid)]['dm'] is False:
+            self.json[str(serverid)]['dm'] = True
+            await ctx.send('Enabled DMs on removal of invite links')
+        elif self.json[str(serverid)]['dm'] is True:
+            self.json[str(serverid)]['dm'] = False
+            await ctx.send('Disabled DMs on removal of invite links')
         dataIO.save_json(self.location, self.json)
 
     async def _new_message(self, message):
@@ -77,8 +77,8 @@ class Antilink:
         user = message.author
         if message.server is None:
             return
-        if message.server.id in self.json:
-            if self.json[message.server.id]['toggle'] is True:
+        if str(message.server.id) in self.json:
+            if self.json[str(message.server.id)]['toggle'] is True:
                 if self.regex.search(message.content) is not None or self.regex_discordme.search(message.content) is not None:
                     roles = [r.name for r in user.roles]
                     bot_admin = settings.get_server_admin(message.server)
@@ -94,8 +94,8 @@ class Antilink:
                     else:
                         asyncio.sleep(0.5)
                         await self.bot.delete_message(message)
-                        if self.json[message.server.id]['dm'] is True:
-                            await self.bot.send_message(message.author, self.json[message.server.id]['message'])
+                        if self.json[str(message.server.id)]['dm'] is True:
+                            await ctx.send(message.author, self.json[str(message.server.id)]['message'])
 
 
 def check_folder():
