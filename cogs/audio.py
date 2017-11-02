@@ -115,7 +115,7 @@ class Music:
                     json = simplejson.loads(urllib.request.urlopen(gurl).read())
                     results += str(x) + ": " + json['items'][0]['snippet']['title'] + '\n'
 
-                sentmessgae = await ctx.send(results)
+                sentmessage = await ctx.send(results)
 
                 await sentmessage.add_reaction(discord.Emoji('\U00000031'))
                 #await sentmessage.add_reaction()
