@@ -1,6 +1,6 @@
 import asyncio
 from os.path import join
-
+import validators
 import discord
 import youtube_dl
 from discord.ext import commands
@@ -57,6 +57,10 @@ class YTDLSource(discord.PCMVolumeTransformer):
 class Music:
     def __init__(self, bot):
         self.bot = bot
+        self.youtube_regex = (
+          r'(https?://)?(www\.)?'
+          '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+          '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
     @commands.command(name="local")
     async def play_file(self, ctx, *, query):
@@ -86,6 +90,22 @@ class Music:
                 await ctx.author.voice.channel.connect()
             else:
                 return await ctx.send("Not connected to a voice channel.")
+
+        if not validators.from_url(url):
+            try:
+                url = 'https://www.youtube.com/results?'
+                payload = {'search_query': ''.join(url)}
+                headers = {'user-agent': 'Yatobot'}
+                conn = aiohttp.TCPConnector()
+                session = aiohttp.ClientSession(connector=conn)
+                async with session.get(url, params=payload, headers=headers) as r:
+                    result = await r.text()
+                session.close()
+                yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
+                url = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
+            except Exception as e:
+                message = 'Something went terribly wrong! [{}]'.format(e)
+                await self.bot.say(message)
 
         if ctx.voice_client.is_playing():
             ctx.voice_client.stop()
