@@ -113,7 +113,7 @@ class Music:
                     api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
                     gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x*2]+"&key="+api_key+"&part=contentDetails"
                     json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                    results += str(x) + ": " + json['items'][0]['snippet']['title'] + '\n'
+                    results += str(x)+'\u20e3' + ": " + json['items'][0]['snippet']['title'] + '\n'
 
                 sentmessage = await ctx.send(results)
 
@@ -123,6 +123,7 @@ class Music:
                 await sentmessage.add_reaction('3\u20e3')
                 await sentmessage.add_reaction('4\u20e3')
                 
+                await 
 
 
 
