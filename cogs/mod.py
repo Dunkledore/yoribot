@@ -280,7 +280,7 @@ class Mod:
             await config.broadcast_channel.send(embed=e)
 
     async def on_reaction_add(self, reaction, user):
-        if ord(reaction.emoji) != 10060:
+        if reaction.emoji != '\U0000274c':
             return
         con = self.bot.pool
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
