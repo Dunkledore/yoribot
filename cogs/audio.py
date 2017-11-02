@@ -6,7 +6,7 @@ import youtube_dl
 from discord.ext import commands
 import aiohttp
 import re
-import urllib2
+import urllib
 import json as simplejson
 
 
@@ -113,7 +113,7 @@ class Music:
                     api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
                     gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x]+"&key="+api_key+"&part=contentDetails"
                     print(gurl)
-                    results += simplejson.load(urllib2.urlopen(gurl))['entry']['title']['$t']
+                    results += simplejson.load(urllib2.request.urlopen(gurl))['entry']['title']['$t']
 
                 await ctx.send(results)
 
