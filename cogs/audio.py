@@ -115,7 +115,7 @@ class Music:
                     json = simplejson.load(urllib.request.urlopen(gurl))
                     print(json)
 
-                    results += json['items']['snippet']['title']
+                    results += json[0]
 
                 await ctx.send(results)
 
