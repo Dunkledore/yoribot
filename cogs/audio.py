@@ -115,7 +115,16 @@ class Music:
                     json = simplejson.loads(urllib.request.urlopen(gurl).read())
                     results += str(x) + ": " + json['items'][0]['snippet']['title'] + '\n'
 
-                await ctx.send(results)
+                sentmessgae = await ctx.send(results)
+
+                await sentmessage.add_reaction(discord.Emoji('\U00000031'))
+                #await sentmessage.add_reaction()
+                #await sentmessage.add_reaction()
+                #await sentmessage.add_reaction()
+                #await sentmessage.add_reaction()
+
+
+
 
                 searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
             except Exception as e:
