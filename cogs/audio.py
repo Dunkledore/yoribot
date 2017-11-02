@@ -96,11 +96,9 @@ class Music:
                 return False
             reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
             if r.emoji not in reactionlist:
-                print(r.emoji)
-                print(r)
                 return False
             else:
-                print('false')
+
                 return True
 
         if ctx.voice_client is None:
@@ -138,15 +136,15 @@ class Music:
                 print('before wait for')
                 choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
                 chosen = ''
-                if choice == '0\u20e3':
+                if choice.emoji == '0\u20e3':
                     chosen = 0  
-                elif choice =='1\u20e3':
+                elif choice.emoji =='1\u20e3':
                     chosen = 1
-                elif choice =='2\u20e3':
+                elif choice.emoji =='2\u20e3':
                     chosen = 2
-                elif choice =='3\u20e3':
+                elif choice.emoji =='3\u20e3':
                     chosen = 3
-                elif choice =='4\u20e3':
+                elif choice.emoji =='4\u20e3':
                     chosen = 4
                 else:
                     print("Something broke in audio")
