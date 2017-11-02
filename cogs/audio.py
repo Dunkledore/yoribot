@@ -92,12 +92,14 @@ class Music:
 
         
         def check(r):
-            users = reaction.users()
-            reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
-            if (ctx.message.author in users) and (r in reactionlist):
-                return True
-            else:
-                return False
+            async for user in reaction.user():
+                if user != ctx.message.author:
+                    return False
+                reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
+                if r not in reactionlist:
+                    return False
+                else:
+                    return True
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
