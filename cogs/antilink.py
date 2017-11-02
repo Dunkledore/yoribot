@@ -82,7 +82,7 @@ class Antilink:
                     roles = [r.name for r in user.roles]
                     #bot_admin = settings.get_server_admin(message.server) add these one day
                     #bot_mod = settings.get_server_mod(message.server)
-                    if user.id == guild.owner.id:
+                    if user.id == message.guild.owner.id:
                         return
                     #elif bot_admin in roles:
                     #    return
