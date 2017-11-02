@@ -135,7 +135,7 @@ class Music:
                 await sentmessage.add_reaction('3\u20e3')
                 await sentmessage.add_reaction('4\u20e3')
                 print('before wait for')
-                choice = await self.bot.wait_for('reaction', check = check, timeout = 30.0)
+                choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
                 chosen = ''
                 if choice == '0\u20e3':
                     chosen = 0  
