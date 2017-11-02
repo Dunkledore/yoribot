@@ -118,7 +118,7 @@ class Music:
                     result = await r.text()
                 session.close()
                 yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
-                print(yt_find)
+                yt_find = list(set(yt_find))
                 
                 results = 'Options are\n'
                 for x in range(0,5):
