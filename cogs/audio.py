@@ -92,8 +92,10 @@ class Music:
 
         
         def check(r, user):
+            print('I am here')
             if user != ctx.message.author:
                 return False
+            print('I am here instead')
             reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
             if r not in reactionlist:
                 return False
