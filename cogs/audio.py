@@ -154,7 +154,7 @@ class Music:
 
 
 
-                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
+                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen*2])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
