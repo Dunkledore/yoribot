@@ -53,7 +53,7 @@ class Rift:
         self.save_settings()
         self.ready = True
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     async def riftembeds(self, ctx, status : str):
         """Toggles Embeds for Rift messages in this channel. Specify on or off."""
         if not status.lower() in ["on","off"]:
@@ -63,7 +63,7 @@ class Rift:
             self.save_settings()
             await ctx.send("Rift embeds for this channel have been turned "+status+".")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftopen(self, ctx, name, channel):
         """Makes you able to communicate with other channels through Red.
@@ -130,7 +130,7 @@ class Rift:
                            "riftclose to close the rift.")
         self.save_settings()
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftconnect(self, ctx, riftname, channel):
         """Connects a channel to the specified rift."""
@@ -197,7 +197,7 @@ class Rift:
         await ctx.send("The channel is now connected to the rift.")
         self.save_settings()
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftclose(self, ctx, riftname):
         """Closes the specified rift. Can only be used from a channel belonging to that rift."""
@@ -215,7 +215,7 @@ class Rift:
         for e in self.embeds.keys():
             print(e)
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True, hidden=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftlist(self, ctx):
         """Lists all the rifts this channel is in. """
@@ -232,7 +232,7 @@ class Rift:
             s = s[:-2]
             await ctx.send(s)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.mod_or_permissions(manage_channels=True)
     async def riftdisconnect(self, ctx, riftname):
         """Disconnects this channel from the specified rift."""
