@@ -55,7 +55,7 @@ class Meta:
         await ctx.send('Hello! I\'m a robot!')
 
     @commands.command()
-    async def charinfo(self, ctx, *, characters: str):
+    async def charinfo(self, ctx, *, characters: str, hidden=True):
         """Shows you information about a number of characters.
 
         Only up to 25 characters at a time.
@@ -71,7 +71,7 @@ class Meta:
 
         await ctx.send('\n'.join(map(to_string, characters)))
 
-    @commands.group(name='prefix', invoke_without_command=True)
+    @commands.group(name='prefix', invoke_without_command=True, hidden=True)
     async def prefix(self, ctx):
         """Manages the server's custom prefixes.
 
@@ -161,7 +161,7 @@ class Meta:
         await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command()
-    async def source(self, ctx, *, command: str = None):
+    async def source(self, ctx, *, command: str = None, hidden=True):
         """Displays my full source code or for a specific command.
 
         To display the source code of a subcommand you can separate it by
@@ -196,7 +196,7 @@ class Meta:
         """Quits the bot."""
         await self.bot.logout()
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, hidden=True)
     @commands.guild_only()
     async def info(self, ctx, *, member: discord.Member = None):
         """Shows info about a member.
@@ -233,7 +233,7 @@ class Meta:
 
         await ctx.send(embed=e)
 
-    @info.command(name='server', aliases=['guild'])
+    @info.command(name='server', aliases=['guild'], hidden=True)
     @commands.guild_only()
     async def server_info(self, ctx):
         """Shows info about the current server."""
@@ -314,7 +314,7 @@ class Meta:
         e.add_field(name='Denied', value='\n'.join(denied))
         await ctx.send(embed=e)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.guild_only()
     async def permissions(self, ctx, member: discord.Member = None, channel: discord.TextChannel = None):
         """Shows a member's permissions in a specific channel.
@@ -330,7 +330,7 @@ class Meta:
 
         await self.say_permissions(ctx, member, channel)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def botpermissions(self, ctx, *, channel: discord.TextChannel = None):
@@ -348,7 +348,7 @@ class Meta:
         member = ctx.guild.me
         await self.say_permissions(ctx, member, channel)
 
-    @commands.command(aliases=['invite'])
+    @commands.command(aliases=['invite'], hidden=True)
     async def join(self, ctx):
         """Joins a server."""
         perms = discord.Permissions.none()
