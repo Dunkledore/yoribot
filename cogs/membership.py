@@ -27,7 +27,7 @@ class Membership:
         self.settings_path = "data/membership/settings.json"
         self.settings = dataIO.load_json(self.settings_path)
 
-    @commands.group(pass_context=True, no_pm=True, name="membershipset")
+    @commands.group(hidden=True, pass_context=True, no_pm=True, name="membershipset")
     @checks.admin_or_permissions(manage_server=True)
     async def _membershipset(self, ctx: commands.Context):
         """Sets membership settings."""
