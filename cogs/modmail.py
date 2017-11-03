@@ -2,7 +2,6 @@ import asyncio
 import discord
 from cogs.utils import checks
 from discord.ext import commands
-from __main__ import send_cmd_help
 import json
 import os
 from .utils.dataIO import dataIO
