@@ -94,9 +94,9 @@ class ModMail:
     async def reply(self, ctx, user: discord.Member=None, *, message):
         """Reply to a message, logs to set channel."""
         if user is None:
-            user = ctx.message.mention
+            user = author
 
-        member = ctx.message.author
+        member = author
         if member:
             embed = discord.Embed(color=0x00c100, description=message)
             to_send = '{}: '.format(member.name)
@@ -151,7 +151,7 @@ class ModMail:
 
     @checks.admin_or_permissions(manager_server=True)
     @modmail.command(pass_context=True)
-    async def channel(self, ctx, channel:discord.Channel=None):
+    async def channel(self, ctx, channel):
         """Set the channel modmail will be sent too"""
 
         if channel is None:
