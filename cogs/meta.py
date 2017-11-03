@@ -27,7 +27,7 @@ class Meta:
         if isinstance(error, commands.BadArgument):
             await ctx.send(error)
 
-    @commands.command(hidden=True, name='help')
+    @commands.command(name='help', hidden=True)
     async def _help(self, ctx, *, command: str = None):
         """Shows help about a command or the bot"""
 
@@ -71,7 +71,7 @@ class Meta:
 
         await ctx.send('\n'.join(map(to_string, characters)))
 
-    @commands.group( hidden=True, name='prefix', invoke_without_command=True)
+    @commands.group(name='prefix', invoke_without_command=True, hidden=True)
     async def prefix(self, ctx):
         """Manages the server's custom prefixes.
 
@@ -91,7 +91,7 @@ class Meta:
         e.description = '\n'.join(f'{index}. {elem}' for index, elem in enumerate(prefixes, 1))
         await ctx.send(embed=e)
 
-    @prefix.command(hidden=True, name='add', ignore_extra=False)
+    @prefix.command(name='add', ignore_extra=False)
     @checks.is_mod()
     async def prefix_add(self, ctx, prefix: Prefix):
         """Appends a prefix to the list of custom prefixes.
@@ -160,8 +160,8 @@ class Meta:
         await self.bot.set_guild_prefixes(ctx.guild, [])
         await ctx.send(f'\N{OK HAND SIGN}')
 
-    @commands.command(hidden=True)
-    async def source(self, ctx, *, command: str = None):
+    @commands.command()
+    async def source(self, ctx, *, command: str = None, hidden=True):
         """Displays my full source code or for a specific command.
 
         To display the source code of a subcommand you can separate it by
@@ -234,7 +234,7 @@ class Meta:
         await ctx.send(embed=e)
 
     @info.command(name='server', aliases=['guild'], hidden=True)
-    @commands.guild_only(hidden=True)
+    @commands.guild_only()
     async def server_info(self, ctx):
         """Shows info about the current server."""
 
@@ -348,7 +348,7 @@ class Meta:
         member = ctx.guild.me
         await self.say_permissions(ctx, member, channel)
 
-    @commands.command(aliases=['invite'], hidden=True)
+    @commands.command(hidden=True, aliases=['invite'])
     async def join(self, ctx):
         """Joins a server."""
         perms = discord.Permissions.none()
