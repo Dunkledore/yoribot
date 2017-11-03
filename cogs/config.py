@@ -227,13 +227,13 @@ class Config:
         if isinstance(error, commands.BadArgument):
             await ctx.send(error)
 
-    @commands.group()
+    @commands.group(hidden=True)
     async def config(self, ctx):
         """Handles the server or channel permission configuration for the bot."""
         if ctx.invoked_subcommand is None:
             await ctx.show_help('config')
 
-    @config.group(invoke_without_command=True, aliases=['plonk'])
+    @config.group(invoke_without_command=True, aliases=['plonk'], hidden=True)
     @checks.is_mod()
     async def ignore(self, ctx, *entities: ChannelOrMember):
         """Ignores text channels or members from using the bot.
