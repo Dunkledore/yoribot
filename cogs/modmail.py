@@ -32,8 +32,8 @@ class ModMail:
                 print("Ignored user")
                 return
 
-            for server in self.bot.servers:
-                member = server.get_member(author.id)
+            for guild in self.bot.servers:
+                member = guild.get_member(author.id)
                 if member:
                     author = member
                 break  # this is checking for silly nicknames.
