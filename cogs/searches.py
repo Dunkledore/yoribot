@@ -39,12 +39,13 @@ class Searches:
         except Exception as e:
             message = 'Something went terribly wrong! [{}]'.format(e)
             await ctx.send(message)
+
     @commands.command(pass_context=True)
     @checks.admin_or_permissions()
     async def animeset(self, ctx):
         """Sets your username and password from myanimelist"""
         await ctx.author.send("Type your user name. You can reply in this private msg")
-        username = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
+        username = await self.bot.wait_for(timeout=15, author=ctx.message.author)
         if username is None:
             return
         else:
@@ -93,7 +94,7 @@ class Searches:
                 await ctx.send(msg)
 
                 check = lambda m: m.content in map(str, range(1, len(root)+1))
-                resp = await self.bot.wait_for_message(timeout=15, author=ctx.message.author,
+                resp = await ctx.bot.wait_for(timeout=15, author=ctx.message.author,
                                                        check=check)
                 if resp is None:
                     return
