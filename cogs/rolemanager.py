@@ -140,7 +140,7 @@ class RoleManager:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
-    async def unlistrole(self, ctx, role):
+    async def removerole(self, ctx, role):
         """Takes a role off the list of self-assignable roles."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
