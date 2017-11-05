@@ -34,7 +34,7 @@ class Searches:
             message = 'Something went terribly wrong! [{}]'.format(e)
             await ctx.send(message)
     @commands.command(pass_context=True)
-    @checks.is_owner()
+    @checks.admin_or_permissions()
     async def animeset(self, ctx):
         """Sets your username and password from myanimelist"""
         await self.bot.whisper("Type your user name. You can reply in this private msg")
