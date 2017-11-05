@@ -45,14 +45,14 @@ class Searches:
     async def animeset(self, ctx):
         """Sets your username and password from myanimelist"""
         await ctx.author.send("Type your user name. You can reply in this private msg")
-        username = await self.bot.wait_for(timeout=15, author=ctx.message.author)
+        username = await self.bot.wait_for('message',timeout=15, author=ctx.message.author)
         if username is None:
             return
         else:
             self.credentials["Username"] = username.content
             dataIO.save_json(self.file_path, self.credentials)
             await ctx.author.send("Ok thanks. Now what is your password?")
-            password = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
+            password = await ctx.bot.wait_for('message', timeout=15, author=ctx.message.author)
             if password is None:
                 return
             else:
