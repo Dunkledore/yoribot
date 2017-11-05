@@ -100,7 +100,7 @@ class RoleManager:
     async def addrole(self, ctx, name, group: str, *, role: str):
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
-        [p]sar add "role name" name of the role"""
+        [p]iam add "role name" name of the role"""
 
         if not ctx.message.guild.me.permissions_in(ctx.message.channel).manage_roles:
             em = discord.Embed(color=ctx.message.author.color,
@@ -138,10 +138,9 @@ class RoleManager:
         for rolename in role_names.split(','):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
-
-    @iam.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
-    async def unlist(self, ctx, role):
+    async def unlistrole(self, ctx, role):
         """Takes a role off the list of self-assignable roles."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
@@ -164,8 +163,8 @@ class RoleManager:
             em.set_author(name=role, icon_url="http://bit.ly/2r2cpXh")
             await ctx.send(embed=em)
 
-    @iam.command(pass_context=True, no_pm=True)
-    async def remove(self, ctx, role):
+    @commands.command(pass_context=True, no_pm=True)
+    async def iamnot(self, ctx, role):
         """Removes a self-assignable role from you."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
