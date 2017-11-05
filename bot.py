@@ -36,6 +36,7 @@ initial_extensions = (
     'cogs.rolemanager',
     'cogs.rift',
     'cogs.membership',
+    'cogs.searches',
     'cogs.antilink',
 )
 
