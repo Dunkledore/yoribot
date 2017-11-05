@@ -27,7 +27,7 @@ class Searches:
             session.close()
             yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
             url = 'https://www.youtube.com/watch?v={}'.format(yt_find[0])
-            await self.bot.say(url)
+            await ctx.send(url)
         except Exception as e:
             message = 'Something went terribly wrong! [{}]'.format(e)
             await ctx.send(message)
