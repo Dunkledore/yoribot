@@ -131,15 +131,15 @@ class RoleManager:
             await ctx.send(embed=em)
 
 
-    @sar.command(name="addroles", pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
-    async def _sar_addroles(self, ctx, group, *, role_names: str):
+    async def addroles(self, ctx, group, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
         for rolename in role_names.split(','):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
 
-    @sar.command(pass_context=True, no_pm=True)
+    @iam.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
     async def unlist(self, ctx, role):
         """Takes a role off the list of self-assignable roles."""
@@ -164,7 +164,7 @@ class RoleManager:
             em.set_author(name=role, icon_url="http://bit.ly/2r2cpXh")
             await ctx.send(embed=em)
 
-    @sar.command(pass_context=True, no_pm=True)
+    @iam.command(pass_context=True, no_pm=True)
     async def remove(self, ctx, role):
         """Removes a self-assignable role from you."""
         if str(ctx.message.guild.id) not in self.settings:
