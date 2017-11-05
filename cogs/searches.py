@@ -2,6 +2,7 @@ from discord.ext import commands
 import aiohttp
 import discord
 import re
+from .utils import checks
 
 
 class Searches:
