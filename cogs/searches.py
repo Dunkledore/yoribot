@@ -45,7 +45,7 @@ class Searches:
     async def animeset(self, ctx):
         """Sets your username and password from myanimelist"""
         await ctx.author.send("Type your user name. You can reply in this private msg")
-        username = await self.bot.wait_for('message',timeout=15, author=ctx.message.author)
+        username = await ctx.bot.wait_for('message',timeout=15, author=ctx.message.author)
         if username is None:
             return
         else:
