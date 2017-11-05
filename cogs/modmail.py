@@ -27,7 +27,7 @@ class ModMail:
             return
         author = message.author
 
-        if isinstance(message.channel, discord.PrivateChannel):
+        if isinstance(message.channel, discord.DMChannel):
             if author.id in self.ignored_users["ignored"]:
                 print("Ignored user")
                 return
