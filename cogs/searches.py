@@ -30,7 +30,7 @@ class Searches:
             await self.bot.say(url)
         except Exception as e:
             message = 'Something went terribly wrong! [{}]'.format(e)
-            await self.bot.say(message)
+            await ctx.send(message)
 
 
 def setup(bot):
