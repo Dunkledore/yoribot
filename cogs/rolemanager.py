@@ -21,7 +21,7 @@ class RoleManager:
         return None
 
     @commands.group(pass_context=True, invoke_without_command=True, no_pm=True)
-    async def sar(self, ctx, *, role):
+    async def iam(self, ctx, *, role):
         """Self-assign a role."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
@@ -64,9 +64,8 @@ class RoleManager:
                 await message.channel.send(embed=em)
                 return
 
-
-    @sar.command(pass_context=True, no_pm=True)
-    async def list(self, ctx):
+    @commands.command(pass_context=True, no_pm=True)
+    async def listroles(self, ctx):
         """Lists the self-assignable roles this server has."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
