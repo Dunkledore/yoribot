@@ -18,6 +18,10 @@ class Searches:
           r'(https?://)?(www\.)?'
           '(youtube|youtu|youtube-nocookie)\.(com|be)/'
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
+        self.animenewsnetwork_regex = (
+          s'(https?://)?(www\.)?'
+          '(animenewsnetwork\.(com)/'
+          '(anime.php\?id=({12})')
         self.file_path = "data/animelist/credentials.json"
         self.credentials = dataIO.load_json(self.file_path)
 
@@ -49,10 +53,10 @@ class Searches:
             headers = {'user-agent': 'Red-cog/1.0'}
             conn = aiohttp.TCPConnector(verify_ssl=False)
             session = aiohttp.ClientSession(connector=conn)
-            async with session.get(url, params=payload, headers=headers) as r:
-                result = await r.text()
+            async with session.get(url, params=payload, headers=headers) as s:
+                result = await s.text()
             session.close()
-            al_find = re.findall(r'href=\"\/name\?q=(.{11})', result)
+            al_find = re.findall(r'href=\"\/name\?q=(.{12})', result)
             url = 'https://www.animenewsnetwork.com/encyclopedia/search/name?q={}'.format(al_find[0])
             await ctx.send(url)
         except Exception as e:
