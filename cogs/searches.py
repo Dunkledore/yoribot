@@ -44,7 +44,7 @@ class Searches:
     async def _anime(self, ctx, *, query: str):
         """Search on My Anime List"""
         try:
-            url = 'https://myanimelist.net/anime.php?'
+            url = 'https://www.animenewsnetwork.com/encyclopedia/search/name?'
             payload = {'search_query': ''.join(query)}
             headers = {'user-agent': 'Red-cog/1.0'}
             conn = aiohttp.TCPConnector(verify_ssl=False)
@@ -52,8 +52,8 @@ class Searches:
             async with session.get(url, params=payload, headers=headers) as r:
                 result = await r.text()
             session.close()
-            al_find = re.findall(r'href=\"\/anime.php\?q=(.{11})', result)
-            url = 'https://www.myanimelist.net/anime.php?q={}'.format(al_find[1])
+            al_find = re.findall(r'href=\"\/name\?q=(.{11})', result)
+            url = 'https://www.animenewsnetwork.com/encyclopedia/search/name?q={}'.format(al_find[0])
             await ctx.send(url)
         except Exception as e:
             message = 'Something went terribly wrong! [{}]'.format(e)
