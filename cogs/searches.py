@@ -52,8 +52,8 @@ class Searches:
             async with session.get(url, params=payload, headers=headers) as r:
                 result = await r.text()
             session.close()
-            al_find = re.findall(r'href=\"\/anime.php\?q=(.{1})', result)
-            url = 'https://www.myanimelist.net/anime.php?q={}'.format(al_find[0])
+            al_find = re.findall(r'href=\"\/anime.php\?q=(.{11})', result)
+            url = 'https://www.myanimelist.net/anime.php?q={}'.format(al_find[1])
             await ctx.send(url)
         except Exception as e:
             message = 'Something went terribly wrong! [{}]'.format(e)
