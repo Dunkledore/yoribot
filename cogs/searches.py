@@ -44,7 +44,7 @@ class Searches:
     async def _anime(self, ctx, *, query: str):
         """Search on My Anime List"""
         try:
-            url = 'https://myanimelist.net/anime.php?q='
+            url = 'https://myanimelist.net/anime.php?'
             payload = {'search_query': ''.join(query)}
             headers = {'user-agent': 'Red-cog/1.0'}
             conn = aiohttp.TCPConnector(verify_ssl=False)
