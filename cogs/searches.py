@@ -53,7 +53,7 @@ class Searches:
                 result = await r.text()
             session.close()
             al_find = re.findall(r'href=\"\/anime.php\?q=(.{11})', result)
-            url = 'https://www.myanimelist.net/anime.php?q={}'.format(yt_find[0])
+            url = 'https://www.myanimelist.net/anime.php?q={}'.format(al_find[0])
             await ctx.send(url)
         except Exception as e:
             message = 'Something went terribly wrong! [{}]'.format(e)
