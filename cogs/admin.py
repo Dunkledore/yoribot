@@ -257,8 +257,7 @@ class Admin:
         name = name.strip()
         if name != "":
             try:
-                await self.bot.edit_profile(self.bot.settings.password,
-                                            username=name)
+                await self.bot.edit(username=name)
             except:
                 await ctx.send("Failed to change name. Remember that you"
                                    " can only do it up to 2 times an hour."
