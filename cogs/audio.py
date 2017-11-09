@@ -139,6 +139,9 @@ class Music:
     async def play(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
 
+        def play_next(error):
+            play(ctx)
+
         if(searchurl == None):
             query = "SELECT * FROM music_queues WHERE guildid = $1"
             queue = await ctx.db.fetch(query,ctx.guild.id)
@@ -161,8 +164,7 @@ class Music:
 
                 return True
         
-        def play_next(error):
-            play(ctx)
+       
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
