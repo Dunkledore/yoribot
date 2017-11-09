@@ -82,7 +82,7 @@ class Music:
 
                 return True
 
-        if not validators.url(url):
+        if not validators.url(searchurl):
             try:
                 url = 'https://www.youtube.com/results?'
                 payload = {'search_query': ''.join(searchurl)}
