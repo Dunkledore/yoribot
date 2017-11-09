@@ -83,12 +83,6 @@ class Music:
 
                 return True
 
-        if ctx.voice_client is None:
-            if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
-                await ctx.author.voice.channel.connect()
-            else:
-                return await ctx.send("Not connected to a voice channel.")
-
         if not validators.url(searchurl):
             try:
                 url = 'https://www.youtube.com/results?'
@@ -137,7 +131,7 @@ class Music:
                 query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
                 url = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
                 await ctx.db.execute(query, ctx.guild.id, url)
-                await ctx.send(url + "added")
+                await ctx.send("Added to queue: " + url)
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
