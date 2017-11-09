@@ -153,7 +153,7 @@ class Music:
             query = "SELECT * FROM music_queues WHERE guildid = $1"
             queue = await ctx.db.fetch(query,ctx.guild.id)
             searchurl = queue[0]['songurl']
-            id = queue[0]['songurl']
+            id = queue[0]['id']
             player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
             ctx.voice_client.play(player, after=play_next)
             query = "DELETE FROM music_queues WHERE id = $1"
