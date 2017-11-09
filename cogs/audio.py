@@ -142,7 +142,7 @@ class Music:
 
         def play_next(error):
             print("playing next")
-            self.play(ctx)
+            self.play(self, ctx)
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
