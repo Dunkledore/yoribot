@@ -138,6 +138,9 @@ class Music:
                 url = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
                 await ctx.db.execute(query, ctx.guild.id, url)
                 await ctx.send(url + "added")
+            except Exception as e:
+                message = 'Something went terribly wrong! [{}]'.format(e)
+                await ctx.send(message)
 
     @commands.command()
     async def play(self, ctx, *, searchurl):
