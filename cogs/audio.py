@@ -127,13 +127,14 @@ class Music:
                     print("Something broke in audio")
                     return
 
-                query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
+                
                 searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
+        query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
         await ctx.db.execute(query, ctx.guild.id, searchurl)
-        await ctx.send("Added to queue: " + url)
+        await ctx.send("Added to queue: " + searchurl)
     
     @commands.command()
     async def play(self, ctx, *, searchurl=None):
