@@ -254,7 +254,7 @@ class Admin:
     @commands.command(hidden=True)            
     async def setname(self, ctx, *, name):
         """Sets Red's name"""
-        name = name.strip()
+        name = name
         if name != "":
             try:
                 await self.bot.edit(username=name)
