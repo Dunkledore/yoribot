@@ -227,7 +227,7 @@ class Music:
             ctx.voice_client.stop()
 
         player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-        ctx.voice_client.play(player, after=play_next)
+        ctx.voice_client.play(player, after= await play_next)
 
         await ctx.send('Now playing: {}'.format(player.title))
 
