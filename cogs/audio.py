@@ -69,7 +69,7 @@ class Music:
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
     @commands.command()
-    async def queue(self, ctx, *, url):
+    async def queue(self, ctx, *, searchurl):
         """Streams from a url (almost anything youtube_dl supports)"""
        
         def check(r, user):
@@ -128,11 +128,11 @@ class Music:
                     return
 
                 query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
-                url = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
+                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
-        await ctx.db.execute(query, ctx.guild.id, url)
+        await ctx.db.execute(query, ctx.guild.id, searchurl)
         await ctx.send("Added to queue: " + url)
     
     @commands.command()
