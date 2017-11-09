@@ -67,10 +67,9 @@ class Music:
           r'(https?://)?(www\.)?'
           '(youtube|youtu|youtube-nocookie)\.(com|be)/'
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
-        self.settings = None
 
     @commands.command()
-    async def queue(self, ctx, *, searchurl):
+    async def queue(self, ctx, *, url):
         """Streams from a url (almost anything youtube_dl supports)"""
        
         def check(r, user):
@@ -83,7 +82,7 @@ class Music:
 
                 return True
 
-        if not validators.url(searchurl):
+        if not validators.url(url):
             try:
                 url = 'https://www.youtube.com/results?'
                 payload = {'search_query': ''.join(searchurl)}
@@ -130,15 +129,26 @@ class Music:
 
                 query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
                 url = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
-                await ctx.db.execute(query, ctx.guild.id, url)
-                await ctx.send("Added to queue: " + url)
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
+        await ctx.db.execute(query, ctx.guild.id, url)
+        await ctx.send("Added to queue: " + url)
     
     @commands.command()
-    async def play(self, ctx, *, searchurl):
+    async def play(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
+
+        if(searchurl == None):
+            query = "SELECT * FROM music_queues WHERE guildid = $1"
+            queue = await ctx.db.fetch(query,ctx.guild.id)
+            searchurl = queue[0]['songurl']
+            id = queue[0]['songurl']
+            player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
+            ctx.voice_client.play(player, after=play_next)
+            query = "DELETE FROM music_queues WHERE id = $1"
+            await ctx.db.execute(query, id)
+            return
 
         
         def check(r, user):
@@ -152,7 +162,7 @@ class Music:
                 return True
         
         def play_next(error):
-            print("test")
+            play(ctx)
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
