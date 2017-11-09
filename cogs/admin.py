@@ -252,7 +252,6 @@ class Admin:
             await ctx.send(fmt)
     
     @commands.command(hidden=True)            
-    @checks.is_owner()
     async def setname(self, ctx, *, name):
         """Sets Red's name"""
         name = name.strip()
