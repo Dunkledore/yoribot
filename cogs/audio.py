@@ -139,8 +139,6 @@ class Music:
                 await ctx.db.execute(query, ctx.guild.id, url)
                 await ctx.send(url + "added")
 
-
-    
     @commands.command()
     async def play(self, ctx, *, searchurl):
         """Streams from a url (almost anything youtube_dl supports)"""
