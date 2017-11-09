@@ -140,7 +140,7 @@ class Music:
     async def play(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
 
-        def play_next(error):
+        async def play_next(error):
             print("playing next")
             await self.play(ctx)
 
