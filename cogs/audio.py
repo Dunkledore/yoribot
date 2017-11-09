@@ -141,6 +141,7 @@ class Music:
         """Streams from a url (almost anything youtube_dl supports)"""
 
         def play_next(error):
+            print("playing next")
             play(ctx)
 
         if ctx.voice_client is None:
