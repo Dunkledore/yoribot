@@ -135,7 +135,7 @@ class Music:
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
                 await ctx.send(message)
-
+    
     @commands.command()
     async def play(self, ctx, *, searchurl):
         """Streams from a url (almost anything youtube_dl supports)"""
@@ -150,6 +150,9 @@ class Music:
             else:
 
                 return True
+        
+        def play_next(error):
+            print("test")
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
@@ -212,8 +215,7 @@ class Music:
             ctx.voice_client.stop()
 
         player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-        ctx.voice_client.play(player, after=lambda e: print(
-            'Player error: %s' % e) if e else None)
+        ctx.voice_client.play(player, after=play_next)
 
         await ctx.send('Now playing: {}'.format(player.title))
 
