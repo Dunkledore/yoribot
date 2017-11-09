@@ -253,7 +253,7 @@ class Admin:
     
     @commands.command(hidden=True)            
     @checks.is_owner()
-    async def name(self, ctx, *, name):
+    async def setname(self, ctx, *, name):
         """Sets Red's name"""
         name = name.strip()
         if name != "":
@@ -261,7 +261,7 @@ class Admin:
                 await self.bot.edit_profile(self.bot.settings.password,
                                             username=name)
             except:
-                await self.bot.say("Failed to change name. Remember that you"
+                await ctx.send("Failed to change name. Remember that you"
                                    " can only do it up to 2 times an hour."
                                    "Use nicknames if you need frequent "
                                    "changes. {}set nickname"
