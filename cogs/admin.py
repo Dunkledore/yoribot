@@ -250,6 +250,26 @@ class Admin:
             await ctx.send('Too many results...', file=discord.File(fp, 'results.txt'))
         else:
             await ctx.send(fmt)
+    
+    @commands.command(hidden=True)            
+    @checks.is_owner()
+    async def name(self, ctx, *, name):
+        """Sets Red's name"""
+        name = name.strip()
+        if name != "":
+            try:
+                await self.bot.edit_profile(self.bot.settings.password,
+                                            username=name)
+            except:
+                await self.bot.say("Failed to change name. Remember that you"
+                                   " can only do it up to 2 times an hour."
+                                   "Use nicknames if you need frequent "
+                                   "changes. {}set nickname"
+                                   "".format(ctx.prefix))
+            else:
+                await ctx.send("Done.")
+        else:
+                await ctx.send("Shit that didn't work.")
 
 def setup(bot):
     bot.add_cog(Admin(bot))
