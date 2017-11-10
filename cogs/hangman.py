@@ -170,7 +170,7 @@ class Hangman:
 				await ctx.send(
 						"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game)))
 
-		@commands.command(name='delete', pass_context=True, no_pm=True)
+		@commands.command(pass_context=True, no_pm=True)
 		async def stophangman(self, ctx):
 				"""Force stops a game of hangman
 				This should realistically only be used in a situation like one player leaves
