@@ -58,4 +58,4 @@ class Searches:
 
 def setup(bot):
     n = Searches(bot)
-    bot.add_cog(n)?load 
+    bot.add_cog(n)
