@@ -101,7 +101,7 @@ class Hangman:
 				self.bot = bot
 				self.games = {}
 
-		def create(self, word, ctx):
+		def start(self, word, ctx):
 				# Create a new game, then save it as the guild's game
 				game = Game(word)
 				self.games[ctx.message.guild.id] = game
@@ -109,7 +109,7 @@ class Hangman:
 
 		@commands.group(aliases=['hm'], pass_context=True, no_pm=True, invoke_without_command=True)
 		@commands.cooldown(1, 7, BucketType.user)
-		async def hangman(self, ctx, *, guess):
+		async def guess(self, ctx, *, guess):
 				"""Makes a guess towards the guild's currently running hangman game
 
 				EXAMPLE: !hangman e (or) !hangman The Phrase!
@@ -151,8 +151,8 @@ class Hangman:
 
 				await ctx.send(fmt)
 
-		@hangman.command(name='create', aliases=['start'], no_pm=True, pass_context=True)
-		async def create_hangman(self, ctx):
+		@commands.command(no_pm=True, pass_context=True)
+		async def starthangman(self, ctx):
 				"""This is used to create a new hangman game
 				A predefined phrase will be randomly chosen as the phrase to use
 
@@ -165,13 +165,13 @@ class Hangman:
 						await ctx.send("Sorry but only one Hangman game can be running per guild!")
 						return
 
-				game = self.create(random.SystemRandom().choice(phrases), ctx)
+				game = self.start(random.SystemRandom().choice(phrases), ctx)
 				# Let them know the game has started, then print the current game so that the blanks are shown
 				await ctx.send(
 						"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game)))
 
-		@hangman.command(name='delete', aliases=['stop', 'remove', 'end'], pass_context=True, no_pm=True)
-		async def stop_game(self, ctx):
+		@commands.command(name='delete', aliases=['stop', 'remove', 'end'], pass_context=True, no_pm=True)
+		async def stophangman(self, ctx):
 				"""Force stops a game of hangman
 				This should realistically only be used in a situation like one player leaves
 				Hopefully a moderator will not abuse it, but there's not much we can do to avoid that
