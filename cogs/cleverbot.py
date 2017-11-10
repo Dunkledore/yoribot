@@ -61,7 +61,7 @@ class Cleverbot():
             await ctx.send(result)
 
     @cleverbot.command(hidden=True)
-    async def toggle(self):
+    async def toggle(self,ctx):
         """Toggles reply on mention"""
         self.settings["TOGGLE"] = not self.settings["TOGGLE"]
         if self.settings["TOGGLE"]:
@@ -71,7 +71,7 @@ class Cleverbot():
         dataIO.save_json("data/cleverbot/settings.json", self.settings)
 
     @cleverbot.command(hidden=True)
-    async def apikey(self, key: str):
+    async def apikey(self, ctx, key: str):
         """Sets token to be used with cleverbot.com
 
         You can get it from https://www.cleverbot.com/api/
@@ -83,7 +83,7 @@ class Cleverbot():
         dataIO.save_json("data/cleverbot/settings.json", self.settings)
         await ctx.send("Credentials set.")
 
-    async def get_response(self, author, text):
+    async def get_response(self, ctx, author, text):
         payload = {}
         payload["key"] = self.get_credentials()
         payload["cs"] = self.instances.get(author.id, "")
@@ -104,7 +104,7 @@ class Cleverbot():
         await session.close()
         return data["output"]
 
-    def get_credentials(self):
+    def get_credentials(self, ctx):
         if "cleverbot_key" not in self.settings:
             if "key" in self.settings:
                 raise OutdatedCredentials() # old cleverbot.io credentials
@@ -113,11 +113,8 @@ class Cleverbot():
         except KeyError:
             raise NoCredentials()
 
-    async def on_message(self, message):
+    async def on_message(self, ctx, message):
         if not self.settings["TOGGLE"] or message.guild is None:
-            return
-
-        if not self.bot.user_allowed(message):
             return
 
         author = message.author
