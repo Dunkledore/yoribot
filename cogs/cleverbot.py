@@ -58,7 +58,7 @@ class Cleverbot():
                                                  "work. The old cleverbot.io service will soon be no "
                                                  "longer active. See `[p]help cleverbot apikey`")
         else:
-            await self.bot.say(result)
+            await ctx.send(result)
 
     @cleverbot.command(hidden=True)
     async def toggle(self):
