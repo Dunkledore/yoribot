@@ -18,14 +18,8 @@ class Searches:
           r'(https?://)?(www\.)?'
           '(youtube|youtu|youtube-nocookie)\.(com|be)/'
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
-        self.animenewsnetwork_regex = (
-          r'(https?://)?(www\.)?'
-          '(animenewsnetwork\.(com)/'
-          '(anime.php\?id=({12})')
         self.url_dog = "https://random.dog/woof.json"
         self.url_cat = "https://random.cat/meow"
-        self.file_path = "data/animelist/credentials.json"
-        self.credentials = dataIO.load_json(self.file_path)
 
     @commands.command(pass_context=True, name='youtube', no_pm=True)
     async def _youtube(self, ctx, *, query: str):
@@ -64,4 +58,4 @@ class Searches:
 
 def setup(bot):
     n = Searches(bot)
-    bot.add_cog(n)
+    bot.add_cog(n)?load 
