@@ -43,7 +43,7 @@ class Cleverbot():
         try:
             result = await self.get_response(author, message)
         except NoCredentials:
-            await self.bot.send_message(channel, "The owner needs to set the credentials first.\n"
+            await ctx.send("The owner needs to set the credentials first.\n"
                                                  "See: `[p]cleverbot apikey`")
         except APIError:
             await self.bot.send_message(channel, "Error contacting the API.")
