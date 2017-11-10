@@ -36,6 +36,7 @@ ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 ytdl.params["outtmpl"] = join("music", ytdl.params["outtmpl"])
 
 
+
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
@@ -67,28 +68,98 @@ class Music:
           '(youtube|youtu|youtube-nocookie)\.(com|be)/'
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
-    @commands.command(name="local")
-    async def play_file(self, ctx, *, query):
-        """Plays a file from the local filesystem"""
+    @commands.command()
+    async def queue(self, ctx, *, searchurl):
+        """Streams from a url (almost anything youtube_dl supports)"""
+       
+        def check(r, user):
+            if user != ctx.message.author:
+                return False
+            reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
+            if r.emoji not in reactionlist:
+                return False
+            else:
+
+                return True
+
+        if not validators.url(searchurl):
+            try:
+                url = 'https://www.youtube.com/results?'
+                payload = {'search_query': ''.join(searchurl)}
+                headers = {'user-agent': 'Red-cog/1.0'}
+                conn = aiohttp.TCPConnector()
+                session = aiohttp.ClientSession(connector=conn)
+                async with session.get(url, params=payload, headers=headers) as r:
+                    result = await r.text()
+                session.close()
+                yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
+                yt_find = list(set(yt_find))
+                
+                results = 'Options are\n'
+                for x in range(0,5):
+                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x*2]+"&key="+api_key+"&part=contentDetails"
+                    json = simplejson.loads(urllib.request.urlopen(gurl).read())
+                    results += str(x)+'\u20e3' + ": " + json['items'][0]['snippet']['title'] + '\n'
+
+                sentmessage = await ctx.send(results)
+
+                await sentmessage.add_reaction('0\u20e3')
+                await sentmessage.add_reaction('1\u20e3')
+                await sentmessage.add_reaction('2\u20e3')
+                await sentmessage.add_reaction('3\u20e3')
+                await sentmessage.add_reaction('4\u20e3')
+                print('before wait for')
+                choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
+                chosen = ''
+                print(choice[0].emoji)               
+                if choice[0].emoji == '0\u20e3':
+                    chosen = 0  
+                elif choice[0].emoji =='1\u20e3':
+                    chosen = 1
+                elif choice[0].emoji =='2\u20e3':
+                    chosen = 2
+                elif choice[0].emoji =='3\u20e3':
+                    chosen = 3
+                elif choice[0].emoji =='4\u20e3':
+                    chosen = 4
+                else:
+                    print("Something broke in audio")
+                    return
+
+                
+                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
+            except Exception as e:
+                message = 'Something went terribly wrong! [{}]'.format(e)
+                await ctx.send(message)
+        query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
+        await ctx.db.execute(query, ctx.guild.id, searchurl)
+        await ctx.send("Added to queue: " + searchurl)
+    
+    @commands.command()
+    async def play(self, ctx, *, searchurl=None):
+        """Streams from a url (almost anything youtube_dl supports)"""
+
+        async def play_next(error):
+            print("playing next")
+            await self.play(ctx)
 
         if ctx.voice_client is None:
-            if ctx.author.voice.channel:
+            if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
                 await ctx.author.voice.channel.connect()
             else:
                 return await ctx.send("Not connected to a voice channel.")
 
-        if ctx.voice_client.is_playing():
-            ctx.voice_client.stop()
-
-        source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(query))
-        ctx.voice_client.play(source, after=lambda e: print(
-            'Player error: %s' % e) if e else None)
-
-        await ctx.send('Now playing: {}'.format(query))
-
-    @commands.command()
-    async def play(self, ctx, *, searchurl):
-        """Streams from a url (almost anything youtube_dl supports)"""
+        if(searchurl == None):
+            query = "SELECT * FROM music_queues WHERE guildid = $1"
+            queue = await ctx.db.fetch(query,ctx.guild.id)
+            searchurl = queue[0]['songurl']
+            id = queue[0]['id']
+            player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
+            ctx.voice_client.play(player, after=await play_next)
+            query = "DELETE FROM music_queues WHERE id = $1"
+            await ctx.db.execute(query, id)
+            return
 
         
         def check(r, user):
@@ -100,12 +171,6 @@ class Music:
             else:
 
                 return True
-
-        if ctx.voice_client is None:
-            if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
-                await ctx.author.voice.channel.connect()
-            else:
-                return await ctx.send("Not connected to a voice channel.")
 
         if not validators.url(searchurl):
             try:
@@ -153,8 +218,6 @@ class Music:
                     return
 
 
-
-
                 searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen*2])
             except Exception as e:
                 message = 'Something went terribly wrong! [{}]'.format(e)
@@ -164,10 +227,11 @@ class Music:
             ctx.voice_client.stop()
 
         player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-        ctx.voice_client.play(player, after=lambda e: print(
-            'Player error: %s' % e) if e else None)
+        ctx.voice_client.play(player, after= await play_next)
 
         await ctx.send('Now playing: {}'.format(player.title))
+
+
 
     @commands.command()
     async def volume(self, ctx, volume: float):
