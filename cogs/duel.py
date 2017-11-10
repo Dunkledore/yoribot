@@ -387,14 +387,12 @@ class Duel:
         dataIO.save_json(JSON_PATH, self.duelists)
         return True
 
-    @checks.mod_or_permissions(administrator=True)
     @commands.group(name="protect", invoke_without_command=True, no_pm=True, pass_context=True)
     async def _protect(self, ctx, user: discord.Member):
         """Adds a member or role to the protected members list"""
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self._protect_user, user)
 
-    @checks.mod_or_permissions(administrator=True)
     @commands.group(name="unprotect", invoke_without_command=True, no_pm=True, pass_context=True)
     async def _unprotect(self, ctx, user: discord.Member):
         """Removes a member or role to the protected members list"""
@@ -523,7 +521,6 @@ class Duel:
             await ctx.send("There are no scores registered in this guild. Start fighting!")
 
     @_duels.command(name="reset", pass_context=True)
-    @checks.admin()
     async def _duels_reset(self, ctx):
         "Clears duel scores without resetting protection or editmode."
         keep_keys = {'protected', 'edit_posts'}
@@ -541,7 +538,6 @@ class Duel:
         await ctx.send('Duel records cleared.')
 
     @_duels.command(name="editmode", pass_context=True)
-    @checks.admin()
     async def _duels_postmode(self, ctx, on_off: bool = None):
         "Edits messages in-place instead of posting each move seperately."
         sid = ctx.message.guild.id
