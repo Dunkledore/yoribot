@@ -107,7 +107,7 @@ class Hangman:
 				self.games[ctx.message.guild.id] = game
 				return game
 
-		@commands.group(aliases=['hm'], pass_context=True, no_pm=True, invoke_without_command=True)
+		@commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
 		@commands.cooldown(1, 7, BucketType.user)
 		async def guess(self, ctx, *, guess):
 				"""Makes a guess towards the guild's currently running hangman game
@@ -170,7 +170,7 @@ class Hangman:
 				await ctx.send(
 						"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game)))
 
-		@commands.command(name='delete', aliases=['stop', 'remove', 'end'], pass_context=True, no_pm=True)
+		@commands.command(name='delete', pass_context=True, no_pm=True)
 		async def stophangman(self, ctx):
 				"""Force stops a game of hangman
 				This should realistically only be used in a situation like one player leaves
