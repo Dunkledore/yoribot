@@ -22,6 +22,8 @@ class Searches:
           r'(https?://)?(www\.)?'
           '(animenewsnetwork\.(com)/'
           '(anime.php\?id=({12})')
+        self.url_dog = "https://random.dog/woof.json"
+        self.url_cat = "https://random.cat/meow"
         self.file_path = "data/animelist/credentials.json"
         self.credentials = dataIO.load_json(self.file_path)
 
@@ -44,9 +46,25 @@ class Searches:
             message = 'Something went terribly wrong! [{}]'.format(e)
             await ctx.send(message)
 
+    @commands.command(pass_context=True, no_pm=True)
+    async def meow(self, ctx: commands.Context):
+        """Gets a random cat picture."""
+
+        async with aiohttp.get(self.url_cat) as response:
+            img = json.loads(await response.text())["file"].replace("\\/","/")
+            await ctx.send(img)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def woof(self, ctx: commands.Context):
+        """Gets a random dog picture."""
+
+        async with aiohttp.get(self.url_dog) as response:
+            img = json.loads(await response.text())["url"]
+            await ctx.send(img)
+
     @commands.command(pass_context=True, name='anime', no_pm=True)
     async def _anime(self, ctx, *, query: str):
-        """Search on My Anime List"""
+        """Search on My Anime List **COMING SOON**"""
         try:
             url = 'https://www.animenewsnetwork.com/encyclopedia/search/name?'
             payload = {'search_query': ''.join(query)}
