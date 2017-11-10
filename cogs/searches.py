@@ -62,24 +62,6 @@ class Searches:
             img = json.loads(await response.text())["url"]
             await ctx.send(img)
 
-    @commands.command(pass_context=True, name='anime', no_pm=True)
-    async def _anime(self, ctx, *, query: str):
-        """Search on My Anime List **COMING SOON**"""
-        try:
-            url = 'https://www.animenewsnetwork.com/encyclopedia/search/name?'
-            payload = {'search_query': ''.join(query)}
-            headers = {'user-agent': 'Red-cog/1.0'}
-            conn = aiohttp.TCPConnector(verify_ssl=False)
-            session = aiohttp.ClientSession(connector=conn)
-            async with session.get(url, params=payload, headers=headers) as r:
-                result = await r.text()
-            session.close()
-            al_find = re.findall(r'href=\"\/name\?q=(.{12})', result)
-            url = 'https://www.animenewsnetwork.com/encyclopedia/search/name?q={}'.format(al_find[0])
-            await ctx.send(url)
-        except Exception as e:
-            message = 'Something went terribly wrong! [{}]'.format(e)
-            await ctx.send(message)
 def setup(bot):
     n = Searches(bot)
     bot.add_cog(n)
