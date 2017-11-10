@@ -61,7 +61,6 @@ class Cleverbot():
             await self.bot.say(result)
 
     @cleverbot.command(hidden=True)
-    @checks.is_owner()
     async def toggle(self):
         """Toggles reply on mention"""
         self.settings["TOGGLE"] = not self.settings["TOGGLE"]
@@ -72,7 +71,6 @@ class Cleverbot():
         dataIO.save_json("data/cleverbot/settings.json", self.settings)
 
     @cleverbot.command(hidden=True)
-    @checks.is_owner()
     async def apikey(self, key: str):
         """Sets token to be used with cleverbot.com
 
