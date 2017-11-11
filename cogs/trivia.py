@@ -339,7 +339,7 @@ class TriviaSession():
                 self.scores[self.bot.user] += 1
             self.current_line = None
             await ctx.send(msg)
-            await self.bot.type()
+            await message.channel.send()
             await asyncio.sleep(3)
             if not self.status == "stop":
                 await self.new_question(ctx)
