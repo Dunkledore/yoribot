@@ -376,7 +376,7 @@ class TriviaSession():
             self.status = "correct answer"
             self.scores[message.author] += 1
             msg = "You got it {}! **+1** to you!".format(message.author.name)
-            await ctx.send(msg)
+            await message.channel.send(msg)
 
 
 def check_folders():
