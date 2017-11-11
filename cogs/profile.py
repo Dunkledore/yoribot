@@ -64,7 +64,11 @@ class Profile:
 		mylist = [ctx.message.content,"value"]
 		await ctx.db.execute(query, mylist)
 		await ctx.send("done")
-
+		query = "SELECT * FROM test"
+		rows = await ctx.db.fetch(query)
+		for r in rows
+			await ctx.send(r)
+			
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
 	async def profileremove(self, ctx, name=None):
