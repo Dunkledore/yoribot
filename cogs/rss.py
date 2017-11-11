@@ -9,7 +9,6 @@ import copy
 
 from cogs.utils.dataIO import fileIO
 from cogs.utils.chat_formatting import *
-from __main__ import send_cmd_help
 
 try:
     import feedparser
@@ -143,8 +142,6 @@ class RSS(object):
     @commands.group(pass_context=True)
     async def rss(self, ctx):
         """RSS feed stuff"""
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @rss.command(pass_context=True, name="add")
     async def _rss_add(self, ctx, name: str, url: str):
