@@ -61,7 +61,7 @@ class Profile:
 		
 		await ctx.send("doing")
 		query = "INSERT INTO test (values) VALUES ($1)"
-		mylist = ["name","value"]
+		mylist = [ctx.message.content,"value"]
 		await ctx.db.execute(query, mylist)
 		await ctx.send("done")
 
