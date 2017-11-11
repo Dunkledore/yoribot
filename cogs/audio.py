@@ -141,8 +141,7 @@ class Music:
         """Streams from a url (almost anything youtube_dl supports)"""
 
         async def play_next(error):
-            print("playing next")
-            await self.play(ctx)
+            
 
         if ctx.voice_client is None:
             if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
@@ -156,7 +155,7 @@ class Music:
             searchurl = queue[0]['songurl']
             id = queue[0]['id']
             player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-            ctx.voice_client.play(player, after=await play_next)
+            ctx.voice_client.play(player, after=play_next)
             query = "DELETE FROM music_queues WHERE id = $1"
             await ctx.db.execute(query, id)
             return
@@ -227,7 +226,7 @@ class Music:
             ctx.voice_client.stop()
 
         player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-        ctx.voice_client.play(player, after= await play_next)
+        ctx.voice_client.play(player, after=play_next)
 
         await ctx.send('Now playing: {}'.format(player.title))
 
