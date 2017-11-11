@@ -21,7 +21,6 @@ Hello! I am a premium Discord bot.
 log = logging.getLogger(__name__)
 
 initial_extensions = (
-    'cogs.audio',
     'cogs.hangman',
     'cogs.rate',
     'cogs.whoplays',
