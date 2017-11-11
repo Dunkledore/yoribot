@@ -54,6 +54,14 @@ class Profile:
 		else:
 			await ctx.send(f'Field {name} successfully created.')
 
+	@checks.mod_or_permissions(manage_channels=True)
+	async def arraytest(self, ctx):
+		"""Adds an embed field onto the profile message"""
+		
+		query = "INSERT INTO test (values) VALUES ($1)"
+		mylist = ["name","value"]
+		await ctx.db.execute(query, mylist)
+
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
 	async def profileremove(self, ctx, name=None):
