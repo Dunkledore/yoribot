@@ -156,30 +156,7 @@ class Trivia:
     async def triviastop(self, ctx):
         session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game()
-
-"""        author = ctx.message.author
-        guild = author.guild
-        admin_role = self.bot.settings.get_guild_admin(guild)
-        mod_role = self.bot.settings.get_guild_mod(guild)
-        is_admin = discord.utils.get(author.roles, name=admin_role)
-        is_mod = discord.utils.get(author.roles, name=mod_role)
-        is_owner = author.id == self.bot.settings.owner
-        is_guild_owner = author == guild.owner
-        is_authorized = is_admin or is_mod or is_owner or is_guild_owner
-
-        session = self.get_trivia_by_channel(ctx.message.channel)
-        if session:
-            if author == session.starter or is_authorized:
-                await session.end_game()
-            else:
-                em = discord.Embed(color=ctx.message.author.color, description="You are not allowed to do that.")
-                em.set_author(name="Uh-oh!", icon_url="http://bit.ly/2qlsl5I")
-                await ctx.send(embed=em)
-        else:
-            em = discord.Embed(color=ctx.message.author.color, description="There wasn't any trivia going in this channel.")
-            em.set_author(name="Uh-oh!", icon_url="http://bit.ly/2qlsl5I")
-            await ctx.send(embed=em)
-"""            
+      
     @trivia.group(name="list", pass_context=True)
     async def trivia_list(self, ctx):
         message = ctx.message
