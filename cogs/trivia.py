@@ -45,7 +45,7 @@ class Trivia:
             msg += "\n {}triviaset revealanswer <true/false>".format(ctx.prefix)
             em = discord.Embed(color=ctx.message.author.color, description=msg)
             em.set_author(name="Trivia Settings Help", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
 
     @triviaset.command(pass_context=True)
     async def maxscore(self, ctx, score : int=-1):
@@ -58,17 +58,17 @@ class Trivia:
             msg += "The max score must be higher than 0."
             em = discord.Embed(color=ctx.message.author.color, description=msg)
             em.set_author(name="Trivia Settings - Max Score", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         elif score > 0:
             self.settings[guild.id]["MAX_SCORE"] = score
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description=score)
             em.set_author(name="Points Required to Win Set To", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         else:
             em = discord.Embed(color=ctx.message.author.color, description="Score must be higher than 0")
             em.set_author(name="Uh-Oh!", icon_url="http://bit.ly/2qlsl5I")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
 
     @triviaset.command(pass_context=True)
     async def timelimit(self, ctx, seconds : int=-1):
@@ -81,17 +81,17 @@ class Trivia:
             msg += " The time limit must be more than 5 seconds."
             em = discord.Embed(color=ctx.message.author.color, description=msg)
             em.set_author(name="Trivia Settings - Time Limit", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         elif seconds > 4:
             self.settings[guild.id]["DELAY"] = seconds
             self.save_settings()
             em = discord.Embed(color=ctx.message.author.color, description=seconds)
             em.set_author(name="Maximum time to answer (in seconds):", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         else:
             em = discord.Embed(color=ctx.message.author.color, description="Must allow at least 5 seconds to answer.")
             em.set_author(name="Uh-Oh!", icon_url="http://bit.ly/2qlsl5I")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
 
     @triviaset.command(pass_context=True)
     async def botplays(self, ctx):
@@ -101,13 +101,13 @@ class Trivia:
             em = discord.Embed(color=ctx.message.author.color, description="Alright the bot will stop kicking your butt.")
             em.set_author(name="Trivia Settings - Bot Plays", icon_url="http://bit.ly/2qrhjLu")
             em.set_footer(text= "To re-enable use *triviaset botplays")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         else:
             self.settings[guild.id]["BOT_PLAYS"] = True
             em = discord.Embed(color=ctx.message.author.color, description="The bot will now gain a point for answering before you do.")
             em.set_author(name="Trivia Settings - Bot Plays", icon_url="http://bit.ly/2qrhjLu")
             em.set_footer(text= "To disable use *triviaset botplays")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         self.save_settings()
 
     @triviaset.command(pass_context=True)
@@ -117,12 +117,12 @@ class Trivia:
             self.settings[guild.id]["REVEAL_ANSWER"] = False
             em = discord.Embed(color=ctx.message.author.color, description="The bot won't show answers anymore.")
             em.set_author(name="Trivia Settings - Reveal Answer", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         else:
             self.settings[guild.id]["REVEAL_ANSWER"] = True
             em = discord.Embed(color=ctx.message.author.color, description="The bot will show answers if nobody knows it.")
             em.set_author(name="Trivia Settings - Reveal Answer", icon_url="http://bit.ly/2qrhjLu")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
         self.save_settings()
 
     @commands.group(pass_context=True, invoke_without_command=True, no_pm=True)
@@ -136,12 +136,12 @@ class Trivia:
             except FileNotFoundError:
                 em = discord.Embed(color=ctx.message.author.color, description="That trivia list doesn't exist.")
                 em.set_author(name=list_name, icon_url="http://bit.ly/2qlsl5I")
-                await self.bot.send_message(ctx.message.channel,embed=em)
+                await ctx.send(ctx.message.channel,embed=em)
             except Exception as e:
                 print(e)
                 em = discord.Embed(color=ctx.message.author.color, description="Error loading trivia list.")
                 em.set_author(name=list_name, icon_url="http://bit.ly/2qlsl5I")
-                await self.bot.send_message(ctx.message.channel,embed=em)
+                await ctx.send(ctx.message.channel,embed=em)
             else:
                 settings = self.settings[guild.id]
                 t = TriviaSession(self.bot, trivia_list, message, settings)
@@ -150,7 +150,7 @@ class Trivia:
         else:
             em = discord.Embed(color=ctx.message.author.color, description="Trivia has already started in this channel.")
             em.set_author(name="OOPS!", icon_url="http://bit.ly/2qlsl5I")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
 
     @trivia.group(name="stop", pass_context=True, no_pm=True)
     async def trivia_stop(self, ctx):
@@ -171,11 +171,11 @@ class Trivia:
             else:
                 em = discord.Embed(color=ctx.message.author.color, description="You are not allowed to do that.")
                 em.set_author(name="Uh-oh!", icon_url="http://bit.ly/2qlsl5I")
-                await self.bot.send_message(ctx.message.channel,embed=em)
+                await ctx.send(ctx.message.channel,embed=em)
         else:
             em = discord.Embed(color=ctx.message.author.color, description="There wasn't any trivia going in this channel.")
             em.set_author(name="Uh-oh!", icon_url="http://bit.ly/2qlsl5I")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
 
     @trivia.group(name="list", pass_context=True)
     async def trivia_list(self, ctx):
@@ -192,13 +192,13 @@ class Trivia:
                 em = discord.Embed(color=ctx.message.author.color, description=msg)
                 em.set_author(name="Available trivia lists:", icon_url="http://bit.ly/2rnwE4T")
                 em.set_footer(text= "To start a round of trivia type *trivia <listname>")
-                await self.bot.send_message(ctx.message.channel,embed=em)
+                await ctx.send(ctx.message.channel,embed=em)
             else:
                 await self.bot.whisper(msg)
         else:
             em = discord.Embed(color=ctx.message.author.color, description="There are no trivia lists available.")
             em.set_author(name="Uh-oh!", icon_url="http://bit.ly/2qlsl5I")
-            await self.bot.send_message(ctx.message.channel,embed=em)
+            await ctx.send(ctx.message.channel,embed=em)
 
 
     def parse_trivia_list(self, filename):
@@ -314,7 +314,7 @@ class TriviaSession():
         if match:
             em.set_image(url=match.group(0))
         em.set_author(name=msg, icon_url="http://bit.ly/2qogYtY")
-        await self.bot.send_message(ctx.message.channel,embed=em)
+        await ctx.send(ctx.message.channel,embed=em)
 
         while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= self.settings["DELAY"]:
             if abs(self.timeout - int(time.perf_counter())) >= self.settings["TIMEOUT"]:
@@ -376,7 +376,7 @@ class TriviaSession():
             self.status = "correct answer"
             self.scores[message.author] += 1
             msg = "You got it {}! **+1** to you!".format(message.author.name)
-            await self.bot.send_message(message.channel, msg)
+            await ctx.send(message.channel, msg)
 
 
 def check_folders():
