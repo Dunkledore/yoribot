@@ -25,7 +25,6 @@ initial_extensions = (
     'cogs.hangman',
     'cogs.rate',
     'cogs.whoplays',
-    'cogs.catsanddogs',
     'cogs.meta',
     'cogs.welcome',
     'cogs.mod',
