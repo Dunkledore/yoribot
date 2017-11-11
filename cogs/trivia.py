@@ -154,7 +154,8 @@ class Trivia:
 
     @commands.command(pass_context=True, no_pm=True)
     async def triviastop(self, ctx):
-        author = ctx.message.author
+        await session.end_game()
+"""        author = ctx.message.author
         guild = author.guild
         admin_role = self.bot.settings.get_guild_admin(guild)
         mod_role = self.bot.settings.get_guild_mod(guild)
@@ -175,7 +176,7 @@ class Trivia:
         else:
             em = discord.Embed(color=ctx.message.author.color, description="There wasn't any trivia going in this channel.")
             em.set_author(name="Uh-oh!", icon_url="http://bit.ly/2qlsl5I")
-            await ctx.send(embed=em)
+            await ctx.send(embed=em)"""
 
     @trivia.group(name="list", pass_context=True)
     async def trivia_list(self, ctx):
