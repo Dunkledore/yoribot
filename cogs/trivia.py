@@ -348,7 +348,7 @@ class TriviaSession():
         t = "+ Results: \n\n"
         for user, score in self.scores.most_common():
             t += "+ {}\t{}\n".format(user, score)
-        await ctx.send(box(t, lang="diff"))
+        await message.channel.send(box(t, lang="diff"))
 
     async def check_answer(self, message):
         if message.author == self.bot.user:
