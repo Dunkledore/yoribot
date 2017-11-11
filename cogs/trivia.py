@@ -344,7 +344,7 @@ class TriviaSession():
             if not self.status == "stop":
                 await self.new_question(ctx)
 
-    async def send_table(self):
+    async def send_table(self, ctx):
         t = "+ Results: \n\n"
         for user, score in self.scores.most_common():
             t += "+ {}\t{}\n".format(user, score)
