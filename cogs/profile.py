@@ -61,6 +61,7 @@ class Profile:
 		query = "INSERT INTO test (values) VALUES ($1)"
 		mylist = ["name","value"]
 		await ctx.db.execute(query, mylist)
+		await ctx.send("done")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
