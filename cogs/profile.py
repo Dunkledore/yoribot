@@ -37,7 +37,7 @@ class Profile:
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def addfield(self, ctx, name=None, *, value=None):
+	async def profileadd(self, ctx, name=None, *, value=None):
 		"""Adds an embed field onto the profile message"""
 		
 		if (name is None) or (value is None):
@@ -56,7 +56,7 @@ class Profile:
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def removefield(self, ctx, name=None):
+	async def profileremove(self, ctx, name=None):
 		"""Removes and embed field from the profile message"""
 
 		if name is None:
