@@ -76,7 +76,7 @@ class Profile:
 			await ctx.send('Field Removed')
 
 def setup(bot):
-    bot.add_cog(Welcome(bot))
+    bot.add_cog(Profile(bot))
 
 
 
