@@ -339,7 +339,7 @@ class TriviaSession():
                 self.scores[self.bot.user] += 1
             self.current_line = None
             await ctx.send(msg)
-            await message.channel.send()
+            await ctx.send()
             await asyncio.sleep(3)
             if not self.status == "stop":
                 await self.new_question(ctx)
@@ -376,7 +376,7 @@ class TriviaSession():
             self.status = "correct answer"
             self.scores[message.author] += 1
             msg = "You got it {}! **+1** to you!".format(message.author.name)
-            await ctx.send(message.channel, msg)
+            await ctx.send(msg)
 
 
 def check_folders():
