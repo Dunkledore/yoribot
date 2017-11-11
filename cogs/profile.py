@@ -58,6 +58,7 @@ class Profile:
 	async def arraytest(self, ctx):
 		"""Adds an embed field onto the profile message"""
 		
+		await ctx.sdnd("doing")
 		query = "INSERT INTO test (values) VALUES ($1)"
 		mylist = ["name","value"]
 		await ctx.db.execute(query, mylist)
