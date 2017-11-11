@@ -152,8 +152,8 @@ class Trivia:
             em.set_author(name="OOPS!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @trivia.group(pass_context=True, no_pm=True)
-    async def trivia_stop(self, ctx):
+    @commands.command(pass_context=True, no_pm=True)
+    async def triviastop(self, ctx):
         author = ctx.message.author
         guild = author.guild
         admin_role = self.bot.settings.get_guild_admin(guild)
