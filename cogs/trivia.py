@@ -156,6 +156,7 @@ class Trivia:
     async def triviastop(self, ctx):
         session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game()
+
 """        author = ctx.message.author
         guild = author.guild
         admin_role = self.bot.settings.get_guild_admin(guild)
