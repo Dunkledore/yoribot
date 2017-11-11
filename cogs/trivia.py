@@ -154,6 +154,7 @@ class Trivia:
 
     @commands.command(pass_context=True, no_pm=True)
     async def triviastop(self, ctx):
+        session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game()
 """        author = ctx.message.author
         guild = author.guild
