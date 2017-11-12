@@ -197,7 +197,13 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Asia", ctx.message.author.id)
 
+	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	async def profiledelete(self, ctx):
+		"""Removes and embed field from the profile message"""
 
+		query="DELETE FROM profile WHERE user_id = $1"
+		await ctx.db.execute(query, ctx.author.id)
+		await ctx.send("Profile Deleted")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	async def profileremove(self, ctx, name=None):
