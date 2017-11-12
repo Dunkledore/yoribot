@@ -19,6 +19,7 @@ class Profile:
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	async def profile(self, ctx, user: discord.Member=None):
 
+		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		query = "SELECT * FROM profile WHERE user_id = $1;"
 		if user is None:
 			profile = await ctx.db.fetch(query, ctx.author.id)
@@ -30,8 +31,8 @@ class Profile:
 			embed.set_thumbnail(url=ctx.message.author.avatar_url)
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
-			
-		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
+
+	
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
