@@ -18,6 +18,7 @@ class Profile:
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	async def profile(self, ctx, user: discord.Member=None):
+		"""Displays the profile of a mentioned user or the caller if no mention is provided"""
 
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		query = "SELECT * FROM profile WHERE user_id = $1;"
@@ -72,6 +73,21 @@ class Profile:
 				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 				await ctx.db.execute(query, fields, ctx.message.author.id)
 				await ctx.send("Field added")
+
+	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	async def age(self, ctx, age: int):
+		"""Sets the age of the caller"""
+
+		query = "SELECT * FROM Profile WHERE user_id = $1"
+		results = await ctx.db.fetch(query, ctx.message.author.id)
+		if not results:
+			query = "INSERT INTO Profile (guild_id, user_id, age) VALUES ($1, $2, $3)"
+			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, age)
+			await ctx.send("Age Set")
+		else:
+			query = "UPDATE Profile SET age = $1 WHERE user_id = $2"
+			await ctx.db.execute(query, age, ctx.message.author.id)
+			await ctx.send("Age Set")
 
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
