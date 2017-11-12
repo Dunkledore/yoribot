@@ -26,7 +26,7 @@ class Profile:
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
-		embed.add_field(name='Age', value=profile[0]['age'])
+		embed.add_field(name='Age', value= profile[0]['age'] or "Nont Provided")
 
 		for fields in profile[0]['fields']:
 			embed.add_field(name=fields[0], value=fields[1].format(ctx.message.author))
