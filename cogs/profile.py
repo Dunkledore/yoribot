@@ -17,7 +17,6 @@ class Profile:
 		self.bot = bot
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
 	async def profile(self, ctx, user: discord.Member=None):
 
 		query = "SELECT * FROM profile WHERE user_id = $1;"
@@ -43,7 +42,6 @@ class Profile:
 		await ctx.send(embed=embed)
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
 	async def profileadd(self, ctx, name=None, *, value=None):
 		"""Adds an embed field onto the profile message"""
 		
@@ -72,7 +70,6 @@ class Profile:
 
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
 	async def profileremove(self, ctx, name=None):
 		"""Removes and embed field from the profile message"""
 
