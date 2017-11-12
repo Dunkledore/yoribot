@@ -45,7 +45,10 @@ class Profile:
 			return
 		else:
 			query = "SELECT * FROM Profile WHERE user_id = $1"
-			results = await ctx.db.fetch(query, ctx.message.author.id)
+			try:
+				results = await ctx.db.fetch(query, ctx.message.author.id)
+			except Exception as e:
+				await ctx.send(e)
 			if results is None:
 				fields = [[name,value]]
 				query = "INSERT INTO Profile (guild_id, user_id, fields) VALUES ($1, $2, $3)"
