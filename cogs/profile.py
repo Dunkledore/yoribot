@@ -83,7 +83,7 @@ class Profile:
 				fields = results[0][7]
 				for field in fields:
 					if field[0] == name:
-						await ctx.send(fields+".remove(" + field + ")")
+						await ctx.send(str(fields)+".remove(" + str(field) + ")")
 						fields = fields.remove(field)
 						query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 						await ctx.db.execute(query, fields, ctx.message.author.id)
