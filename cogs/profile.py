@@ -128,11 +128,9 @@ class Profile:
 		if not results:
 			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "North America")
-			await ctx.send("Region Set")
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "North America", ctx.message.author.id)
-			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['europe'])
 	async def Europe(self, ctx):
@@ -143,11 +141,9 @@ class Profile:
 		if not results:
 			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "Europe")
-			await ctx.send("Region Set")
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Europe", ctx.message.author.id)
-			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['africa'])
 	async def Africa(self, ctx):
@@ -158,11 +154,9 @@ class Profile:
 		if not results:
 			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "Africa")
-			await ctx.send("Region Set")
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Africa", ctx.message.author.id)
-			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['oceania'])
 	async def Oceania(self, ctx):
@@ -173,11 +167,9 @@ class Profile:
 		if not results:
 			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "Oceania")
-			await ctx.send("Region Set")
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Oceania", ctx.message.author.id)
-			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['southamerica'])
 	async def SouthAmerica(self, ctx):
@@ -188,11 +180,9 @@ class Profile:
 		if not results:
 			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "South America")
-			await ctx.send("Region Set")
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "South America", ctx.message.author.id)
-			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['asia'])
 	async def Asia(self, ctx):
@@ -203,11 +193,9 @@ class Profile:
 		if not results:
 			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "Asia")
-			await ctx.send("Region Set")
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Asia", ctx.message.author.id)
-			await ctx.send("Region Set")
 
 
 
