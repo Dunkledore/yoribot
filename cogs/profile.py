@@ -64,22 +64,6 @@ class Profile:
 				await ctx.send("Field added")
 
 
-
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
-	async def arraytest(self, ctx):
-		"""Adds an embed field onto the profile message"""
-		
-		await ctx.send("doing")
-		query = "INSERT INTO test (values) VALUES ($1)"
-		mylist = [ctx.message.content,"value"]
-		await ctx.db.execute(query, mylist)
-		await ctx.send("done")
-		query = "SELECT * FROM test"
-		rows = await ctx.db.fetch(query)
-		for r in rows:
-			await ctx.send(r)
-
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
 	async def profileremove(self, ctx, name=None):
@@ -89,9 +73,23 @@ class Profile:
 			await ctx.send('Please enter a field to remove')
 			return
 		else:
-			query = "DELETE FROM profile WHERE guild_id =$1 AND name = $2"
-			await ctx.db.execute(query, ctx.guild.id, name)
-			await ctx.send('Field Removed')
+			query = "SELECT * FROM Profile WHERE user_id = $1"
+			results = await ctx.db.fetch(query, ctx.message.author.id)
+			if not results:
+				await ctx.send("You have not made your profile yet")
+			elif not results[0][7]:
+				await ctx.send("You have no fields to remove")
+			else:
+				fields = results[0][7]
+				for field in fields:
+					if field[0] == name:
+						fields = fields.remove(field)
+						query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
+						await ctx.db.execute(query, fields, ctx.message.author.id)
+						await ctx.send("Field Removed")
+						return
+				await ctx.send("No field with that name")
+
 
 def setup(bot):
     bot.add_cog(Profile(bot))
