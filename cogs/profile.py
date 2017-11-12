@@ -23,12 +23,13 @@ class Profile:
 		query = "SELECT * FROM profile WHERE user_id = $1;"
 		if user is None:
 			profile = await ctx.db.fetch(query, ctx.author.id)
-			embed.set_author(name=user.name, icon_url=ctx.message.guild.icon_url)
-			embed.set_thumbnail(url=user.avatar_url)
-		else:
-			profile = await ctx.db.fetch(query, user.id)
 			embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 			embed.set_thumbnail(url=ctx.message.author.avatar_url)
+		else:
+			profile = await ctx.db.fetch(query, user.id)
+			embed.set_author(name=user.name, icon_url=ctx.message.guild.icon_url)
+			embed.set_thumbnail(url=user.avatar_url)
+
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
 
