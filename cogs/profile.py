@@ -51,6 +51,17 @@ class Profile:
 				query = "INSERT INTO Profile (guild_id, user_id, fields) VALUES ($1, $2, $3)"
 				await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, fields)
 				await ctx.send("Field Added")
+			elif not results[7]:
+				fields = [[name,value]]
+				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
+				await ctx.db.execute(query, fields, ctx.message.author.id)
+			elif:
+				fields = results[7]
+				fields.append([name,value])
+				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
+				await ctx.db.execute(query, fields, ctx.message.author.id)
+
+
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
