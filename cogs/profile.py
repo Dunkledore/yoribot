@@ -119,6 +119,24 @@ class Profile:
 			await ctx.db.execute(query, sexuality, ctx.message.author.id)
 			await ctx.send("Sexuality Set")
 
+	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	async def NorthAmerica(self, ctx):
+		"""Sets the age of the caller"""
+
+		query = "SELECT * FROM Profile WHERE user_id = $1"
+		results = await ctx.db.fetch(query, ctx.message.author.id)
+		if not results:
+			query = "INSERT INTO Profile (guild_id, user_id, region) VALUES ($1, $2, $3)"
+			await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, "North America")
+			await ctx.send("Region Set")
+		else:
+			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
+			await ctx.db.execute(query, "North America", ctx.message.author.id)
+			await ctx.send("Region Set")
+
+
+
+
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	async def profileremove(self, ctx, name=None):
