@@ -28,7 +28,7 @@ class Profile:
 		await ctx.send(profile)
 
 		for fields in profile[0][7]:
-			embed.add_field(name=fields[2], value=fields[3].format(ctx.message.author))
+			embed.add_field(name=fields[0], value=fields[1].format(ctx.message.author))
 
 
 		await ctx.send(embed=embed)
