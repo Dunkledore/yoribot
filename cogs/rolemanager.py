@@ -60,7 +60,7 @@ class RoleManager:
                 await message.channel.send(roleinfo)
                 if roleinfo is None:
                     return
-                role = discord.utils.get(message.guild.roles, id=roleinfo[1])
+                role = discord.utils.get(message.guild.roles, id=int(roleinfo[1]))
                 await message.channel.send(role)
                 await message.author.add_roles(role)
                 em = discord.Embed(color=message.author.color, description="The role has been assigned to you!")
