@@ -81,7 +81,9 @@ class Profile:
 				await ctx.send("You have no fields to remove")
 			else:
 				fields = results[0][7]
+				await ctx.send(fields)
 				for field in fields:
+					await ctx.send(field)
 					if field[0] == name:
 						fields = fields.remove(field)
 						query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
