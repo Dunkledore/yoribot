@@ -26,6 +26,8 @@ class Profile:
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
+		embed.add_field(name='Age', value=profile[0]['age'])
+
 		for fields in profile[0]['fields']:
 			embed.add_field(name=fields[0], value=fields[1].format(ctx.message.author))
 
@@ -48,13 +50,13 @@ class Profile:
 				query = "INSERT INTO Profile (guild_id, user_id, fields) VALUES ($1, $2, $3)"
 				await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, fields)
 				await ctx.send("Field Added")
-			elif not results[0][7]:
+			elif not results[0]['fields']:
 				fields = [[name,value]]
 				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 				await ctx.db.execute(query, fields, ctx.message.author.id)
 				await ctx.send("Field added")
 			else:
-				fields = results[0][7]
+				fields = results[0]['fields']
 				fields.append([name,value])
 				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 				await ctx.db.execute(query, fields, ctx.message.author.id)
@@ -74,10 +76,10 @@ class Profile:
 			results = await ctx.db.fetch(query, ctx.message.author.id)
 			if not results:
 				await ctx.send("You have not made your profile yet")
-			elif not results[0][7]:
+			elif not results[0]['fields']:
 				await ctx.send("You have no fields to remove")
 			else:
-				fields = results[0][7]
+				fields = results[0]['fields']
 				for field in fields:
 					if field[0] == name:
 						fields.remove(field)
