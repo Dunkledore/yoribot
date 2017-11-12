@@ -19,14 +19,14 @@ class Profile:
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
 	async def profile(self, ctx):
-		
+
 		query = "SELECT * FROM profile WHERE user_id = $1;"
 		profile = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
-		for fields in profile:
+		for fields in profile[0][7]:
 			embed.add_field(name=fields[2], value=fields[3].format(ctx.message.author))
 
 
