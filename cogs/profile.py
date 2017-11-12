@@ -46,16 +46,16 @@ class Profile:
 		else:
 			query = "SELECT * FROM Profile WHERE user_id = $1"
 			results = await ctx.db.fetch(query, ctx.message.author.id)
-			await ctx.send(results[0])
 			if not results:
 				fields = [[name,value]]
 				query = "INSERT INTO Profile (guild_id, user_id, fields) VALUES ($1, $2, $3)"
 				await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, fields)
 				await ctx.send("Field Added")
-			elif not results[7]:
+			elif not results[0][7]:
 				fields = [[name,value]]
 				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 				await ctx.db.execute(query, fields, ctx.message.author.id)
+				await ctx.send("added")
 			else:
 				fields = results[7]
 				fields.append([name,value])
