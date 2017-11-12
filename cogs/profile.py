@@ -23,7 +23,7 @@ class Profile:
 		await self.show_welcome_message(ctx)
 
 	async def show_profile(self, ctx):
-		query = "SELECT * FROM profile WHERE guild_id = $1;"
+		query = "SELECT * FROM profile WHERE user_id = $1;"
 		profile = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
@@ -44,15 +44,13 @@ class Profile:
 			await ctx.send('Please enter both a field and a value')
 			return
 		else:
-			query = "INSERT INTO profile (guild_id, name, value) VALUES ($1, $2, $3)"
-		
-		try:
-			await ctx.db.execute(query, ctx.guild.id, name, value)
-		except Exception as e:
-			await ctx.send('Field could not be created')
-			await ctx.send(e)
-		else:
-			await ctx.send(f'Field {name} successfully created.')
+			query = "SELECT * FROM Profile WHERE user_id = $1"
+			results = await ctx.db.fetchone(query, ctx.message.author.id)
+			if results is None:
+				fields = [[name,value]]
+				query = "INSERT INTO Profile (guild_id, user_id, fields) VALUES ($1, $2, $3)"
+				await ctx.db.execute(query, ctx.guild.id, ctx.message.author.id, fields)
+				await ctx.send("Field Added")
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
