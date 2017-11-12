@@ -18,10 +18,13 @@ class Profile:
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def profile(self, ctx):
+	async def profile(self, ctx, user: discord.Member=None):
 
 		query = "SELECT * FROM profile WHERE user_id = $1;"
-		profile = await ctx.db.fetch(query, ctx.author.id)
+		if user is None:
+			profile = await ctx.db.fetch(query, ctx.author.id)
+		else:
+			profile = await ctx.db.fetch(query, ctx.author.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
