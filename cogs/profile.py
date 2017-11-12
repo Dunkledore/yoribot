@@ -46,7 +46,9 @@ class Profile:
 		else:
 			query = "SELECT * FROM Profile WHERE user_id = $1"
 			try:
+				await ctx.send("trying")
 				results = await ctx.db.fetch(query, ctx.message.author.id)
+				await ctx.send("done")
 			except Exception as e:
 				await ctx.send(e)
 			if results is None:
