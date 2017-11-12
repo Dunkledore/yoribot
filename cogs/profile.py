@@ -21,7 +21,7 @@ class Profile:
 	async def profile(self, ctx):
 
 		query = "SELECT * FROM profile WHERE user_id = $1;"
-		profile = await ctx.db.fetch(query, ctx.guild.id)
+		profile = await ctx.db.fetch(query, ctx.author.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
