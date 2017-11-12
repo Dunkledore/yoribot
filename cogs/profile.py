@@ -119,7 +119,7 @@ class Profile:
 			await ctx.db.execute(query, sexuality, ctx.message.author.id)
 			await ctx.send("Sexuality Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['northamerica'])
 	async def NorthAmerica(self, ctx):
 		"""Sets the region of the caller to North America"""
 
@@ -134,7 +134,7 @@ class Profile:
 			await ctx.db.execute(query, "North America", ctx.message.author.id)
 			await ctx.send("Region Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['europe'])
 	async def Europe(self, ctx):
 		"""Sets the region of the caller to Europe"""
 
@@ -149,7 +149,7 @@ class Profile:
 			await ctx.db.execute(query, "Europe", ctx.message.author.id)
 			await ctx.send("Region Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['africa'])
 	async def Africa(self, ctx):
 		"""Sets the region of the caller to Africa"""
 
@@ -164,7 +164,7 @@ class Profile:
 			await ctx.db.execute(query, "Africa", ctx.message.author.id)
 			await ctx.send("Region Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['oceania'])
 	async def Oceania(self, ctx):
 		"""Sets the region of the caller to Oceania"""
 
@@ -179,7 +179,7 @@ class Profile:
 			await ctx.db.execute(query, "Oceania", ctx.message.author.id)
 			await ctx.send("Region Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['southamerica'])
 	async def SouthAmerica(self, ctx):
 		"""Sets the region of the caller to South America"""
 
@@ -194,7 +194,7 @@ class Profile:
 			await ctx.db.execute(query, "South America", ctx.message.author.id)
 			await ctx.send("Region Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['asia'])
 	async def Asia(self, ctx):
 		"""Sets the region of the caller to Asia"""
 
