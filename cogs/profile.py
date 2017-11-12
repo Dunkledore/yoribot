@@ -55,7 +55,7 @@ class Profile:
 				fields = [[name,value]]
 				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 				await ctx.db.execute(query, fields, ctx.message.author.id)
-			elif:
+			else:
 				fields = results[7]
 				fields.append([name,value])
 				query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
