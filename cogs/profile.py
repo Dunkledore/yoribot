@@ -86,6 +86,7 @@ class Profile:
 					await ctx.send(field)
 					if field[0] == name:
 						fields = fields.remove(field)
+						await ctx.send(fields)
 						query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 						await ctx.db.execute(query, fields, ctx.message.author.id)
 						await ctx.send("Field Removed")
