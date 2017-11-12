@@ -24,7 +24,7 @@ class Profile:
 		if user is None:
 			profile = await ctx.db.fetch(query, ctx.author.id)
 		else:
-			profile = await ctx.db.fetch(query, ctx.author.id)
+			profile = await ctx.db.fetch(query, user.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
