@@ -41,8 +41,9 @@ class Profile:
 		embed.add_field(name='Gender', value= profile[0]['gender'] or "Not Provided")
 		embed.add_field(name='Sexuality', value= profile[0]['sexuality'] or "Not Provided")
 
-		for fields in profile[0]['fields']:
-			embed.add_field(name=fields[0], value=fields[1].format(ctx.message.author))
+		if fields:
+			for fields in profile[0]['fields']:
+				embed.add_field(name=fields[0], value=fields[1].format(ctx.message.author))
 
 
 		await ctx.send(embed=embed)
