@@ -19,10 +19,7 @@ class Profile:
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
 	async def profile(self, ctx):
-		"""Will send the welcome message as if the caller just joined"""
-		await self.show_welcome_message(ctx)
-
-	async def show_profile(self, ctx):
+		
 		query = "SELECT * FROM profile WHERE user_id = $1;"
 		profile = await ctx.db.fetch(query, ctx.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
@@ -83,7 +80,6 @@ class Profile:
 				fields = results[0][7]
 				for field in fields:
 					if field[0] == name:
-						await ctx.send(str(fields)+".remove(" + str(field) + ")")
 						fields.remove(field)
 						query = "UPDATE Profile SET fields = $1 WHERE user_id = $2"
 						await ctx.db.execute(query, fields, ctx.message.author.id)
