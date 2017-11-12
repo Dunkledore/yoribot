@@ -33,9 +33,7 @@ class Profile:
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
 
-	
-		embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
-		embed.set_thumbnail(url=ctx.message.author.avatar_url)
+
 
 		embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
 		embed.add_field(name='Region', value= profile[0]['region'] or "Not Provided")
