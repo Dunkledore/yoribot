@@ -153,7 +153,8 @@ class Music:
                 await ctx.send(message)
         query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
         await ctx.db.execute(query, ctx.guild.id, searchurl)
-        await ctx.send("Added to queue: " + searchurl)
+        
+        await ctx.send("Added to queue: " + json['items'][0]['snippet']['title'])
     
     @commands.command()
     async def clearqueue(self, ctx):
