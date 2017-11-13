@@ -144,7 +144,7 @@ class Music:
             print("1")
             coro = ctx.send("Playing Next Song")
             print("2")
-            fut = asyncio.run_coroutine_threadsafe(coro, client.loop)
+            fut = asyncio.run_coroutine_threadsafe(coro, self.bot.loop)
             print("3")
             fut.result()
             print("4")
