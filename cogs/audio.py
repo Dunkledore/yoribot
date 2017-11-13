@@ -166,7 +166,7 @@ class Music:
             player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
             ctx.voice_client.play(player, after=play_next)
             query = "DELETE FROM music_queues WHERE id = $1"
-            await ctx.db.execute(query, id)
+            await self.bot.pool.execute(query, id)
             return
 
         
