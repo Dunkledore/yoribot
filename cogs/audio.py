@@ -137,12 +137,15 @@ class Music:
         await ctx.send("Added to queue: " + searchurl)
     
     @commands.command()
-    async def play(self, ctx, *, searchurl=None):
+    async def play(self, ctx, *, searchurl=None)
+        await self.play_command(ctx, searchurl=searchurl)
+
+    async def play_command(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
 
         def play_next(error):
             try:
-                coro = self.play(ctx)
+                coro = self.play_command(ctx)
                 fut = asyncio.run_coroutine_threadsafe(coro, self.bot.loop)
                 fut.result()
             except Exception as e:
