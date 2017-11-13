@@ -168,6 +168,12 @@ class Music:
     async def play(self, ctx, *, searchurl=None):
         await self.play_command(ctx, searchurl=searchurl)
 
+    @commands.command()
+    async def skip(self, ctx, *, searchurl=None):
+        if ctx.voice_client:
+            ctx.voice_client.stop()    
+            await self.play_command(ctx, searchurl=searchurl)
+
     async def play_command(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
 
