@@ -73,6 +73,7 @@ class Music:
         """Streams from a url (almost anything youtube_dl supports)"""
        
         if searchurl is None:
+            print("doing")
             query = "SELECT * FROM music_queues WHERE guildid = $1"
             fetched = await ctx.db.fetch(query, ctx.guild.id)
             results = 'Coming Up \n'
