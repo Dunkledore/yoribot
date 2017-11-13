@@ -140,7 +140,10 @@ class Music:
     async def play(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
 
-        async def play_next(error):
+        def play_next(error):
+            coro = ctx.send("Playing Next Song")
+            asyncio.run_coroutine_threadsafe(coro, client.loop)
+            fut.result()
             
 
         if ctx.voice_client is None:
