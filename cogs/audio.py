@@ -75,14 +75,17 @@ class Music:
         if searchurl is None:
             query = "SELECT * FROM music_queues WHERE guildid = $1"
             fetched = await ctx.db.fetch(query, ctx.guild.id)
-            results = 'Coming Up \n'
+            results = 'Coming Up: \n'
             counter = 1
-            for x in fetched:
-                api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-                gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
-                json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                results += str(counter) + ". " + json['items'][0]['snippet']['title'] + '\n'
-                counter += 1
+            if fetched:
+                for x in fetched:
+                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
+                    json = simplejson.loads(urllib.request.urlopen(gurl).read())
+                    results += str(counter) + ". " + json['items'][0]['snippet']['title'] + '\n'
+                    counter += 1
+            else:
+                results += "Nothing in queue"
             await ctx.send(results)
             return   
 
