@@ -79,7 +79,7 @@ class Music:
             results = 'Coming Up \n'
             for x in fetched:
                 api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-                gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=',)+"&key="+api_key+"&part=contentDetails"
+                gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
                 json = simplejson.loads(urllib.request.urlopen(gurl).read())
                 results += json['items'][0]['snippet']['title'] + '\n'
 
