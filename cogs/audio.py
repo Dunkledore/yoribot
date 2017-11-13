@@ -137,7 +137,7 @@ class Music:
         await ctx.send("Added to queue: " + searchurl)
     
     @commands.command()
-    async def play(self, ctx, *, searchurl=None)
+    async def play(self, ctx, *, searchurl=None):
         await self.play_command(ctx, searchurl=searchurl)
 
     async def play_command(self, ctx, *, searchurl=None):
