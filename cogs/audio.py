@@ -153,7 +153,9 @@ class Music:
                 await ctx.send(message)
         query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
         await ctx.db.execute(query, ctx.guild.id, searchurl)
-        
+        api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+        gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
+        json = simplejson.loads(urllib.request.urlopen(gurl).read())
         await ctx.send("Added to queue: " + json['items'][0]['snippet']['title'])
     
     @commands.command()
