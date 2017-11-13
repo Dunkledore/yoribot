@@ -160,7 +160,7 @@ class Music:
 
         if(searchurl == None):
             query = "SELECT * FROM music_queues WHERE guildid = $1"
-            queue = await ctx.db.fetch(query,ctx.guild.id)
+            queue = await self.bot.pool.fetch(query,ctx.guild.id)
             searchurl = queue[0]['songurl']
             id = queue[0]['id']
             player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
