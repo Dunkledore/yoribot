@@ -137,6 +137,12 @@ class Music:
         await ctx.send("Added to queue: " + searchurl)
     
     @commands.command()
+    async def clearqueue(self, ctx):
+        query = "DELETE FROM music_queues WHERE guildid = $1"
+        await ctx.db.execute(query, ctx.guild.id)
+        await ctx.send("Queue Cleared")
+
+    @commands.command()
     async def play(self, ctx, *, searchurl=None):
         await self.play_command(ctx, searchurl=searchurl)
 
