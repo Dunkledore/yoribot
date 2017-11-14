@@ -58,6 +58,15 @@ class Searches:
             img = json.loads(await response.text())["url"]
             await ctx.send(img)
 
+    @commands.command()
+    async def anime(self, ctx, *text):
+        """Let me just Google that for you..."""
+
+        #Your code will go here
+        text = " ".join(text)
+        query=text.replace(" ", "%20")
+        await ctx.send("http://lmgtfy.com/?="+query)
+
 def setup(bot):
     n = Searches(bot)
     bot.add_cog(n)
