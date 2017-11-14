@@ -147,23 +147,23 @@ class AnimeList:
         await ctx.send(embed=embed)
 
     async def owner_set(self, ctx):
-        await self.bot.whisper("Type your user name. You can reply in this private msg")
+        await ctx.author.send("Type your user name. You can reply in this private msg")
         username = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
 
         if username is None:
-            return await self.bot.whisper("Username and Password setup timed out.")
+            return await ctx.author.send("Username and Password setup timed out.")
 
-        await self.bot.whisper("Ok thanks. Now what is your password?")
+        await ctx.author.send("Ok thanks. Now what is your password?")
         password = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
 
         if password is None:
-            return await self.bot.whisper("Username and Password setup timed out.")
+            return await ctx.author.send("Username and Password setup timed out.")
 
         if await self.credential_verfication(username.content, password.content):
             self.credentials["Password"] = password.content
             self.credentials["Username"] = username.content
             dataIO.save_json(self.file_path, self.credentials)
-            await self.bot.whisper("Setup complete. Account details added.\nTry searching for "
+            await ctx.author.send("Setup complete. Account details added.\nTry searching for "
                                    "an anime using {}anime".format(ctx.prefix))
             return
 
