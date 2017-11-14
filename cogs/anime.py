@@ -244,7 +244,7 @@ class AnimeList:
                 await ctx.send(msg)
                 def check(m):
                 
-                return m.content.isdigit() and int(m.content) in range(1, len(root) + 1) and ctx.author.id == m.author.id
+                    return m.content.isdigit() and int(m.content) in range(1, len(root) + 1) and ctx.author.id == m.author.id
 
                 resp = await self.bot.wait_for('message', timeout=15, check=check)
                 if resp is None:
