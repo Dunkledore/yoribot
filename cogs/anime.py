@@ -163,7 +163,7 @@ class AnimeList:
         if password is None:
             return await ctx.author.send("Username and Password setup timed out.")
 
-        if await self.credential_verfication(username.content, password.content, ctx):
+        if await self.credential_verfication(username.content, password.content, ctx.author):
             self.credentials["Password"] = password.content
             self.credentials["Username"] = username.content
             dataIO.save_json(self.file_path, self.credentials)
@@ -205,7 +205,7 @@ class AnimeList:
         except KeyError:
             return name.name
 
-    async def credential_verfication(self, username, password, ctx):
+    async def credential_verfication(self, username, password, author):
         auth = aiohttp.BasicAuth(login=username, password=password)
         url = "https://myanimelist.net/api/account/verify_credentials.xml"
         with aiohttp.ClientSession(auth=auth) as session:
@@ -216,11 +216,11 @@ class AnimeList:
                     return True
 
                 if status == 401:
-                    await ctx.send("Username and Password is incorrect.")
+                    await author.send("Username and Password is incorrect.")
                     return False
 
                 if status == 403:
-                    await ctx.send("Too many failed login attempts. Try putting in the"
+                    await author.send("Too many failed login attempts. Try putting in the"
                                        "correct credentials after some time has passed.")
                     return False
 
