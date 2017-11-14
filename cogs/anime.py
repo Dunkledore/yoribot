@@ -148,8 +148,8 @@ class AnimeList:
 
     async def owner_set(self, ctx):
         
-            def check(m):
-                return m.author.id == ctx.message.author.id
+        def check(m):
+            return m.author.id == ctx.message.author.id
 
         await ctx.author.send("Type your user name. You can reply in this private msg")
         username = await self.bot.wait_for('message', timeout=30.0, check=check)
