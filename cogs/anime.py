@@ -11,7 +11,6 @@ from xml.etree import ElementTree as ET
 import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
-from __main__ import send_cmd_help
 
 # Username and Password is obtained from myanime list website
 # You need to create an account there and input the information below
@@ -48,9 +47,6 @@ class AnimeList:
     @commands.group(pass_context=True)
     async def mal(self, ctx):
         """MAL Search Commands"""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @mal.command(name="anime", pass_context=True)
     async def _anime_mal(self, ctx, user: discord.Member=None):
