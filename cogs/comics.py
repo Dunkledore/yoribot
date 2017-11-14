@@ -9,7 +9,7 @@ try:
 except:
     hasSoup = False
 
-class Comics:
+class ComicsEmbed:
 
     async def xkcd():
         """Randomly retrieve and display a comic from xkcd"""
@@ -59,7 +59,7 @@ class Comics:
             return em
 
 
-class Funny:
+class Comics:
     """Get a funny comic"""
 
     def __init__(self, bot):
@@ -69,7 +69,7 @@ class Funny:
     async def xkcd(self, ctx):
         """Randomly retrieve and display a comic from xkcd"""
         try:
-            em = await Comics.xkcd()
+            em = await ComicsEmbed.xkcd()
             await ctx.send(embed = em)
         except:
             await ctx.send("Could not load comic")
@@ -79,7 +79,7 @@ class Funny:
     async def cnh(self, ctx):
         """Randomly retrieve and display a comic from Cyanide and Happiness"""
         try:
-            em = await Comics.cnh()
+            em = await ComicsEmbed.cnh()
             await ctx.send(embed = em)
         except:
             await ctx.send("Could not load comic")
@@ -89,26 +89,26 @@ class Funny:
     async def se(self, ctx):
         """Randomly retrieve and display a comic from Safely Endangered"""
         try:
-            em = await Comics.se()
+            em = await ComicsEmbed.se()
             await ctx.send(embed = em)
         except:
             await ctx.send("Could not load comic")
             raise
 
     @commands.command(aliases=['fr', "bored"])
-    async def funnyr(self, ctx):
+    async def comicr(self, ctx):
         """Randomly Retrieves a comic from one of the sources"""
         random.seed()
         rand = random.randint(0 , 2)
         try:
             if(rand == 0):
-                em = await Comics.cnh()
+                em = await ComicsEmbed.cnh()
                 await ctx.send(embed = em)
             elif(rand == 1):
-                em = await Comics.xkcd()
+                em = await ComicsEmbed.xkcd()
                 await ctx.send(embed = em)
             elif(rand == 2):
-                em = await Comics.se()
+                em = await ComicsEmbed.se()
                 await ctx.send(embed = em)
             else:
                 await ctx.send("Thats odd you shouldn't be seeing this")
@@ -119,7 +119,7 @@ class Funny:
 
 def setup(bot):
     if hasSoup:
-        n=Funny(bot)
+        n=Comics(bot)
         bot.add_cog(n)
     else:
         print("Install BeautifulSoup4 using pip install BeautifulSoup4")
