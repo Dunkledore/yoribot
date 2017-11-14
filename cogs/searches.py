@@ -54,7 +54,6 @@ class Searches:
             em.set_image(url=img)
             em.set_footer(text= "Random cat image from https://random.cat")
             await ctx.send(embed=em)
-            await ctx.send(img)
 
     @commands.command(pass_context=True, no_pm=True)
     async def woof(self, ctx: commands.Context):
@@ -62,6 +61,12 @@ class Searches:
 
         async with aiohttp.get(self.url_dog) as response:
             img = json.loads(await response.text())["url"]
+
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random dog picture", icon_url="http://bit.ly/2yEqy05")
+            em.set_image(url=img)
+            em.set_footer(text= "Random dog image from https://random.dog")
+            await ctx.send(embed=em)
             await ctx.send(img)
 
     @commands.command()
