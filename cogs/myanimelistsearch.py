@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-class MyAnimeListSearch:
+class Anime:
     """Commences a search on MyAnimeList"""
 
     def __init__(self, bot):
@@ -57,4 +57,4 @@ class MyAnimeListSearch:
         await ctx.send(" http://myanimelist.net/search/all?q="+query)
 
 def setup(bot):
-    bot.add_cog(MyAnimeListSearch(bot))
+    bot.add_cog(Anime(bot))
