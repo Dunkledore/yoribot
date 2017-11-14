@@ -65,7 +65,13 @@ class Searches:
         #Your code will go here
         text = " ".join(text)
         query=text.replace(" ", "%20")
-        await ctx.send("http://lmgtfy.com/?q="+query)
+        await ctx.send("Step 1 - Visit google.com")
+        await asyncio.sleep(1)
+        await ctx.send("Step 2 - Type your question")
+        await asyncio.sleep(1)
+        await ctx.send("Step 3 - Click the Button")
+        await asyncio.sleep(1)
+        await ctx.send("That's it! https://www.google.com/search?q="+query)
 
 def setup(bot):
     n = Searches(bot)
