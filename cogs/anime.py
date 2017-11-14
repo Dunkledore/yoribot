@@ -147,11 +147,12 @@ class AnimeList:
         await ctx.send(embed=embed)
 
     async def owner_set(self, ctx):
-        await ctx.author.send("Type your user name. You can reply in this private msg")
-        username = await self.bot.wait_for('message', timeout=15, author=author)
+        
+            def check(m):
+                return m.author.id == ctx.message.author.id
 
-        def check(m):
-            return m.author.id == ctx.author.id
+        await ctx.author.send("Type your user name. You can reply in this private msg")
+        username = await self.bot.wait_for('message', timeout=30.0, check=check)
 
         if username is None:
             return await ctx.author.send("Username and Password setup timed out.")
