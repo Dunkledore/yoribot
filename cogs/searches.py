@@ -67,7 +67,7 @@ class Searches:
         query=text.replace(" ", "%20")
         await ctx.send("Step 1 - Visit google.com")
         await asyncio.sleep(2)
-        await ctx.send("Step 2 - Type \""+query "\"")
+        await ctx.send("Step 2 - Type \""+ query +"\"")
         await asyncio.sleep(2)
         await ctx.send("Step 3 - Click the Button")
         await asyncio.sleep(2)
