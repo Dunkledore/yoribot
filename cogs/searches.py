@@ -67,7 +67,6 @@ class Searches:
             em.set_image(url=img)
             em.set_footer(text= "Random dog image from https://random.dog")
             await ctx.send(embed=em)
-            await ctx.send(img)
 
     @commands.command()
     async def lmgtfy(self, ctx, *text):
