@@ -65,7 +65,7 @@ class Searches:
         #Your code will go here
         text = " ".join(text)
         query=text.replace(" ", "%20")
-        await ctx.send("http://lmgtfy.com/?="+query)
+        await ctx.send("http://lmgtfy.com/?q="+query)
 
 def setup(bot):
     n = Searches(bot)
