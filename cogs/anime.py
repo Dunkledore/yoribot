@@ -150,11 +150,14 @@ class AnimeList:
         await ctx.author.send("Type your user name. You can reply in this private msg")
         username = await self.bot.wait_for('message', timeout=15, author=author)
 
+        def check(m):
+            return m.author.id = ctx.author.id
+
         if username is None:
             return await ctx.author.send("Username and Password setup timed out.")
 
         await ctx.author.send("Ok thanks. Now what is your password?")
-        password = await self.bot.wait_for('message', timeout=15, author=author)
+        password = await self.bot.wait_for('message', timeout=30.0, check=check)
 
         if password is None:
             return await ctx.author.send("Username and Password setup timed out.")
