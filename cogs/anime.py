@@ -151,7 +151,7 @@ class AnimeList:
         username = await self.bot.wait_for('message', timeout=15, author=author)
 
         def check(m):
-            return m.author.id = ctx.author.id
+            return m.author.id == ctx.author.id
 
         if username is None:
             return await ctx.author.send("Username and Password setup timed out.")
