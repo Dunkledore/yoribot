@@ -50,7 +50,7 @@ class Searches:
             img = json.loads(await response.text())["file"].replace("\\/","/")
 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
-            em.set_author(name="Random cat picture", icon_url="http://icons.iconarchive.com/icons/sonya/swarm/256/Cat-icon.png")
+            em.set_author(name="Random cat picture", icon_url="http://bit.ly/2ALFyKW")
             em.set_image(img)
             em.set_footer(text= "Random cat image from https://random.cat")
             await ctx.send(embed=em)
