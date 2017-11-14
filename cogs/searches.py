@@ -50,7 +50,7 @@ class Searches:
             img = json.loads(await response.text())["file"].replace("\\/","/")
 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
-            em.set_author(name="Random cat picture", icon_url="http://bit.ly/2z0wyEh")
+            em.set_author(name="Random cat picture", icon_url="http://bit.ly/2AH8Byg")
             em.set_image(url=img)
             em.set_footer(text= "Random cat image from https://random.cat")
             await ctx.send(embed=em)
@@ -63,7 +63,7 @@ class Searches:
             img = json.loads(await response.text())["url"]
 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
-            em.set_author(name="Random dog picture", icon_url="http://bit.ly/2mrjFxp")
+            em.set_author(name="Random dog picture", icon_url="http://bit.ly/2jotVFo")
             em.set_image(url=img)
             em.set_footer(text= "Random dog image from https://random.dog")
             await ctx.send(embed=em)
