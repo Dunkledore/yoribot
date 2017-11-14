@@ -59,7 +59,7 @@ class Searches:
             await ctx.send(img)
 
     @commands.command()
-    async def anime(self, ctx, *text):
+    async def lmgtfy(self, ctx, *text):
         """Let me just Google that for you..."""
 
         #Your code will go here
