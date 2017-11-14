@@ -69,9 +69,28 @@ class Music:
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
     @commands.command()
-    async def queue(self, ctx, *, searchurl):
+    async def queue(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
        
+        if searchurl is None:
+            query = "SELECT * FROM music_queues WHERE guildid = $1"
+            fetched = await ctx.db.fetch(query, ctx.guild.id)
+            results = 'Coming Up: \n'
+            counter = 1
+            if fetched:
+                for x in fetched:
+                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
+                    json = simplejson.loads(urllib.request.urlopen(gurl).read())
+                    results += str(counter) + ". " + json['items'][0]['snippet']['title'] + '\n'
+                    counter += 1
+            else:
+                results += "Nothing in queue"
+            await ctx.send(results)
+            return   
+
+
+
         def check(r, user):
             if user != ctx.message.author:
                 return False
@@ -98,7 +117,7 @@ class Music:
                 results = 'Options are\n'
                 for x in range(0,5):
                     api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x*2]+"&key="+api_key+"&part=contentDetails"
+                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x]+"&key="+api_key+"&part=contentDetails"
                     json = simplejson.loads(urllib.request.urlopen(gurl).read())
                     results += str(x)+'\u20e3' + ": " + json['items'][0]['snippet']['title'] + '\n'
 
@@ -134,13 +153,37 @@ class Music:
                 await ctx.send(message)
         query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
         await ctx.db.execute(query, ctx.guild.id, searchurl)
-        await ctx.send("Added to queue: " + searchurl)
+        api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+        gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+searchurl.replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
+        json = simplejson.loads(urllib.request.urlopen(gurl).read())
+        await ctx.send("Added to queue: " + json['items'][0]['snippet']['title'])
     
     @commands.command()
+    async def clearqueue(self, ctx):
+        query = "DELETE FROM music_queues WHERE guildid = $1"
+        await ctx.db.execute(query, ctx.guild.id)
+        await ctx.send("Queue Cleared")
+
+    @commands.command()
     async def play(self, ctx, *, searchurl=None):
+        await self.play_command(ctx, searchurl=searchurl)
+
+    @commands.command()
+    async def skip(self, ctx, *, searchurl=None):
+        if ctx.voice_client:
+            ctx.voice_client.stop()    
+            await self.play_command(ctx, searchurl=searchurl)
+
+    async def play_command(self, ctx, *, searchurl=None):
         """Streams from a url (almost anything youtube_dl supports)"""
 
-        async def play_next(error):
+        def play_next(error):
+            try:
+                coro = self.play_command(ctx)
+                fut = asyncio.run_coroutine_threadsafe(coro, self.bot.loop)
+                fut.result()
+            except Exception as e:
+                print(e)
             
 
         if ctx.voice_client is None:
@@ -151,13 +194,13 @@ class Music:
 
         if(searchurl == None):
             query = "SELECT * FROM music_queues WHERE guildid = $1"
-            queue = await ctx.db.fetch(query,ctx.guild.id)
+            queue = await self.bot.pool.fetch(query,ctx.guild.id)
             searchurl = queue[0]['songurl']
             id = queue[0]['id']
             player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
             ctx.voice_client.play(player, after=play_next)
             query = "DELETE FROM music_queues WHERE id = $1"
-            await ctx.db.execute(query, id)
+            await self.bot.pool.execute(query, id)
             return
 
         
