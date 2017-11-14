@@ -148,13 +148,13 @@ class AnimeList:
 
     async def owner_set(self, ctx):
         await ctx.author.send("Type your user name. You can reply in this private msg")
-        username = await self.bot.wait_for('message', timeout=15, author=ctx.message.author)
+        username = await self.bot.wait_for('message', timeout=15, author=author)
 
         if username is None:
             return await ctx.author.send("Username and Password setup timed out.")
 
         await ctx.author.send("Ok thanks. Now what is your password?")
-        password = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
+        password = await self.bot.wait_for('message', timeout=15, author=author)
 
         if password is None:
             return await ctx.author.send("Username and Password setup timed out.")
