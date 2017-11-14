@@ -242,10 +242,11 @@ class AnimeList:
                                   for n, entry in enumerate(root) if n < 10])
 
                 await ctx.send(msg)
+                def check(m):
+                
+                return m.content.isdigit() and int(m.content) in range(1, len(root) + 1) and ctx.author.id == m.author.id
 
-                check = lambda m: m.content.isdigit() and int(m.content) in range(1, len(root) + 1)
-                resp = await self.bot.wait_for_message(timeout=15, author=ctx.message.author,
-                                                       check=check)
+                resp = await self.bot.wait_for('message', timeout=15, check=check)
                 if resp is None:
                     return
 
