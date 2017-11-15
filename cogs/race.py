@@ -191,7 +191,7 @@ class Race:
         await ctx.send("Mode now set to {}.".format(mode))
 
     @race.command(name="version")
-    async def _version_race(self):
+    async def _version_race(self, ctx):
         """Displays the version of race"""
         await ctx.send("You are running race version {}".format(self.version))
 
