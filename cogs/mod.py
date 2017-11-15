@@ -519,8 +519,6 @@ class Mod:
         except discord.Forbidden:
             await ctx.send("I lack the permissions to do this.")
         else:
-            logger.info("{}({}) hackbanned {}"
-                        "".format(author.name, author.id, user_id))
             user = await self.bot.get_user_info(user_id)
             await ctx.send("Done. The user will not be able to join this "
                                "server.")
