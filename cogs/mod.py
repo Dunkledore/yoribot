@@ -500,7 +500,7 @@ class Mod:
 
         ban_list = await server.bans()
         await ctx.send(ban_list)
-        user = server.get_member(user_id)
+        user = self.bot.get_user(user_id)
         await ctx.send(user)
         is_banned = discord.utils.get(ban_list, user=user)
         await ctx.send(is_banned)
