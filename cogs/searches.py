@@ -62,7 +62,7 @@ class Searches:
             await ctx.send(embed=em)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def woof(self, ctx:commands.Context)
+    async def woof(self, ctx:commands.Context):
         await get_woof(ctx)
 
     async def get_woof(self, ctx: commands.Context):
