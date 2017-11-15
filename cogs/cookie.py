@@ -261,7 +261,7 @@ class Cookie:
 def check_folders():
     if not os.path.exists("data/cookie"):
         print("Creating data/cookie folder...")
-        os.makedirs("data/JumperCogs/cookie")
+        os.makedirs("data/cookie")
 
 
 def check_files():
