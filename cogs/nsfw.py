@@ -3,13 +3,14 @@ from discord.ext import commands
 from bs4 import BeautifulSoup
 import random
 from .utils import checks
+import aiohttp
 
 class Nsfw:
     """Nsfw commands."""
 
     def __init__(self, bot):
         self.bot = bot
-        self.session = self.bot.http.session
+        self.session = aiohttp.ClientSession()
 
     @commands.group(pass_context=True, hidden=True)
     @checks.is_nsfw()
