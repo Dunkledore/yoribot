@@ -58,7 +58,7 @@ def mod_or_permissions(**perms):
 def is_owner():
     async def pred(ctx):
         return await ctx.bot.is_owner(ctx.author)
-    return command.check(pred)
+    return commands.check(pred)
 
 def admin_or_permissions(**perms):
     perms['administrator'] = True
