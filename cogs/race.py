@@ -355,7 +355,7 @@ class Race:
             return self.system[str(guild.id)]
 
     def check_config(self, guild):
-        if guild.id in self.config['guilds']:
+        if str(guild.id) in self.config['guilds']:
             return self.config['guilds'][str(guild.id)]
         else:
             self.config['guilds'][str(guild.id)] = {'Prize': (1, 100), 'Mode': 'standard', 'Time': 60}
