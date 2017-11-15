@@ -425,7 +425,7 @@ class Race:
                         data['Third'] = (player.user, player.animal, speed)
                         player.placed = True
             field = [player.field() for player in racers]
-            await game.edit('\n'.join(field))
+            await game.edit(content='\n'.join(field))
 
             if [player.get_position() for player in racers].count(0) == len(racers):
                 break
