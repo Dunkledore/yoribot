@@ -1,4 +1,4 @@
-import discord
+ import discord
 from discord.ext import commands
 from bs4 import BeautifulSoup
 import random
@@ -64,7 +64,7 @@ class Nsfw:
     async def rule34(self, ctx):
         """Random Image From rule34"""
         try:
-            query = ("http://rule34.xxx/index.php?page=post&s=random")
+            query = ("https://rule34.xxx/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
@@ -78,7 +78,7 @@ class Nsfw:
     async def danbooru(self, ctx):
         """Random Image From Danbooru"""
         try:
-            query = ("http://danbooru.donmai.us/posts/random")
+            query = ("https://danbooru.donmai.us/posts/random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
@@ -92,7 +92,7 @@ class Nsfw:
     async def gelbooru(self, ctx):
         """Random Image From Gelbooru"""
         try:
-            query = ("http://www.gelbooru.com/index.php?page=post&s=random")
+            query = ("https://www.gelbooru.com/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
@@ -106,7 +106,7 @@ class Nsfw:
     async def tbib(self, ctx):
         """Random Image From DrunkenPumken"""
         try:
-            query = ("http://www.tbib.org/index.php?page=post&s=random")
+            query = ("https://www.tbib.org/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
@@ -120,7 +120,7 @@ class Nsfw:
     async def xbooru(self, ctx):
         """Random Image From Xbooru"""
         try:
-            query = ("http://xbooru.com/index.php?page=post&s=random")
+            query = ("https://xbooru.com/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
@@ -134,7 +134,7 @@ class Nsfw:
     async def furrybooru(self, ctx):
         """Random Image From Furrybooru"""
         try:
-            query = ("http://furry.booru.org/index.php?page=post&s=random")
+            query = ("https://furry.booru.org/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
@@ -148,7 +148,7 @@ class Nsfw:
     async def drunkenpumken(self, ctx):
         """Random Image From DrunkenPumken"""
         try:
-            query = ("http://drunkenpumken.booru.org/index.php?page=post&s=random")
+            query = ("https://drunkenpumken.booru.org/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
