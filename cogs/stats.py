@@ -10,7 +10,7 @@ import traceback
 import psutil
 import os
 
-log = logging.getLogger(yato)
+log = logging.getLogger(__name__)
 
 LOGGING_CHANNEL = 373279722886397971
 
