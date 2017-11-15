@@ -499,8 +499,11 @@ class Mod:
         server = author.guild
 
         ban_list = await server.bans()
+        await ctx.send(ban_list)
         user = server.get_member(user_id)
+        await ctx.send(user)
         is_banned = discord.utils.get(ban_list, user=user)
+        await ctx.send(is_banned)
 
         if is_banned:
             await self.bot.say("User is already banned.")
