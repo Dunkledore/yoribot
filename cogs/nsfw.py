@@ -140,8 +140,8 @@ class Nsfw:
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
             imageaddress = image.split("?")[0]
-            head, sep, tail = image.partition('//')
-            await ctx.send(head+'/'+tail)
+            head, sep, tail = image.partition('//images')
+            await ctx.send(head+'/images'+tail)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
