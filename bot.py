@@ -50,7 +50,6 @@ initial_extensions = (
     'cogs.rolemanager',
     'cogs.rss',
     'cogs.searches',
-    'cogs.sentry',
     'cogs.stats',
     'cogs.tags',
     'cogs.trivia',
