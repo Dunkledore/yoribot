@@ -4,3 +4,4 @@
 
 A premium Discord bot based on the Rapptz/RoboDanny project using discord.py. 
 
+[Visit the website](https://http://yoribot.com) for more information about the bot including a comprehensive list of commands and demo gifs.
