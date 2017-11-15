@@ -384,7 +384,9 @@ class Race:
                 racers = [Racer(bot_set[0], bot_set[1], self.bot.user)]
 
             for user in data['Players']:
+                print(user)
                 mobj = author.guild.get_member(int(user))
+                print(mobj)
                 animal_set = random.choice(animals)
                 racers.append(Racer(animal_set[0], animal_set[1], mobj))
         else:
