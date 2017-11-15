@@ -506,7 +506,7 @@ class Mod:
             await ctx.send("User is already banned.")
             return
 
-        
+        user = server.get_member(user_id)
         if user is not None:
             await ctx.invoke(self.ban, user=user, reason=reason)
             return
