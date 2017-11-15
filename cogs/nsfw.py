@@ -157,21 +157,6 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
-    @checks.is_nsfw()
-    async def lolibooru(self, nsfw):
-        """Random Image From Lolibooru"""
-        try:
-            query = ("https://lolibooru.moe/post/random/")
-            page = await self.session.get(query)
-            page = await page.text()
-            soup = BeautifulSoup(page, 'html.parser')
-            image = soup.find(id="image").get("src")
-            image = image.replace(' ','%20')
-            await ctx.send(image)
-        except Exception as e:
-            await ctx.send(":x: **Error:** `{}`".format(e))
-
     @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def ysearch(self, ctx, *tags: str):
