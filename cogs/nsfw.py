@@ -17,7 +17,7 @@ class Nsfw:
     async def nsfw(self, ctx):
         """Nsfw Commands"""
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def yandere(self, ctx):
         """Random Image From Yandere"""
@@ -31,7 +31,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def konachan(self, ctx):
         """Random Image From Konachan"""
@@ -45,7 +45,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def e621(self, ctx):
         """Random Image From e621"""
@@ -59,7 +59,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def rule34(self, ctx):
         """Random Image From rule34"""
@@ -73,7 +73,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def danbooru(self, ctx):
         """Random Image From Danbooru"""
@@ -87,7 +87,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def gelbooru(self, ctx):
         """Random Image From Gelbooru"""
@@ -101,7 +101,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def tbib(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -115,7 +115,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def xbooru(self, ctx):
         """Random Image From Xbooru"""
@@ -129,7 +129,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def furrybooru(self, ctx):
         """Random Image From Furrybooru"""
@@ -143,7 +143,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(no_pm=True)
+    @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def drunkenpumken(self, ctx):
         """Random Image From DrunkenPumken"""
