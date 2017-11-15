@@ -10,9 +10,9 @@ import traceback
 import psutil
 import os
 
-log = logging.getLogger(__name__)
+log = logging.getLogger(yato)
 
-LOGGING_CHANNEL = 373278494496391178
+LOGGING_CHANNEL = 373279722886397971
 
 class Commands(db.Table):
     id = db.PrimaryKeyColumn()
@@ -53,7 +53,7 @@ class Stats:
         self.bot.socket_stats[msg.get('t')] += 1
 
     @property
-    def webhook(self):
+    def webhook(self,ctx):
         wh_id, wh_token = self.bot.config.stat_webhook
         hook = discord.Webhook.partial(id=wh_id, token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
         return hook
