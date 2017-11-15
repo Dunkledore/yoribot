@@ -244,7 +244,7 @@ class Race:
         data['Race Start'] = True
 
         racers = self.game_setup(author, data, settings['Mode'])
-        race_msg = await ctx.send('\n'.join([player.field() for player in racers]))
+        race_msg = await ctx.send(":checkered_flag: The race is now in progress :checkered_flag:" +'\n'.join([player.field() for player in racers]))
         await self.run_game(racers, race_msg, data)
 
         footer = "Type {}race claim to receive prize money. You must claim it before the next race!"
