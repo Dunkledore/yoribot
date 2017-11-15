@@ -346,20 +346,20 @@ class Race:
 
     def check_guild(self, guild):
         if guild.id in self.system:
-            return self.system[guild.id]
+            return self.system[str(guild.id)]
         else:
-            self.system[guild.id] = {'Race Start': False, 'Race Active': False, 'Players': {},
+            self.system[str(guild.id)] = {'Race Start': False, 'Race Active': False, 'Players': {},
                                       'Winner': None, 'First': None, 'Second': None, 'Third': None
                                       }
-            return self.system[guild.id]
+            return self.system[str(guild.id)]
 
     def check_config(self, guild):
         if guild.id in self.config['guilds']:
-            return self.config['guilds'][guild.id]
+            return self.config['guilds'][str(guild.id)]
         else:
             self.config['guilds'][str(guild.id)] = {'Prize': (1, 100), 'Mode': 'standard', 'Time': 60}
             self.save_settings()
-            return self.config['guilds'][guild.id]
+            return self.config['guilds'][str(guild.id)]
 
     def game_teardown(self, data, force=False):
         if data['Winner'] == self.bot.user or force:
