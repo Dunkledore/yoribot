@@ -118,7 +118,7 @@ class Cookie:
         settings = self.check_guild_settings(guild)
         self.account_check(settings, author)
         cookies = settings["Players"][author.id]["Cookies"]
-        await self.bot.whisper("ฅ(=＾‥ ＾=)ฅ Yori sees you have **{}** cookies in the jar. "
+        await ctx.send("ฅ(=＾‥ ＾=)ฅ Yori sees you have **{}** cookies in the jar. "
                                "Nyaa nyaa.".format(cookies))
 
     @commands.command(pass_context=True, no_pm=True)
