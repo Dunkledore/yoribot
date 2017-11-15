@@ -56,7 +56,7 @@ def mod_or_permissions(**perms):
     return commands.check(predicate)
 
 def is_owner():
-    async def pred(ctx)
+    async def pred(ctx):
         return await ctx.bot.is_owner(ctx.author)
     return command.check(pred)
 
