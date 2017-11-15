@@ -259,15 +259,15 @@ class Cookie:
 
 
 def check_folders():
-    if not os.path.exists("data/JumperCogs/cookie"):
-        print("Creating data/JumperCogs/cookie folder...")
+    if not os.path.exists("data/cookie"):
+        print("Creating data/cookie folder...")
         os.makedirs("data/JumperCogs/cookie")
 
 
 def check_files():
     default = {"guilds": {}}
 
-    f = "data/JumperCogs/cookie/cookie.json"
+    f = "data/cookie/cookie.json"
     if not dataIO.is_valid_json(f):
         print("Creating default cookie.json...")
         dataIO.save_json(f, default)
@@ -276,4 +276,5 @@ def check_files():
 def setup(bot):
     check_folders()
     check_files()
-    bot.add_cog(Cookie(bot))
+    n=Cookie(bot)
+    bot.add_cog(n)
