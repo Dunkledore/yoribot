@@ -28,9 +28,10 @@ class Trivia:
         settings = dataIO.load_json(self.file_path)
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group(pass_context=True, no_pm=True, hidden=True)
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx):
+        """Allows you to change the settings for Trivia"""
         guild = ctx.message.guild
         if ctx.invoked_subcommand is None:
             settings = self.settings[guild.id]
@@ -154,6 +155,7 @@ class Trivia:
 
     @commands.command(pass_context=True, no_pm=True)
     async def triviastop(self, ctx):
+        """Stops Trivia"""
         session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game()
       

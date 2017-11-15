@@ -7,6 +7,7 @@ import re
 from time import time
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
+from .utils import checks
 
 logger = logging.getLogger("red.gallery")
 
@@ -186,7 +187,8 @@ class Gallery:
             pass
 
     @commands.group(pass_context=True, allow_dm=False)
-    async def galset(self, ctx):
+    @checks.is_admin()
+    async def galset(self, ctx, hidden=True):
         """Gallery module settings"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
