@@ -55,7 +55,7 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="highres").get("href")
-            await ctx.send('http:' + image)
+            await ctx.send('https:' + image)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -139,7 +139,8 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
-            await ctx.send(image)
+            head, sep, tail = image.partition('?')
+            await ctx.send(head)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
