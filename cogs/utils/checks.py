@@ -55,7 +55,7 @@ def mod_or_permissions(**perms):
         return await check_guild_permissions(ctx, perms, check=any)
     return commands.check(predicate)
 
-def is_owner(bot):
+async def is_owner(bot):
     appinfo = await bot.application_info()
     return ctx.message.author.id == appinfo.owner.id
 
