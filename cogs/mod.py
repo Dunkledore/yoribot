@@ -498,7 +498,7 @@ class Mod:
         author = ctx.message.author
         server = author.guild
 
-        ban_list = await self.bot.get_bans(server)
+        ban_list = await server.bans()
         is_banned = discord.utils.get(ban_list, id=user_id)
 
         if is_banned:
