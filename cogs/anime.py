@@ -11,6 +11,7 @@ from xml.etree import ElementTree as ET
 import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
+from utils import checks
 
 # Username and Password is obtained from myanime list website
 # You need to create an account there and input the information below
