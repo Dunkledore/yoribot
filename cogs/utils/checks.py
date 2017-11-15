@@ -39,6 +39,11 @@ def has_guild_permissions(*, check=all, **perms):
 
 # These do not take channel overrides into account
 
+def is_nsfw():
+    def pred(ctx):
+        return ctx.message.channel.is_nsfw()
+    return commands.check(pred)
+
 def is_mod():
     async def pred(ctx):
         return await check_guild_permissions(ctx, {'manage_guild': True})
