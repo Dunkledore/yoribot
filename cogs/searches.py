@@ -48,9 +48,10 @@ class Searches:
 
         async with aiohttp.get(self.url_cat) as response:
             img = json.loads(await response.text())["file"].replace("\\/","/")
-            while img.endswith(".mp4"):
-                img = json.loads(await response.text())["file"].replace("\\/","/")
-                
+            if img.endswith(".mp4"):
+                await self.meow(ctx)
+                return
+
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name="Random cat picture", icon_url="http://bit.ly/2AH8Byg")
             em.set_image(url=img)
@@ -63,8 +64,9 @@ class Searches:
 
         async with aiohttp.get(self.url_dog) as response:
             img = json.loads(await response.text())["url"]
-            while img.endswith(".mp4"):
-                img = json.loads(await response.text())["file"].replace("\\/","/")
+            if img.endswith(".mp4"):
+                await self.meow(ctx)
+                return
                 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name="Random dog picture", icon_url="http://bit.ly/2jotVFo")
