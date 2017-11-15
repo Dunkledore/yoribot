@@ -289,7 +289,7 @@ class Race:
             return
         elif not data['Race Active']:
             return
-        elif author.id in data['Players']:
+        elif str(author.id) in data['Players']:
             return
         elif len(data['Players']) == 8:
             return
@@ -384,7 +384,7 @@ class Race:
                 racers = [Racer(bot_set[0], bot_set[1], self.bot.user)]
 
             for user in data['Players']:
-                mobj = author.guild.get_member(user)
+                mobj = author.guild.get_member(int(user))
                 animal_set = random.choice(animals)
                 racers.append(Racer(animal_set[0], animal_set[1], mobj))
         else:
