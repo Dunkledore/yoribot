@@ -140,8 +140,8 @@ class RSS(object):
         else:
             return True
 
-    @commands.group(pass_context=True)
-    async def rss(self, ctx, hidden=True):
+    @commands.group(pass_context=True, hidden=True)
+    async def rss(self, ctx):
         """RSS feed stuff"""
 
     @rss.command(pass_context=True, name="add")
