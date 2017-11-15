@@ -487,6 +487,43 @@ class Mod:
         deleted = await ctx.channel.purge(limit=search, check=check, before=ctx.message)
         return Counter(m.author.display_name for m in deleted)
 
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def hackban(self, ctx, user_id: int, *, reason: str = None):
+        """Preemptively bans user from the server
+
+        A user ID needs to be provided
+        If the user is present in the server a normal ban will be
+        issued instead"""
+        author = ctx.message.author
+        server = author.guild
+
+        ban_list = await self.bot.get_bans(server)
+        is_banned = discord.utils.get(ban_list, id=user_id)
+
+        if is_banned:
+            await self.bot.say("User is already banned.")
+            return
+
+        user = server.get_member(user_id)
+        if user is not None:
+            await ctx.invoke(self.ban, user=user, reason=reason)
+            return
+
+        try:
+            await self.bot.http.ban(user_id, server.id)
+        except discord.NotFound:
+            await ctx.send("User not found. Have you provided the "
+                               "correct user ID?")
+        except discord.Forbidden:
+            await ctx.send("I lack the permissions to do this.")
+        else:
+            logger.info("{}({}) hackbanned {}"
+                        "".format(author.name, author.id, user_id))
+            user = await self.bot.get_user_info(user_id)
+            await ctx.send("Done. The user will not be able to join this "
+                               "server.")
+
     @commands.command()
     @checks.has_permissions(manage_messages=True)
     async def cleanup(self, ctx, search=100):
