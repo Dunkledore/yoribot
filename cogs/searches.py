@@ -43,13 +43,16 @@ class Searches:
             await ctx.send(message)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def meow(self, ctx: commands.Context):
+    async def meow(self, ctx :commands.Context):
+        await self.get_meow(ctx)
+
+    async def get_meow(self, ctx: commands.Context):
         """Gets a random cat picture."""
 
         async with aiohttp.get(self.url_cat) as response:
             img = json.loads(await response.text())["file"].replace("\\/","/")
             if img.endswith(".mp4"):
-                await self.meow(ctx)
+                await self.get_meow(ctx)
                 return
 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
@@ -59,13 +62,16 @@ class Searches:
             await ctx.send(embed=em)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def woof(self, ctx: commands.Context):
+    async def woof(self, ctx:commands.Context)
+        await get_woof(ctx)
+
+    async def get_woof(self, ctx: commands.Context):
         """Gets a random dog picture."""
 
         async with aiohttp.get(self.url_dog) as response:
             img = json.loads(await response.text())["url"]
             if img.endswith(".mp4"):
-                await self.meow(ctx)
+                await self.get_woof(ctx)
                 return
                 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
