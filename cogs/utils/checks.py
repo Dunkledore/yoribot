@@ -55,6 +55,11 @@ def mod_or_permissions(**perms):
         return await check_guild_permissions(ctx, perms, check=any)
     return commands.check(predicate)
 
+def is_owner():
+    async def pred(ctx):
+        return await ctx.bot.is_owner(ctx.author)
+    return commands.check(pred)
+
 def admin_or_permissions(**perms):
     perms['administrator'] = True
     async def predicate(ctx):
