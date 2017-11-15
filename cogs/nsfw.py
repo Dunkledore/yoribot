@@ -55,7 +55,7 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="highres").get("href")
-            await ctx.send(image)
+            await ctx.send('http:' + image)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
