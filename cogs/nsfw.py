@@ -134,7 +134,7 @@ class Nsfw:
     async def furrybooru(self, ctx):
         """Random Image From Furrybooru"""
         try:
-            query = ("https://furry.booru.org/index.php?page=post&s=random")
+            query = ("http://furry.booru.org/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
