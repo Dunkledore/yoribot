@@ -357,7 +357,7 @@ class Race:
         if guild.id in self.config['guilds']:
             return self.config['guilds'][guild.id]
         else:
-            self.config['guilds'][guild.id] = {'Prize': (1, 100), 'Mode': 'standard', 'Time': 60}
+            self.config['guilds'][str(guild.id)] = {'Prize': (1, 100), 'Mode': 'standard', 'Time': 60}
             self.save_settings()
             return self.config['guilds'][guild.id]
 
