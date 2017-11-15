@@ -345,7 +345,7 @@ class Race:
             data['Winner'] = None
 
     def check_guild(self, guild):
-        if guild.id in self.system:
+        if str(guild.id) in self.system:
             return self.system[str(guild.id)]
         else:
             self.system[str(guild.id)] = {'Race Start': False, 'Race Active': False, 'Players': {},
