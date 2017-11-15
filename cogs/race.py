@@ -244,7 +244,7 @@ class Race:
 
         racers = self.game_setup(author, data, settings['Mode'])
         race_bare = '\n'.join([player.field() for player in racers])
-        race_text = ":checkered_flag: The race is now in progress :checkered_flag:" + race_bare
+        race_text = ":checkered_flag: The race is now in progress :checkered_flag: \n" + race_bare
         race_msg = await ctx.send(race_text)
         await self.run_game(racers, race_msg, data)
 
@@ -426,7 +426,7 @@ class Race:
                         data['Third'] = (player.user, player.animal, speed)
                         player.placed = True
             field = [player.field() for player in racers]
-            race_bare = ":checkered_flag: The race is now in progress :checkered_flag:"
+            race_bare = ":checkered_flag: The race is now in progress :checkered_flag: \n"
             await game.edit(content=race_bare + '\n'.join(field))
 
             if [player.get_position() for player in racers].count(0) == len(racers):
