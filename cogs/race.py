@@ -294,7 +294,7 @@ class Race:
         elif len(data['Players']) == 8:
             return
         else:
-            data['Players'][author.id] = {}
+            data['Players'][str(author.id)] = {}
             await ctx.send("**{}** entered the race!".format(author.name))
 
     @race.command(name="claim", pass_context=True)
