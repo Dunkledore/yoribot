@@ -53,11 +53,12 @@ class Sentry:
 
     @commands.group(pass_context=True)
     @checks.is_owner()
-    async def sentry(self, ctx):
+    async def sentry(self, ctx, hidden=True):
         """Manage Sentry logging"""
 
 
     @sentry.command(pass_context=True)
+    @checks.is_admin()
     async def dsn(self, ctx, dsn: str):
         """Set your DSN, Full private required. Recommended to do in DM"""
         if re.match('(https\:\/\/|http\:\/\/).*\:.*\@.*\/*[0-9]', dsn) is None:
@@ -72,6 +73,7 @@ class Sentry:
             self.save_json()
 
     @sentry.command(pass_context=True)
+    @checks.is_admin()
     async def test(self, ctx, *, message="A test message to Sentry"):
         """Send a test message to the Sentry host."""
         try:
@@ -81,6 +83,7 @@ class Sentry:
             await ctx.send('Sentry client isn\'t setup. Please set a key and reload the cog.')
 
     @sentry.command(pass_context=True)
+    @checks.is_admin()
     async def name(self, ctx, name):
         """Set the "server_name" that appears in Sentry"""
         self.settings['name'] = name
@@ -88,12 +91,14 @@ class Sentry:
         self.save_json()
 
     @sentry.command(pass_context=True)
+    @checks.is_admin()
     async def environment(self, ctx, environment):
         """Set the environment that appears in Sentry"""
         self.settings['environment'] = environment
         await ctx.send('Environment set,\nReload the cog for the changes to have effect.')
 
     @sentry.command(pass_context=True)
+    @checks.is_admin()
     async def level(self, ctx, level):
         """Set the logging level for Sentry
 
@@ -109,6 +114,7 @@ class Sentry:
             await ctx.send('Invalid log level, please use one of the following:\ncritical, debug, error, fatal, notset, warn, warning')
 
     @sentry.command(pass_context=True)
+    @checks.is_admin()
     async def ssl(self, ctx):
         """Enable or disable SSL verification to the Sentry server."""
         if self.settings['ssl'] is True:
@@ -120,10 +126,12 @@ class Sentry:
         self.save_json()
 
     @sentry.group(pass_context=True)
+    @checks.is_admin()
     async def tags(self, ctx):
         """Manage tags for Sentry"""
 
     @tags.command(pass_context=True)
+    @checks.is_admin()
     async def add(self, ctx, tag, *, value):
         """Add/edit a tag with the set value."""
         self.settings['tags'][tag] = value
@@ -131,6 +139,7 @@ class Sentry:
         self.save_json()
 
     @tags.command(pass_context=True)
+    @checks.is_admin()
     async def remove(self, ctx, tag):
         """Remove a tag"""
         if tag in self.settings['tags']:
@@ -141,6 +150,7 @@ class Sentry:
             await ctx.send('This tag doesn\'t exist')
 
     @tags.command(pass_context=True)
+    @checks.is_admin()
     async def list(self, ctx):
         """List all tags"""
         tag_list = ''
@@ -152,11 +162,13 @@ class Sentry:
         dataIO.save_json('data/sentry/settings.json', self.settings)
 
     @sentry.group(pass_context=True)
+    @checks.is_admin()
     async def ignore(self, ctx):
         """Manage the ignored loggers for Sentry"""
 
 
     @ignore.command(pass_context=True, name='add')
+    @checks.is_admin()
     async def add_ignore(self, ctx, logger):
         """Add a logger to the ignore list"""
         if 'ignore' not in self.settings:
@@ -169,6 +181,7 @@ class Sentry:
             await ctx.send('``{}`` already in the ignore list.'.format(logger))
 
     @ignore.command(pass_context=True, name='remove')
+    @checks.is_admin()
     async def remove_ignore(self, ctx, logger):
         """Remove a logger from the ignore list"""
         if logger in self.settings['ignore']:

@@ -131,7 +131,7 @@ class RoleManager:
             await ctx.send(embed=em)
 
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.admin_or_permissions()
     async def addroles(self, ctx, group, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
@@ -140,7 +140,7 @@ class RoleManager:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.admin_or_permissions()
-    async def removerole(self, ctx, role):
+    async def removerole(self, ctx, role, hidden=True):
         """Takes a role off the list of self-assignable roles."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,

@@ -30,7 +30,7 @@ class AnimeList:
 
     @commands.command(pass_context=True)
     @checks.is_owner()
-    async def animeset(self, ctx):
+    async def animeset(self, ctx, hidden=True):
         """Sets your username and password from myanimelist"""
         await self.owner_set(ctx)
 

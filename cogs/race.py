@@ -104,7 +104,8 @@ class Race:
         """Race cog's group command"""
 
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group(pass_context=True, no_pm=True, hidden=True)
+    @checks.is_admin()
     async def setrace(self, ctx):
         """Race cog's settings group command"""
 

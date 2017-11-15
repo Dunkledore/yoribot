@@ -6,6 +6,7 @@ import asyncio
 import string
 import logging
 import copy
+from .utils import checks
 
 from cogs.utils.dataIO import fileIO
 from cogs.utils.chat_formatting import *
@@ -140,10 +141,11 @@ class RSS(object):
             return True
 
     @commands.group(pass_context=True)
-    async def rss(self, ctx):
+    async def rss(self, ctx, hidden=True):
         """RSS feed stuff"""
 
     @rss.command(pass_context=True, name="add")
+    @checks.is_admin()
     async def _rss_add(self, ctx, name: str, url: str):
         """Add an RSS feed to the current channel"""
         channel = ctx.message.channel
@@ -160,6 +162,7 @@ class RSS(object):
                 'Invalid or unavailable URL.')
 
     @rss.command(pass_context=True, name="list")
+    @checks.is_admin()
     async def _rss_list(self, ctx):
         """List currently running feeds"""
         msg = "Available Feeds:\n\t"
@@ -167,6 +170,7 @@ class RSS(object):
         await ctx.send(box(msg))
 
     @rss.command(pass_context=True, name="template")
+    @checks.is_admin()
     async def _rss_template(self, ctx, feed_name: str, *, template: str):
         ("""Set a template for the feed alert
 
@@ -184,6 +188,7 @@ class RSS(object):
             await ctx.send('Feed not found!')
 
     @rss.command(pass_context=True, name="force")
+    @checks.is_admin()
     async def _rss_force(self, ctx, feed_name: str):
         """Forces a feed alert"""
         guild = ctx.message.guild
@@ -208,6 +213,7 @@ class RSS(object):
         await ctx.send(message)
 
     @rss.command(pass_context=True, name="remove")
+    @checks.is_admin()
     async def _rss_remove(self, ctx, name: str):
         """Removes a feed from this guild"""
         success = await self.feeds.delete_feed(ctx, name)
