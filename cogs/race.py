@@ -239,12 +239,13 @@ class Race:
                            "begin in {} seconds!\n\n**{}** entered the "
                            "race!".format(ctx.prefix, ' ' * 25, wait, author.mention))
         await asyncio.sleep(wait)
-        await ctx.send(":checkered_flag: The race is now in progress :checkered_flag:")
 
         data['Race Start'] = True
 
         racers = self.game_setup(author, data, settings['Mode'])
-        race_msg = await ctx.send(":checkered_flag: The race is now in progress :checkered_flag:" +'\n'.join([player.field() for player in racers]))
+        race_bare = '\n'.join([player.field() for player in racers])
+        race_text = ":checkered_flag: The race is now in progress :checkered_flag:" + race_bare
+        race_msg = await ctx.send(race_text)
         await self.run_game(racers, race_msg, data)
 
         footer = "Type {}race claim to receive prize money. You must claim it before the next race!"
@@ -425,7 +426,8 @@ class Race:
                         data['Third'] = (player.user, player.animal, speed)
                         player.placed = True
             field = [player.field() for player in racers]
-            await game.edit(content='\n'.join(field))
+            race_bare = ":checkered_flag: The race is now in progress :checkered_flag:"
+            await game.edit(content=race_bare + '\n'.join(field))
 
             if [player.get_position() for player in racers].count(0) == len(racers):
                 break
