@@ -16,7 +16,7 @@ from raven import Client
 from raven.conf import setup_logging
 from raven.handlers.logging import SentryHandler
 
-log = logging.getLogger('red.sentry')
+log = logging.getLogger(__name__)
 
 
 class Sentry:
