@@ -52,29 +52,6 @@ class Stats:
     async def on_socket_response(self, msg):
         self.bot.socket_stats[msg.get('t')] += 1
 
-    @property
-    def webhook(self,ctx):
-        wh_id, wh_token = self.bot.config.stat_webhook
-        hook = discord.Webhook.partial(id=wh_id, token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
-        return hook
-
-    async def log_error(self, *, ctx=None, extra=None):
-        e = discord.Embed(title='Error', colour=0xdd5f53)
-        e.description = f'```py\n{traceback.format_exc()}\n```'
-        e.add_field(name='Extra', value=extra, inline=False)
-        e.timestamp = datetime.datetime.utcnow()
-
-        if ctx is not None:
-            fmt = '{0} (ID: {0.id})'
-            author = fmt.format(ctx.author)
-            channel = fmt.format(ctx.channel)
-            guild = 'None' if ctx.guild is None else fmt.format(ctx.guild)
-
-            e.add_field(name='Author', value=author)
-            e.add_field(name='Channel', value=channel)
-            e.add_field(name='Guild', value=guild)
-
-        await self.webhook.send(embed=e)
 
     @commands.command(hidden=True)
     @commands.is_owner()
