@@ -17,7 +17,7 @@ class Nsfw:
     async def nsfw(self, ctx):
         """Nsfw Commands"""
 
-    @commands.command(pass_context=True)
+    @nsfw.command(pass_context=True)
     @checks.is_nsfw()
     async def dick(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
@@ -27,7 +27,7 @@ class Nsfw:
         y = "=" *  x
         await ctx.send("{}\'s dick:' ** 8{}D **".format(ctx.message.mentions[0].name, y))
 
-    @commands.command(pass_context=True)
+    @nsfw.command(pass_context=True)
     @checks.is_nsfw()
     async def boobs(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
@@ -37,7 +37,7 @@ class Nsfw:
         y = " " *  x
         await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(ctx.message.mentions[0].name, y, y))
 
-    @commands.command(pass_context=True)
+    @nsfwcommand(pass_context=True)
     @checks.is_nsfw()
     async def ass(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
