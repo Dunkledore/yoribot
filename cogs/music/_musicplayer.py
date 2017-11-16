@@ -412,7 +412,6 @@ class MusicPlayer:
                 return
             except Exception as e:
                 self.statuslog.error("Internal error connecting to voice, disconnecting")
-                print(e)
                 logger.error("Error connecting to voice {}".format(e))
                 return
         else:
@@ -574,36 +573,31 @@ class MusicPlayer:
 
             self.queue.pop(0)
 
+            player = await YTDLSource.from_url(song, loop=self.bot.loop)
+            self.streamer = player
+            self.state = "ready"
+
+            self.streamer.volume = self.volume / 100
+            self.vclient.play(player, after=self.vafter_ts)
+
+            if self.streamer.is_live:
+                self.statuslog.info("Streaming")
+            else:
+                self.statuslog.info("Playing")
+            self.nowplayinglog.info(songname)
+            self.nowplayinglog.info("Error playing {}".format(songname))
+            self.statuslog.error("Had a problem playing {}".format(songname))
+            logger.exception(e)
             try:
-                player = await YTDLSource.from_url(song, loop=self.bot.loop)
-                self.streamer = player
-                self.state = "ready"
+                self.streamer.stop()
+            except:
+                pass
 
-                self.streamer.volume = self.volume / 100
-                self.vclient.play(player, after=self.vafter_ts)
+            self.streamer = None
+            self.state = "ready"
+            await self.vplay()
 
-                if self.streamer.is_live:
-                    self.statuslog.info("Streaming")
-                else:
-                    self.statuslog.info("Playing")
-                self.nowplayinglog.info(songname)
-            except Exception as e:
-                print(e)
-                self.nowplayinglog.info("Error playing {}".format(songname))
-                self.statuslog.error("Had a problem playing {}".format(songname))
-                logger.exception(e)
-
-                try:
-                    self.streamer.stop()
-                except:
-                    pass
-
-                self.streamer = None
-                self.state = "ready"
-                await self.vplay()
-
-            self.update_queue()
-
+        self.update_queue()
         # Queue exhausted
         else:
             self.statuslog.info("Finished queue")
