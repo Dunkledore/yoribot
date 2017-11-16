@@ -367,6 +367,7 @@ class MusicPlayer:
                 return
             except Exception as e:
                 self.statuslog.error("Internal error connecting to voice, disconnecting")
+                print(e)
                 logger.error("Error connecting to voice {}".format(e))
                 return
         else:
