@@ -1,8 +1,8 @@
 import logging
 import discord 
 
-from utils import datatools
-from music import _data, _musicplayer
+from .utils import datatools
+from .music import _data, _musicplayer
 
 class Music:
 
@@ -45,7 +45,7 @@ class Music:
 						pass
 					except discord.errors.Forbidden:
 						pass
-						
+
 					# Commands
 					if emoji == "⏯":
 						await _data.cache[str(server.id)].toggle()
