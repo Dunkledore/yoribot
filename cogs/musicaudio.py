@@ -145,7 +145,7 @@ def setup(bot):
 	if "keys" not in data["discord"]:
 		data["discord"]["keys"] = {}
 
-	if "google_api_key" in data["discord"]["keys"]:
+	if "google_api_key" not in data["discord"]["keys"]:
 		data["discord"]["keys"]["google_api_key"] = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
 		datatools.write_data(data)
 
