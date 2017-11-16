@@ -2,7 +2,7 @@ import logging
 import discord 
 
 from utils import datatools
-from music im port _data, _musicplayer
+from music import _data, _musicplayer
 
 class Music:
 
