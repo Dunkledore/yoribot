@@ -60,11 +60,11 @@ class Sfx:
     # Other cogs may use the following two functions as an easy API for sfx.
     # The function definitions probably violate every possible style guide,
     # But I like it :)
-    def enqueue_tts(self, vchan: discord.Channel,
+    def enqueue_tts(self, vchan: discord.VoiceChannel,
                            text: str,
                             vol: int=None,
                        priority: int=5,
-                          tchan: discord.Channel=None,
+                          tchan: discord.TextChannel=None,
                        language: str=None):
         if vol is None:
             vol = self.tts_volume
@@ -83,12 +83,12 @@ class Sfx:
         except asyncio.QueueFull:
             return False
 
-    def enqueue_sfx(self, vchan: discord.Channel,
+    def enqueue_sfx(self, vchan: discord.VoiceChannel,
                            path: str,
                             vol: int=None,
                        priority: int=5,
                          delete: bool=False,
-                          tchan: discord.Channel=None):
+                          tchan: discord.TextChannel=None):
         if vol is None:
             vol = self.default_volume
         try:
@@ -99,19 +99,19 @@ class Sfx:
         except asyncio.QueueFull:
             return False
 
-    def _list_sounds(self, guild_id: str) -> List[str]:
+    def _list_sounds(self, server_id: str) -> List[str]:
         return sorted(
             [os.path.splitext(s)[0] for s in os.listdir(os.path.join(
-                self.sound_base, guild_id))],
+                self.sound_base, server_id))],
             key=lambda s: s.lower())
 
-    async def _change_and_resume(self, vc, channel: discord.Channel):
+    async def _change_and_resume(self, vc, channel: discord.VoiceChannel):
         await vc.move_to(channel)
         vc.audio_player.resume()
 
     def _revive_audio(self, sid):
-        guild = self.bot.get_guild(sid)
-        vc_current = self.bot.voice_client_in(guild)
+        server = self.bot.get_server(sid)
+        vc_current = self.bot.voice_client_in(server)
         vc_current.audio_player = self.vc_buffers[sid].vc_ap
         vchan_old = self.vc_buffers[sid].vchan
         self.vc_buffers[sid] = None
@@ -124,10 +124,10 @@ class Sfx:
     def _suspend_audio(self, vc, cid):
         channel = self.bot.get_channel(cid)
         vc.audio_player.pause()
-        self.vc_buffers[channel.guild.id] = SuspendedPlayer(vc)
+        self.vc_buffers[channel.server.id] = SuspendedPlayer(vc)
 
     async def _slave_queue_manager(self, queue, sid):
-        guild = self.bot.get_guild(sid)
+        server = self.bot.get_server(sid)
         timeout_counter = 0
         audio_cog = self.bot.get_cog('Audio')
         while True:
@@ -141,7 +141,7 @@ class Sfx:
                 # give back control to any prior voice clients
                 if self.vc_buffers.get(sid) is not None:
                     self._revive_audio(sid)
-                vc = self.bot.voice_client_in(guild)
+                vc = self.bot.voice_client_in(server)
                 if vc is not None:
                     if (hasattr(vc, 'audio_player') and
                             vc.audio_player.is_playing()):
@@ -167,7 +167,7 @@ class Sfx:
             path = next_sound['path']
             vol = next_sound['vol']
             delete = next_sound['delete']
-            vc = self.bot.voice_client_in(guild)
+            vc = self.bot.voice_client_in(server)
 
             if vc is None:
                 # Voice not in use, we can connect to a voice channel
@@ -205,7 +205,7 @@ class Sfx:
             while self.audio_players[sid].is_playing():
                 await asyncio.sleep(0.1)
                 # if audio_cog is not None:
-                audio_cog.voice_client(guild)
+                audio_cog.voice_client(server)
                 if vc is not None:
                     if (hasattr(vc, 'audio_player') and
                             vc.audio_player.is_playing()):
@@ -218,49 +218,49 @@ class Sfx:
                 os.remove(path)
 
     @commands.command(pass_context=True, no_pm=True, aliases=['gtts'])
-    @commands.cooldown(1, 1, commands.BucketType.guild)
+    @commands.cooldown(1, 1, commands.BucketType.server)
     async def tts(self, ctx, *text: str):
         """Play a TTS clip in your current channel"""
 
         if not gTTS_avail:
-            await ctx.send("You do not have gTTS installed.")
+            await self.bot.say("You do not have gTTS installed.")
             return
         vchan = ctx.message.author.voice_channel
         if vchan is None:
-            await ctx.send("You are not connected to a voice channel.")
+            await self.bot.say("You are not connected to a voice channel.")
             return
 
         self.enqueue_tts(vchan, " ".join(text))
 
     @commands.command(no_pm=True, pass_context=True, aliases=['playsound'])
-    @commands.cooldown(1, 1, commands.BucketType.guild)
+    @commands.cooldown(1, 1, commands.BucketType.server)
     async def sfx(self, ctx, soundname: str):
         """Plays the specified sound."""
 
-        guild = ctx.message.guild
+        server = ctx.message.server
         vchan = ctx.message.author.voice_channel
 
         if vchan is None:
-            await ctx.send("You are not connected to a voice channel.")
+            await self.bot.say("You are not connected to a voice channel.")
             return
 
-        if guild.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, guild.id))
+        if server.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, server.id))
 
-        if guild.id not in self.settings:
-            self.settings[guild.id] = {}
+        if server.id not in self.settings:
+            self.settings[server.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
         f = glob.glob(os.path.join(
-            self.sound_base, guild.id, soundname + ".*"))
+            self.sound_base, server.id, soundname + ".*"))
 
         if len(f) < 1:
             # No exact match, but try for a partial match
-            f = glob.glob(os.path.join(self.sound_base, guild.id, soundname + "*"))
+            f = glob.glob(os.path.join(self.sound_base, server.id, soundname + "*"))
 
             if len(f) < 1:
                 # There are still 0 possible sound matches
-                await ctx.send(cf.error(
+                await self.bot.say(cf.error(
                     "Sound file not found. Try `{}allsfx` for a list.".format(
                         ctx.prefix)))
                 return
@@ -270,23 +270,23 @@ class Sfx:
 
         elif len(f) > 1:
             # There are identical file names, so this is still a valid error
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "There are {} sound files with the same name, but different"
                 " extensions, and I can't deal with it. Please make filenames"
                 " (excluding extensions) unique.".format(len(f))))
             return
 
         soundname = os.path.splitext(os.path.basename(f[0]))[0]
-        if soundname in self.settings[guild.id]:
-            if "volume" in self.settings[guild.id][soundname]:
-                vol = self.settings[guild.id][soundname]["volume"]
+        if soundname in self.settings[server.id]:
+            if "volume" in self.settings[server.id][soundname]:
+                vol = self.settings[server.id][soundname]["volume"]
             else:
                 vol = self.default_volume
-                self.settings[guild.id][soundname]["volume"] = vol
+                self.settings[server.id][soundname]["volume"] = vol
                 dataIO.save_json(self.settings_path, self.settings)
         else:
             vol = self.default_volume
-            self.settings[guild.id][soundname] = {"volume": vol}
+            self.settings[server.id][soundname] = {"volume": vol}
             dataIO.save_json(self.settings_path, self.settings)
 
         self.enqueue_sfx(vchan, f[0], vol=vol)
@@ -297,19 +297,19 @@ class Sfx:
 
         await self.bot.type()
 
-        guild = ctx.message.guild
+        server = ctx.message.server
 
-        if guild.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, guild.id))
+        if server.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, server.id))
 
-        if guild.id not in self.settings:
-            self.settings[guild.id] = {}
+        if server.id not in self.settings:
+            self.settings[server.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
-        strbuffer = self._list_sounds(guild.id)
+        strbuffer = self._list_sounds(server.id)
 
         if len(strbuffer) == 0:
-            await ctx.send(cf.warning(
+            await self.bot.say(cf.warning(
                 "No sounds found. Use `{}addsfx` to add one.".format(
                     ctx.prefix)))
             return
@@ -339,18 +339,18 @@ class Sfx:
 
         await self.bot.type()
 
-        guild = ctx.message.guild
+        server = ctx.message.server
 
-        if guild.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, guild.id))
+        if server.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, server.id))
 
-        if guild.id not in self.settings:
-            self.settings[guild.id] = {}
+        if server.id not in self.settings:
+            self.settings[server.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
         attach = ctx.message.attachments
         if len(attach) > 1 or (attach and link):
-            await ctx.send(
+            await self.bot.say(
                 cf.error("Please only add one sound at a time."))
             return
 
@@ -365,15 +365,15 @@ class Sfx:
             filename = os.path.basename(
                 "_".join(url.split()).replace("%20", "_"))
         else:
-            await ctx.send(
+            await self.bot.say(
                 cf.error("You must provide either a Discord attachment or a"
                          " direct link to a sound."))
             return
 
-        filepath = os.path.join(self.sound_base, guild.id, filename)
+        filepath = os.path.join(self.sound_base, server.id, filename)
 
-        if os.path.splitext(filename)[0] in self._list_sounds(guild.id):
-            await ctx.send(
+        if os.path.splitext(filename)[0] in self._list_sounds(server.id):
+            await self.bot.say(
                 cf.error("A sound with that filename already exists."
                          " Please change the filename and try again."))
             return
@@ -383,11 +383,11 @@ class Sfx:
             f.write(await new_sound.read())
             f.close()
 
-        self.settings[guild.id][
+        self.settings[server.id][
             os.path.splitext(filename)[0]] = {"volume": self.default_volume}
         dataIO.save_json(self.settings_path, self.settings)
 
-        await ctx.send(
+        await self.bot.say(
             cf.info("Sound {} added.".format(os.path.splitext(filename)[0])))
 
     @commands.command(no_pm=True, pass_context=True, aliases=['soundvol'])
@@ -400,42 +400,42 @@ class Sfx:
 
         await self.bot.type()
 
-        guild = ctx.message.guild
+        server = ctx.message.server
 
-        if guild.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, guild.id))
+        if server.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, server.id))
 
-        if guild.id not in self.settings:
-            self.settings[guild.id] = {}
+        if server.id not in self.settings:
+            self.settings[server.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
-        f = glob.glob(os.path.join(self.sound_base, guild.id,
+        f = glob.glob(os.path.join(self.sound_base, server.id,
                                    soundname + ".*"))
         if len(f) < 1:
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "Sound file not found. Try `{}allsfx` for a list.".format(
                     ctx.prefix)))
             return
         elif len(f) > 1:
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "There are {} sound files with the same name, but different"
                 " extensions, and I can't deal with it. Please make filenames"
                 " (excluding extensions) unique.".format(len(f))))
             return
 
-        if soundname not in self.settings[guild.id]:
-            self.settings[guild.id][soundname] = {"volume": self.default_volume}
+        if soundname not in self.settings[server.id]:
+            self.settings[server.id][soundname] = {"volume": self.default_volume}
             dataIO.save_json(self.settings_path, self.settings)
 
         if percent is None:
-            await ctx.send("Volume for {} is {}.".format(
-                soundname, self.settings[guild.id][soundname]["volume"]))
+            await self.bot.say("Volume for {} is {}.".format(
+                soundname, self.settings[server.id][soundname]["volume"]))
             return
 
-        self.settings[guild.id][soundname]["volume"] = percent
+        self.settings[server.id][soundname]["volume"] = percent
         dataIO.save_json(self.settings_path, self.settings)
 
-        await ctx.send("Volume for {} set to {}.".format(soundname,
+        await self.bot.say("Volume for {} set to {}.".format(soundname,
                                                                percent))
 
     @commands.command(no_pm=True, pass_context=True, aliases=['delsound'])
@@ -445,20 +445,20 @@ class Sfx:
 
         await self.bot.type()
 
-        guild = ctx.message.guild
+        server = ctx.message.server
 
-        if guild.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, guild.id))
+        if server.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, server.id))
 
-        f = glob.glob(os.path.join(self.sound_base, guild.id,
+        f = glob.glob(os.path.join(self.sound_base, server.id,
                                    soundname + ".*"))
         if len(f) < 1:
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "Sound file not found. Try `{}allsfx` for a list.".format(
                     ctx.prefix)))
             return
         elif len(f) > 1:
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "There are {} sound files with the same name, but different"
                 " extensions, and I can't deal with it. Please make filenames"
                 " (excluding extensions) unique.".format(len(f))))
@@ -466,11 +466,11 @@ class Sfx:
 
         os.remove(f[0])
 
-        if soundname in self.settings[guild.id]:
-            del self.settings[guild.id][soundname]
+        if soundname in self.settings[server.id]:
+            del self.settings[server.id][soundname]
             dataIO.save_json(self.settings_path, self.settings)
 
-        await ctx.send(cf.info("Sound {} deleted.".format(soundname)))
+        await self.bot.say(cf.info("Sound {} deleted.".format(soundname)))
 
     @commands.command(no_pm=True, pass_context=True, aliases=['getsound'])
     async def getsfx(self, ctx, soundname: str):
@@ -478,21 +478,21 @@ class Sfx:
 
         await self.bot.type()
 
-        guild = ctx.message.guild
+        server = ctx.message.server
 
-        if guild.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, guild.id))
+        if server.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, server.id))
 
-        f = glob.glob(os.path.join(self.sound_base, guild.id,
+        f = glob.glob(os.path.join(self.sound_base, server.id,
                                    soundname + ".*"))
 
         if len(f) < 1:
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "Sound file not found. Try `{}allsfx` for a list.".format(
                     ctx.prefix)))
             return
         elif len(f) > 1:
-            await ctx.send(cf.error(
+            await self.bot.say(cf.error(
                 "There are {} sound files with the same name, but different"
                 " extensions, and I can't deal with it. Please make filenames"
                 " (excluding extensions) unique.".format(len(f))))
@@ -523,8 +523,8 @@ class Sfx:
             # This does not really check to make sure the queued item
             # is valid. Should probably check that with the enqueue function.
             channel = self.bot.get_channel(item['cid'])
-            guild = channel.guild
-            sid = guild.id
+            server = channel.server
+            sid = server.id
             priority = item['priority']
 
             if self.slave_tasks.get(sid) is None:
@@ -572,5 +572,5 @@ def check_files():
 def setup(bot):
     check_folders()
     check_files()
-    n=Sfx(bot)
-    bot.add_cog(n)
+    n=Sfx
+    bot.add_cog(Sfx(bot))
