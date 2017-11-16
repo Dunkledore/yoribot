@@ -13,7 +13,7 @@ from .utils import checks
 
 
 class Searches:
-    """Different search commands - YouTube, """
+    """Different search commands - YouTube, Google, random cat, random dog. """
     def __init__(self, bot):
         self.bot = bot
         self.youtube_regex = (
