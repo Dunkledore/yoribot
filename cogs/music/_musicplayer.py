@@ -422,7 +422,7 @@ class MusicPlayer:
 
         # Create embed UI object
         self.embed = ui_embed.UI(
-            bot,
+            self.bot,
             self.mchannel,
             "Music Player",
             "Press the buttons!",
