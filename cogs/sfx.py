@@ -1,6 +1,5 @@
 from .utils.dataIO import fileIO
 from .utils import checks
-from __main__ import send_cmd_help
 from __main__ import settings as bot_settings
 # Sys.
 import discord
@@ -745,8 +744,7 @@ class Freesound:
     @commands.group(name="freesound", pass_context=True, no_pm=False)
     async def _freesound(self, ctx):
         """Freesound operations"""
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+
 
     @_freesound.command(pass_context=True, no_pm=False)
     @checks.admin_or_permissions(manage_guild=True)
