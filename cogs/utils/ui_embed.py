@@ -1,11 +1,10 @@
-from ..musicaudio import client
 
 import discord
 
 
 class UI:
     def __init__(self, channel, title, description,
-                 modulename="Modis", creator="anonymous", colour=0xAAFF00, thumbnail=None, image=None, datapacks=()):
+                 modulename="Modis", creator="anonymous", colour=0xAAFF00, thumbnail=None, image=None, datapacks=(), bot):
         """Initialises variables and builds GUI
 
         Args:
@@ -31,6 +30,7 @@ class UI:
 
         self.built_embed = self.build()
         self.sent_embed = None
+        self.bot = bot
 
     def build(self):
         """Builds Discord embed GUI
@@ -73,14 +73,14 @@ class UI:
     async def send(self):
         """Send new GUI"""
 
-        await client.send_typing(self.channel)
-        self.sent_embed = await client.send_message(self.channel, embed=self.built_embed)
+        await self.bot.send_typing(self.channel)
+        self.sent_embed = await bot.send_message(self.channel, embed=self.built_embed)
 
     async def usend(self):
         """Edit existing GUI if available, else send new GUI"""
 
         try:
-            await client.edit_message(self.sent_embed, embed=self.built_embed)
+            await self.bot.edit_message(self.sent_embed, embed=self.built_embed)
         except:
             pass
 
@@ -88,7 +88,7 @@ class UI:
         """Deletes the existing GUI if available"""
 
         try:
-            await client.delete_message(self.sent_embed)
+            await self.bot.delete_message(self.sent_embed)
         except:
             pass
 

@@ -5,13 +5,13 @@ import random
 import discord
 
 from . import _data, api_youtube
-from ..utils import ui_embed
+from .utils import ui_embed
 
 logger = logging.getLogger(__name__)
 
 
 class MusicPlayer:
-    def __init__(self, server_id):
+    def __init__(self, server_id, bot):
         """Locks onto a server for easy management of various UIs
 
         Args:
@@ -45,6 +45,7 @@ class MusicPlayer:
         self.statuslog = logging.getLogger("{}.{}.status".format(__name__, self.server_id))
         self.statuslog.setLevel("DEBUG")
         self.statustimer = None
+        self.bot = bot
 
     async def setup(self, author, text_channel):
         """
@@ -427,7 +428,8 @@ class MusicPlayer:
             modulename=_data.modulename,
             creator=_data.creator,
             colour=0x88FF00,
-            datapacks=datapacks
+            datapacks=datapacks,
+            bot
         )
 
         # Add handlers to update gui
