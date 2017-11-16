@@ -622,10 +622,10 @@ class EmbedLogHandler(logging.Handler):
         if self.embed is not None:
             await self.embed.usend()
 
-    def emit(self, record):
+    async def emit(self, record):
         msg = self.format(record)
         try:
             self.embed.update_data(self.line, msg)
         except AttributeError:
             return
-        self.flush()
+        await self.flush()
