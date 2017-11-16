@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 import datetime
+import re
+import math
 import random
 try:
     from bs4 import BeautifulSoup
