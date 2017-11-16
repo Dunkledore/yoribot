@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from random import choice as randchoice
+from .utils import checks
 import os
 
 defaults = [
