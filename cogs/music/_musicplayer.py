@@ -9,6 +9,14 @@ from ..utils import ui_embed
 
 logger = logging.getLogger(__name__)
 
+class YTDLSource(discord.PCMVolumeTransformer):
+    def __init__(self, source, *, data, volume=0.5):
+        super().__init__(source, volume)
+
+        self.data = data
+
+        self.title = data.get('title')
+        self.url = data.get('url')
 
 class MusicPlayer:
     def __init__(self, server_id, bot):
@@ -530,11 +538,12 @@ class MusicPlayer:
             self.queue.pop(0)
 
             try:
-                self.streamer = await self.vclient.create_ytdl_player(song, after=self.vafter_ts)
+                player = await YTDLSource.from_url(song, loop=self.bot.loop)
+                self.streamer = player
                 self.state = "ready"
 
                 self.streamer.volume = self.volume / 100
-                self.streamer.start()
+                self.vclient.play(player, after=self.vafter_ts)
 
                 if self.streamer.is_live:
                     self.statuslog.info("Streaming")
