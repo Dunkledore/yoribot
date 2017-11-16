@@ -358,7 +358,7 @@ class MusicPlayer:
         if self.vchannel:
             self.statuslog.info("Connecting to voice")
             try:
-                self.vclient = await self.bot.join_voice_channel(self.vchannel)
+                self.vclient = await self.vchannel.connect()
             except discord.ClientException:
                 self.statuslog.error("I'm already connected to a voice channel.")
                 return
