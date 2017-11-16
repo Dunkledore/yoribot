@@ -376,6 +376,7 @@ class Meta:
         await ctx.send(content)
 
     @commands.command(hidden=True)
+    @commands.is_mod
     async def cud(self, ctx):
         """pls no spam"""
 
