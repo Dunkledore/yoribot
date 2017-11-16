@@ -18,13 +18,31 @@ class Nsfw:
         """Nsfw Commands"""
 
     @commands.command(pass_context=True)
-    async def penis(self, ctx, user):
+    async def dick(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
 
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 10)
         y = "=" *  x
         await ctx.send("{}\'s dick:' ** 8{}D **".format(ctx.message.mentions[0].name, y))
+
+    @commands.command(pass_context=True)
+    async def boobs(self, ctx, user):
+        """Rates users sparkliness. 157% accurate!"""
+
+        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        x = random.randint(1, 10)
+        y = " " *  x
+        await ctx.send("{}\'s boobs:' ** (.{}Y{}.) **".format(ctx.message.mentions[0].name, y, y))
+
+    @commands.command(pass_context=True)
+    async def ass(self, ctx, user):
+        """Rates users sparkliness. 157% accurate!"""
+
+        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        x = random.randint(1, 10)
+        y = " " *  x
+        await ctx.send("{}\'s ass:' ** ({}!{}) **".format(ctx.message.mentions[0].name, y, y))
 
     @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
