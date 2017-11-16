@@ -47,20 +47,6 @@ class Nsfw:
 
     @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
-    async def e621(self, ctx):
-        """Random Image From e621"""
-        try:
-            query = ("https://e621.net/post/random")
-            page = await self.session.get(query)
-            page = await page.text()
-            soup = BeautifulSoup(page, 'html.parser')
-            image = soup.find(id="highres").get("href")
-            await ctx.send('https:' + image)
-        except Exception as e:
-            await ctx.send(":x: **Error:** `{}`".format(e))
-
-    @nsfw.command(pass_context=True, no_pm=True)
-    @checks.is_nsfw()
     async def rule34(self, ctx):
         """Random Image From rule34"""
         try:
@@ -70,20 +56,6 @@ class Nsfw:
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
             await ctx.send('http:' + image)
-        except Exception as e:
-            await ctx.send(":x: **Error:** `{}`".format(e))
-
-    @nsfw.command(pass_context=True, no_pm=True)
-    @checks.is_nsfw()
-    async def danbooru(self, ctx):
-        """Random Image From Danbooru"""
-        try:
-            query = ("https://danbooru.donmai.us/posts/random")
-            page = await self.session.get(query)
-            page = await page.text()
-            soup = BeautifulSoup(page, 'html.parser')
-            image = soup.find(id="image").get("src")
-            await ctx.send('http://danbooru.donmai.us' + image)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
