@@ -354,7 +354,7 @@ class MusicPlayer:
         self.logger.debug("Setting up voice")
 
         # Create voice client
-        self.vchannel = author.voice.voice_channel
+        self.vchannel = author.voice.channel
         if self.vchannel:
             self.statuslog.info("Connecting to voice")
             try:
