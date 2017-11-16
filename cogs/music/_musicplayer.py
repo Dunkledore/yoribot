@@ -582,20 +582,6 @@ class MusicPlayer:
 
             self.statuslog.info("Playing")
             self.nowplayinglog.info(songname)
-            self.nowplayinglog.info("Error playing {}".format(songname))
-            self.statuslog.error("Had a problem playing {}".format(songname))
-            logger.exception(e)
-            try:
-                self.streamer.stop()
-            except:
-                pass
-
-            self.streamer = None
-            self.state = "ready"
-            await self.vplay()
-
-            self.update_queue()
-            # Queue exhausted
         else:
             self.statuslog.info("Finished queue")
             self.state = "ready"
