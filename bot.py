@@ -36,6 +36,7 @@ initial_extensions = (
     'cogs.cookie',
     'cogs.config',
     'cogs.ffxiv',
+    'cogs.fun',
     'cogs.gallery',
     'cogs.hangman',
     'cogs.membership',
