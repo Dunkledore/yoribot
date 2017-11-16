@@ -28,9 +28,9 @@ class AnimeList:
         self.file_path = "data/animelist/credentials.json"
         self.credentials = dataIO.load_json(self.file_path)
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, hidden=True)
     @checks.is_owner()
-    async def animeset(self, ctx, hidden=True):
+    async def animeset(self, ctx):
         """Sets your username and password from myanimelist"""
         await self.owner_set(ctx)
 
