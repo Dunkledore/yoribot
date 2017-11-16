@@ -137,17 +137,17 @@ class Music:
 def setup(bot):
 
 	if datatools.has_data():
-        data = datatools.get_data()
-    else:
-        # Create a blank data file
-        data = {"discord": {}}
+		data = datatools.get_data()
+	else:
+		# Create a blank data file
+		data = {"discord": {}}
 
-    if "keys" not in data["discord"]:
-        data["discord"]["keys"] = {}
+	if "keys" not in data["discord"]:
+		data["discord"]["keys"] = {}
 
-    if "google_api_key" in data["discord"]["keys"]:
-    	data["discord"]["keys"]["google_api_key"] = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-    	datatools.write_data(data)
+	if "google_api_key" in data["discord"]["keys"]:
+		data["discord"]["keys"]["google_api_key"] = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+		datatools.write_data(data)
 
 
 	n = Music(bot)
