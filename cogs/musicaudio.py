@@ -86,7 +86,7 @@ class Music:
 
 					# Lock on to server if not yet locked
 					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
-						_data.cache[server.id] = _musicplayer.MusicPlayer(str(server.id), self.bot)
+						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
 					# Remove message
 					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
