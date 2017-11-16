@@ -144,9 +144,9 @@ class Music:
 
 def setup(bot):
 	if datatools.has_data():
-        data = datatools.get_data()
-    else:
-        # Create a blank data file
-        data = {"discord": {}}
+		data = datatools.get_data()
+	else:
+		# Create a blank data file
+		data = {"discord": {}}
 	n = Music(bot)
 	bot.add_cog(n)
