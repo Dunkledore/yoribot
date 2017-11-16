@@ -150,12 +150,12 @@ def setup(bot):
 		data = {"discord": {}}
 
 	if "servers" not in data["discord"]:
-        data["discord"]["servers"]
+		data["discord"]["servers"]
 
-    if "keys" not in data["discord"]:
-        data["discord"]["keys"] = {}
+	if "keys" not in data["discord"]:
+		data["discord"]["keys"] = {}
 
-    datatools.write_data(data)
+	datatools.write_data(data)
 
 	n = Music(bot)
 	bot.add_cog(n)
