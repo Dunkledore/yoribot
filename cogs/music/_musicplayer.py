@@ -611,9 +611,9 @@ class EmbedLogHandler(logging.Handler):
         self.line = line
         self.bot = bot
 
-    async def flush(self):
+    def flush(self):
         try:
-            await self.usend_when_ready()
+            asyncio.run_coroutine_threadsafe(self.usend_when_ready(), self.bot.loop)
         except Exception as e:
             logger.exception(e)
             return
@@ -622,10 +622,10 @@ class EmbedLogHandler(logging.Handler):
         if self.embed is not None:
             await self.embed.usend()
 
-    async def emit(self, record):
+    def emit(self, record):
         msg = self.format(record)
         try:
             self.embed.update_data(self.line, msg)
         except AttributeError:
             return
-        await self.flush()
+        self.flush()
