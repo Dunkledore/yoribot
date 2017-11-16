@@ -155,6 +155,8 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
+            head, sep, tail = image.partition('?')
+            clean = head.replace("//","/").replace("http:/", "http://")
             await ctx.send(image)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
