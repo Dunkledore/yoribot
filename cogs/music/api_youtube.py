@@ -2,7 +2,7 @@ import logging
 
 import googleapiclient.discovery
 from urllib.parse import urlparse
-from modis import datatools
+from ..utils import datatools
 
 logger = logging.getLogger(__name__)
 
