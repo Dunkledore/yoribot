@@ -588,6 +588,7 @@ class MusicPlayer:
                     self.statuslog.info("Playing")
                 self.nowplayinglog.info(songname)
             except Exception as e:
+                print(e)
                 self.nowplayinglog.info("Error playing {}".format(songname))
                 self.statuslog.error("Had a problem playing {}".format(songname))
                 logger.exception(e)
