@@ -186,9 +186,9 @@ class Gallery:
         except asyncio.CancelledError:
             pass
 
-    @commands.group(pass_context=True, allow_dm=False)
+    @commands.group(pass_context=True, allow_dm=False, hidden=True)
     @checks.is_admin()
-    async def galset(self, ctx, hidden=True):
+    async def galset(self, ctx):
         """Gallery module settings"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
