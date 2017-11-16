@@ -92,7 +92,7 @@ class Music:
 					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
 								   'destroy', 'front', 'movehere']:
 						try:
-							await self.bot.delete_message(message)
+							await message.delete()
 						except discord.errors.NotFound:
 							logger.warning("Could not delete music player command message - NotFound")
 						except discord.errors.Forbidden:
