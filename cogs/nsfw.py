@@ -37,7 +37,7 @@ class Nsfw:
         y = " " *  x
         await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(ctx.message.mentions[0].name, y, y))
 
-    @nsfwcommand(pass_context=True)
+    @nsfw.command(pass_context=True)
     @checks.is_nsfw()
     async def ass(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
