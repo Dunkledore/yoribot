@@ -4,4 +4,5 @@ class Music:
 		self.bot = bot
 
 	def setup(bot):
-		bot.add_cog(Music(bot))
+		n = Music(bot)
+		bot.add_cog(n)
