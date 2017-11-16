@@ -25,7 +25,7 @@ class Music:
 
 
 		# Commands section
-		if user != reaction.message.channel.server.me:
+		if user != reaction.message.channel.guild.me:
 			if server.id not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
 				return
 
@@ -73,7 +73,7 @@ class Music:
 
 
 		# Only reply to server messages and don't reply to myself
-		if server is not None and author != channel.server.me:
+		if server is not None and author != channel.guild.me:
 			# Commands section
 			prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
 			for prefix in prefixes:
