@@ -150,7 +150,7 @@ class Nsfw:
     async def drunkenpumken(self, ctx):
         """Random Image From DrunkenPumken"""
         try:
-            query = ("https://drunkenpumken.booru.org/index.php?page=post&s=random")
+            query = ("http://drunkenpumken.booru.org/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
