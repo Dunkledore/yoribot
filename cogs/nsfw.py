@@ -17,15 +17,14 @@ class Nsfw:
     async def nsfw(self, ctx):
         """Nsfw Commands"""
 
-    @commands.command()
-    async def penis(self, user: discord.Member):
-        """Detects user's penis length
-        This is 100% accurate."""
-        state = random.getstate()
-        random.seed(user.id)
-        dong = "8{}D".format("=" * random.randint(0, 30))
-        random.setstate(state)
-        await ctx.send("Size: " + dong)
+    @commands.command(pass_context=True)
+    async def penis(self, ctx, user):
+        """Rates users sparkliness. 157% accurate!"""
+
+        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        x = random.randint(1, 10)
+        y = "=" *  x
+        await ctx.send("{}\'s dick:' ** 8{}D ** \n {}".format(ctx.message.mentions[0].name, x, y))
 
     @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
