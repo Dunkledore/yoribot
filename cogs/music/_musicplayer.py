@@ -1,13 +1,14 @@
 import asyncio
 import logging
 import random
-
+import youtube_dl
 import discord
 
 from . import _data, api_youtube
 from ..utils import ui_embed
 
 logger = logging.getLogger(__name__)
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
