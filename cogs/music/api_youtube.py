@@ -23,7 +23,8 @@ def build_api():
         ytdiscoveryapi = googleapiclient.discovery.build("youtube", "v3", developerKey=ytdevkey)
         logger.debug("Build successfull")
         return True
-    except:
+    except Exception as e:
+        print(e)
         logger.critical("HTTP error connecting to YouTube API, build failed")
         return False
 
