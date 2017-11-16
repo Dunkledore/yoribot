@@ -24,7 +24,7 @@ class Nsfw:
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 10)
         y = "=" *  x
-        await ctx.send("{}\'s dick:' ** 8{}D ** \n {}".format(ctx.message.mentions[0].name, x, y))
+        await ctx.send("{}\'s dick:' ** 8{}D ** \n {}".format(ctx.message.mentions[0].name, y))
 
     @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
