@@ -150,7 +150,7 @@ def setup(bot):
 		data = {"discord": {}}
 
 	if "servers" not in data["discord"]:
-		data["discord"]["servers"]
+		data["discord"]["servers"] = {}
 
 	if "keys" not in data["discord"]:
 		data["discord"]["keys"] = {}
