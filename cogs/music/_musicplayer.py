@@ -422,6 +422,7 @@ class MusicPlayer:
 
         # Create embed UI object
         self.embed = ui_embed.UI(
+            bot,
             self.mchannel,
             "Music Player",
             "Press the buttons!",
@@ -429,7 +430,6 @@ class MusicPlayer:
             creator=_data.creator,
             colour=0x88FF00,
             datapacks=datapacks,
-            bot
         )
 
         # Add handlers to update gui
