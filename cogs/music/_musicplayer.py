@@ -501,12 +501,12 @@ class MusicPlayer:
 
     async def add_reactions(self):
         """Adds the reactions buttons to the current message"""
-        print("LINE 504")
         self.statuslog.info("Loading buttons")
         for e in ("⏯", "⏹", "⏭", "🔀", "🔉", "🔊"):
             try:
                 if self.embed is not None:
-                    await self.bot.add_reaction(self.embed.sent_embed, e)
+                    await self.embed.sent_embed.add_reaction(e)
+                    print()
             except discord.DiscordException:
                 self.statuslog.error("I couldn't add the buttons. Check my permissions.")
             except Exception as e:
