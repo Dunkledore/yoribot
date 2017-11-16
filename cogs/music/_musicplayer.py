@@ -580,10 +580,7 @@ class MusicPlayer:
             self.streamer.volume = self.volume / 100
             self.vclient.play(player, after=self.vafter_ts)
 
-            if self.streamer.is_live:
-                self.statuslog.info("Streaming")
-            else:
-                self.statuslog.info("Playing")
+            self.statuslog.info("Playing")
             self.nowplayinglog.info(songname)
             self.nowplayinglog.info("Error playing {}".format(songname))
             self.statuslog.error("Had a problem playing {}".format(songname))
