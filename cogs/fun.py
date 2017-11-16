@@ -8,9 +8,9 @@ class Fun:
         self.bot = bot
 
     @commands.command(pass_context=True, no_pm=True)
-    async def riot(self, ctx, *, text: str):
+    async def riot(self, ctx, *text):
         """RIOT!"""
-        await self.bot.say('ヽ༼ຈل͜ຈ༽ﾉ **' + str(text) + '** ヽ༼ຈل͜ຈ༽ﾉ')
+        await ctx.send('ヽ༼ຈل͜ຈ༽ﾉ **' + text + '** ヽ༼ຈل͜ຈ༽ﾉ')
 
 
 def setup(bot):
