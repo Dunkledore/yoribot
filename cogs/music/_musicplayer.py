@@ -501,6 +501,7 @@ class MusicPlayer:
 
     async def add_reactions(self):
         """Adds the reactions buttons to the current message"""
+        print("LINE 504")
         self.statuslog.info("Loading buttons")
         for e in ("⏯", "⏹", "⏭", "🔀", "🔉", "🔊"):
             try:
