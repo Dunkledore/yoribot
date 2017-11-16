@@ -18,7 +18,7 @@ class Nsfw:
         """Nsfw Commands"""
 
     @commands.command()
-    async def penis(self, *, user : discord.Member):
+    async def penis(self, *, user):
         """Detects user's penis length
         This is 100% accurate."""
         state = random.getstate()
