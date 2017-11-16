@@ -1114,4 +1114,5 @@ def setup(bot):
         raise RuntimeError("numpy is missing, get your bitness python3(cp35) numpy install package from http://www.lfd.uci.edu/~gohlke/pythonlibs/ and do: pip3 install packagename.whl in file located directory")
     if not matplot_available:
         raise RuntimeError("matplot is missing, get your bitness python3(cp35) matplotlib install package from http://www.lfd.uci.edu/~gohlke/pythonlibs/ and do: pip3 install packagename.whl in file located directory")
-    bot.add_cog(Freesound(bot))
+    n=Freesound(bot)
+    bot.add_cog(n)
