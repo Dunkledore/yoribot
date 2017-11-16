@@ -31,7 +31,6 @@ initial_extensions = (
     'cogs.admin',
     'cogs.anime',
     'cogs.antilink',
-    'cogs.audio',
     'cogs.comics',
     'cogs.cookie',
     'cogs.config',
