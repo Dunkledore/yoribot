@@ -37,7 +37,7 @@ class Fun:
         fileIO("data/fun/items.json", 'save', self.items)
 
     @commands.group(pass_context=True, invoke_without_command=True)
-    async def slap(self, ctx, *, user: discord.Member=None):
+    async def slap(self, ctx, user: discord.Member=None):
         """Slap a user"""
         botid = self.bot.user.id
         if user is None:
@@ -54,7 +54,7 @@ class Fun:
                                (rndchoice(self.items) + "-"))
 
     @slap.command()
-    async def add(self, item):
+    async def add(self, ctx, item):
         """Adds an item"""
         if item in self.items:
             await ctx.send("That is already an item.")
@@ -65,7 +65,7 @@ class Fun:
 
     @slap.command()
     @checks.is_owner()
-    async def remove(self, item):
+    async def remove(self, ctx, item):
         """Removes item"""
         if item not in self.items:
             await ctx.send("That is not an item")
