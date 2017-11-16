@@ -2,7 +2,7 @@ import logging
 import discord 
 
 from .utils import datatools
-from .music import _data
+_data = __import__("music._data")
 
 
 class Music:
