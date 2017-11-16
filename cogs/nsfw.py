@@ -20,7 +20,7 @@ class Nsfw:
     @nsfw.command(pass_context=True)
     @checks.is_nsfw()
     async def dick(self, ctx, user):
-        """Rates users sparkliness. 157% accurate!"""
+        """Show's the size of the user's dick (157% accurate)"""
 
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 15)
@@ -30,7 +30,7 @@ class Nsfw:
     @nsfw.command(pass_context=True)
     @checks.is_nsfw()
     async def boobs(self, ctx, user):
-        """Rates users sparkliness. 157% accurate!"""
+        """Shows the size of the user's boobs (157% accurate)"""
 
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 5)
@@ -40,7 +40,7 @@ class Nsfw:
     @nsfw.command(pass_context=True)
     @checks.is_nsfw()
     async def ass(self, ctx, user):
-        """Rates users sparkliness. 157% accurate!"""
+        """Shows the size of the user's ass (157% accurate)"""
 
         random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 5)

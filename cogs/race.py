@@ -109,33 +109,6 @@ class Race:
     async def setrace(self, ctx):
         """Race cog's settings group command"""
 
-    @setrace.command(name="prize", pass_context=True)
-    @checks.admin_or_permissions(manage_guild=True)
-    async def _prize_setrace(self, ctx, minimum: int, maximum: int):
-        """Set the prize range
-
-        A number of credits will be randomly picked from the set
-        miminum to the set maximum.
-
-        Parameters:
-            minimum: integer
-                Must be lower than maximum
-            maximum: integer
-                Must be higher than minimum
-
-        Returns:
-            Bot replies with invalid mode
-            Bot replies with valid mode and saves choice
-        """
-
-        if minimum > maximum:
-            return await ctx.send("https://simple.wikipedia.org/wiki/Maximum_and_minimum")
-        guild = ctx.message.guild
-        settings = self.check_config(guild)
-        settings['Prize'] = (minimum, maximum)
-        self.save_settings()
-        await ctx.send("Prize range set to {}-{}".format(minimum, maximum))
-
     @setrace.command(name="time", pass_context=True)
     @checks.admin_or_permissions(manage_guild=True)
     async def _time_setrace(self, ctx, time: int):
@@ -249,7 +222,7 @@ class Race:
         race_msg = await ctx.send(race_text)
         await self.run_game(racers, race_msg, data)
 
-        footer = "Type {}race claim to receive prize money. You must claim it before the next race!"
+        footer = "Hope you had fun!"
         first = ':first_place:  {0}'.format(*data['First'])
         fv = '{1}\n{2:.2f}s'.format(*data['First'])
         second = ':second_place: {0}'.format(*data['Second'])
@@ -299,53 +272,6 @@ class Race:
             data['Players'][str(author.id)] = {}
             await ctx.send("**{}** entered the race!".format(author.name))
 
-    @race.command(name="claim", pass_context=True)
-    async def _claim_race(self, ctx):
-        """Claim your prize from the animal race
-
-        Returns:
-                One of three outcomes based on result
-            :Text output giving random credits from 10-100
-            :Text output telling you are not the winner
-            :Text output telling you to get a bank account
-
-        Raises:
-            cogs.economy.NoAccount Error when bank account not found.
-
-        Notes:
-            If you do not have a bank account with economy, the bot will take your money
-            and spend it on cheap booze and potatoes.
-        """
-        author = ctx.message.author
-        data = self.check_guild(author.guild)
-        settings = self.check_config(author.guild)
-
-        if data['Race Active']:
-            return
-
-        if data['Winner'] != author:
-            return await ctx.send("Scram kid. You didn't win nothing yet.")
-        try:
-            bank = self.bot.get_cog('Economy').bank
-        except AttributeError:
-            return await ctx.send("Economy is not loaded.")
-
-        prize_range = settings['Prize']
-        prize = random.randint(*prize_range)
-
-        try:  # Because people will play games for money without a fucking account smh
-            bank.deposit_credits(author, prize)
-        except Exception as e:
-            print('{} raised {} because they are stupid.'.format(author.name, type(e)))
-            await ctx.send("We wanted to give you a prize, but you didn't have a bank "
-                               "account.\nTo teach you a lesson, your winnings are mine this "
-                               "time. Now go register!")
-        else:
-            await ctx.send("After paying for animal feed, entrance fees, track fees, "
-                               "you get {} credits.".format(prize))
-        finally:
-            data['Winner'] = None
-
     def check_guild(self, guild):
         if str(guild.id) in self.system:
             return self.system[str(guild.id)]
@@ -359,7 +285,7 @@ class Race:
         if str(guild.id) in self.config['guilds']:
             return self.config['guilds'][str(guild.id)]
         else:
-            self.config['guilds'][str(guild.id)] = {'Prize': (1, 100), 'Mode': 'standard', 'Time': 60}
+            self.config['guilds'][str(guild.id)] = {'Mode': 'standard', 'Time': 60}
             self.save_settings()
             return self.config['guilds'][str(guild.id)]
 
@@ -432,9 +358,6 @@ class Race:
 
             if [player.get_position() for player in racers].count(0) == len(racers):
                 break
-
-        prize = random.randint(10, 100)
-        data['Prize'] = prize
 
 
 def check_folders():
