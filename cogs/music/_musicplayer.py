@@ -5,7 +5,7 @@ import random
 import discord
 
 from . import _data, api_youtube
-from music import ui_embed
+import ui_embed
 
 logger = logging.getLogger(__name__)
 
