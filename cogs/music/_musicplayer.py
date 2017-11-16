@@ -437,15 +437,15 @@ class MusicPlayer:
         codeformatter = logging.Formatter("```{message}```", style="{")
         volumeformatter = logging.Formatter("{message}%", style="{")
 
-        nowplayinghandler = EmbedLogHandler(self, self.embed, 0)
+        nowplayinghandler = EmbedLogHandler(self, self.embed, 0, self.bot)
         nowplayinghandler.setFormatter(noformatter)
-        queuehandler = EmbedLogHandler(self, self.embed, 1)
+        queuehandler = EmbedLogHandler(self, self.embed, 1, self.bot)
         queuehandler.setFormatter(codeformatter)
-        queuelenhandler = EmbedLogHandler(self, self.embed, 2)
+        queuelenhandler = EmbedLogHandler(self, self.embed, 2, self.bot)
         queuelenhandler.setFormatter(noformatter)
-        volumehandler = EmbedLogHandler(self, self.embed, 3)
+        volumehandler = EmbedLogHandler(self, self.embed, 3, self.bot)
         volumehandler.setFormatter(volumeformatter)
-        statushandler = EmbedLogHandler(self, self.embed, 4)
+        statushandler = EmbedLogHandler(self, self.embed, 4, self.bot)
         statushandler.setFormatter(codeformatter)
 
         self.nowplayinglog.addHandler(nowplayinghandler)
@@ -597,7 +597,7 @@ class MusicPlayer:
 
 
 class EmbedLogHandler(logging.Handler):
-    def __init__(self, music_player, embed, line):
+    def __init__(self, music_player, embed, line, bot):
         """
 
         Args:
@@ -609,6 +609,7 @@ class EmbedLogHandler(logging.Handler):
         self.music_player = music_player
         self.embed = embed
         self.line = line
+        self.bot = bot
 
     def flush(self):
         try:
