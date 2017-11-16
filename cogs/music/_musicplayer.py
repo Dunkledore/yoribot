@@ -597,8 +597,8 @@ class MusicPlayer:
             self.state = "ready"
             await self.vplay()
 
-        self.update_queue()
-        # Queue exhausted
+            self.update_queue()
+            # Queue exhausted
         else:
             self.statuslog.info("Finished queue")
             self.state = "ready"
