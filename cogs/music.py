@@ -10,7 +10,7 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
-	async def on_reaction_add(reaction, user):
+	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
 
 		Args:
@@ -62,7 +62,7 @@ class Music:
 						await _data.cache[str(server.id)].setvolume('+')
 
 
-	async def on_message(message):
+	async def on_message(self, message):
 		"""The on_message event handler for this module
 
 		Args:
