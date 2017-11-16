@@ -148,5 +148,14 @@ def setup(bot):
 	else:
 		# Create a blank data file
 		data = {"discord": {}}
+
+	if "servers" not in data["discord"]:
+        data["discord"]["servers"]
+
+    if "keys" not in data["discord"]:
+        data["discord"]["keys"] = {}
+
+    datatools.write_data(data)
+
 	n = Music(bot)
 	bot.add_cog(n)
