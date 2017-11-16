@@ -3,6 +3,7 @@ import logging
 import random
 import youtube_dl
 import discord
+from os.path import join
 
 from . import _data, api_youtube
 from ..utils import ui_embed
