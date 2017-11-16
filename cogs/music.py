@@ -2,7 +2,7 @@ import logging
 import discord 
 
 from .utils import datatools
-from .music import _data
+from .music import _data, _musicplayer
 
 
 class Music:
@@ -135,19 +135,5 @@ class Music:
 
 
 def setup(bot):
-	if datatools.has_data():
-		data = datatools.get_data()
-	else:
-		# Create a blank data file
-		data = {"discord": {}}
-
-	if "servers" not in data["discord"]:
-		data["discord"]["servers"] = {}
-
-	if "keys" not in data["discord"]:
-		data["discord"]["keys"] = {}
-
-	datatools.write_data(data)
-
 	n = Music(bot)
 	bot.add_cog(n)
