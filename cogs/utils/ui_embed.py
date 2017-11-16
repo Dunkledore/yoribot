@@ -1,4 +1,4 @@
-from .musicaudio import client
+from ..musicaudio import client
 
 import discord
 
