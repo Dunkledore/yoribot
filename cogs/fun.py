@@ -17,9 +17,8 @@ class Fun:
         await ctx.send('ヽ༼ຈل͜ຈ༽ﾉ **' + text + '** ヽ༼ຈل͜ຈ༽ﾉ')
     
     @commands.command(pass_context=True, no_pm=True)
-    async def thot(self, ctx, user: discord.Member=None):
+    async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
-        if not user:
             user = ctx.message.author
             await ctx.send("{} {}".format(user.mention, randchoice(self.thotchoices)))
 
