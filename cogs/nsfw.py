@@ -15,7 +15,7 @@ class Nsfw:
     @commands.group(pass_context=True, hidden=True)
     @checks.is_nsfw()
     async def nsfw(self, ctx):
-        """Nsfw Commands"""
+        """Nsfw Commands - use ``*help nsfw`` for more commands."""
 
     @nsfw.command(pass_context=True)
     @checks.is_nsfw()
