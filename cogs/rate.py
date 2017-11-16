@@ -254,6 +254,7 @@ class Ratings:
 
 def setup(bot):
     if soupAvailable:
-        bot.add_cog(Ratings(bot))
+        n=Rating(bot)
+        bot.add_cog(n)
     else:
         raise RuntimeError("You need to run `pip3 install beautifulsoup4`")
