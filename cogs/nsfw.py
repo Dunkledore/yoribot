@@ -16,6 +16,16 @@ class Nsfw:
     @checks.is_nsfw()
     async def nsfw(self, ctx):
         """Nsfw Commands"""
+        
+    @commands.command()
+    async def penis(self, *, user : discord.Member):
+        """Detects user's penis length
+        This is 100% accurate."""
+        state = random.getstate()
+        random.seed(user.id)
+        dong = "8{}D".format("=" * random.randint(0, 30))
+        random.setstate(state)
+        await self.bot.say("Size: " + dong)
 
     @nsfw.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
