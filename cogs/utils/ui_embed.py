@@ -72,9 +72,8 @@ class UI:
 
     async def send(self):
         """Send new GUI"""
-
-        await self.bot.send_typing(self.channel)
-        self.sent_embed = await bot.send_message(self.channel, embed=self.built_embed)
+        async with self.channel.typing():
+            self.sent_embed = await self.channel.send(embed=self.built_embed)
 
     async def usend(self):
         """Edit existing GUI if available, else send new GUI"""
