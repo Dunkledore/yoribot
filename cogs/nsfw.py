@@ -139,9 +139,9 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
-            imageaddress = image.split("?")[0]
-            head, sep, tail = image.partition('//images')
-            await ctx.send(head+'/images'+tail)
+            head, sep, tail = image.partition('?')
+            a, b, c = head.partition('//samples')
+            await ctx.send('http://img.booru.org/furry/samples'+c)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
