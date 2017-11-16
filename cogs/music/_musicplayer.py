@@ -611,11 +611,9 @@ class EmbedLogHandler(logging.Handler):
         self.line = line
         self.bot = bot
 
-    def flush(self):
+    async def flush(self):
         try:
-            asyncio.set_event_loop(asyncio.new_event_loop())
-            loop = asyncio.get_event_loop()
-            asyncio.run_coroutine_threadsafe(self.usend_when_ready(), loop)
+            await self.usend_when_ready()
         except Exception as e:
             logger.exception(e)
             return
