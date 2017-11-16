@@ -99,10 +99,10 @@ class Sfx:
         except asyncio.QueueFull:
             return False
 
-    def _list_sounds(self, server_id: str) -> List[str]:
+    def _list_sounds(self, guild_id: str) -> List[str]:
         return sorted(
             [os.path.splitext(s)[0] for s in os.listdir(os.path.join(
-                self.sound_base, server_id))],
+                self.sound_base, guild_id))],
             key=lambda s: s.lower())
 
     async def _change_and_resume(self, vc, channel: discord.VoiceChannel):
@@ -110,8 +110,8 @@ class Sfx:
         vc.audio_player.resume()
 
     def _revive_audio(self, sid):
-        server = self.bot.get_server(sid)
-        vc_current = self.bot.voice_client_in(server)
+        guild = self.bot.get_guild(sid)
+        vc_current = self.bot.voice_client_in(guild)
         vc_current.audio_player = self.vc_buffers[sid].vc_ap
         vchan_old = self.vc_buffers[sid].vchan
         self.vc_buffers[sid] = None
@@ -124,10 +124,10 @@ class Sfx:
     def _suspend_audio(self, vc, cid):
         channel = self.bot.get_channel(cid)
         vc.audio_player.pause()
-        self.vc_buffers[channel.server.id] = SuspendedPlayer(vc)
+        self.vc_buffers[channel.guild.id] = SuspendedPlayer(vc)
 
     async def _slave_queue_manager(self, queue, sid):
-        server = self.bot.get_server(sid)
+        guild = self.bot.get_guild(sid)
         timeout_counter = 0
         audio_cog = self.bot.get_cog('Audio')
         while True:
@@ -141,7 +141,7 @@ class Sfx:
                 # give back control to any prior voice clients
                 if self.vc_buffers.get(sid) is not None:
                     self._revive_audio(sid)
-                vc = self.bot.voice_client_in(server)
+                vc = self.bot.voice_client_in(guild)
                 if vc is not None:
                     if (hasattr(vc, 'audio_player') and
                             vc.audio_player.is_playing()):
@@ -167,7 +167,7 @@ class Sfx:
             path = next_sound['path']
             vol = next_sound['vol']
             delete = next_sound['delete']
-            vc = self.bot.voice_client_in(server)
+            vc = self.bot.voice_client_in(guild)
 
             if vc is None:
                 # Voice not in use, we can connect to a voice channel
@@ -205,7 +205,7 @@ class Sfx:
             while self.audio_players[sid].is_playing():
                 await asyncio.sleep(0.1)
                 # if audio_cog is not None:
-                audio_cog.voice_client(server)
+                audio_cog.voice_client(guild)
                 if vc is not None:
                     if (hasattr(vc, 'audio_player') and
                             vc.audio_player.is_playing()):
@@ -218,7 +218,7 @@ class Sfx:
                 os.remove(path)
 
     @commands.command(pass_context=True, no_pm=True, aliases=['gtts'])
-    @commands.cooldown(1, 1, commands.BucketType.server)
+    @commands.cooldown(1, 1, commands.BucketType.guild)
     async def tts(self, ctx, *text: str):
         """Play a TTS clip in your current channel"""
 
@@ -233,30 +233,30 @@ class Sfx:
         self.enqueue_tts(vchan, " ".join(text))
 
     @commands.command(no_pm=True, pass_context=True, aliases=['playsound'])
-    @commands.cooldown(1, 1, commands.BucketType.server)
+    @commands.cooldown(1, 1, commands.BucketType.guild)
     async def sfx(self, ctx, soundname: str):
         """Plays the specified sound."""
 
-        server = ctx.message.server
+        guild = ctx.message.guild
         vchan = ctx.message.author.voice_channel
 
         if vchan is None:
             await self.bot.say("You are not connected to a voice channel.")
             return
 
-        if server.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, server.id))
+        if guild.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, guild.id))
 
-        if server.id not in self.settings:
-            self.settings[server.id] = {}
+        if guild.id not in self.settings:
+            self.settings[guild.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
         f = glob.glob(os.path.join(
-            self.sound_base, server.id, soundname + ".*"))
+            self.sound_base, guild.id, soundname + ".*"))
 
         if len(f) < 1:
             # No exact match, but try for a partial match
-            f = glob.glob(os.path.join(self.sound_base, server.id, soundname + "*"))
+            f = glob.glob(os.path.join(self.sound_base, guild.id, soundname + "*"))
 
             if len(f) < 1:
                 # There are still 0 possible sound matches
@@ -277,16 +277,16 @@ class Sfx:
             return
 
         soundname = os.path.splitext(os.path.basename(f[0]))[0]
-        if soundname in self.settings[server.id]:
-            if "volume" in self.settings[server.id][soundname]:
-                vol = self.settings[server.id][soundname]["volume"]
+        if soundname in self.settings[guild.id]:
+            if "volume" in self.settings[guild.id][soundname]:
+                vol = self.settings[guild.id][soundname]["volume"]
             else:
                 vol = self.default_volume
-                self.settings[server.id][soundname]["volume"] = vol
+                self.settings[guild.id][soundname]["volume"] = vol
                 dataIO.save_json(self.settings_path, self.settings)
         else:
             vol = self.default_volume
-            self.settings[server.id][soundname] = {"volume": vol}
+            self.settings[guild.id][soundname] = {"volume": vol}
             dataIO.save_json(self.settings_path, self.settings)
 
         self.enqueue_sfx(vchan, f[0], vol=vol)
@@ -297,16 +297,16 @@ class Sfx:
 
         await self.bot.type()
 
-        server = ctx.message.server
+        guild = ctx.message.guild
 
-        if server.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, server.id))
+        if guild.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, guild.id))
 
-        if server.id not in self.settings:
-            self.settings[server.id] = {}
+        if guild.id not in self.settings:
+            self.settings[guild.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
-        strbuffer = self._list_sounds(server.id)
+        strbuffer = self._list_sounds(guild.id)
 
         if len(strbuffer) == 0:
             await self.bot.say(cf.warning(
@@ -339,13 +339,13 @@ class Sfx:
 
         await self.bot.type()
 
-        server = ctx.message.server
+        guild = ctx.message.guild
 
-        if server.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, server.id))
+        if guild.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, guild.id))
 
-        if server.id not in self.settings:
-            self.settings[server.id] = {}
+        if guild.id not in self.settings:
+            self.settings[guild.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
         attach = ctx.message.attachments
@@ -370,9 +370,9 @@ class Sfx:
                          " direct link to a sound."))
             return
 
-        filepath = os.path.join(self.sound_base, server.id, filename)
+        filepath = os.path.join(self.sound_base, guild.id, filename)
 
-        if os.path.splitext(filename)[0] in self._list_sounds(server.id):
+        if os.path.splitext(filename)[0] in self._list_sounds(guild.id):
             await self.bot.say(
                 cf.error("A sound with that filename already exists."
                          " Please change the filename and try again."))
@@ -383,7 +383,7 @@ class Sfx:
             f.write(await new_sound.read())
             f.close()
 
-        self.settings[server.id][
+        self.settings[guild.id][
             os.path.splitext(filename)[0]] = {"volume": self.default_volume}
         dataIO.save_json(self.settings_path, self.settings)
 
@@ -400,16 +400,16 @@ class Sfx:
 
         await self.bot.type()
 
-        server = ctx.message.server
+        guild = ctx.message.guild
 
-        if server.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, server.id))
+        if guild.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, guild.id))
 
-        if server.id not in self.settings:
-            self.settings[server.id] = {}
+        if guild.id not in self.settings:
+            self.settings[guild.id] = {}
             dataIO.save_json(self.settings_path, self.settings)
 
-        f = glob.glob(os.path.join(self.sound_base, server.id,
+        f = glob.glob(os.path.join(self.sound_base, guild.id,
                                    soundname + ".*"))
         if len(f) < 1:
             await self.bot.say(cf.error(
@@ -423,16 +423,16 @@ class Sfx:
                 " (excluding extensions) unique.".format(len(f))))
             return
 
-        if soundname not in self.settings[server.id]:
-            self.settings[server.id][soundname] = {"volume": self.default_volume}
+        if soundname not in self.settings[guild.id]:
+            self.settings[guild.id][soundname] = {"volume": self.default_volume}
             dataIO.save_json(self.settings_path, self.settings)
 
         if percent is None:
             await self.bot.say("Volume for {} is {}.".format(
-                soundname, self.settings[server.id][soundname]["volume"]))
+                soundname, self.settings[guild.id][soundname]["volume"]))
             return
 
-        self.settings[server.id][soundname]["volume"] = percent
+        self.settings[guild.id][soundname]["volume"] = percent
         dataIO.save_json(self.settings_path, self.settings)
 
         await self.bot.say("Volume for {} set to {}.".format(soundname,
@@ -445,12 +445,12 @@ class Sfx:
 
         await self.bot.type()
 
-        server = ctx.message.server
+        guild = ctx.message.guild
 
-        if server.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, server.id))
+        if guild.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, guild.id))
 
-        f = glob.glob(os.path.join(self.sound_base, server.id,
+        f = glob.glob(os.path.join(self.sound_base, guild.id,
                                    soundname + ".*"))
         if len(f) < 1:
             await self.bot.say(cf.error(
@@ -466,8 +466,8 @@ class Sfx:
 
         os.remove(f[0])
 
-        if soundname in self.settings[server.id]:
-            del self.settings[server.id][soundname]
+        if soundname in self.settings[guild.id]:
+            del self.settings[guild.id][soundname]
             dataIO.save_json(self.settings_path, self.settings)
 
         await self.bot.say(cf.info("Sound {} deleted.".format(soundname)))
@@ -478,12 +478,12 @@ class Sfx:
 
         await self.bot.type()
 
-        server = ctx.message.server
+        guild = ctx.message.guild
 
-        if server.id not in os.listdir(self.sound_base):
-            os.makedirs(os.path.join(self.sound_base, server.id))
+        if guild.id not in os.listdir(self.sound_base):
+            os.makedirs(os.path.join(self.sound_base, guild.id))
 
-        f = glob.glob(os.path.join(self.sound_base, server.id,
+        f = glob.glob(os.path.join(self.sound_base, guild.id,
                                    soundname + ".*"))
 
         if len(f) < 1:
@@ -523,8 +523,8 @@ class Sfx:
             # This does not really check to make sure the queued item
             # is valid. Should probably check that with the enqueue function.
             channel = self.bot.get_channel(item['cid'])
-            server = channel.server
-            sid = server.id
+            guild = channel.guild
+            sid = guild.id
             priority = item['priority']
 
             if self.slave_tasks.get(sid) is None:
