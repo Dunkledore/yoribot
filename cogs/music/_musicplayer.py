@@ -613,7 +613,9 @@ class EmbedLogHandler(logging.Handler):
 
     def flush(self):
         try:
-            asyncio.run_coroutine_threadsafe(self.usend_when_ready(), asyncio.new_event_loop())
+            asyncio.set_event_loop(asyncio.new_event_loop())
+            loop = asyncio.get_event_loop()
+            asyncio.run_coroutine_threadsafe(self.usend_when_ready(), loop)
         except Exception as e:
             logger.exception(e)
             return
