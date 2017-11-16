@@ -19,8 +19,8 @@ class Fun:
     @commands.command(pass_context=True, no_pm=True)
     async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
-            user = ctx.message.author
-            await ctx.send("{} {}".format(user.mention, randchoice(self.thotchoices)))
+        user = ctx.message.author
+        await ctx.send("{} {}".format(user.mention, randchoice(self.thotchoices)))
 
 def setup(bot):
     bot.add_cog(Fun(bot))
