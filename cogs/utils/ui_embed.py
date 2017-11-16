@@ -3,8 +3,8 @@ import discord
 
 
 class UI:
-    def __init__(self, channel, title, description,
-                 modulename="Modis", creator="anonymous", colour=0xAAFF00, thumbnail=None, image=None, datapacks=(), bot):
+    def __init__(self, bot, channel, title, description,
+                 modulename="Modis", creator="anonymous", colour=0xAAFF00, thumbnail=None, image=None, datapacks=()):
         """Initialises variables and builds GUI
 
         Args:
