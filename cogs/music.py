@@ -23,10 +23,6 @@ class Music:
 		channel = reaction.message.channel
 		emoji = reaction.emoji
 
-		data = datatools.get_data()
-
-		if not data["discord"]["servers"][str(server.id)][_data.modulename]["activated"]:
-			return
 
 		# Commands section
 		if user != reaction.message.channel.server.me:
@@ -75,10 +71,6 @@ class Music:
 		channel = message.channel
 		content = message.content
 
-		data = datatools.get_data()
-
-		if not data["discord"]["servers"][str(server.id)][_data.modulename]["activated"]:
-			return
 
 		# Only reply to server messages and don't reply to myself
 		if server is not None and author != channel.server.me:
