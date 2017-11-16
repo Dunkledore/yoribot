@@ -2,7 +2,7 @@ import logging
 import discord 
 
 from .utils import datatools
-import music
+from .music import _data
 
 
 class Music:
