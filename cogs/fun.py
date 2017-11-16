@@ -10,6 +10,7 @@ class Fun:
     @commands.command(pass_context=True, no_pm=True)
     async def riot(self, ctx, *text):
         """RIOT!"""
+        text = " ".join(text)
         await ctx.send('ヽ༼ຈل͜ຈ༽ﾉ **' + text + '** ヽ༼ຈل͜ຈ༽ﾉ')
 
 
