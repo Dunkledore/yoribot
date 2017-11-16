@@ -21,7 +21,7 @@ class Fun:
         """Determines if a user is a thot or not"""
         if not user:
             user = ctx.message.author
-            await self.bot.say("{} {}".format(user.mention, randchoice(self.thotchoices)))
+            await ctx.send("{} {}".format(user.mention, randchoice(self.thotchoices)))
 
 def setup(bot):
     bot.add_cog(Fun(bot))
