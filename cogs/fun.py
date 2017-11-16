@@ -40,10 +40,11 @@ class Fun:
     async def slap(self, ctx, user: discord.Member=None):
         """Slap a user"""
         botid = self.bot.user.id
+        person = user.display_name
         if user is None:
             user = ctx.message.author
             await ctx.send("Dont make me slap you instead " + user.name)
-        elif user.id == botid:
+        elif user.id == bot.id:
             user = ctx.message.author
             botname = self.bot.user.name
             await ctx.send("-" + botname + " slaps " + user.mention +
