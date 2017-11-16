@@ -73,13 +73,13 @@ class UI:
     async def send(self):
         """Send new GUI"""
         async with self.channel.typing():
-            self.sent_embed = await self.channel.send(embed=self.built_embed)
+            self.sent_embed = await self.channel.send(self.channel, embed=self.built_embed)
 
     async def usend(self):
         """Edit existing GUI if available, else send new GUI"""
 
         try:
-            await self.bot.edit_message(self.sent_embed, embed=self.built_embed)
+            await self.sent_embed.edit(embed=self.built_embed)
         except:
             pass
 
