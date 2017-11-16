@@ -40,7 +40,6 @@ initial_extensions = (
     'cogs.gallery',
     'cogs.hangman',
     'cogs.membership',
-    'cogs.meta',
     'cogs.mod',
     'cogs.nsfw',
     'cogs.poll',
