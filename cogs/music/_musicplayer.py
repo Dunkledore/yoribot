@@ -556,7 +556,7 @@ class MusicPlayer:
 
     async def vplay(self):
         
-        def vafter_inside(self):
+        def vafter_inside(error):
             print("line560")
             try:
                 self.vplay()
