@@ -29,8 +29,8 @@ class Music:
 		if user != reaction.message.channel.guild.me:
 			print("LINE30")
 			valid_reaction = str(reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
-			print(str(reaction.message.id))
-			print(_data.cache[str(server.id)].embed.sent_embed.id)
+			print(type(str(reaction.message.id))
+			print(type(_data.cache[str(server.id)].embed.sent_embed.id))
 
 			if valid_reaction:
 				print("LINE34")
