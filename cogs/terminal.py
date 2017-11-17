@@ -252,6 +252,7 @@ class terminal:
                         error = True
 
                     shell = output.decode('utf_8')
+                    await message.channel.send(output.decode('utf_8')) # DEBUG
 
                 if shell == "" and not error:
                     await message.channel.send("Var shell is empty.") # DEBUG
