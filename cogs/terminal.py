@@ -177,8 +177,7 @@ class terminal:
 
     async def on_message(self, message): # This is where the magic starts
 
-        if message.channel.id in self.sessions:# and self.enabled: # and
-                # message.author.id == self.bot.settings.owner: # DO NOT DELETE
+        if message.channel.id in self.sessions and self.enabled: # and message.author.id == self.bot.settings.owner: # DO NOT DELETE
 
             #TODO:
             #  Whitelist & Blacklists that cant be modified by the bot
@@ -207,10 +206,7 @@ class terminal:
                     command += ' ' + message.attachments[0]['url']
 
                 if not command: # if you have entered nothing it will just ignore
-                    await message.channel.send("No command entered.") # DEBUG
                     return
-                else:
-                    await message.channel.send(f"Received command: `{command}`")  # DEBUG
 
                 if command in self.cc:
                     if self.cc[command][uname()[0].lower()]:
@@ -247,21 +243,16 @@ class terminal:
                         shell = 'cd: {}: No such file or directory'.format(path)
                 else:
                     try:
-                        await message.channel.send("Starting process...") # DEBUG
                         output = Popen(command, cwd=self.sessions[message.channel.id], shell=True, stdout=PIPE,
                                        stderr=STDOUT).communicate()[0]
-                        await message.channel.send("Process complete.") # DEBUG
                         error = False
                     except CalledProcessError as err:
-                        await message.channel.send("Process errored.") # DEBUG
                         output = err.output
                         error = True
 
                     shell = output.decode('utf_8')
-                    await message.channel.send(output.decode('utf_8')) # DEBUG
 
                 if shell == "" and not error:
-                    await message.channel.send("Var shell is empty.") # DEBUG
                     return
 
                 shell = sub('/bin/sh: .: ', '', shell)
@@ -325,12 +316,10 @@ class terminal:
                             return
                         else:
                             if output:
-                                # await self.bot.send_message(message.channel, '```Bash\n{}```'.format(output))
-                                await message.channel.send(f"```Bash\n{output}")
+                                await message.channel.send(f"```Bash\n{output}```")
                     else:
                         if output:
-                            # await self.bot.send_message(message.channel, '```Bash\n{}```'.format(output))
-                            await message.channel.send(f"```Bash\n{output}")
+                            await message.channel.send(f"```Bash\n{output}```")
 
 
 
