@@ -26,30 +26,27 @@ class Music:
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
-			if server.id not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
-				return
 
 			valid_reaction = str(reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
-			else:
-				if valid_reaction:
-					# Remove reaction
-						
-					await reaction.message.remove_reaction(emoji, user)
+			if valid_reaction:
+				# Remove reaction
 
-					# Commands
-					if emoji == "⏯":
-						await _data.cache[str(server.id)].toggle()
-					if emoji == "⏹":
-						await _data.cache[str(server.id)].stop()
-					if emoji == "⏭":
-						await _data.cache[str(server.id)].skip("1")
-					if emoji == "🔀":
-						await _data.cache[str(server.id)].shuffle()
-					if emoji == "🔉":
-						await _data.cache[str(server.id)].setvolume('-')
-					if emoji == "🔊":
-						await _data.cache[str(server.id)].setvolume('+')
+				await reaction.message.remove_reaction(emoji, user)
+			
+				# Commands
+				if emoji == "⏯":
+					await _data.cache[str(server.id)].toggle()
+				if emoji == "⏹":
+					await _data.cache[str(server.id)].stop()
+				if emoji == "⏭":
+					await _data.cache[str(server.id)].skip("1")
+				if emoji == "🔀":
+					await _data.cache[str(server.id)].shuffle()
+				if emoji == "🔉":
+					await _data.cache[str(server.id)].setvolume('-')
+				if emoji == "🔊":
+					await _data.cache[str(server.id)].setvolume('+')
 
 
 	async def on_message(self, message):
