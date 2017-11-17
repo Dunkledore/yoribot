@@ -6,7 +6,7 @@ from .music import _data, _musicplayer
 
 client = None
 
-class Music:
+class Audio:
 
 	def __init__(self,bot):
 		self.bot = bot
@@ -146,5 +146,5 @@ class Music:
 
 
 def setup(bot):
-	n = Music(bot)
+	n = Audio(bot)
 	bot.add_cog(n)
