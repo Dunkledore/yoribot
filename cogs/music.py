@@ -3,7 +3,7 @@ from .utils import checks, formats
 from .utils.paginator import HelpPaginator, CannotPaginate
 import discord
 
-class MusicHelp:
+class Musichelp:
     """Use this to display the help info for the music plugin."""
 
     def __init__(self, bot):
@@ -19,5 +19,5 @@ class MusicHelp:
         await ctx.send(embed=em)
 
 def setup(bot):
-    n=MusicHelp(bot)
+    n=Musichelp(bot)
     bot.add_cog(n)
