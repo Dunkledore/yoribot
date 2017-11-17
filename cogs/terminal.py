@@ -115,7 +115,7 @@ class terminal:
         if ctx.invoked_subcommand is None:
             pages = self.bot.formatter.format_help_for(ctx, ctx.command)
             for page in pages:
-                await self.bot.send_message(ctx.message.channel, page)
+                await ctx.send(page)
 
     @cmdsettings.group(name="customcom", pass_context=True)
     #@checks.is_owner()
@@ -138,7 +138,7 @@ class terminal:
         if os is None:
             pages = self.bot.formatter.format_help_for(ctx, ctx.command)
             for page in pages:
-                await self.bot.send_message(ctx.message.channel, page)
+                await ctx.send(page)
             if self.cos == 'default':
                 await ctx.send('```\nCurrent prompt type: {}[{}] ```\n'
                                    ''.format(self.cos, uname()[0].lower()))
@@ -166,7 +166,7 @@ class terminal:
         if prefix is None:
             pages = self.bot.formatter.format_help_for(ctx, ctx.command)
             for page in pages:
-                await self.bot.send_message(ctx.message.channel, page)
+                await ctx.send(page)
             await ctx.send('```\nCurrent prefix: {} ```\n'.format(self.prefix))
             return
 
@@ -222,7 +222,7 @@ class terminal:
                     self.sessions.pop(message.channel.id)
                     return
                 elif commands == 'exit':
-                    await self.bot.send_message(message.channel, "Exiting.")
+                    await message.channel.send("Exiting.")
                     return
 
                 if "apt-get install" in command.lower() and not "-y" in command.lower():
@@ -297,18 +297,15 @@ class terminal:
                 for num, output in enumerate(result):
                     if num % 1 == 0 and num != 0:
 
-                        note = await self.bot.send_message(message.channel,
-                                                           'There are still {} pages left.\n'
+                        note = await message.channel.send('There are still {} pages left.\n'
                                                            'Type `more` to continue.'
                                                            ''.format(len(result) - (num+1)))
-
-                        msg = await self.bot.wait_for_message(check=lambda m:
+                        msg = await self.bot.wait_for("message",check=lambda m:
                                                               m.channel == message.channel and
                                                               m.author == message.author and
-                                                              m.content == 'more',
-                                                              timeout=10)
+                                                              m.content == 'more',timeout=10.0)
                         try:
-                            await self.bot.delete_message(note)
+                            await note.delete()
                         except Exception:
                             pass
 
