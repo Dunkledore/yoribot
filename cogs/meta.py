@@ -195,7 +195,7 @@ class Meta:
         await ctx.send(final_url)
 
     @commands.command(name='quit', hidden=True)
-    @commands.is_owner()
+    @checks.is_owner()
     async def _quit(self, ctx):
         """Quits the bot."""
         await self.bot.logout()
@@ -371,12 +371,12 @@ class Meta:
         await ctx.send(f'<{discord.utils.oauth_url(self.bot.client_id, perms)}>')
 
     @commands.command(rest_is_raw=True, hidden=True)
-    @checks.is_admin()
+    @checks.is_mod()
     async def echo(self, ctx, *, content):
         await ctx.send(content)
 
     @commands.command(hidden=True)
-    @checks.is_mod
+    @checks.is_mod()
     async def cud(self, ctx):
         """pls no spam"""
 
