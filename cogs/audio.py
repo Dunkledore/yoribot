@@ -2,7 +2,6 @@ import logging
 import discord
 from discord.ext import commands
 from .utils import checks, formats
-from .utils.paginator import HelpPaginator, CannotPaginate
 
 from .utils import datatools
 from .music import _data, _musicplayer
@@ -127,7 +126,7 @@ class Music:
 
 		@commands.command(pass_context=True)
 		async def music(self, ctx):
-			"""Will show different commands to control bot music`"""
+			"""Will show different commands to control bot music"""
 			em = discord.Embed(color=ctx.message.author.color, description="Yori is a premium Discord bot based on the rapptz robodanny code and heavily customized with influences also from Red-DiscordBot.")
 			em.set_author(name="Yori Advanced Music Player", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
 			em.set_image(url='https://i.gyazo.com/c7722437eb4f75a992b1871bae091230.gif')
