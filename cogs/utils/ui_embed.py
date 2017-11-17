@@ -54,7 +54,7 @@ class UI:
         embed.set_author(
             name="Yori",
             url="https://yoribot.com/"
-            icon_url="")
+            icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
 
         for pack in self.datapacks:
             embed.add_field(
@@ -62,11 +62,6 @@ class UI:
                 value=pack[1],
                 inline=pack[2]
             )
-
-        embed.set_footer(
-            text="{} module by {}".format(self.modulename, self.creator),
-            icon_url="http://musicbyango.com/modis/dp/{}64.jpg".format(self.creator)
-        )
 
         return embed
 
