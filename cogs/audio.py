@@ -43,25 +43,23 @@ class Music:
 			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
+				is_mod = await self.is_mod(user, reaction.message.channel)
+				has_majority = self.has_majority(reaction)
 				# Remove reaction			
 				# Commands
-				if emoji == "⏯":
-					await _data.cache[str(server.id)].toggle()
-				if emoji == "⏹":
-					await _data.cache[str(server.id)].stop()
-				if emoji == "⏭":
-					is_mod = await self.is_mod(user, reaction.message.channel)
-					has_majority = self.has_majority(reaction)
-					if is_mod or has_majority:
-						await _data.cache[str(server.id)].skip("1")
-				if emoji == "🔀":
-					is_mod = await self.is_mod(user, reaction.message.channel)
-					if is_mod:
+				if is_mod or has_majority:
+					if emoji == "⏯":
+						await _data.cache[str(server.id)].toggle()
+					if emoji == "⏹":
+						await _data.cache[str(server.id)].stop()
+					if emoji == "⏭":
+							await _data.cache[str(server.id)].skip("1")
+					if emoji == "🔀":
 						await _data.cache[str(server.id)].shuffle()
-				if emoji == "🔉":
-					await _data.cache[str(server.id)].setvolume('-')
-				if emoji == "🔊":
-					await _data.cache[str(server.id)].setvolume('+')
+					if emoji == "🔉":
+						await _data.cache[str(server.id)].setvolume('-')
+					if emoji == "🔊":
+						await _data.cache[str(server.id)].setvolume('+')
 
 	async def on_message(self, message):
 		"""The on_message event handler for this module
@@ -107,39 +105,44 @@ class Music:
 					if command == 'play':
 						await _data.cache[str(server.id)].play(author, channel, arg)
 
+					
+
 					if command == 'playnext':
 						await _data.cache[str(server.id)].play(author, channel, arg, now=True)
-
-					if command == 'playnow':
-						await _data.cache[str(server.id)].play(author, channel, arg, now=True, stop_current=True)
-
-					elif command == 'pause':
-						await _data.cache[str(server.id)].pause()
-
-					elif command == 'resume':
-						await _data.cache[str(server.id)].resume()
-
-					elif command == 'skip':
-						is_mod = await self.is_mod(message.author, message.channel )
-						if is_mod:
-							await _data.cache[str(server.id)].skip(query=arg)
-
-					elif command == 'shuffle':
-						is_mod = await self.is_mod(message.author, message.channel )
-						if is_mod:
-							await _data.cache[str(server.id)].shuffle()
-					elif command == 'stop':
-						await _data.cache[str(server.id)].stop()
-
-					elif command == 'destroy':
-						await _data.cache[str(server.id)].destroy()
-
-					elif command == 'volume':
-						await _data.cache[str(server.id)].setvolume(arg)
-
 					elif command == 'front' or command == 'movehere':
-						await _data.cache[str(server.id)].movehere(channel)
-					return
+							await _data.cache[str(server.id)].movehere(channel)
+
+					is_mod = await self.is_mod(message.author, message.channel)
+
+					if is_mod:
+						if command == 'playnow':
+							await _data.cache[str(server.id)].play(author, channel, arg, now=True, stop_current=True)
+
+						elif command == 'pause':
+							await _data.cache[str(server.id)].pause()
+
+						elif command == 'resume':
+							await _data.cache[str(server.id)].resume()
+
+						elif command == 'skip':
+							is_mod = await self.is_mod(message.author, message.channel )
+							if is_mod:
+								await _data.cache[str(server.id)].skip(query=arg)
+
+						elif command == 'shuffle':
+							is_mod = await self.is_mod(message.author, message.channel )
+							if is_mod:
+								await _data.cache[str(server.id)].shuffle()
+						elif command == 'stop':
+							await _data.cache[str(server.id)].stop()
+
+						elif command == 'destroy':
+							await _data.cache[str(server.id)].destroy()
+
+						elif command == 'volume':
+							await _data.cache[str(server.id)].setvolume(arg)
+						return
+
 
 def setup(bot):
 
