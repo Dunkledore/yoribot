@@ -2,13 +2,6 @@ from discord.ext import commands
 from .utils import checks, formats
 from .utils.paginator import HelpPaginator, CannotPaginate
 import discord
-from collections import OrderedDict, deque, Counter
-import os, datetime
-import asyncio
-import copy
-import unicodedata
-import inspect
-
 
 class MusicHelp:
     """Use this to display the help info for the music plugin."""
