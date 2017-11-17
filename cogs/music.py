@@ -26,4 +26,5 @@ class MusicHelp:
         await ctx.send(embed=em)
 
 def setup(bot):
-    bot.add_cog(MusicHelp(bot))
+    n=MusicHelp(bot)
+    bot.add_cog(n)
