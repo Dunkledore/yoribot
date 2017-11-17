@@ -649,6 +649,7 @@ class EmbedLogHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
+        print(msg)
         try:
             self.embed.update_data(self.line, msg)
         except AttributeError:
