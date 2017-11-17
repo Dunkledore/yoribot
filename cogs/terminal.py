@@ -325,12 +325,12 @@ class terminal:
                             return
                         else:
                             if output:
-                                await self.bot.send_message(message.channel,
-                                                            '```Bash\n{}```'.format(output))
+                                # await self.bot.send_message(message.channel, '```Bash\n{}```'.format(output))
+                                await message.channel.send(f"```Bash\n{output}")
                     else:
                         if output:
-                            await self.bot.send_message(message.channel,
-                                                        '```Bash\n{}```'.format(output))
+                            # await self.bot.send_message(message.channel, '```Bash\n{}```'.format(output))
+                            await message.channel.send(f"```Bash\n{output}")
 
 
 
