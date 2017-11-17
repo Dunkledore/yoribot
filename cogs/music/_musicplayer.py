@@ -592,16 +592,15 @@ class MusicPlayer:
 
     def vafter_ts(self):
         print("LINE594")
-            try:
-                future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
-                print("LINE597")
-            except Exception as e:
-                print(e)
-
-            try:
-                future.result()
-            except Exception as e:
-                print(e) 
+        try:
+            future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
+            print("LINE597")
+        except Exception as e:
+            print(e)
+        try:
+            future.result()
+        except Exception as e:
+            print(e) 
 
     async def vafter(self):
         """Function that is called after a song finishes playing"""
