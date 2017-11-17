@@ -555,6 +555,15 @@ class MusicPlayer:
         self.queuelenlog.info(str(len(self.queue)))
 
     async def vplay(self):
+        
+        def vafter_ts(self):
+        print("next song")
+            future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
+            try:
+                future.result()
+            except:
+                pass
+
         if self.state != 'ready':
             logger.error("Attempt to play song from wrong state ('{}'), must be 'ready'.".format(self.state))
             return
@@ -589,13 +598,7 @@ class MusicPlayer:
 
             await self.stop()
 
-    def vafter_ts(self):
-        print("next song")
-        future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
-        try:
-            future.result()
-        except:
-            pass
+    
 
     async def vafter(self):
         """Function that is called after a song finishes playing"""
@@ -649,7 +652,6 @@ class EmbedLogHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        print(msg)
         try:
             self.embed.update_data(self.line, msg)
         except AttributeError:
