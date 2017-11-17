@@ -561,8 +561,8 @@ class MusicPlayer:
             future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
             try:
                 future.result()
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
         if self.state != 'ready':
             logger.error("Attempt to play song from wrong state ('{}'), must be 'ready'.".format(self.state))
