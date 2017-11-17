@@ -643,7 +643,6 @@ class EmbedLogHandler(logging.Handler):
         try:
             asyncio.run_coroutine_threadsafe(self.usend_when_ready(), self.bot.loop)
         except Exception as e:
-            logger.exception(e)
             return
 
     async def usend_when_ready(self):
