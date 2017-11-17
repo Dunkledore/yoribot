@@ -57,17 +57,17 @@ class Music:
 					if emoji == "🔀":
 						await _data.cache[str(server.id)].shuffle()
 						async for ruser in reaction.users():
-							if ruser.id is not self.bot.user.id:
+							if ruser.id != self.bot.user.id:
 								await reaction.message.remove_reaction(emoji, ruser)
 					if emoji == "🔉":
 						await _data.cache[str(server.id)].setvolume('-')
 						async for ruser in reaction.users():
-							if ruser.id is not self.bot.user.id:
+							if ruser.id != self.bot.user.id:
 								await reaction.message.remove_reaction(emoji, ruser)
 					if emoji == "🔊":
 						await _data.cache[str(server.id)].setvolume('+')
 						async for ruser in reaction.users():
-							if ruser.id is not self.bot.user.id:
+							if ruser.id != self.bot.user.id:
 								await reaction.message.remove_reaction(emoji, ruser)
 
 	async def on_message(self, message):
