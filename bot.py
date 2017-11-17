@@ -42,6 +42,7 @@ initial_extensions = (
     'cogs.membership',
     'cogs.meta',
     'cogs.mod',
+    'cogs.musichelp',
     'cogs.nsfw',
     'cogs.poll',
     'cogs.profile',
