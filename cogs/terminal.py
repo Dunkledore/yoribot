@@ -219,7 +219,8 @@ class terminal:
                 if (command == 'exit()' or
                         command == 'quit'):  # commands used for quiting cmd, same as for repl
 
-                    await self.bot.send_message(message.channel, 'Exiting.')
+                    # await self.bot.send_message(message.channel, 'Exiting.')
+                    await message.channel.send("Exiting.")
                     self.sessions.pop(message.channel.id)
                     return
                 elif commands == 'exit':
