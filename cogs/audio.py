@@ -12,6 +12,14 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
+	async def is_mod(self, user, channel):
+		is_owner = await self.bot.is_owner(user)
+		if is_owner:
+			return True
+		perms = {'manage_guild': True}
+		return check(getattr(resolved, name, None) == value for name, value in perms.items())
+		return check(geta)
+
 	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
 
@@ -41,7 +49,8 @@ class Music:
 				if emoji == "⏹":
 					await _data.cache[str(server.id)].stop()
 				if emoji == "⏭":
-					await _data.cache[str(server.id)].skip("1")
+					if self.is_mod(user, reaction.message.channel):
+						await _data.cache[str(server.id)].skip("1")
 				if emoji == "🔀":
 					await _data.cache[str(server.id)].shuffle()
 				if emoji == "🔉":
