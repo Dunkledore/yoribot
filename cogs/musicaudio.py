@@ -19,7 +19,6 @@ class Music:
 		"""
 
 		# Simplify reaction info
-		print("LINE22")
 		server = reaction.message.guild
 		channel = reaction.message.channel
 		emoji = reaction.emoji
@@ -27,15 +26,12 @@ class Music:
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
-			print("LINE30")
 			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
-				print("LINE34")
 				# Remove reaction
 
 				await reaction.message.remove_reaction(emoji, user)
-				print("LINE38")
 			
 				# Commands
 				if emoji == "⏯":
@@ -50,8 +46,6 @@ class Music:
 					await _data.cache[str(server.id)].setvolume('-')
 				if emoji == "🔊":
 					await _data.cache[str(server.id)].setvolume('+')
-				print("LINE53")
-
 
 	async def on_message(self, message):
 		"""The on_message event handler for this module
