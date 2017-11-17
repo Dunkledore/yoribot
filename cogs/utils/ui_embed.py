@@ -52,9 +52,9 @@ class UI:
             embed.set_image(url=self.image)
 
         embed.set_author(
-            name="Modis",
-            url="https://musicbyango.com/modis/",
-            icon_url="http://musicbyango.com/modis/dp/modis64t.png")
+            name="Yori",
+            url="https://yoribot.com/"
+            icon_url="")
 
         for pack in self.datapacks:
             embed.add_field(
