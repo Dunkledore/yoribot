@@ -589,6 +589,9 @@ class MusicPlayer:
 
             self.statuslog.info("Playing")
             self.nowplayinglog.info(songname)
+
+            await self.embed.sent_embed.clear_reactions()
+            await self.add_reactions()
         else:
             self.statuslog.info("Finished queue")
             self.state = "ready"
