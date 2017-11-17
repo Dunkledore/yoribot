@@ -10,7 +10,7 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
-    @commands.group()
+    @commands.group(pass_context=True)
     async def music(self, ctx):
         """Will show different commands to control bot music`"""
         em = discord.Embed(color=ctx.message.author.color, description="Yori is a premium Discord bot based on the rapptz robodanny code and heavily customized with influences also from Red-DiscordBot.")
