@@ -200,6 +200,8 @@ class terminal:
                 else:
                     command = message.content[len('debugprefixcmd'):]
                 # check if the message starts with the command prefix
+                while command.startswith(' '):
+                    command = command[1:]
 
                 if message.attachments:
                     command += ' ' + message.attachments[0]['url']
@@ -208,7 +210,7 @@ class terminal:
                     await message.channel.send("No command entered.") # DEBUG
                     return
                 else:
-                    await message.channel.send(f"Received command: `{message.content}`")  # DEBUG
+                    await message.channel.send(f"Received command: `{command}`")  # DEBUG
 
                 if command in self.cc:
                     if self.cc[command][uname()[0].lower()]:
