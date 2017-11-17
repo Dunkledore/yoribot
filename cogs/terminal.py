@@ -159,7 +159,7 @@ class terminal:
         await ctx.send('Changed prompt type to {} '.format(self.cos.replace("`", "\\`")))
 
     @cmdsettings.command(name="prefix", pass_context=True)
-    @checks.is_owner()
+    @checks.admin_or_permissions()
     async def _prefix(self, ctx, prefix: str = None):
         """Set the prefix for the Terminal"""
 
