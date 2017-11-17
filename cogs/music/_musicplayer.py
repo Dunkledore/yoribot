@@ -285,7 +285,7 @@ class MusicPlayer:
                 except IndexError:
                     pass
 
-            self.streamer.stop()
+            self.streamer._end.set()
 
 
     async def shuffle(self):
