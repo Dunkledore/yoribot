@@ -1,17 +1,25 @@
 import logging
-import discord
-from discord.ext import commands
-from .utils import checks, formats
+import discord 
 
 from .utils import datatools
 from .music import _data, _musicplayer
 
+client = None
 
 class Music:
 
 	def __init__(self,bot):
 		self.bot = bot
+		client = bot
 
+	async def is_mod(self, user, channel):
+		is_owner = await self.bot.is_owner(user)
+		if is_owner:
+			return True
+		perms = {'manage_guild': True}
+		return check(getattr(resolved, name, None) == value for name, value in perms.items())
+		return check(geta)
+	
 	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
 
@@ -28,26 +36,38 @@ class Music:
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
-			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
+			if server.id not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
+				return
 
-			if valid_reaction:
-				# Remove reaction
+			try:
+				valid_reaction = str(reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
+			except AttributeError:
+				pass
+			else:
+				if valid_reaction:
+					# Remove reaction
+					try:
+						await self.bot.remove_reaction(reaction.message, emoji, user)
+					except discord.errors.NotFound:
+						pass
+					except discord.errors.Forbidden:
+						pass
 
-				await reaction.message.remove_reaction(emoji, user)
-			
-				# Commands
-				if emoji == "⏯":
-					await _data.cache[str(server.id)].toggle()
-				if emoji == "⏹":
-					await _data.cache[str(server.id)].stop()
-				if emoji == "⏭":
-					await _data.cache[str(server.id)].skip("1")
-				if emoji == "🔀":
-					await _data.cache[str(server.id)].shuffle()
-				if emoji == "🔉":
-					await _data.cache[str(server.id)].setvolume('-')
-				if emoji == "🔊":
-					await _data.cache[str(server.id)].setvolume('+')
+					# Commands
+					if emoji == "⏯":
+						await _data.cache[str(server.id)].toggle()
+					if emoji == "⏹":
+						await _data.cache[str(server.id)].stop()
+					if emoji == "⏭":
+						if self.is_mod(user, reaction.message.channel):
+							await _data.cache[str(server.id)].skip("1")
+					if emoji == "🔀":
+						await _data.cache[str(server.id)].shuffle()
+					if emoji == "🔉":
+						await _data.cache[str(server.id)].setvolume('-')
+					if emoji == "🔊":
+						await _data.cache[str(server.id)].setvolume('+')
+
 
 	async def on_message(self, message):
 		"""The on_message event handler for this module
@@ -77,13 +97,13 @@ class Music:
 
 					# Lock on to server if not yet locked
 					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
-						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
+						_data.cache[server.id] = _musicplayer.MusicPlayer(str(server.id))
 
 					# Remove message
 					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
 								   'destroy', 'front', 'movehere']:
 						try:
-							await message.delete()
+							await self.bot.delete_message(message)
 						except discord.errors.NotFound:
 							logger.warning("Could not delete music player command message - NotFound")
 						except discord.errors.Forbidden:
@@ -124,21 +144,7 @@ class Music:
 						await _data.cache[str(server.id)].movehere(channel)
 					return
 
+
 def setup(bot):
-
-	if datatools.has_data():
-		data = datatools.get_data()
-	else:
-		# Create a blank data file
-		data = {"discord": {}}
-
-	if "keys" not in data["discord"]:
-		data["discord"]["keys"] = {}
-
-	if "google_api_key" not in data["discord"]["keys"]:
-		data["discord"]["keys"]["google_api_key"] = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-		datatools.write_data(data)
-
-
 	n = Music(bot)
 	bot.add_cog(n)
