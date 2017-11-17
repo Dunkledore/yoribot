@@ -557,7 +557,8 @@ class MusicPlayer:
     async def vplay(self):
         
         def vafter_inside(self):
-            self.vafter_ts()
+            self.logger.debug("Finished playing a song")
+            self.vplay()
 
 
         if self.state != 'ready':
@@ -609,7 +610,7 @@ class MusicPlayer:
     async def vafter(self):
         """Function that is called after a song finishes playing"""
 
-        self.logger.debug("Finished playing a song")
+        
         if self.state != 'ready':
             self.logger.debug("Returning because player is in state {}".format(self.state))
             return
