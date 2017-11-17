@@ -557,8 +557,11 @@ class MusicPlayer:
     async def vplay(self):
         
         def vafter_ts(self):
-            future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
-            print("here")
+            try:
+                future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
+            except Exception as e:
+                print(e)
+
             try:
                 future.result()
             except Exception as e:
