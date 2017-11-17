@@ -497,9 +497,10 @@ class MusicPlayer:
         self.volumelog.addHandler(volumehandler)
         self.statuslog.addHandler(statushandler)
 
-    async def add_reactions(self):
+    async def add_reactions(self, verbose=True):
         """Adds the reactions buttons to the current message"""
-        self.statuslog.info("Loading buttons")
+        if verbose:
+            self.statuslog.info("Loading buttons")
         for e in ("⏯", "⏹", "⏭", "🔀", "🔉", "🔊"):
             try:
                 if self.embed is not None:
@@ -591,7 +592,7 @@ class MusicPlayer:
             self.nowplayinglog.info(songname)
 
             await self.embed.sent_embed.clear_reactions()
-            await self.add_reactions()
+            await self.add_reactions(False)
         else:
             self.statuslog.info("Finished queue")
             self.state = "ready"
