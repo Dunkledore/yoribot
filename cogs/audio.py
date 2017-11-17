@@ -124,7 +124,7 @@ class Music:
 					elif command == 'front' or command == 'movehere':
 						await _data.cache[str(server.id)].movehere(channel)
 					return
-    
+
         @commands.command(pass_context=True)
         async def music(self, ctx):
             """Will show different commands to control bot music`"""
