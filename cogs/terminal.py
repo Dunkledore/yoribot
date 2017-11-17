@@ -195,7 +195,7 @@ class terminal:
 
             if (message.content.startswith(self.prefix) or
                     message.content.startswith('debugprefixcmd')):
-
+                await self.bot.say(f"Received command: `{message.content}`") # DEBUG
                 if message.content.startswith(self.prefix):
                     command = message.content[len(self.prefix):]
                 else:
@@ -206,6 +206,7 @@ class terminal:
                     command += ' ' + message.attachments[0]['url']
 
                 if not command: # if you have entered nothing it will just ignore
+                    await self.bot.say("No command entered.") # DEBUG
                     return
 
                 if command in self.cc:
@@ -221,7 +222,7 @@ class terminal:
                     self.sessions.pop(message.channel.id)
                     return
                 elif commands == 'exit':
-                    await self.bot.send_message(message.channel, "")
+                    await self.bot.send_message(message.channel, "Exiting.")
                 if "apt-get install" in command.lower() and not "-y" in command.lower():
                     command = "{} -y".format(command) # forces apt-get to not ask for a prompt
 
@@ -240,16 +241,20 @@ class terminal:
                         shell = 'cd: {}: No such file or directory'.format(path)
                 else:
                     try:
+                        await self.bot.say("Starting process...") # DEBUG
                         output = Popen(command, cwd=self.sessions[message.channel.id], shell=True, stdout=PIPE,
                                        stderr=STDOUT).communicate()[0]
+                        await self.bot.say("Process complete.") # DEBUG
                         error = False
                     except CalledProcessError as err:
+                        await self.bot.say("Process errored.") # DEBUG
                         output = err.output
                         error = True
 
                     shell = output.decode('utf_8')
 
                 if shell == "" and not error:
+                    await self.bot.say("Var shell is empty.") # DEBUG
                     return
 
                 shell = sub('/bin/sh: .: ', '', shell)
