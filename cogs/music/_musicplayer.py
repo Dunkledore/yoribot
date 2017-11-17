@@ -556,17 +556,6 @@ class MusicPlayer:
 
     async def vplay(self):
         
-        def vafter_ts(self):
-            try:
-                future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
-            except Exception as e:
-                print(e)
-
-            try:
-                future.result()
-            except Exception as e:
-                print(e)
-
         if self.state != 'ready':
             logger.error("Attempt to play song from wrong state ('{}'), must be 'ready'.".format(self.state))
             return
@@ -589,7 +578,7 @@ class MusicPlayer:
             self.state = "ready"
 
             self.streamer.volume = self.volume / 100
-            self.vclient.play(player, after=vafter_ts)
+            self.vclient.play(player, after=self.vafter_ts)
 
             self.statuslog.info("Playing")
             self.nowplayinglog.info(songname)
@@ -601,7 +590,16 @@ class MusicPlayer:
 
             await self.stop()
 
-    
+    def vafter_ts(self):
+            try:
+                future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
+            except Exception as e:
+                print(e)
+
+            try:
+                future.result()
+            except Exception as e:
+                print(e) 
 
     async def vafter(self):
         """Function that is called after a song finishes playing"""
