@@ -22,6 +22,8 @@ class Music:
 
 	def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
+		print(reaction.count)
+		print(listeners)
 		return reaction.count > (listeners/2)
 
 	async def on_reaction_add(self, reaction, user):
@@ -43,10 +45,7 @@ class Music:
 			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
-				# Remove reaction
-
-				await reaction.message.remove_reaction(emoji, user)
-			
+				# Remove reaction			
 				# Commands
 				if emoji == "⏯":
 					await _data.cache[str(server.id)].toggle()
