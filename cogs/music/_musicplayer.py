@@ -557,7 +557,6 @@ class MusicPlayer:
     async def vplay(self):
         
         def vafter_inside(error):
-            print("line560")
             try:
                 future = asyncio.run_coroutine_threadsafe(self.vplay(), self.bot.loop)
                 future.result()
@@ -599,10 +598,8 @@ class MusicPlayer:
             await self.stop()
 
     def vafter_ts(self):
-        print("LINE594")
         try:
             future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
-            print("LINE597")
         except Exception as e:
             print(e)
         try:
