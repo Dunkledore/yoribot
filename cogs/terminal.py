@@ -195,7 +195,7 @@ class terminal:
 
             if (message.content.startswith(self.prefix) or
                     message.content.startswith('debugprefixcmd')):
-                await self.bot.say(f"Received command: `{message.content}`") # DEBUG
+                await message.channel.send(f"Received command: `{message.content}`") # DEBUG
                 if message.content.startswith(self.prefix):
                     command = message.content[len(self.prefix):]
                 else:
@@ -206,7 +206,7 @@ class terminal:
                     command += ' ' + message.attachments[0]['url']
 
                 if not command: # if you have entered nothing it will just ignore
-                    await self.bot.say("No command entered.") # DEBUG
+                    await message.channel.send("No command entered.") # DEBUG
                     return
 
                 if command in self.cc:
@@ -241,20 +241,20 @@ class terminal:
                         shell = 'cd: {}: No such file or directory'.format(path)
                 else:
                     try:
-                        await self.bot.say("Starting process...") # DEBUG
+                        await message.channel.send("Starting process...") # DEBUG
                         output = Popen(command, cwd=self.sessions[message.channel.id], shell=True, stdout=PIPE,
                                        stderr=STDOUT).communicate()[0]
-                        await self.bot.say("Process complete.") # DEBUG
+                        await message.channel.send("Process complete.") # DEBUG
                         error = False
                     except CalledProcessError as err:
-                        await self.bot.say("Process errored.") # DEBUG
+                        await message.channel.send("Process errored.") # DEBUG
                         output = err.output
                         error = True
 
                     shell = output.decode('utf_8')
 
                 if shell == "" and not error:
-                    await self.bot.say("Var shell is empty.") # DEBUG
+                    await message.channel.send("Var shell is empty.") # DEBUG
                     return
 
                 shell = sub('/bin/sh: .: ', '', shell)
