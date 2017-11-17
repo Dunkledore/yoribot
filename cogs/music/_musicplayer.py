@@ -559,7 +559,7 @@ class MusicPlayer:
         def vafter_ts(self):
             print("next song")
             print("LINE561")
-            future = asyncio.run_coroutine_threadsafe(self.vafter(), asyncio.get_event_loop())
+            future = asyncio.run_coroutine_threadsafe(self.vafter(), asyncio.new_event_loop())
             print("LINE562")
             try:
                 future.result()
