@@ -17,7 +17,7 @@ class Music:
 		if is_owner:
 			return True
 		perms = {'manage_guild': True}
-		resolved = channel.permissions_for(ctx.user)
+		resolved = channel.permissions_for(user)
 		return check(getattr(resolved, name, None) == value for name, value in perms.items())
 
 	async def on_reaction_add(self, reaction, user):
