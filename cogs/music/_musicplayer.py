@@ -559,7 +559,8 @@ class MusicPlayer:
         def vafter_inside(error):
             print("line560")
             try:
-                self.vplay()
+                future = asyncio.run_coroutine_threadsafe(self.vplay(), self.bot.loop)
+                future.result()
             except Exception as e:
                 print(e)
 
