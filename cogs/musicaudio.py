@@ -37,7 +37,7 @@ class Music:
 				if valid_reaction:
 					# Remove reaction
 					try:
-						await self.bot.remove_reaction(reaction.message, emoji, user)
+						await reaction.message.remove_reaction(emoji, user)
 					except discord.errors.NotFound:
 						pass
 					except discord.errors.Forbidden:
