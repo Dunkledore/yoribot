@@ -12,13 +12,13 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
-	async def is_mod(self, user, channel):
+	async def is_mod(self, user, channel, * , check=all):
 		is_owner = await self.bot.is_owner(user)
 		if is_owner:
 			return True
 		perms = {'manage_guild': True}
+		resolved = channel.permissions_for(ctx.user)
 		return check(getattr(resolved, name, None) == value for name, value in perms.items())
-		return check(geta)
 
 	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
