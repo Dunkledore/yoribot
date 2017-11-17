@@ -195,7 +195,6 @@ class terminal:
 
             if (message.content.startswith(self.prefix) or
                     message.content.startswith('debugprefixcmd')):
-                await message.channel.send(f"Received command: `{message.content}`") # DEBUG
                 if message.content.startswith(self.prefix):
                     command = message.content[len(self.prefix):]
                 else:
@@ -208,6 +207,8 @@ class terminal:
                 if not command: # if you have entered nothing it will just ignore
                     await message.channel.send("No command entered.") # DEBUG
                     return
+                else:
+                    await message.channel.send(f"Received command: `{message.content}`")  # DEBUG
 
                 if command in self.cc:
                     if self.cc[command][uname()[0].lower()]:
@@ -223,6 +224,8 @@ class terminal:
                     return
                 elif commands == 'exit':
                     await self.bot.send_message(message.channel, "Exiting.")
+                    return
+
                 if "apt-get install" in command.lower() and not "-y" in command.lower():
                     command = "{} -y".format(command) # forces apt-get to not ask for a prompt
 
