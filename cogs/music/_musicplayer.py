@@ -556,6 +556,10 @@ class MusicPlayer:
 
     async def vplay(self):
         
+        def vafter_inside(self):
+            self.vafter_ts()
+
+
         if self.state != 'ready':
             logger.error("Attempt to play song from wrong state ('{}'), must be 'ready'.".format(self.state))
             return
@@ -578,7 +582,7 @@ class MusicPlayer:
             self.state = "ready"
 
             self.streamer.volume = self.volume / 100
-            self.vclient.play(player, after=self.vafter_ts)
+            self.vclient.play(player, after=self.vafter_inside)
 
             self.statuslog.info("Playing")
             self.nowplayinglog.info(songname)
