@@ -115,8 +115,6 @@ class Antilink:
                                 await message.guild.owner.create_dm()
                             await message.guild.owner.dm_channel.send(message.author.mention + " posted " + message.content + " in " + message.channel.name)
 
-
-
 def check_folder():
     if not os.path.exists('data/antilink'):
         os.makedirs('data/antilink')
