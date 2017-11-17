@@ -20,6 +20,10 @@ class Music:
 		resolved = channel.permissions_for(user)
 		return check(getattr(resolved, name, None) == value for name, value in perms.items())
 
+	def has_majority(self, reaction):
+		listeners = len(reaction.message.guild.voice_client.channel.members)
+		return reaction.count > (listeners/2)
+
 	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
 
@@ -50,7 +54,8 @@ class Music:
 					await _data.cache[str(server.id)].stop()
 				if emoji == "⏭":
 					is_mod = await self.is_mod(user, reaction.message.channel)
-					if is_mod:
+					has_majority = self.has_majority(reaction)
+					if is_mod or has_majority:
 						await _data.cache[str(server.id)].skip("1")
 				if emoji == "🔀":
 					is_mod = await self.is_mod(user, reaction.message.channel)
