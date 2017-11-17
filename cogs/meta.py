@@ -371,7 +371,7 @@ class Meta:
         await ctx.send(f'<{discord.utils.oauth_url(self.bot.client_id, perms)}>')
 
     @commands.command(rest_is_raw=True, hidden=True)
-    @commands.is_owner()
+    @checks.is_admin()
     async def echo(self, ctx, *, content):
         await ctx.send(content)
 
