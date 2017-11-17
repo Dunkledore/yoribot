@@ -22,6 +22,8 @@ class Music:
 
 	def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
+		print (reaction.count)
+		print (listeners)
 		return (reaction.count-1) > (listeners-1/2)
 
 	async def on_reaction_add(self, reaction, user):
