@@ -582,7 +582,7 @@ class MusicPlayer:
             self.state = "ready"
 
             self.streamer.volume = self.volume / 100
-            self.vclient.play(player, after=self.vafter_inside)
+            self.vclient.play(player, after=vafter_inside)
 
             self.statuslog.info("Playing")
             self.nowplayinglog.info(songname)
