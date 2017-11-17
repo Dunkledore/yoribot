@@ -19,7 +19,7 @@ class Musichelp:
         em.add_field(name='shuffle', value='Shuffles the list of songs queued.', inline=False)
         em.add_field(name='stop', value='Stops the music from playing.', inline=False)
         em.add_field(name='front', value='Moves the player window to the front of the chat.', inline=False)
-        em.set_image(url='https://i.gyazo.com/c7722437eb4f75a992b1871bae091230.gif')
+        em.set_image(url='https://i.gyazo.com/476ca3539836bfd7e5240f1f5366fa80.gif')
         em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
         await ctx.send(embed=em)
 
