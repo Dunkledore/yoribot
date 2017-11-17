@@ -29,19 +29,13 @@ class Music:
 			if server.id not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
 				return
 
-			try:
-				valid_reaction = str(reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
-			except AttributeError:
-				pass
+			valid_reaction = str(reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
+
 			else:
 				if valid_reaction:
 					# Remove reaction
-					try:
-						await reaction.message.remove_reaction(emoji, user)
-					except discord.errors.NotFound:
-						pass
-					except discord.errors.Forbidden:
-						pass
+						
+					await reaction.message.remove_reaction(emoji, user)
 
 					# Commands
 					if emoji == "⏯":
