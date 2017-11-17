@@ -19,6 +19,7 @@ class Music:
 		"""
 
 		# Simplify reaction info
+		print("LINE22")
 		server = reaction.message.guild
 		channel = reaction.message.channel
 		emoji = reaction.emoji
