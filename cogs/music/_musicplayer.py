@@ -557,9 +557,11 @@ class MusicPlayer:
     async def vplay(self):
         
         def vafter_inside(self):
-            self.logger.debug("Finished playing a song")
-            self.vplay()
-
+            print("line560")
+            try:
+                self.vplay()
+            except Exception as e:
+                print(e)
 
         if self.state != 'ready':
             logger.error("Attempt to play song from wrong state ('{}'), must be 'ready'.".format(self.state))
