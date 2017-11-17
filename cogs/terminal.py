@@ -175,7 +175,7 @@ class terminal:
         dataIO.save_json(abspath(dirname(argv[0])) + '/data/terminal/settings.json', self.settings)
         await ctx.send('Changed prefix to {} '.format(self.prefix.replace("`", "\\`")))
 
-    async def on_message(self, ctx, message): # This is where the magic starts
+    async def on_message(self, message): # This is where the magic starts
 
         if message.channel.id in self.sessions:# and self.enabled: # and
                 # message.author.id == self.bot.settings.owner: # DO NOT DELETE
