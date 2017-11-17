@@ -590,6 +590,7 @@ class MusicPlayer:
             await self.stop()
 
     def vafter_ts(self):
+        print("next song")
         future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
         try:
             future.result()
