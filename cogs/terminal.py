@@ -27,7 +27,7 @@ class terminal:
 
 
     @commands.command(pass_context=True, hidden=True)
-    @checks.is_owner()
+    #@checks.is_owner()
     async def cmddebug(self, ctx):
         """This command is for debugging only"""
         try:
@@ -75,7 +75,7 @@ class terminal:
             await ctx.send(page)
 
     @commands.group(pass_context=True, hidden=True)
-    @checks.is_owner()
+    #@checks.is_owner()
     async def system(self, ctx):
         """Returns system infromation"""
         await ctx.send('{} is running on {} {} using {}'
@@ -83,7 +83,7 @@ class terminal:
                                      uname()[0], uname()[2], python_version()))
 
     @commands.command(pass_context=True)
-    @checks.is_owner()
+    #@checks.is_owner()
     async def cmd(self, ctx):
         """Starts up the prompt"""
         if ctx.message.channel.id in self.sessions:
@@ -109,7 +109,7 @@ class terminal:
                            ' `exit()` or `quit` to exit.'.format(self.prefix.replace("`", "\\`")))
 
     @commands.group(pass_context=True)
-    @checks.is_owner()
+    #@checks.is_owner()
     async def cmdsettings(self, ctx):
         """Settings for terminal"""
         if ctx.invoked_subcommand is None:
@@ -118,7 +118,7 @@ class terminal:
                 await self.bot.send_message(ctx.message.channel, page)
 
     @cmdsettings.group(name="customcom", pass_context=True)
-    @checks.is_owner()
+    #@checks.is_owner()
     async def _cc(self, ctx):
         """Custom commands for terminal"""
         await ctx.send('This feature is WIP')
@@ -130,7 +130,7 @@ class terminal:
                 """
 
     @cmdsettings.command(name="os", pass_context=True)
-    @checks.is_owner()
+    #@checks.is_owner()
     async def _os(self, ctx, os: str = None):
         """Set the prompt type of terminal to emulate another Operatingsystem.
         these 'emulations' arent 100% accurate on other Operatingsystems"""
