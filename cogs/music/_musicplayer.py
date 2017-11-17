@@ -285,10 +285,8 @@ class MusicPlayer:
                 except IndexError:
                     pass
 
-            try:
-                self.streamer.stop()
-            except Exception as e:
-                logger.exception(e)
+            self.streamer.stop()
+
 
     async def shuffle(self):
         """The shuffle command"""
