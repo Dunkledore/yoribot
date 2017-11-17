@@ -11,6 +11,7 @@ class Music:
 
 	def __init__(self,bot):
 		self.bot = bot
+		self.message_counter = 0
 
 	async def is_mod(self, user, channel, * , check=all):
 		is_owner = await self.bot.is_owner(user)
@@ -36,7 +37,6 @@ class Music:
 		server = reaction.message.guild
 		channel = reaction.message.channel
 		emoji = reaction.emoji
-
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
@@ -77,11 +77,19 @@ class Music:
 			message (discord.Message): Input message
 		"""
 
+
+
 		# Simplify message info
 		server = message.guild
 		author = message.author
 		channel = message.channel
 		content = message.content
+
+		if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
+			self.message_counter += 1
+			if self.message_counter > 5:
+				await _data.cache[str(server.id)].movehere(channel)
+				self.message_counter = 0
 
 
 		# Only reply to server messages and don't reply to myself
@@ -120,6 +128,7 @@ class Music:
 						await _data.cache[str(server.id)].play(author, channel, arg, now=True)
 					elif command == 'front' or command == 'movehere':
 							await _data.cache[str(server.id)].movehere(channel)
+							self.message_counter = 0
 
 					is_mod = await self.is_mod(message.author, message.channel)
 
