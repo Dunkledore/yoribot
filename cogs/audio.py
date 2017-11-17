@@ -49,7 +49,7 @@ class Music:
 				if emoji == "⏹":
 					await _data.cache[str(server.id)].stop()
 				if emoji == "⏭":
-					is_mod = await self.is_mod(user, reaction.message.channel):
+					is_mod = await self.is_mod(user, reaction.message.channel)
 					if is_mod:
 						await _data.cache[str(server.id)].skip("1")
 				if emoji == "🔀":
