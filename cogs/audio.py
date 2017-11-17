@@ -1,5 +1,8 @@
 import logging
-import discord 
+import discord
+from discord.ext import commands
+from .utils import checks, formats
+from .utils.paginator import HelpPaginator, CannotPaginate
 
 from .utils import datatools
 from .music import _data, _musicplayer
@@ -121,6 +124,7 @@ class Music:
 					elif command == 'front' or command == 'movehere':
 						await _data.cache[str(server.id)].movehere(channel)
 					return
+    
     @commands.command(pass_context=True)
     async def music(self, ctx):
         """Will show different commands to control bot music`"""
