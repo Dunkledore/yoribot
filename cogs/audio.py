@@ -1,296 +1,143 @@
-import asyncio
-from os.path import join
-import validators
-import discord
-import youtube_dl
-from discord.ext import commands
-import aiohttp
-import re
-import urllib
-import json as simplejson
+import logging
+import discord 
 
-
-# Suppress noise about console usage from errors
-youtube_dl.utils.bug_reports_message = lambda: ''
-
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
-}
-
-ffmpeg_options = {
-    'before_options': '-nostdin',
-    'options': '-vn'
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-ytdl.params["outtmpl"] = join("music", ytdl.params["outtmpl"])
-
-
-
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
-        super().__init__(source, volume)
-
-        self.data = data
-
-        self.title = data.get('title')
-        self.url = data.get('url')
-
-    @classmethod
-    async def from_url(cls, url, *, loop=None):
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, ytdl.extract_info, url)
-
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-
-        filename = ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options),
-                   data=data)
+from .utils import datatools
+from .music import _data, _musicplayer
 
 
 class Music:
-    def __init__(self, bot):
-        self.bot = bot
-        self.youtube_regex = (
-          r'(https?://)?(www\.)?'
-          '(youtube|youtu|youtube-nocookie)\.(com|be)/'
-          '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
 
-    @commands.command()
-    async def queue(self, ctx, *, searchurl=None):
-        """Streams from a url (almost anything youtube_dl supports)"""
-       
-        if searchurl is None:
-            query = "SELECT * FROM music_queues WHERE guildid = $1"
-            fetched = await ctx.db.fetch(query, ctx.guild.id)
-            results = 'Coming Up: \n'
-            counter = 1
-            if fetched:
-                for x in fetched:
-                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+x['songurl'].replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
-                    json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                    results += str(counter) + ". " + json['items'][0]['snippet']['title'] + '\n'
-                    counter += 1
-            else:
-                results += "Nothing in queue"
-            await ctx.send(results)
-            return   
+	def __init__(self,bot):
+		self.bot = bot
+
+	async def on_reaction_add(self, reaction, user):
+		"""The on_message event handler for this module
+
+		Args:
+			reaction (discord.Reaction): Input reaction
+			user (discord.User): The user that added the reaction
+		"""
+
+		# Simplify reaction info
+		server = reaction.message.guild
+		channel = reaction.message.channel
+		emoji = reaction.emoji
 
 
+		# Commands section
+		if user != reaction.message.channel.guild.me:
+			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
-        def check(r, user):
-            if user != ctx.message.author:
-                return False
-            reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
-            if r.emoji not in reactionlist:
-                return False
-            else:
+			if valid_reaction:
+				# Remove reaction
 
-                return True
+				await reaction.message.remove_reaction(emoji, user)
+			
+				# Commands
+				if emoji == "⏯":
+					await _data.cache[str(server.id)].toggle()
+				if emoji == "⏹":
+					await _data.cache[str(server.id)].stop()
+				if emoji == "⏭":
+					await _data.cache[str(server.id)].skip("1")
+				if emoji == "🔀":
+					await _data.cache[str(server.id)].shuffle()
+				if emoji == "🔉":
+					await _data.cache[str(server.id)].setvolume('-')
+				if emoji == "🔊":
+					await _data.cache[str(server.id)].setvolume('+')
 
-        if not validators.url(searchurl):
-            try:
-                url = 'https://www.youtube.com/results?'
-                payload = {'search_query': ''.join(searchurl)}
-                headers = {'user-agent': 'Red-cog/1.0'}
-                conn = aiohttp.TCPConnector()
-                session = aiohttp.ClientSession(connector=conn)
-                async with session.get(url, params=payload, headers=headers) as r:
-                    result = await r.text()
-                session.close()
-                yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
-                yt_find = list(set(yt_find))
-                
-                results = 'Options are\n'
-                for x in range(0,5):
-                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x]+"&key="+api_key+"&part=contentDetails"
-                    json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                    results += str(x)+'\u20e3' + ": " + json['items'][0]['snippet']['title'] + '\n'
+	async def on_message(self, message):
+		"""The on_message event handler for this module
 
-                sentmessage = await ctx.send(results)
+		Args:
+			message (discord.Message): Input message
+		"""
 
-                await sentmessage.add_reaction('0\u20e3')
-                await sentmessage.add_reaction('1\u20e3')
-                await sentmessage.add_reaction('2\u20e3')
-                await sentmessage.add_reaction('3\u20e3')
-                await sentmessage.add_reaction('4\u20e3')
-                print('before wait for')
-                choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
-                chosen = ''
-                print(choice[0].emoji)               
-                if choice[0].emoji == '0\u20e3':
-                    chosen = 0  
-                elif choice[0].emoji =='1\u20e3':
-                    chosen = 1
-                elif choice[0].emoji =='2\u20e3':
-                    chosen = 2
-                elif choice[0].emoji =='3\u20e3':
-                    chosen = 3
-                elif choice[0].emoji =='4\u20e3':
-                    chosen = 4
-                else:
-                    print("Something broke in audio")
-                    return
-
-                
-                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen])
-            except Exception as e:
-                message = 'Something went terribly wrong! [{}]'.format(e)
-                await ctx.send(message)
-        query =  "INSERT INTO music_queues (guildid, songurl) VALUES ($1, $2)"
-        await ctx.db.execute(query, ctx.guild.id, searchurl)
-        api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-        gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+searchurl.replace('https://www.youtube.com/watch?v=','')+"&key="+api_key+"&part=contentDetails"
-        json = simplejson.loads(urllib.request.urlopen(gurl).read())
-        await ctx.send("Added to queue: " + json['items'][0]['snippet']['title'])
-    
-    @commands.command()
-    async def clearqueue(self, ctx):
-        query = "DELETE FROM music_queues WHERE guildid = $1"
-        await ctx.db.execute(query, ctx.guild.id)
-        await ctx.send("Queue Cleared")
-
-    @commands.command()
-    async def play(self, ctx, *, searchurl=None):
-        await self.play_command(ctx, searchurl=searchurl)
-
-    @commands.command()
-    async def skip(self, ctx, *, searchurl=None):
-        if ctx.voice_client:
-            ctx.voice_client.stop()    
-            await self.play_command(ctx, searchurl=searchurl)
-
-    async def play_command(self, ctx, *, searchurl=None):
-        """Streams from a url (almost anything youtube_dl supports)"""
-
-        def play_next(error):
-            try:
-                coro = self.play_command(ctx)
-                fut = asyncio.run_coroutine_threadsafe(coro, self.bot.loop)
-                fut.result()
-            except Exception as e:
-                print(e)
-            
-
-        if ctx.voice_client is None:
-            if (ctx.author.voice is not None) and (ctx.author.voice.channel is not None):
-                await ctx.author.voice.channel.connect()
-            else:
-                return await ctx.send("Not connected to a voice channel.")
-
-        if(searchurl == None):
-            query = "SELECT * FROM music_queues WHERE guildid = $1"
-            queue = await self.bot.pool.fetch(query,ctx.guild.id)
-            searchurl = queue[0]['songurl']
-            id = queue[0]['id']
-            player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-            ctx.voice_client.play(player, after=play_next)
-            query = "DELETE FROM music_queues WHERE id = $1"
-            await self.bot.pool.execute(query, id)
-            return
-
-        
-        def check(r, user):
-            if user != ctx.message.author:
-                return False
-            reactionlist = ['0\u20e3','1\u20e3','2\u20e3','3\u20e3','4\u20e3']
-            if r.emoji not in reactionlist:
-                return False
-            else:
-
-                return True
-
-        if not validators.url(searchurl):
-            try:
-                url = 'https://www.youtube.com/results?'
-                payload = {'search_query': ''.join(searchurl)}
-                headers = {'user-agent': 'Red-cog/1.0'}
-                conn = aiohttp.TCPConnector()
-                session = aiohttp.ClientSession(connector=conn)
-                async with session.get(url, params=payload, headers=headers) as r:
-                    result = await r.text()
-                session.close()
-                yt_find = re.findall(r'href=\"\/watch\?v=(.{11})', result)
-                yt_find = list(set(yt_find))
-                
-                results = 'Options are\n'
-                for x in range(0,5):
-                    api_key = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
-                    gurl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+yt_find[x*2]+"&key="+api_key+"&part=contentDetails"
-                    json = simplejson.loads(urllib.request.urlopen(gurl).read())
-                    results += str(x)+'\u20e3' + ": " + json['items'][0]['snippet']['title'] + '\n'
-
-                sentmessage = await ctx.send(results)
-
-                await sentmessage.add_reaction('0\u20e3')
-                await sentmessage.add_reaction('1\u20e3')
-                await sentmessage.add_reaction('2\u20e3')
-                await sentmessage.add_reaction('3\u20e3')
-                await sentmessage.add_reaction('4\u20e3')
-                print('before wait for')
-                choice = await self.bot.wait_for('reaction_add', check = check, timeout = 30.0)
-                chosen = ''
-                print(choice[0].emoji)               
-                if choice[0].emoji == '0\u20e3':
-                    chosen = 0  
-                elif choice[0].emoji =='1\u20e3':
-                    chosen = 1
-                elif choice[0].emoji =='2\u20e3':
-                    chosen = 2
-                elif choice[0].emoji =='3\u20e3':
-                    chosen = 3
-                elif choice[0].emoji =='4\u20e3':
-                    chosen = 4
-                else:
-                    print("Something broke in audio")
-                    return
+		# Simplify message info
+		server = message.guild
+		author = message.author
+		channel = message.channel
+		content = message.content
 
 
-                searchurl = 'https://www.youtube.com/watch?v={}'.format(yt_find[chosen*2])
-            except Exception as e:
-                message = 'Something went terribly wrong! [{}]'.format(e)
-                await ctx.send(message)
+		# Only reply to server messages and don't reply to myself
+		if server is not None and author != channel.guild.me:
+			# Commands section
+			prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
+			for prefix in prefixes:
+				if content.startswith(prefix):
+					# Parse message
+					package = content.split(" ")
+					command = package[0][len(prefix):]
+					args = package[1:]
+					arg = ' '.join(args)
 
-        if ctx.voice_client.is_playing():
-            ctx.voice_client.stop()
+					# Lock on to server if not yet locked
+					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
+						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
-        player = await YTDLSource.from_url(searchurl, loop=self.bot.loop)
-        ctx.voice_client.play(player, after=play_next)
+					# Remove message
+					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
+								   'destroy', 'front', 'movehere']:
+						try:
+							await message.delete()
+						except discord.errors.NotFound:
+							logger.warning("Could not delete music player command message - NotFound")
+						except discord.errors.Forbidden:
+							logger.warning("Could not delete music player command message - Forbidden")
 
-        await ctx.send('Now playing: {}'.format(player.title))
+					# Commands
+					if command == 'play':
+						await _data.cache[str(server.id)].play(author, channel, arg)
 
+					if command == 'playnext':
+						await _data.cache[str(server.id)].play(author, channel, arg, now=True)
 
+					if command == 'playnow':
+						await _data.cache[str(server.id)].play(author, channel, arg, now=True, stop_current=True)
 
-    @commands.command()
-    async def volume(self, ctx, volume: float):
-        """Changes the player's volume"""
+					elif command == 'pause':
+						await _data.cache[str(server.id)].pause()
 
-        if ctx.voice_client is None:
-            return await ctx.send("Not connected to a voice channel.")
+					elif command == 'resume':
+						await _data.cache[str(server.id)].resume()
 
-        ctx.voice_client.source.volume = volume
-        await ctx.send("Changed volume to {}%".format(volume))
+					elif command == 'skip':
+						await _data.cache[str(server.id)].skip(query=arg)
 
-    @commands.command()
-    async def stop(self, ctx):
-        """Stops and disconnects the bot from voice"""
+					elif command == 'shuffle':
+						await _data.cache[str(server.id)].shuffle()
 
-        await ctx.voice_client.disconnect()
+					elif command == 'stop':
+						await _data.cache[str(server.id)].stop()
+
+					elif command == 'destroy':
+						await _data.cache[str(server.id)].destroy()
+
+					elif command == 'volume':
+						await _data.cache[str(server.id)].setvolume(arg)
+
+					elif command == 'front' or command == 'movehere':
+						await _data.cache[str(server.id)].movehere(channel)
+					return
 
 
 def setup(bot):
-    bot.add_cog(Music(bot))
+
+	if datatools.has_data():
+		data = datatools.get_data()
+	else:
+		# Create a blank data file
+		data = {"discord": {}}
+
+	if "keys" not in data["discord"]:
+		data["discord"]["keys"] = {}
+
+	if "google_api_key" not in data["discord"]["keys"]:
+		data["discord"]["keys"]["google_api_key"] = 'AIzaSyB10j5t3LxMpuedlExxcVvj0rsezTurY9w'
+		datatools.write_data(data)
+
+
+	n = Music(bot)
+	bot.add_cog(n)
