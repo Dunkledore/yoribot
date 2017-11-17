@@ -559,9 +559,12 @@ class MusicPlayer:
         def vafter_ts(self):
             print("next song")
             future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
+            print("LINE562")
             try:
                 future.result()
+                print("LINE565")
             except Exception as e:
+                print("LINE567")
                 print(e)
 
         if self.state != 'ready':
