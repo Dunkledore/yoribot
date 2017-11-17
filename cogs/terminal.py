@@ -177,7 +177,7 @@ class terminal:
 
     async def on_message(self, message): # This is where the magic starts
 
-        if message.channel.id in self.sessions and self.enabled: # and
+        if message.channel.id in self.sessions:# and self.enabled: # and
                 # message.author.id == self.bot.settings.owner: # DO NOT DELETE
 
             #TODO:
