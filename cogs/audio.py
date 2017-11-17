@@ -57,15 +57,18 @@ class Music:
 					if emoji == "🔀":
 						await _data.cache[str(server.id)].shuffle()
 						async for ruser in reaction.users():
-							await reaction.message.remove_reaction(emoji, ruser)
+							if ruser is not self.bot.user:
+								await reaction.message.remove_reaction(emoji, ruser)
 					if emoji == "🔉":
 						await _data.cache[str(server.id)].setvolume('-')
 						async for ruser in reaction.users():
-							await reaction.message.remove_reaction(emoji, ruser)
+							if ruser is not self.bot.user:
+								await reaction.message.remove_reaction(emoji, ruser)
 					if emoji == "🔊":
 						await _data.cache[str(server.id)].setvolume('+')
 						async for ruser in reaction.users():
-							await reaction.message.remove_reaction(emoji, ruser)
+							if ruser is not self.bot.user:
+								await reaction.message.remove_reaction(emoji, ruser)
 
 	async def on_message(self, message):
 		"""The on_message event handler for this module
