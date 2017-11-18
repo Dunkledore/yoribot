@@ -165,7 +165,7 @@ class Fun:
                                "".format(red_choice.value, author.mention))
 
     @commands.command(pass_context=True, name="8", aliases=["8ball"])
-    async def _8ball(self, ctx, *, question : str):
+    async def _8ball(self, ctx, question : str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
@@ -187,12 +187,6 @@ class Fun:
             tmp = str(datetime.timedelta(seconds=tmp))
             await ctx.send(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
-
-    @commands.command()
-    async def lmgtfy(self, *, search_terms : str):
-        """Creates a lmgtfy link"""
-        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
-        await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
