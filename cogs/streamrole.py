@@ -31,8 +31,8 @@ class StreamRole:
         """Sets StreamRole settings."""
 
         guild = ctx.message.guild
-        if guild.id not in self.settings:
-            self.settings[guild.id] = deepcopy(default_settings)
+        if str(guild.id) not in self.settings:
+            self.settings[str(guild.id)] = deepcopy(default_settings)
             dataIO.save_json(self.settings_path, self.settings)
 
 
