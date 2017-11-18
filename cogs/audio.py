@@ -103,7 +103,7 @@ class Music:
 					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
 						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
-
+					print(_data.cache[str(server.id)].embed)
 					if _data.cache[str(server.id)].embed:
 						print (message.channel.id)
 						print (_data.cache[str(server.id)].embed.sent_embed.channel.id)
