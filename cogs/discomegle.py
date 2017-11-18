@@ -5,7 +5,7 @@ import asyncio
 import random
 from .utils.dataIO import dataIO, fileIO
 
-prefix = fileIO("data/red/settings.json", "load")['PREFIXES'][0]
+prefix = '*'
 
 class Discomegle:
     """Lets you chat with random person who has access to the bot."""
