@@ -244,6 +244,11 @@ class FFXIV:
     @ffxiv_news.command(name="latest")
     async def latest_news(self, ctx, *, type:str, count:int):
         """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
+        if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
+            await self.embed(ctx, "Lodestone News",
+                             "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
+                             "red")
+            return
         if self.latestnews == {}:
             await self.update_news()
         timedlist = sorted(self.latestnews, key=lambda k: k["time"],reverse=True)
