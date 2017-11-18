@@ -81,13 +81,13 @@ class StreamRole:
 
     async def stream_listener(self, before: discord.Member,
                               after: discord.Member):
-        if before.guild.id not in self.settings:
-            self.settings[before.guild.id] = deepcopy(default_settings)
+        if str(before.guild.id) not in self.settings:
+            self.settings[str(before.guild.id)] = deepcopy(default_settings)
             dataIO.save_json(self.settings_path, self.settings)
 
-        guild_settings = self.settings[before.guild.id]
+        guild_settings = self.settings[str(before.guild.id)]
         if guild_settings["enabled"] and guild_settings["role"] is not None:
-            streamer_role = find(lambda m: m.id == guild_settings["role"],
+            streamer_role = find(lambda m: (str(m.id) == guild_settings["role"],
                                  before.guild.roles)
             if streamer_role is None:
                 return
