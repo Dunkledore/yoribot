@@ -88,7 +88,8 @@ class Cookie:
             settings["Players"][author.id]["Cookies"] -= cookies
             settings["Players"][user.id]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
-            msg = "You gave **{}** cookies to {}".format(cookies, user.name)
+            y = ":cookie:" * cookies
+            msg = "You gave **{}** cookies to {} \n {}".format(cookies, user.name, y)
         else:
             msg = "You don't have enough cookies in your account"
 
@@ -188,7 +189,7 @@ class Cookie:
                 settings["Players"][author.id]["Cookies"] += stolen
                 dataIO.save_json(self.file_path, self.system)
                 y = ":cookie:" * stolen
-                msg = (":grin:\nYou stole {} cookies from "
+                msg = (":grin: You stole {} cookies from "
                        "{}! \n {}".format(stolen, user.name, y))
             else:
                 msg = ":angry: Nyaa... Yori couldn't find their :cookie: jar!"
