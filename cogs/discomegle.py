@@ -38,14 +38,14 @@ class Discomegle:
         user = message.author
         channel = message.channel
 
-        if channel.is_private and not msg.startswith(prefix) and str(user.id) in self.link:
+        if type(channel) is Discord.DMChannel and not msg.startswith(prefix) and str(user.id) in self.link:
             target_channel = self.link[user.id]["TARGET_CHANNEL"]
             em = discord.Embed(description=msg, colour=self.colour)
             em.set_author(name="Partner")
             await target_channel.send(embed = em)
 
         else:
-            if channel.is_private:
+            if type(channel) is Discord.DMChannel:
                 if msg == (prefix + "joinpool"):
                     await self.add_to_pool(message)
                 elif msg == (prefix + "leavepool"):
