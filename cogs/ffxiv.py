@@ -50,6 +50,7 @@ class FFXIV:
                       "Omega"]
         }
         self.latestnews = {}
+        self.lastupdate = None
         self.newsiconurls = {
             "maintenance": "https://img.finalfantasyxiv.com/lds/h/U/6qzbI-6AwlXAfGhCBZU10jsoLA.png",
             "notices": "https://img.finalfantasyxiv.com/lds/h/c/GK5Y3gQsnlxMRQ_pORu6lKQAJ0.png",
@@ -82,7 +83,7 @@ class FFXIV:
     async def ffxiv(self, ctx):
         """FFXIV command group."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     def getDC(self, server):
         for dc in self.servers.keys():
@@ -156,7 +157,7 @@ class FFXIV:
     async def ffxiv_news(self, ctx):
         """Lodestone news."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     @ffxiv_news.command(ame="enable")
     async def news_enable(self, ctx, *, type):
@@ -219,6 +220,7 @@ class FFXIV:
                 d = await r.json()
                 self.latestnews = d
                 self.format_news()
+                self.lastupdate = datetime.datetime().utcnow()
             except:
                 self.latestnews = {"__ERROR__": "Invalid JSON or no response."}
 
@@ -242,15 +244,19 @@ class FFXIV:
         return news
 
     @ffxiv_news.command(name="latest")
-    async def latest_news(self, ctx, *, type:str, count:int):
+    async def latest_news(self, ctx, type, count:int):
         """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
         if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
             await self.embed(ctx, "Lodestone News",
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
                              "red")
             return
-        if self.latestnews == {}:
+        await ctx.send("Getting the latest "+count+" "+type+" news.") # DEBUG
+        if self.latestnews == {} or self.lastupdate is None or self.lastupdate < datetime.datetime().utcnow()-datetime.timedelta(minutes=5):
+            await ctx.send("updating the news...") # DEBUG
             await self.update_news()
+        if "__ERROR__" in self.latestnews.keys():
+            await ctx.send("Error updating.") # DEBUG
         timedlist = sorted(self.latestnews, key=lambda k: k["time"],reverse=True)
         if count < 1:
             count = 1
@@ -853,7 +859,7 @@ class FFXIV:
     async def fflogs(self, ctx):
         """Display FFlogs rankings and parse infos."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     def getregion(self, server):
         for r in self.fflogs_data["regions"].keys():
