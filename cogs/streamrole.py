@@ -44,16 +44,15 @@ class StreamRole:
         await ctx.message.channel.trigger_typing()
 
         guild = ctx.message.guild
-        if (not self.settings[guild.id]["enabled"] and
-                self.settings[guild.id]["role"] is None):
+        if (not self.settings[str(guild.id)]["enabled"] and
+                self.settings[str(guild.id)]["role"] is None):
             await ctx.send(cf.warning(
                 "You need to set the role before turning on StreamRole."
                 " Use `{}streamroleset role`".format(ctx.prefix)))
             return
 
-        self.settings[guild.id][
-            "enabled"] = not self.settings[guild.id]["enabled"]
-        if self.settings[guild.id]["enabled"]:
+        self.settings[str(guild.id)]
+        if self.settings[str(guild.id)]["enabled"]:
             await ctx.send(
                 cf.info("StreamRole is now enabled."))
         else:
