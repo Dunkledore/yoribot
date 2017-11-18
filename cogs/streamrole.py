@@ -51,7 +51,7 @@ class StreamRole:
                 " Use `{}streamroleset role`".format(ctx.prefix)))
             return
 
-        self.settings[str(guild.id)]
+        self.settings[guild.id]["enabled"] = not self.settings[guild.id]["enabled"]
         if self.settings[str(guild.id)]["enabled"]:
             await ctx.send(
                 cf.info("StreamRole is now enabled."))
