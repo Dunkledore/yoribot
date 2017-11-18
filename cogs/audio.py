@@ -85,11 +85,12 @@ class Music:
 		channel = message.channel
 		content = message.content
 
-		if str(message.channel.id) == _data.cache[str(server.id)].embed.sent_embed.channel.id:
-			self.message_counter += 1
-			if self.message_counter > 5:
-				await _data.cache[str(server.id)].movehere(channel)
-				self.message_counter = 0
+		if _data.cache[str(server.id)]:
+			if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
+				self.message_counter += 1
+				if self.message_counter > 5:
+					await _data.cache[str(server.id)].movehere(channel)
+					self.message_counter = 0
 
 
 		# Only reply to server messages and don't reply to myself
