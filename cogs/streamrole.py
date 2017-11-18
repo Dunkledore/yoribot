@@ -41,7 +41,7 @@ class StreamRole:
     async def _toggle(self, ctx: commands.Context):
         """Toggles StreamRole on/off."""
 
-        await self.bot.type()
+        await channel.typing()
 
         guild = ctx.message.guild
         if (not self.settings[guild.id]["enabled"] and
@@ -68,7 +68,7 @@ class StreamRole:
         members that are streaming.
         """
 
-        await self.bot.type()
+        await channel.typing()
 
         guild = ctx.message.guild
         self.settings[guild.id]["role"] = role.id
