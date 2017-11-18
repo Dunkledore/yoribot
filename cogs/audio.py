@@ -101,6 +101,7 @@ class Music:
 
 					# Lock on to server if not yet locked
 					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
+						print("new one")
 						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
 					print(_data.cache[str(server.id)].embed)
