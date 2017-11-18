@@ -83,10 +83,10 @@ class Cookie:
             return await ctx.send("You can't give yourself cookies.")
         self.account_check(settings, author)
         self.account_check(settings, user)
-        sender_cookies = settings["Players"][author.id]["Cookies"]
+        sender_cookies = settings["Players"][str(author.id)]["Cookies"]
         if 0 < cookies <= sender_cookies:
-            settings["Players"][author.id]["Cookies"] -= cookies
-            settings["Players"][user.id]["Cookies"] += cookies
+            settings["Players"][str(author.id)]["Cookies"] -= cookies
+            settings["Players"][str(user.id)]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
             y = ":cookie:" * cookies
             msg = "You gave **{}** cookies to {} \n {}".format(cookies, user.name, y)
@@ -107,7 +107,7 @@ class Cookie:
             weighted_sample = [1] * 152 + [x for x in range(49) if x > 1]
             cookies = random.choice(weighted_sample)
             y = ":cookie: " * cookies
-            settings["Players"][author.id]["Cookies"] += cookies
+            settings["Players"][str(author.id)]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
             await ctx.send("You recieved {} cookie(s) from the cookie Gods! Nyaaaaaan!\n {}".format(cookies, y))
 
@@ -118,7 +118,7 @@ class Cookie:
         guild = ctx.message.guild
         settings = self.check_guild_settings(guild)
         self.account_check(settings, author)
-        cookies = settings["Players"][author.id]["Cookies"]
+        cookies = settings["Players"][str(author.id)]["Cookies"]
         y= ":cookie:" * cookies
         await ctx.send("Yori sees you have **{}** cookies in the jar. "
                                "\n {} ".format(cookies,y))
@@ -149,16 +149,16 @@ class Cookie:
 
     async def check_cooldowns(self, userid, action, settings):
         path = settings["Config"][action]
-        if abs(settings["Players"][userid][action] - int(time.perf_counter())) >= path:
-            settings["Players"][userid][action] = int(time.perf_counter())
+        if abs(settings["Players"][str(userid)][action] - int(time.perf_counter())) >= path:
+            settings["Players"][str(userid)][action] = int(time.perf_counter())
             dataIO.save_json(self.file_path, self.system)
             return True
-        elif settings["Players"][userid][action] == 0:
-            settings["Players"][userid][action] = int(time.perf_counter())
+        elif settings["Players"][str(userid)][action] == 0:
+            settings["Players"][str(userid)][action] = int(time.perf_counter())
             dataIO.save_json(self.file_path, self.system)
             return True
         else:
-            s = abs(settings["Players"][userid][action] - int(time.perf_counter()))
+            s = abs(settings["Players"][str(userid)][action] - int(time.perf_counter()))
             seconds = abs(s - path)
             remaining = self.time_formatting(seconds)
             await ctx.send("I can't do that for you YET. You still have:\n{}".format(remaining))
@@ -170,23 +170,23 @@ class Cookie:
             msg = ":no_mouth: Nyaaaaaaaan! I couldn't find anyone with cookies!"
             return msg
 
-        if user.id not in settings["Players"]:
+        if str(user.id) not in settings["Players"]:
             self.account_check(settings, user)
 
-        if settings["Players"][user.id]["Cookies"] == 0:
+        if settings["Players"][str(user.id)]["Cookies"] == 0:
             msg = (":cry: Nyaa! Yori is sorry, nothing but crumbs in this human's "
                    ":cookie: jar!")
         else:
             if success_chance <= 90:
-                cookie_jar = settings["Players"][user.id]["Cookies"]
+                cookie_jar = settings["Players"][str(user.id)]["Cookies"]
                 cookies_stolen = int(cookie_jar * 0.75)
 
                 if cookies_stolen == 0:
                     cookies_stolen = 1
 
                 stolen = random.randint(1, cookies_stolen)
-                settings["Players"][user.id]["Cookies"] -= stolen
-                settings["Players"][author.id]["Cookies"] += stolen
+                settings["Players"][str(user.id)]["Cookies"] -= stolen
+                settings["Players"][str(author.id)]["Cookies"] += stolen
                 dataIO.save_json(self.file_path, self.system)
                 y = ":cookie:" * stolen
                 msg = (":grin: You stole {} cookies from "
@@ -198,9 +198,9 @@ class Cookie:
     def random_user(self, settings, author, guild):
         filter_users = [guild.get_member(x) for x in settings["Players"]
                         if hasattr(guild.get_member(x), "name")]
-        legit_users = [x for x in filter_users if x.id != author.id and x is not x.bot]
+        legit_users = [x for x in filter_users if str(x.id) != str(author.id) and x is not x.bot]
 
-        users = [x for x in legit_users if settings["Players"][x.id]["Cookies"] > 0]
+        users = [x for x in legit_users if settings["Players"][str(x.id)]["Cookies"] > 0]
 
         if not users:
             user = "Fail"
@@ -215,8 +215,8 @@ class Cookie:
         return user
 
     def account_check(self, settings, userobj):
-        if userobj.id not in settings["Players"]:
-            settings["Players"][userobj.id] = {"Cookies": 0,
+        if str(userobj.id) not in settings["Players"]:
+            settings["Players"][str(userobj.id)] = {"Cookies": 0,
                                                "Steal CD": 0,
                                                "Cookie CD": 0}
             dataIO.save_json(self.file_path, self.system)
@@ -247,17 +247,17 @@ class Cookie:
         return msg
 
     def check_guild_settings(self, guild):
-        if guild.id not in self.system["guilds"]:
-            self.system["guilds"][guild.id] = {"Players": {},
+        if str(guild.id) not in self.system["guilds"]:
+            self.system["guilds"][str(guild.id)] = {"Players": {},
                                                  "Config": {"Steal CD": 5,
                                                             "Cookie CD": 5}
                                                  }
             dataIO.save_json(self.file_path, self.system)
             print("Creating default heist settings for guild: {}".format(guild.name))
-            path = self.system["guilds"][guild.id]
+            path = self.system["guilds"][str(guild.id)]
             return path
         else:
-            path = self.system["guilds"][guild.id]
+            path = self.system["guilds"][str(guild.id)]
             return path
 
 
