@@ -3,7 +3,6 @@ from discord.ext import commands
 import aiohttp
 import asyncio
 import random
-from __main__ import send_cmd_help
 from .utils.dataIO import dataIO, fileIO
 
 prefix = fileIO("data/red/settings.json", "load")['PREFIXES'][0]
