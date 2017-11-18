@@ -104,7 +104,7 @@ class Music:
 						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
 
-					if _data.cache[str(server.id)].embed.sent_embed:
+					if _data.cache[str(server.id)].embed:
 						if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
 							self.message_counter += 1
 							if self.message_counter > 5:
