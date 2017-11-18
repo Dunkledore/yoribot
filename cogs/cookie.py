@@ -105,10 +105,10 @@ class Cookie:
         if await self.check_cooldowns(author.id, action, settings):
             weighted_sample = [1] * 152 + [x for x in range(49) if x > 1]
             cookies = random.choice(weighted_sample)
+            y = ":cookie: " * cookies
             settings["Players"][author.id]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
-            await ctx.send("~₍˄·͈༝·͈˄₍˄·͈༝·͈˄ （（≡￣♀￣≡））˄·͈༝·͈˄₎₍˄·͈༝·͈˄₎◞ ̑̑ \nYou recieved {} "
-                               "cookie(s) from the cookie Gods! Nyaaaaaan!".format(cookies))
+            await ctx.send("You recieved {} cookie(s) from the cookie Gods! Nyaaaaaan!\n {}".format(cookies, y))
 
     @commands.command(pass_context=True, no_pm=False, ignore_extra=False)
     async def jar(self, ctx):
