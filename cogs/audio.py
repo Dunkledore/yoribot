@@ -105,8 +105,10 @@ class Music:
 
 
 					if _data.cache[str(server.id)].embed:
+						print (message.channel.id)
+						print (_data.cache[str(server.id)].embed.sent_embed.channel.id)
+							pass
 						if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
-							await channel.send(self.message_counter)
 							self.message_counter += 1
 							if self.message_counter > 5:
 								await _data.cache[str(server.id)].movehere(channel)
