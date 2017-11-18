@@ -71,7 +71,7 @@ class StreamRole:
         await ctx.message.channel.trigger_typing()
 
         guild = ctx.message.guild
-        self.settings[guild.id]["role"] = role.id
+        self.settings[str(guild.id)]["role"] = role.id
         dataIO.save_json(self.settings_path, self.settings)
 
         await ctx.send(
