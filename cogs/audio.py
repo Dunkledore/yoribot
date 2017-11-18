@@ -85,7 +85,7 @@ class Music:
 		channel = message.channel
 		content = message.content
 
-		if _data.cache[str(server.id)]:
+		if _data.cache:
 			if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
 				self.message_counter += 1
 				if self.message_counter > 5:
