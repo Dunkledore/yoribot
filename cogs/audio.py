@@ -11,7 +11,6 @@ class Music:
 
 	def __init__(self,bot):
 		self.bot = bot
-		self.message_counter = 0
 
 	async def is_mod(self, user, channel, * , check=all):
 		is_owner = await self.bot.is_owner(user)
@@ -103,15 +102,6 @@ class Music:
 					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
 						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
-					print(_data.cache[str(server.id)])
-					if _data.cache[str(server.id)].embed:
-						print (message.channel.id)
-						print (_data.cache[str(server.id)].embed.sent_embed.channel.id)
-						if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
-							self.message_counter += 1
-							if self.message_counter > 5:
-								await _data.cache[str(server.id)].movehere(channel)
-								self.message_counter = 0
 
 					# Remove message
 					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
@@ -133,7 +123,6 @@ class Music:
 						await _data.cache[str(server.id)].play(author, channel, arg, now=True)
 					elif command == 'front' or command == 'movehere':
 							await _data.cache[str(server.id)].movehere(channel)
-							self.message_counter = 0
 
 					is_mod = await self.is_mod(message.author, message.channel)
 
