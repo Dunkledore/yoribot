@@ -85,11 +85,6 @@ class Music:
 		channel = message.channel
 		content = message.content
 
-		if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
-			self.message_counter += 1
-			if self.message_counter > 5:
-				await _data.cache[str(server.id)].movehere(channel)
-				self.message_counter = 0
 
 
 		# Only reply to server messages and don't reply to myself
@@ -108,7 +103,7 @@ class Music:
 					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
 						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
 
-					
+
 					if message.channel.id == _data.cache[str(server.id)].embed.sent_embed.channel.id:
 						self.message_counter += 1
 						if self.message_counter > 5:
