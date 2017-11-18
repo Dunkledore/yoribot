@@ -87,7 +87,7 @@ class StreamRole:
 
         guild_settings = self.settings[str(before.guild.id)]
         if guild_settings["enabled"] and guild_settings["role"] is not None:
-            streamer_role = find(lambda m: (str(m.id) == guild_settings["role"],
+            streamer_role = find(lambda m: (str(m.id)) == guild_settings["role"],
                                  before.guild.roles)
             if streamer_role is None:
                 return
