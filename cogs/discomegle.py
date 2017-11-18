@@ -37,7 +37,7 @@ class Discomegle:
         msg = message.content
         user = message.author
         channel = message.channel
-        print type(channel)
+        print str(type(channel))
         if type(channel) is Discord.DMChannel and not msg.startswith(prefix) and str(user.id) in self.link:
             target_channel = self.link[user.id]["TARGET_CHANNEL"]
             em = discord.Embed(description=msg, colour=self.colour)
