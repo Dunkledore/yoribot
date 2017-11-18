@@ -184,7 +184,7 @@ class Tags:
                 return
 
             names = '\n'.join(r['name'] for r in rows)
-            raise RuntimeError(f'Tag not found. Did you mean...\n{names}')
+            #raise RuntimeError(f'Tag not found. Did you mean...\n{names}')
 
         con = connection or self.bot.pool
 
