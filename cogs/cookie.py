@@ -173,7 +173,7 @@ class Cookie:
             self.account_check(settings, user)
 
         if settings["Players"][user.id]["Cookies"] == 0:
-            msg = (":sllight_frown: Nyaa! Yori is sorry, nothing but crumbs in this human's "
+            msg = (":cry: Nyaa! Yori is sorry, nothing but crumbs in this human's "
                    ":cookie: jar!")
         else:
             if success_chance <= 90:
