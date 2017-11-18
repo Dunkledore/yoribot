@@ -94,11 +94,11 @@ class StreamRole:
             if (after.game is not None and
                     after.game.type == 1 and
                     streamer_role not in after.roles):
-                await self.bot.add_roles(after, streamer_role)
+                await after.add_roles(streamer_role)
             # is not
             elif ((after.game is None or after.game.type != 1) and
                   streamer_role in after.roles):
-                await self.bot.remove_roles(after, streamer_role)
+                await after.remove_roles(streamer_role)
 
 
 def check_folders():
