@@ -17,6 +17,25 @@ defaults = [
     "Asu\u10e6's Wrath",
     "Irdumb's Cookie jar"]
 
+
+class RPS(Enum):
+    rock     = "\N{MOYAI}"
+    paper    = "\N{PAGE FACING UP}"
+    scissors = "\N{BLACK SCISSORS}"
+
+
+class RPSParser:
+    def __init__(self, argument):
+        argument = argument.lower()
+        if argument == "rock":
+            self.choice = RPS.rock
+        elif argument == "paper":
+            self.choice = RPS.paper
+        elif argument == "scissors":
+            self.choice = RPS.scissors
+        else:
+            raise
+
 class Fun:
 
     def __init__(self, bot):
