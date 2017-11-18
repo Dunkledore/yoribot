@@ -46,7 +46,7 @@ class StreamRole:
         guild = ctx.message.guild
         if (not self.settings[guild.id]["enabled"] and
                 self.settings[guild.id]["role"] is None):
-            await self.bot.reply(cf.warning(
+            await message.channel.send(cf.warning(
                 "You need to set the role before turning on StreamRole."
                 " Use `{}streamroleset role`".format(ctx.prefix)))
             return
@@ -54,10 +54,10 @@ class StreamRole:
         self.settings[guild.id][
             "enabled"] = not self.settings[guild.id]["enabled"]
         if self.settings[guild.id]["enabled"]:
-            await self.bot.reply(
+            await message.channel.send(
                 cf.info("StreamRole is now enabled."))
         else:
-            await self.bot.reply(
+            await message.channel.send(
                 cf.info("StreamRole is now disabled."))
         dataIO.save_json(self.settings_path, self.settings)
 
@@ -74,7 +74,7 @@ class StreamRole:
         self.settings[guild.id]["role"] = role.id
         dataIO.save_json(self.settings_path, self.settings)
 
-        await self.bot.reply(
+        await message.channel.send(
             cf.info("Any member who is streaming will now be given the "
                     "role `{}`. Ensure you also toggle the cog on with "
                     "`{}streamroleset toggle`.".format(role.name, ctx.prefix)))
