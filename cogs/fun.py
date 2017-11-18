@@ -2,6 +2,11 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from random import choice as randchoice
+from random import randint
+from random import choice
+from enum import Enum
+from urllib.parse import quote_plus
+import datetime
 from .utils import checks
 import os
 
