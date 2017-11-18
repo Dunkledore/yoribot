@@ -46,6 +46,10 @@ class Fun:
     def __init__(self, bot):
         self.bot = bot
         self.thotchoices = fileIO("data/fun/thotchoices.json","load")
+        self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
+                     "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
+                     "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
+                     "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
 
     @commands.command(pass_context=True, no_pm=True)
     async def riot(self, ctx, *text):
@@ -165,7 +169,7 @@ class Fun:
                                "".format(red_choice.value, author.mention))
 
     @commands.command(pass_context=True, name="8", aliases=["8ball"])
-    async def _8ball(self, ctx, question : str):
+    async def _8ball(self, ctx, *, question : str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
