@@ -82,7 +82,7 @@ class FFXIV:
     async def ffxiv(self, ctx):
         """FFXIV command group."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     def getDC(self, server):
         for dc in self.servers.keys():
@@ -156,7 +156,7 @@ class FFXIV:
     async def ffxiv_news(self, ctx):
         """Lodestone news."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     @ffxiv_news.command(ame="enable")
     async def news_enable(self, ctx, *, type):
@@ -242,7 +242,7 @@ class FFXIV:
         return news
 
     @ffxiv_news.command(name="latest")
-    async def latest_news(self, ctx, *, type:str, count:int):
+    async def latest_news(self, ctx, type:str, count:int):
         """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
         if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
             await self.embed(ctx, "Lodestone News",
@@ -853,7 +853,7 @@ class FFXIV:
     async def fflogs(self, ctx):
         """Display FFlogs rankings and parse infos."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     def getregion(self, server):
         for r in self.fflogs_data["regions"].keys():
