@@ -27,7 +27,7 @@ class StreamRole:
 
     @commands.group(pass_context=True, no_pm=True, name="streamroleset")
     @checks.admin_or_permissions(manage_guild=True)
-    async def _streamroleset(self, ctx: commands.Context):
+    async def _streamroleset(self, ctx):
         """Sets StreamRole settings."""
 
         guild = ctx.message.guild
@@ -38,10 +38,10 @@ class StreamRole:
 
     @_streamroleset.command(pass_context=True, no_pm=True, name="toggle")
     @checks.admin_or_permissions(manage_guild=True)
-    async def _toggle(self, ctx: commands.Context):
+    async def _toggle(self, ctx):
         """Toggles StreamRole on/off."""
 
-        await channel.send()
+        await ctx.message.channel.trigger_typing()
 
         guild = ctx.message.guild
         if (not self.settings[guild.id]["enabled"] and
@@ -63,12 +63,12 @@ class StreamRole:
 
     @_streamroleset.command(pass_context=True, no_pm=True, name="role")
     @checks.admin_or_permissions(manage_guild=True)
-    async def _role(self, ctx: commands.Context, role: discord.Role):
+    async def _role(self, ctx, role: discord.Role):
         """Sets the role that StreamRole assigns to
         members that are streaming.
         """
 
-        await channel.send()
+        await ctx.message.channel.trigger_typing()
 
         guild = ctx.message.guild
         self.settings[guild.id]["role"] = role.id
