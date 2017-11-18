@@ -244,8 +244,10 @@ class FFXIV:
         return news
 
     @ffxiv_news.command(name="latest")
-    async def latest_news(self, ctx, type, count:int):
+    async def latest_news(self, ctx, type, count):
         """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
+
+        count = int(count)
         if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
             await self.embed(ctx, "Lodestone News",
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
