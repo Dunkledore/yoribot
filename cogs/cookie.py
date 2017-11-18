@@ -88,7 +88,8 @@ class Cookie:
             settings["Players"][author.id]["Cookies"] -= cookies
             settings["Players"][user.id]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
-            msg = "You gave **{}** cookies to {}".format(cookies, user.name)
+            y = ":cookie:" * cookies
+            msg = "You gave **{}** cookies to {} \n {}".format(cookies, user.name, y)
         else:
             msg = "You don't have enough cookies in your account"
 
@@ -105,10 +106,10 @@ class Cookie:
         if await self.check_cooldowns(author.id, action, settings):
             weighted_sample = [1] * 152 + [x for x in range(49) if x > 1]
             cookies = random.choice(weighted_sample)
+            y = ":cookie: " * cookies
             settings["Players"][author.id]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
-            await ctx.send("~₍˄·͈༝·͈˄₍˄·͈༝·͈˄ （（≡￣♀￣≡））˄·͈༝·͈˄₎₍˄·͈༝·͈˄₎◞ ̑̑ \nYou recieved {} "
-                               "cookie(s) from the cookie Gods! Nyaaaaaan!".format(cookies))
+            await ctx.send("You recieved {} cookie(s) from the cookie Gods! Nyaaaaaan!\n {}".format(cookies, y))
 
     @commands.command(pass_context=True, no_pm=False, ignore_extra=False)
     async def jar(self, ctx):
@@ -118,8 +119,9 @@ class Cookie:
         settings = self.check_guild_settings(guild)
         self.account_check(settings, author)
         cookies = settings["Players"][author.id]["Cookies"]
-        await ctx.send("ฅ(=＾‥ ＾=)ฅ Yori sees you have **{}** cookies in the jar. "
-                               "Nyaa nyaa.".format(cookies))
+        y= ":cookie:" * cookies
+        await ctx.send("Yori sees you have **{}** cookies in the jar. "
+                               "\n {} ".format(cookies,y))
 
     @commands.command(pass_context=True, no_pm=True)
     async def steal(self, ctx, user: discord.Member=None):
@@ -136,12 +138,12 @@ class Cookie:
         if user == "Fail":
             pass
         elif user.bot:
-            return await ctx.send("Stealing failed because the picked target is a bot.\nYou "
-                                      "can retry stealing again, your cooldown is not consumed.")
+            return await ctx.send("You can't steal from me because I am a cookie god.\nYou "
+                                      "can try stealing from one of the mortals though :grin:")
 
         if await self.check_cooldowns(author.id, action, settings):
             msg = self.steal_logic(settings, user, author)
-            await ctx.send("ଲ(=(|) ɪ (|)=)ଲ Yori is on the prowl to steal :cookie:")
+            await ctx.send(":spy: Yori is on the prowl to steal :cookie:")
             await asyncio.sleep(4)
             await ctx.send(msg)
 
@@ -159,20 +161,20 @@ class Cookie:
             s = abs(settings["Players"][userid][action] - int(time.perf_counter()))
             seconds = abs(s - path)
             remaining = self.time_formatting(seconds)
-            await ctx.send("This action has a cooldown. You still have:\n{}".format(remaining))
+            await ctx.send("I can't do that for you YET. You still have:\n{}".format(remaining))
             return False
 
     def steal_logic(self, settings, user, author):
         success_chance = random.randint(1, 100)
         if user == "Fail":
-            msg = "ω(=OｪO=)ω Nyaaaaaaaan! I couldn't find anyone with cookies!"
+            msg = ":no_mouth: Nyaaaaaaaan! I couldn't find anyone with cookies!"
             return msg
 
         if user.id not in settings["Players"]:
             self.account_check(settings, user)
 
         if settings["Players"][user.id]["Cookies"] == 0:
-            msg = ("ω(=｀ｪ ´=)ω Nyaa! Yori is sorry, nothing but crumbs in this human's "
+            msg = (":cry: Nyaa! Yori is sorry, nothing but crumbs in this human's "
                    ":cookie: jar!")
         else:
             if success_chance <= 90:
@@ -186,10 +188,11 @@ class Cookie:
                 settings["Players"][user.id]["Cookies"] -= stolen
                 settings["Players"][author.id]["Cookies"] += stolen
                 dataIO.save_json(self.file_path, self.system)
-                msg = ("ω(=＾ ‥ ＾=)ﾉ彡:cookie:\nYou stole {} cookies from "
-                       "{}!".format(stolen, user.name))
+                y = ":cookie:" * stolen
+                msg = (":grin: You stole {} cookies from "
+                       "{}! \n {}".format(stolen, user.name, y))
             else:
-                msg = "ω(=｀ｪ ´=)ω Nyaa... Yori couldn't find their :cookie: jar!"
+                msg = ":angry: Nyaa... Yori couldn't find their :cookie: jar!"
         return msg
 
     def random_user(self, settings, author, guild):
