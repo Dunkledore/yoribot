@@ -128,8 +128,8 @@ class MusicPlayer:
             self.enqueue(query, now)
 
             if stop_current:
-                if self.streamer:
-                    self.streamer.stop()
+                if self.vclient:
+                    self.vclient.stop()
 
             # Start playing if not yet playing
             if self.streamer is None:
@@ -184,7 +184,7 @@ class MusicPlayer:
         self.vready = False
 
         try:
-            self.streamer.stop()
+            self.vclient.stop()
         except:
             pass
 
@@ -212,12 +212,12 @@ class MusicPlayer:
             return
 
         try:
-            if self.streamer.is_playing():
+            if self.vclient.is_playing():
                 self.statuslog.info("Paused")
-                self.streamer.pause()
+                self.vclient.pause()
             else:
                 self.statuslog.info("Playing")
-                self.streamer.resume()
+                self.vclient.resume()
         except Exception as e:
             logger.error(e)
             pass
@@ -231,9 +231,9 @@ class MusicPlayer:
             return
 
         try:
-            if self.streamer.is_playing():
+            if self.vclient.is_playing():
                 self.statuslog.info("Paused")
-                self.streamer.pause()
+                self.vclient.pause()
         except Exception as e:
             logger.error(e)
             pass
@@ -247,9 +247,9 @@ class MusicPlayer:
             return
 
         try:
-            if not self.streamer.is_playing():
+            if not self.vclient.is_playing():
                 self.statuslog.info("Playing")
-                self.streamer.resume()
+                self.vclient.resume()
         except Exception as e:
             logger.error(e)
             pass
@@ -600,40 +600,6 @@ class MusicPlayer:
             self.update_queue()
 
             await self.stop()
-
-    def vafter_ts(self):
-        try:
-            future = asyncio.run_coroutine_threadsafe(self.vafter(), self.bot.loop)
-        except Exception as e:
-            print(e)
-        try:
-            future.result()
-        except Exception as e:
-            print(e) 
-
-    async def vafter(self):
-        """Function that is called after a song finishes playing"""
-
-        
-        if self.state != 'ready':
-            self.logger.debug("Returning because player is in state {}".format(self.state))
-            return
-
-        try:
-            if self.streamer.error is None:
-                await self.vplay()
-            else:
-                await self.destroy()
-                self.statuslog.error(self.streamer.error)
-                self.statuslog.critical("Encountered an error while playing :/")
-        except Exception as e:
-            try:
-                await self.destroy()
-            except:
-                pass
-
-            logger.exception(e)
-
 
 class EmbedLogHandler(logging.Handler):
     def __init__(self, music_player, embed, line, bot):
