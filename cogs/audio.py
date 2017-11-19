@@ -12,14 +12,6 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
-	async def is_mod(self, user, channel, * , check=all):
-		is_owner = await self.bot.is_owner(user)
-		if is_owner:
-			return True
-		perms = {'manage_guild': True}
-		resolved = channel.permissions_for(user)
-		return check(getattr(resolved, name, None) == value for name, value in perms.items())
-
 	def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
 		return (reaction.count-1) > ((listeners-1)/2)
@@ -69,92 +61,85 @@ class Music:
 							if ruser.id != self.bot.user.id:
 								await reaction.message.remove_reaction(emoji, ruser)
 
-	async def on_message(self, message):
-		"""The on_message event handler for this module
-
-		Args:
-			message (discord.Message): Input message
-		"""
-
+	def getMusicPlayer(self, serer_id):
+		if str(server_id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
+			return _musicplayer.MusicPlayer(str(server_id), self.bot)
+		else:
+			return _data.cache[str(server_id)]
 
 
-		# Simplify message info
-		server = message.guild
-		author = message.author
-		channel = message.channel
-		content = message.content
+	@commands.command(no_pm=True)
+	async def play(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query)
 
 
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def playnext(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query, now=True)
 
-		# Only reply to server messages and don't reply to myself
-		if server is not None and author != channel.guild.me:
-			# Commands section
-			prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
-			for prefix in prefixes:
-				if content.startswith(prefix):
-					# Parse message
-					package = content.split(" ")
-					command = package[0][len(prefix):]
-					args = package[1:]
-					arg = ' '.join(args)
-
-					# Lock on to server if not yet locked
-					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
-						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
+	@commands.command(no_pm=True, aliases=['front'])
+	async def front(self, ctx):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).movehere(ctx.channel)
 
 
-					# Remove message
-					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
-								   'destroy', 'front', 'movehere']:
-						try:
-							await message.delete()
-						except discord.errors.NotFound:
-							logger.warning("Could not delete music player command message - NotFound")
-						except discord.errors.Forbidden:
-							logger.warning("Could not delete music player command message - Forbidden")
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def playnow(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
 
-					# Commands
-					if command == 'play':
-						await _data.cache[str(server.id)].play(author, channel, arg)
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def pause(self, ctx):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).pause()
 
-					
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def resume(self, ctx):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).resume()
 
-					if command == 'playnext':
-						await _data.cache[str(server.id)].play(author, channel, arg, now=True)
-					elif command == 'front' or command == 'movehere':
-							await _data.cache[str(server.id)].movehere(channel)
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def skip(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).skip(query=query)
 
-					is_mod = await self.is_mod(message.author, message.channel)
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def skip(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).skip(query=query)
 
-					if is_mod:
-						if command == 'playnow':
-							await _data.cache[str(server.id)].play(author, channel, arg, now=True, stop_current=True)
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def shuffle(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).shuffle()
 
-						elif command == 'pause':
-							await _data.cache[str(server.id)].pause()
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def stop(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).stop()
 
-						elif command == 'resume':
-							await _data.cache[str(server.id)].resume()
 
-						elif command == 'skip':
-							is_mod = await self.is_mod(message.author, message.channel )
-							if is_mod:
-								await _data.cache[str(server.id)].skip(query=arg)
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def destroy(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).destroy()
 
-						elif command == 'shuffle':
-							is_mod = await self.is_mod(message.author, message.channel )
-							if is_mod:
-								await _data.cache[str(server.id)].shuffle()
-						elif command == 'stop':
-							await _data.cache[str(server.id)].stop()
-
-						elif command == 'destroy':
-							await _data.cache[str(server.id)].destroy()
-
-						elif command == 'volume':
-							await _data.cache[str(server.id)].setvolume(arg)
-						return
-
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def volume(self, ctx, *, query=None):
+		await ctx.message.delete()
+		await self.getMusicPlayer(ctx.guild.id).setvolume(query)
 
 def setup(bot):
 
