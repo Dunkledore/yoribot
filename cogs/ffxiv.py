@@ -67,7 +67,7 @@ class FFXIV:
             "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
 
-        newsTicker = self.run_in_bg(self.send_all_news)
+        #newsTicker = self.run_in_bg(self.send_all_news)
 
     def run_in_bg(self, target, *, loop=None, executor=None):
         if loop is None:
@@ -300,7 +300,7 @@ class FFXIV:
 
     async def newsembed(self, ctx, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
-        em = discord.Embed(color=0x73261E,
+        em = discord.Embed(color=0x73261E, type="rich",
                            title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem[
                                                                                                        "tag"] + " ") +
                                  "Lodestone News: "+newsitem["title"],
