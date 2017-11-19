@@ -1034,4 +1034,4 @@ def setup(bot):
         dataIO.save_json("data/ffxiv/fflogs/settings.json", {"api_key": ""})
     n = FFXIV(bot)
     bot.add_cog(n)
-    bot.loop.create_task(n.send_all_news())
+    #bot.loop.create_task(n.send_all_news())
