@@ -31,6 +31,8 @@ class Music:
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
+			print(type(reaction.message.id))
+			print(type(_data.cache[str(server.id)].embed.sent_embed.id))
 			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
