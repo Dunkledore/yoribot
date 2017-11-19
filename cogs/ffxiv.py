@@ -217,7 +217,7 @@ class FFXIV:
         url = "http://xivdb.com/assets/lodestone.json"
         async with aiohttp.ClientSession().get(url) as r:
             try:
-                t = r.text()
+                t = await r.text()
                 await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
                 d = await r.json()
                 self.latestnews = d
