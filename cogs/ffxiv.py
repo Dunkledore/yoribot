@@ -244,7 +244,7 @@ class FFXIV:
         return news
 
     @ffxiv_news.command(name="latest")
-    async def latest_news(self, ctx, type, count):
+    async def latest_news(self, ctx, type="all", count=1):
         """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
 
         count = int(count)
