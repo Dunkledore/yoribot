@@ -80,7 +80,7 @@ class Music:
 		await ctx.message.delete()
 		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query, now=True)
 
-	@commands.command(no_pm=True, aliases=['front'])
+	@commands.command(no_pm=True, aliases=['movehere'])
 	async def front(self, ctx):
 		await ctx.message.delete()
 		await self.getMusicPlayer(ctx.guild.id).movehere(ctx.channel)
