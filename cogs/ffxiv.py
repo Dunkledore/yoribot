@@ -162,7 +162,7 @@ class FFXIV:
         if not ctx.invoked_subcommand:
             return
 
-    @ffxiv_news.command(ame="enable")
+    @ffxiv_news.command(name="enable")
     async def news_enable(self, ctx, *, type):
         """Enable sending lodestone news in this channel. Type can be: notices, topics, maintenance, status or all."""
         await ctx.send(f"Rcv: Enable; Type: {type}")
@@ -1034,4 +1034,4 @@ def setup(bot):
         dataIO.save_json("data/ffxiv/fflogs/settings.json", {"api_key": ""})
     n = FFXIV(bot)
     bot.add_cog(n)
-    #bot.loop.create_task(n.send_all_news())
+    bot.loop.create_task(n.send_all_news())
