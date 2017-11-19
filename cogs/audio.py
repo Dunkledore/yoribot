@@ -112,12 +112,6 @@ class Music:
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def skip(self, ctx, *, query=None):
-		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).skip(query=query)
-
-	@commands.command(no_pm=True)
-	@checks.is_mod()
 	async def shuffle(self, ctx, *, query=None):
 		await ctx.message.delete()
 		await self.getMusicPlayer(ctx.guild.id).shuffle()
