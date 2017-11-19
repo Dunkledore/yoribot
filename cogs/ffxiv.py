@@ -220,7 +220,7 @@ class FFXIV:
             return d
 
     async def update_news(self, ctx):
-        await ctx.send("Updating...") # DEBUG
+        await ctx.send("Updating...")  # DEBUG
         try:
             d = await self.collectnews()
             self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"]),
@@ -228,8 +228,8 @@ class FFXIV:
                                "status": sorted(d["status"], key=lambda k: k["time"]),
                                "notices": sorted(d["notices"], key=lambda k: k["time"])}
             self.format_news()
-            self.newsupdatetime = datetime.utcnow()
-            await ctx.send("Updated.") # DEBUG
+            self.newsupdatetime = datetime.datetime(2017, 1, 1).utcnow()
+            await ctx.send("Updated.")  # DEBUG
         except Exception as e:
             self.latestnews = {"__ERROR__": str(e)}
             return
@@ -264,9 +264,10 @@ class FFXIV:
                              "red")
             return
         await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
-        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime().utcnow() + datetime.timedelta(minutes=-5):
+        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime().utcnow() + datetime.timedelta(
+                minutes=-5):
             await self.update_news(ctx)
-        else: # DEBUG
+        else:  # DEBUG
             await ctx.send("No update needed.")
         if "__ERROR__" in self.latestnews.keys():
             await ctx.send("Error updating:" + self.latestnews["__ERROR__"])  # DEBUG
@@ -275,7 +276,7 @@ class FFXIV:
             count = 1
         if count > 20 or (type == "all" and count > 5):
             count = 5 if type == "all" else 20
-        await ctx.send(f"Sending the latest {count} {type} news.") # DEBUG
+        await ctx.send(f"Sending the latest {count} {type} news.")  # DEBUG
         if type == "all":
             for t in self.latestnews.keys():
                 for i in range(count):
@@ -287,7 +288,9 @@ class FFXIV:
     async def newsembed(self, ctx, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
         em = discord.Embed(color=0x73261E,
-                           title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem["tag"] + " ") + newsitem["title"],
+                           title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem[
+                                                                                                       "tag"] + " ") +
+                                 newsitem["title"],
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text="Lodestone News, at " + newsitem["time"] + " (UTC)")
