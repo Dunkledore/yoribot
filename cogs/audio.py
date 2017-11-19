@@ -115,27 +115,27 @@ class Music:
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def skip(self, ctx, *, query=None):
+	async def skip(self, ctx, *, query=1):
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).skip(query=query)
 		await ctx.send("skipped")
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def shuffle(self, ctx, *, query=None):
+	async def shuffle(self, ctx):
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).shuffle()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def stop(self, ctx, *, query=None):
+	async def stop(self, ctx):
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).stop()
 
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def destroy(self, ctx, *, query=None):
+	async def destroy(self, ctx):
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).destroy()
 
