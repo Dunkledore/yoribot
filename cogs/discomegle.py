@@ -45,7 +45,7 @@ class Discomegle:
             await target_channel.send(embed = em)
 
         else:
-            if type(channel) is Discord.DMChannel:
+            if type(channel) is discord.channel.DMChannel:
                 if msg == (prefix + "joinpool"):
                     await self.add_to_pool(message)
                 elif msg == (prefix + "leavepool"):
