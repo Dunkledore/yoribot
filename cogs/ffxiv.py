@@ -239,8 +239,6 @@ class FFXIV:
             return
         for item in self.latestnews["topics"]:
             soup = BeautifulSoup(item["html"], "html.parser")
-            for br in soup.find_all("br"):
-                br.replace_with("\n")
             item["text"] = soup.get_text()
 
     def get_news_after(self, timestamp):
@@ -294,6 +292,8 @@ class FFXIV:
                                                                                                        "tag"] + " ") +
                                  newsitem["title"],
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
+        if "banner" in newsitem.keys():
+            em.set_thumbnail(url=newsitem["banner"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text="Lodestone News, at " + newsitem["time"] + " (UTC)")
         await ctx.send(embed=em)
