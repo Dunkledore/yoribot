@@ -31,7 +31,7 @@ class Music:
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
-			valid_reaction = (str(reaction.message.id)) == _data.cache[str(server.id)].embed.sent_embed.id
+			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
 				is_mod = await self.is_mod(user, reaction.message.channel)
