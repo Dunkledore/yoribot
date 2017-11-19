@@ -254,7 +254,7 @@ class FFXIV:
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
                              "red")
             return
-        await ctx.send("Getting the latest "+count+" "+type+" news.") # DEBUG
+        await ctx.send("Getting the latest "+str(count)+" "+type+" news.") # DEBUG
         if self.latestnews == {} or self.lastupdate is None or self.lastupdate < datetime.datetime().utcnow()-datetime.timedelta(minutes=5):
             await ctx.send("updating the news...") # DEBUG
             await self.update_news()
