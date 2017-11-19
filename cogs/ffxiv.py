@@ -276,7 +276,7 @@ class FFXIV:
             for i in range(count):
                 await ctx.send(self.newsembed(self.latestnews[type][i], type))
 
-    async def newsembed(self, newsitem, type):
+    def newsembed(self, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
         em = discord.Embed(color=0x73261E,
                            title=("" if newsitem["tag"] == "" else newsitem["tag"] + " ") + newsitem["title"],
