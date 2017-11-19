@@ -181,6 +181,8 @@ class FFXIV:
         if ch in newsset.keys() and (type.lower() in newsset[ch] or "all" in newsset[ch]):
             await self.embed(ctx, "Lodestone News", "Already sending those news here.", "red")
             return
+        if ch not in newsset.keys():
+            newsset[ch] = []
         if type.lower() == "all" or len(newsset[ch]) == 3:
             newsset[ch] = ["all"]
             await self.embed(ctx, "Lodestone News", "Now sending all lodestone news to this channel.", "green")
