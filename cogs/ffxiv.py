@@ -293,12 +293,12 @@ class FFXIV:
         if type == "all":
             for t in self.latestnews.keys():
                 for i in range(count):
-                    await ctx.send(embed=await self.newsembed(ctx, self.latestnews[t][i], t))
+                    await ctx.send(embed=self.newsembed(ctx, self.latestnews[t][i], t))
         else:
             for i in range(count):
-                await ctx.send(embed=await self.newsembed(ctx, self.latestnews[type][i], type))
+                await ctx.send(embed=self.newsembed(ctx, self.latestnews[type][i], type))
 
-    async def newsembed(self, ctx, newsitem, type):
+    def newsembed(self, ctx, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
         em = discord.Embed(color=0x73261E, type="rich",
                            title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem[
@@ -309,7 +309,7 @@ class FFXIV:
             em.set_image(url=newsitem["banner"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text=newsitem["time"] + " (UTC)")
-        return eem
+        return em
 
     async def send_all_news(self):
         self.update_news(None)
@@ -326,7 +326,7 @@ class FFXIV:
                         for type in news.keys():
                             if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
                                 for item in news[type]:
-                                    await chan.send(await self.newsembed(item, type))
+                                    await chan.send(self.newsembed(item, type))
 
     @ffxiv.command()
     async def recipe(self, ctx, *, itemname):
