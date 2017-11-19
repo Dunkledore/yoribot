@@ -8,6 +8,7 @@ import os
 import re
 from urllib.parse import quote as urlencode
 import datetime
+import asyncio
 
 try:
     from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageOps
@@ -64,6 +65,10 @@ class FFXIV:
             "notices": "https://na.finalfantasyxiv.com/lodestone/news/category/1",
             "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
+
+        newsTask = asyncio.Task(self.send_all_news)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(newsTask)
 
     def save_settings(self):
         dataIO.save_json("data/ffxiv/settings.json", self.settings)
@@ -280,39 +285,41 @@ class FFXIV:
         if type == "all":
             for t in self.latestnews.keys():
                 for i in range(count):
-                    await self.newsembed(ctx, self.latestnews[t][i], t)
+                    await ctx.send(embed=self.newsembed(ctx, self.latestnews[t][i], t))
         else:
             for i in range(count):
-                await self.newsembed(ctx, self.latestnews[type][i], type)
+                await ctx.send(embed=self.newsembed(ctx, self.latestnews[type][i], type))
 
     async def newsembed(self, ctx, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
         em = discord.Embed(color=0x73261E,
                            title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem[
                                                                                                        "tag"] + " ") +
-                                 newsitem["title"],
+                                 "Lodestone News: "+newsitem["title"],
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
         if "banner" in newsitem.keys():
             em.set_image(url=newsitem["banner"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
-        em.set_footer(text="Lodestone News, at " + newsitem["time"] + " (UTC)")
-        await ctx.send(embed=em)
+        em.set_footer(text=newsitem["time"] + " (UTC)")
+        return em
 
     async def send_all_news(self):
-        newsset = self.settings["news"]
-        now = datetime.datetime().utcnow()
-        before = now - self.updatefrequency
-        news = self.get_news_after(before)
-        for guildid in newsset.keys():
-            guild = self.bot.get_guild(guildid)
-            if guild is not None:
-                for ch in newsset[guild].keys():
-                    chan = guild.get_channel(ch)
-                    if chan is not None:
-                        for type in news.keys():
-                            if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
-                                for item in news[type]:
-                                    await chan.send(self.newsembed(item, type))
+        while True:
+            newsset = self.settings["news"]
+            now = datetime.datetime().utcnow()
+            before = now - self.updatefrequency
+            news = self.get_news_after(before)
+            for guildid in newsset.keys():
+                guild = self.bot.get_guild(guildid)
+                if guild is not None:
+                    for ch in newsset[guild].keys():
+                        chan = guild.get_channel(ch)
+                        if chan is not None:
+                            for type in news.keys():
+                                if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
+                                    for item in news[type]:
+                                        await chan.send(self.newsembed(item, type))
+            await asyncio.sleep(self.updatefrequency.seconds)
 
     @ffxiv.command()
     async def recipe(self, ctx, *, itemname):
