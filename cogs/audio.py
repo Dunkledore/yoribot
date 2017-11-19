@@ -131,7 +131,7 @@ class Music:
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def pdestroy(self, ctx, *, query=None):
+	async def destroy(self, ctx, *, query=None):
 		await ctx.message.delete()
 		await self.getMusicPlayer(ctx.guild.id).destroy()
 
