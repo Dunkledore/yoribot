@@ -9,6 +9,7 @@ import re
 from urllib.parse import quote as urlencode
 import datetime
 import asyncio
+import time
 
 try:
     from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageOps
@@ -327,7 +328,7 @@ class FFXIV:
                                 if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
                                     for item in news[type]:
                                         await chan.send(self.newsembed(item, type))
-            await asyncio.sleep(self.updatefrequency.seconds)
+            time.sleep(self.updatefrequency.seconds)
 
     @ffxiv.command()
     async def recipe(self, ctx, *, itemname):
