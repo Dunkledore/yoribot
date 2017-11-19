@@ -51,6 +51,7 @@ class FFXIV:
         }
         self.latestnews = {}
         self.newsupdatetime = None
+        self.updatefrequency = datetime.timedelta(minutes=10)
         self.newsiconurls = {
             "maintenance": "https://img.finalfantasyxiv.com/lds/h/U/6qzbI-6AwlXAfGhCBZU10jsoLA.png",
             "notices": "https://img.finalfantasyxiv.com/lds/h/c/GK5Y3gQsnlxMRQ_pORu6lKQAJ0.png",
@@ -264,8 +265,7 @@ class FFXIV:
                              "red")
             return
         await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
-        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime(2017,1,1).utcnow() + datetime.timedelta(
-                minutes=-5):
+        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime(2017,1,1).utcnow() - self.updatefrequency:
             await self.update_news(ctx)
         else:  # DEBUG
             await ctx.send("No update needed.")
@@ -293,7 +293,7 @@ class FFXIV:
                                  newsitem["title"],
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
         if "banner" in newsitem.keys():
-            em.set_thumbnail(url=newsitem["banner"])
+            em.set_image(url=newsitem["banner"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text="Lodestone News, at " + newsitem["time"] + " (UTC)")
         await ctx.send(embed=em)
@@ -301,7 +301,7 @@ class FFXIV:
     async def send_all_news(self):
         newsset = self.settings["news"]
         now = datetime.datetime().utcnow()
-        before = now - datetime.timedelta(minutes=5)
+        before = now - self.updatefrequency
         news = self.get_news_after(before)
         for guildid in newsset.keys():
             guild = self.bot.get_guild(guildid)
