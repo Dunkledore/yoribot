@@ -215,7 +215,7 @@ class FFXIV:
 
     async def update_news(self, ctx):
         url = "http://xivdb.com/assets/lodestone.json"
-        async with aiohttp.get(url) as r:
+        async with aiohttp.ClientSession().get(url) as r:
             try:
                 t = r.text()
                 await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
