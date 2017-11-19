@@ -167,6 +167,7 @@ class FFXIV:
     @ffxiv_news.command(ame="enable")
     async def news_enable(self, ctx, *, type):
         """Enable sending lodestone news in this channel. Type can be: notices, topics, maintenance, status or all."""
+        await ctx.send(f"Rcv: Enable; Type: {type}")
         if "news" not in self.settings.keys():
             self.settings["news"] = {}
         if ctx.guild.id not in self.settings["news"].keys():
