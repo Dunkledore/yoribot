@@ -264,7 +264,7 @@ class FFXIV:
                              "red")
             return
         await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
-        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime().utcnow() + datetime.timedelta(
+        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime(2017,1,1).utcnow() + datetime.timedelta(
                 minutes=-5):
             await self.update_news(ctx)
         else:  # DEBUG
