@@ -182,7 +182,7 @@ class FFXIV:
         else:
             newsset[ch].append(type.lower())
             await self.embed(ctx, "Lodestone News", "Now sending lodestone " + type.lower() + (
-            " news" if type.lower in ["maintenance", "status"] else "") + "in this channel.", "green")
+                " news" if type.lower in ["maintenance", "status"] else "") + "in this channel.", "green")
         self.save_settings()
 
     @ffxiv_news.command(name="disable")
@@ -212,16 +212,19 @@ class FFXIV:
                 " news" if type.lower in ["maintenance", "status"] else "") + "in this channel anymore.", "green")
         self.save_settings()
 
-    async def update_news(self, ctx):
+    async def collectnews(self):
         url = "http://xivdb.com/assets/lodestone.json"
-        d = {}
+        async with aiohttp.ClientSession().get(url) as r:
+            d = await r.json()
+            return d
+
+    async def update_news(self, ctx):
         try:
-            async with aiohttp.ClientSession().get(url) as r:
-                d = await r.json()
-            self.latestnews = {"maintenance": sorted(d["maintenance"],key=lambda k:k["time"]),
-                               "topics": sorted(d["topics"],key=lambda k:k["time"]),
-                               "status": sorted(d["status"],key=lambda k:k["time"]),
-                               "notices": sorted(d["notices"],key=lambda k:k["time"])}
+            d = await self.collectnews()
+            self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"]),
+                               "topics": sorted(d["topics"], key=lambda k: k["time"]),
+                               "status": sorted(d["status"], key=lambda k: k["time"]),
+                               "notices": sorted(d["notices"], key=lambda k: k["time"])}
             self.format_news()
         except Exception as e:
             self.latestnews = {"__ERROR__": str(e)}
@@ -256,10 +259,10 @@ class FFXIV:
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
                              "red")
             return
-        await ctx.send("Getting the latest "+str(count)+" "+type+" news.") # DEBUG
+        await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
         await self.update_news(ctx)
         if "__ERROR__" in self.latestnews.keys():
-            await ctx.send("Error updating:"+self.latestnews["__ERROR__"]) # DEBUG
+            await ctx.send("Error updating:" + self.latestnews["__ERROR__"])  # DEBUG
             return
         if count < 1:
             count = 1
