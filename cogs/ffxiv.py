@@ -67,14 +67,7 @@ class FFXIV:
             "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
 
-        #newsTicker = self.run_in_bg(self.send_all_news)
-
-    def run_in_bg(self, target, *, loop=None, executor=None):
-        if loop is None:
-            loop = asyncio.get_event_loop()
-        if callable(target):
-            return loop.run_in_executor(executor,target)
-
+        self.send_all_news()
 
     def save_settings(self):
         dataIO.save_json("data/ffxiv/settings.json", self.settings)
@@ -236,10 +229,10 @@ class FFXIV:
             await ctx.send("Updating...")  # DEBUG
         try:
             d = await self.collectnews()
-            self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"],reverse=True),
-                               "topics": sorted(d["topics"], key=lambda k: k["time"],reverse=True),
-                               "status": sorted(d["status"], key=lambda k: k["time"],reverse=True),
-                               "notices": sorted(d["notices"], key=lambda k: k["time"],reverse=True)}
+            self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"], reverse=True),
+                               "topics": sorted(d["topics"], key=lambda k: k["time"], reverse=True),
+                               "status": sorted(d["status"], key=lambda k: k["time"], reverse=True),
+                               "notices": sorted(d["notices"], key=lambda k: k["time"], reverse=True)}
             self.format_news()
             self.newsupdatetime = datetime.datetime(2017, 1, 1).utcnow()
             if ctx is not None:
@@ -278,7 +271,8 @@ class FFXIV:
                              "red")
             return
         await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
-        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime(2017,1,1).utcnow() - self.updatefrequency:
+        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime(2017, 1,
+                                                                                  1).utcnow() - self.updatefrequency:
             await self.update_news(ctx)
         else:  # DEBUG
             await ctx.send("No update needed.")
@@ -293,17 +287,17 @@ class FFXIV:
         if type == "all":
             for t in self.latestnews.keys():
                 for i in range(count):
-                    await ctx.send(embed=self.newsembed(ctx, self.latestnews[t][i], t))
+                    await ctx.send(embed=self.newsembed(self.latestnews[t][i], t))
         else:
             for i in range(count):
-                await ctx.send(embed=self.newsembed(ctx, self.latestnews[type][i], type))
+                await ctx.send(embed=self.newsembed(self.latestnews[type][i], type))
 
-    def newsembed(self, ctx, newsitem, type):
+    def newsembed(self, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
         em = discord.Embed(color=0x73261E, type="rich",
                            title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem[
                                                                                                        "tag"] + " ") +
-                                 "Lodestone News: "+newsitem["title"],
+                                 "Lodestone News: " + newsitem["title"],
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
         if "banner" in newsitem.keys():
             em.set_image(url=newsitem["banner"])
@@ -312,21 +306,24 @@ class FFXIV:
         return em
 
     async def send_all_news(self):
-        self.update_news(None)
-        newsset = self.settings["news"]
-        now = datetime.datetime(2017,1,1).utcnow()
-        before = now - self.updatefrequency
-        news = self.get_news_after(before)
-        for guildid in newsset.keys():
-            guild = self.bot.get_guild(guildid)
-            if guild is not None:
-                for ch in newsset[guild].keys():
-                    chan = guild.get_channel(ch)
-                    if chan is not None:
-                        for type in news.keys():
-                            if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
-                                for item in news[type]:
-                                    await chan.send(self.newsembed(item, type))
+        await self.bot.wait_until_ready()
+        while self == self.bot.get_cog("FFXIV"):
+            self.update_news(None)
+            newsset = self.settings["news"]
+            now = datetime.datetime(2017, 1, 1).utcnow()
+            before = now - self.updatefrequency
+            news = self.get_news_after(before)
+            for guildid in newsset.keys():
+                guild = self.bot.get_guild(guildid)
+                if guild is not None:
+                    for ch in newsset[guild].keys():
+                        chan = guild.get_channel(ch)
+                        if chan is not None:
+                            for type in news.keys():
+                                if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
+                                    for item in news[type]:
+                                        await chan.send(embed=self.newsembed(item, type))
+            await asyncio.sleep(self.updatefrequency.seconds)
 
     @ffxiv.command()
     async def recipe(self, ctx, *, itemname):
