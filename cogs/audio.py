@@ -80,70 +80,70 @@ class Music:
 	@commands.command(no_pm=True)
 	async def play(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query)
+		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query)
 
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def playnext(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query, now=True)
+		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True)
 
 	@commands.command(no_pm=True, aliases=['movehere'])
 	async def front(self, ctx):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).movehere(ctx.channel)
+		await self.getMusicPlayer(str(ctx.guild.id)).movehere(ctx.channel)
 
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def playnow(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
+		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def pause(self, ctx):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).pause()
+		await self.getMusicPlayer(str(ctx.guild.id)).pause()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def resume(self, ctx):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).resume()
+		await self.getMusicPlayer(str(ctx.guild.id)).resume()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def skip(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).skip(query=query)
+		await self.getMusicPlayer(str(ctx.guild.id)).skip(query=query)
 		await ctx.send("skipped")
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def shuffle(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).shuffle()
+		await self.getMusicPlayer(str(ctx.guild.id)).shuffle()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def stop(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).stop()
+		await self.getMusicPlayer(str(ctx.guild.id)).stop()
 
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def destroy(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).destroy()
+		await self.getMusicPlayer(str(ctx.guild.id)).destroy()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def volume(self, ctx, *, query=None):
 		await ctx.message.delete()
-		await self.getMusicPlayer(ctx.guild.id).setvolume(query)
+		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
 
 def setup(bot):
 
