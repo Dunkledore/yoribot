@@ -309,26 +309,24 @@ class FFXIV:
             em.set_image(url=newsitem["banner"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text=newsitem["time"] + " (UTC)")
-        return em
+        return em.to_dict()
 
     async def send_all_news(self):
-        while True:
-            self.update_news(None)
-            newsset = self.settings["news"]
-            now = datetime.datetime(2017,1,1).utcnow()
-            before = now - self.updatefrequency
-            news = self.get_news_after(before)
-            for guildid in newsset.keys():
-                guild = self.bot.get_guild(guildid)
-                if guild is not None:
-                    for ch in newsset[guild].keys():
-                        chan = guild.get_channel(ch)
-                        if chan is not None:
-                            for type in news.keys():
-                                if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
-                                    for item in news[type]:
-                                        await chan.send(self.newsembed(item, type))
-            time.sleep(self.updatefrequency.seconds)
+        self.update_news(None)
+        newsset = self.settings["news"]
+        now = datetime.datetime(2017,1,1).utcnow()
+        before = now - self.updatefrequency
+        news = self.get_news_after(before)
+        for guildid in newsset.keys():
+            guild = self.bot.get_guild(guildid)
+            if guild is not None:
+                for ch in newsset[guild].keys():
+                    chan = guild.get_channel(ch)
+                    if chan is not None:
+                        for type in news.keys():
+                            if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
+                                for item in news[type]:
+                                    await chan.send(self.newsembed(item, type))
 
     @ffxiv.command()
     async def recipe(self, ctx, *, itemname):
