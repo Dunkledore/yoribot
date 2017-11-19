@@ -219,6 +219,7 @@ class FFXIV:
             return d
 
     async def update_news(self, ctx):
+        await ctx.send("Updating...") # DEBUG
         try:
             d = await self.collectnews()
             self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"]),
@@ -226,6 +227,7 @@ class FFXIV:
                                "status": sorted(d["status"], key=lambda k: k["time"]),
                                "notices": sorted(d["notices"], key=lambda k: k["time"])}
             self.format_news()
+            await ctx.send("Updated.") # DEBUG
         except Exception as e:
             self.latestnews = {"__ERROR__": str(e)}
 
@@ -271,19 +273,19 @@ class FFXIV:
         if type == "all":
             for t in self.latestnews.keys():
                 for i in range(count):
-                    await ctx.send(self.newsembed(self.latestnews[t][i], t))
+                    await self.newsembed(ctx, self.latestnews[t][i], t)
         else:
             for i in range(count):
-                await ctx.send(self.newsembed(self.latestnews[type][i], type))
+                await self.newsembed(ctx, self.latestnews[type][i], type)
 
-    def newsembed(self, newsitem, type):
+    async def newsembed(self, ctx, newsitem, type):
         titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
         em = discord.Embed(color=0x73261E,
                            title=("" if newsitem["tag"] == "" else newsitem["tag"] + " ") + newsitem["title"],
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text="Lodestone News, at " + newsitem["time"] + " (UTC)")
-        return em
+        await ctx.send(em)
 
     async def send_all_news(self):
         newsset = self.settings["news"]
