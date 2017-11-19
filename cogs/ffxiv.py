@@ -220,7 +220,7 @@ class FFXIV:
                 # t = await r.text()
                 # await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
                 d = await r.json()
-                self.latestnews = d
+                self.latestnews = {"maintenance": d["maintenance"], "topics": d["topics"], "status": d["status"], "notices": d["notices"]}
                 self.format_news()
                 # self.lastupdate = datetime.datetime().utcnow()
             except Exception as e:
