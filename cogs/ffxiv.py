@@ -285,7 +285,7 @@ class FFXIV:
                            url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
         em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
         em.set_footer(text="Lodestone News, at " + newsitem["time"] + " (UTC)")
-        await ctx.send(em)
+        await ctx.send(embed=em)
 
     async def send_all_news(self):
         newsset = self.settings["news"]
