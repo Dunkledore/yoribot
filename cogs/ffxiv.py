@@ -228,10 +228,11 @@ class FFXIV:
                                "status": sorted(d["status"], key=lambda k: k["time"]),
                                "notices": sorted(d["notices"], key=lambda k: k["time"])}
             self.format_news()
-            self.newsupdatetime = datetime.datetime().now()
+            self.newsupdatetime = datetime.utcnow()
             await ctx.send("Updated.") # DEBUG
         except Exception as e:
             self.latestnews = {"__ERROR__": str(e)}
+            return
 
     def format_news(self):
         if self.latestnews is None or "__ERROR__" in self.latestnews.keys() or self.latestnews == {}:
