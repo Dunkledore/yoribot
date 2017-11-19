@@ -3,10 +3,9 @@ from discord.ext import commands
 import aiohttp
 import asyncio
 import random
-from __main__ import send_cmd_help
 from .utils.dataIO import dataIO, fileIO
 
-prefix = fileIO("data/red/settings.json", "load")['PREFIXES'][0]
+prefix = '*'
 
 class Discomegle:
     """Lets you chat with random person who has access to the bot."""
@@ -38,15 +37,15 @@ class Discomegle:
         msg = message.content
         user = message.author
         channel = message.channel
-
-        if channel.is_private and not msg.startswith(prefix) and str(user.id) in self.link:
-            target_channel = self.link[user.id]["TARGET_CHANNEL"]
+        print (type(channel) is discord.channel.DMChannel)
+        if type(channel) is discord.channel.DMChannel and not msg.startswith(prefix) and str(user.id) in self.link:
+            target_channel = self.link[str(user.id)]["TARGET_CHANNEL"]
             em = discord.Embed(description=msg, colour=self.colour)
             em.set_author(name="Partner")
             await target_channel.send(embed = em)
 
         else:
-            if channel.is_private:
+            if type(channel) is discord.channel.DMChannel:
                 if msg == (prefix + "joinpool"):
                     await self.add_to_pool(message)
                 elif msg == (prefix + "leavepool"):
@@ -62,7 +61,7 @@ class Discomegle:
         self.pool[str(user.id)] = channel
 
         em = discord.Embed(description="**You have been added to the pool.**", colour=self.colour)
-        await channel(embed = em)
+        await channel.send(embed = em)
 
     async def remove_from_pool(self, message):
         user = message.author
