@@ -31,8 +31,6 @@ class Music:
 
 		# Commands section
 		if user != reaction.message.channel.guild.me:
-			print(type(reaction.message.id))
-			print(type(_data.cache[str(server.id)].embed.sent_embed.id))
 			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
@@ -65,7 +63,8 @@ class Music:
 
 	def getMusicPlayer(self, server_id):
 		if str(server_id) not in _data.cache or _data.cache[str(server_id)].state == 'destroyed':
-			return _musicplayer.MusicPlayer(str(server_id), self.bot)
+			_data.cache[str(server_id)] = _musicplayer.MusicPlayer(str(server_id), self.bot)
+			return _data.cache[str(server_id)]
 		else:
 			return _data.cache[str(server_id)]
 
