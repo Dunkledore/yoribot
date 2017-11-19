@@ -66,9 +66,14 @@ class FFXIV:
             "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
 
-        newsTask = asyncio.Task(self.send_all_news)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(newsTask)
+        newsTicker = self.run_in_bg(self.send_all_news)
+
+    def run_in_bg(self, target, *, loop=None, executor=None):
+        if loop is None:
+            loop = asyncio.get_event_loop()
+        if callable(target):
+            return loop.run_in_executor(executor,target)
+
 
     def save_settings(self):
         dataIO.save_json("data/ffxiv/settings.json", self.settings)
