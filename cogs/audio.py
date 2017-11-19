@@ -62,7 +62,7 @@ class Music:
 								await reaction.message.remove_reaction(emoji, ruser)
 
 	def getMusicPlayer(self, serer_id):
-		if str(server_id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
+		if str(server_id) not in _data.cache or _data.cache[str(server_id)].state == 'destroyed':
 			return _musicplayer.MusicPlayer(str(server_id), self.bot)
 		else:
 			return _data.cache[str(server_id)]
