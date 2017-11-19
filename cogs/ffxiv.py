@@ -213,10 +213,12 @@ class FFXIV:
                 " news" if type.lower in ["maintenance", "status"] else "") + "in this channel anymore.", "green")
         self.save_settings()
 
-    async def update_news(self):
+    async def update_news(self, ctx):
         url = "http://xivdb.com/assets/lodestone.json"
         async with aiohttp.get(url) as r:
             try:
+                t = r.text()
+                await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
                 d = await r.json()
                 self.latestnews = d
                 self.format_news()
@@ -257,7 +259,7 @@ class FFXIV:
         await ctx.send("Getting the latest "+str(count)+" "+type+" news.") # DEBUG
         if self.latestnews == {} or self.lastupdate is None or self.lastupdate < datetime.datetime().utcnow()-datetime.timedelta(minutes=5):
             await ctx.send("updating the news...") # DEBUG
-            await self.update_news()
+            await self.update_news(ctx)
         if "__ERROR__" in self.latestnews.keys():
             await ctx.send("Error updating.") # DEBUG
         timedlist = sorted(self.latestnews, key=lambda k: k["time"],reverse=True)
