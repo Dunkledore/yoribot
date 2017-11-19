@@ -248,6 +248,7 @@ class FFXIV:
         """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
 
         count = int(count)
+        print("latestnews requested:", type, count)
         if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
             await self.embed(ctx, "Lodestone News",
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
