@@ -239,7 +239,7 @@ class FFXIV:
             return
         for item in self.latestnews["topics"]:
             soup = BeautifulSoup(item["html"], "html.parser")
-            item["text"] = soup.get_text()
+            item["text"] = soup.get_text("\n")
 
     def get_news_after(self, timestamp):
         if self.latestnews is None or "__ERROR__" in self.latestnews.keys() or self.latestnews == {}:
