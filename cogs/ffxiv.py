@@ -165,14 +165,15 @@ class FFXIV:
     @ffxiv_news.command(name="enable")
     async def news_enable(self, ctx, *, type):
         """Enable sending lodestone news in this channel. Type can be: notices, topics, maintenance, status or all."""
-        await ctx.send(f"Rcv: Enable; Type: {type}")
+
+        guildid = str(ctx.guild.id)
         if "news" not in self.settings.keys():
             self.settings["news"] = {}
-        if ctx.guild.id not in self.settings["news"].keys():
-            self.settings["news"][ctx.guild.id] = {}
+        if guildid not in self.settings["news"].keys():
+            self.settings["news"][guildid] = {}
         self.save_settings()
-        newsset = self.settings["news"][ctx.guild.id]
-        ch = ctx.channel.id
+        newsset = self.settings["news"][guildid]
+        ch = str(ctx.channel.id)
         if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
             await self.embed(ctx, "Lodestone News",
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
@@ -195,13 +196,15 @@ class FFXIV:
     @ffxiv_news.command(name="disable")
     async def news_disable(self, ctx, *, type):
         """Disable sending lodestone news in this channel. Type can be: notices, topics, maintenance, status or all."""
+
+        guildid = str(ctx.guild.id)
         if "news" not in self.settings.keys():
             self.settings["news"] = {}
         if ctx.guild.id not in self.settings["news"].keys():
-            self.settings["news"][ctx.guild.id] = {}
+            self.settings["news"][guildid] = {}
         self.save_settings()
-        newsset = self.settings["news"][ctx.guild.id]
-        ch = ctx.channel.id
+        newsset = self.settings["news"][guildid]
+        ch = str(ctx.channel.id)
         if ch not in newsset.keys() or type.lower() not in newsset[ch]:
             await self.embed(ctx, "Lodestone News", "No news are sent in this channel.", "red")
             return
