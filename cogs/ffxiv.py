@@ -223,8 +223,8 @@ class FFXIV:
                 self.latestnews = d
                 self.format_news()
                 self.lastupdate = datetime.datetime().utcnow()
-            except:
-                self.latestnews = {"__ERROR__": "Invalid JSON or no response."}
+            except Exception as e:
+                self.latestnews = {"__ERROR__": str(e)}
 
     def format_news(self):
         if self.latestnews is None or "__ERROR__" in self.latestnews.keys() or self.latestnews == {}:
@@ -261,8 +261,9 @@ class FFXIV:
             await ctx.send("updating the news...") # DEBUG
             await self.update_news(ctx)
         if "__ERROR__" in self.latestnews.keys():
-            await ctx.send("Error updating.") # DEBUG
-        timedlist = sorted(self.latestnews, key=lambda k: k["time"],reverse=True)
+            await ctx.send("Error updating:"+self.latestnews["__ERROR__"]) # DEBUG
+            return
+        timedlist = sorted(self.latestnews, key=lambda k: k["time"], reverse=True)
         if count < 1:
             count = 1
         if count > 20 or (type == "all" and count > 5):
