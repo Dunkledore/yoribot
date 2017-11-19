@@ -61,7 +61,7 @@ class Discomegle:
         self.pool[str(user.id)] = channel
 
         em = discord.Embed(description="**You have been added to the pool.**", colour=self.colour)
-        await channel(embed = em)
+        await channel.send(embed = em)
 
     async def remove_from_pool(self, message):
         user = message.author
