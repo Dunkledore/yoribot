@@ -220,7 +220,10 @@ class FFXIV:
                 # t = await r.text()
                 # await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
                 d = await r.json()
-                self.latestnews = {"maintenance": d["maintenance"], "topics": d["topics"], "status": d["status"], "notices": d["notices"]}
+                self.latestnews = {"maintenance": sorted(d["maintenance"],key=lambda k:k["time"]),
+                                   "topics": sorted(d["topics"],key=lambda k:k["time"]),
+                                   "status": sorted(d["status"],key=lambda k:k["time"]),
+                                   "notices": sorted(d["notices"],key=lambda k:k["time"])}
                 self.format_news()
                 # self.lastupdate = datetime.datetime().utcnow()
             except Exception as e:
@@ -263,7 +266,6 @@ class FFXIV:
         if "__ERROR__" in self.latestnews.keys():
             await ctx.send("Error updating:"+self.latestnews["__ERROR__"]) # DEBUG
             return
-        timedlist = sorted(self.latestnews, key=lambda k: k["time"], reverse=True)
         if count < 1:
             count = 1
         if count > 20 or (type == "all" and count > 5):
