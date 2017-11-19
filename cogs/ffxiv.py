@@ -223,10 +223,10 @@ class FFXIV:
         await ctx.send("Updating...")  # DEBUG
         try:
             d = await self.collectnews()
-            self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"]),
-                               "topics": sorted(d["topics"], key=lambda k: k["time"]),
-                               "status": sorted(d["status"], key=lambda k: k["time"]),
-                               "notices": sorted(d["notices"], key=lambda k: k["time"])}
+            self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"],reverse=True),
+                               "topics": sorted(d["topics"], key=lambda k: k["time"],reverse=True),
+                               "status": sorted(d["status"], key=lambda k: k["time"],reverse=True),
+                               "notices": sorted(d["notices"], key=lambda k: k["time"],reverse=True)}
             self.format_news()
             self.newsupdatetime = datetime.datetime(2017, 1, 1).utcnow()
             await ctx.send("Updated.")  # DEBUG
