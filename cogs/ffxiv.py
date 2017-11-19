@@ -217,12 +217,12 @@ class FFXIV:
         url = "http://xivdb.com/assets/lodestone.json"
         async with aiohttp.ClientSession().get(url) as r:
             try:
-                t = await r.text()
-                await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
+                # t = await r.text()
+                # await ctx.send("Response:" + t[:1800] if len(t)>1800 else t)
                 d = await r.json()
                 self.latestnews = d
                 self.format_news()
-                self.lastupdate = datetime.datetime().utcnow()
+                # self.lastupdate = datetime.datetime().utcnow()
             except Exception as e:
                 self.latestnews = {"__ERROR__": str(e)}
 
