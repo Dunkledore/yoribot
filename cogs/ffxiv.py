@@ -67,8 +67,6 @@ class FFXIV:
             "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
 
-        self.send_all_news()
-
     def save_settings(self):
         dataIO.save_json("data/ffxiv/settings.json", self.settings)
 
@@ -1034,4 +1032,6 @@ def setup(bot):
     if not os.path.exists("data/ffxiv/fflogs/settings.json"):
         print("Creating data/ffxiv/fflogs/settings.json file...")
         dataIO.save_json("data/ffxiv/fflogs/settings.json", {"api_key": ""})
-    bot.add_cog(FFXIV(bot))
+    n = FFXIV(bot)
+    bot.add_cog(n)
+    bot.loop.create_task(n.send_all_news())
