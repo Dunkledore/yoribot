@@ -16,6 +16,14 @@ class Music:
 		listeners = len(reaction.message.guild.voice_client.channel.members)
 		return (reaction.count-1) > ((listeners-1)/2)
 
+	async def is_mod(self, user, channel, * , check=all):
+		is_owner = await self.bot.is_owner(user)
+		if is_owner:
+			return True
+		perms = {'manage_guild': True}
+		resolved = channel.permissions_for(user)
+		return check(getattr(resolved, name, None) == value for name, value in perms.items())
+
 	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
 
