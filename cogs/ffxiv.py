@@ -226,7 +226,8 @@ class FFXIV:
             return d
 
     async def update_news(self, ctx):
-        await ctx.send("Updating...")  # DEBUG
+        if ctx is not None:
+            await ctx.send("Updating...")  # DEBUG
         try:
             d = await self.collectnews()
             self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"],reverse=True),
@@ -235,7 +236,8 @@ class FFXIV:
                                "notices": sorted(d["notices"], key=lambda k: k["time"],reverse=True)}
             self.format_news()
             self.newsupdatetime = datetime.datetime(2017, 1, 1).utcnow()
-            await ctx.send("Updated.")  # DEBUG
+            if ctx is not None:
+                await ctx.send("Updated.")  # DEBUG
         except Exception as e:
             self.latestnews = {"__ERROR__": str(e)}
             return
@@ -305,8 +307,9 @@ class FFXIV:
 
     async def send_all_news(self):
         while True:
+            self.update_news(None)
             newsset = self.settings["news"]
-            now = datetime.datetime().utcnow()
+            now = datetime.datetime(2017,1,1).utcnow()
             before = now - self.updatefrequency
             news = self.get_news_after(before)
             for guildid in newsset.keys():
