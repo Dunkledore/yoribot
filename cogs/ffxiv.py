@@ -181,7 +181,7 @@ class FFXIV:
         if ch in newsset.keys() and (type.lower() in newsset[ch] or "all" in newsset[ch]):
             await self.embed(ctx, "Lodestone News", "Already sending those news here.", "red")
             return
-        if type.lower == "all" or len(newsset[ch]) == 3:
+        if type.lower() == "all" or len(newsset[ch]) == 3:
             newsset[ch] = ["all"]
             await self.embed(ctx, "Lodestone News", "Now sending all lodestone news to this channel.", "green")
         else:
@@ -208,7 +208,7 @@ class FFXIV:
                              "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
                              "red")
             return
-        if type.lower == "all" or len(newsset[ch]) == 1:
+        if type.lower() == "all" or len(newsset[ch]) == 1:
             newsset.pop(ch, "")
             await self.embed(ctx, "Lodestone News", "Now not sending any news in this channel.", "green")
         else:
