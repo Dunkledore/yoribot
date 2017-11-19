@@ -109,6 +109,7 @@ class Music:
 	async def skip(self, ctx, *, query=None):
 		await ctx.message.delete()
 		await self.getMusicPlayer(ctx.guild.id).skip(query=query)
+		await ctx.send("skipped")
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
