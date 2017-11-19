@@ -50,6 +50,7 @@ class FFXIV:
                       "Omega"]
         }
         self.latestnews = {}
+        self.newsupdatetime = None
         self.newsiconurls = {
             "maintenance": "https://img.finalfantasyxiv.com/lds/h/U/6qzbI-6AwlXAfGhCBZU10jsoLA.png",
             "notices": "https://img.finalfantasyxiv.com/lds/h/c/GK5Y3gQsnlxMRQ_pORu6lKQAJ0.png",
@@ -227,6 +228,7 @@ class FFXIV:
                                "status": sorted(d["status"], key=lambda k: k["time"]),
                                "notices": sorted(d["notices"], key=lambda k: k["time"])}
             self.format_news()
+            self.newsupdatetime = datetime.datetime().utcnow()
             await ctx.send("Updated.") # DEBUG
         except Exception as e:
             self.latestnews = {"__ERROR__": str(e)}
@@ -261,7 +263,10 @@ class FFXIV:
                              "red")
             return
         await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
-        await self.update_news(ctx)
+        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime().utcnow() + datetime.timedelta(minutes=-5):
+            await self.update_news(ctx)
+        else: # DEBUG
+            await ctx.send("No update needed.")
         if "__ERROR__" in self.latestnews.keys():
             await ctx.send("Error updating:" + self.latestnews["__ERROR__"])  # DEBUG
             return
