@@ -68,7 +68,7 @@ def is_owner():
 
 def is_developer():
     async def pred(ctx):
-    	developers = [146893225850961920,234353120455426048,123900100081745922]
+        developers = [146893225850961920,234353120455426048,123900100081745922]
         return (ctx.author.id in developers)
     return commands.check(pred)
 
