@@ -15,7 +15,7 @@ class Music:
 	def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
 		lisnener_reaction_count = 0
-		async for user in reaction.user()
+		async for user in reaction.user():
 			if user.voice_client.channel.id == reaction.message.guild.voice_client.channel.members:
 				lisnener_reaction_count += 1
 
