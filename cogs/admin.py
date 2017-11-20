@@ -41,6 +41,7 @@ class Admin:
         await ctx.send('Pong')
 
     @commands.command(hidden=True)
+    @checks.admin_or_permissions()
     async def load(self, ctx, *, module):
         """Loads a module."""
         try:
@@ -51,6 +52,7 @@ class Admin:
             await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(hidden=True)
+    @checks.admin_or_permissions()
     async def unload(self, ctx, *, module):
         """Unloads a module."""
         try:
@@ -61,6 +63,7 @@ class Admin:
             await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(name='reload', hidden=True)
+    @checks.admin_or_permissions()
     async def _reload(self, ctx, *, module):
         """Reloads a module."""
         try:
@@ -72,6 +75,7 @@ class Admin:
             await ctx.send('\N{OK HAND SIGN}')
 
     @commands.command(pass_context=True, hidden=True, name='eval')
+    @checks.admin_or_permissions()
     async def _eval(self, ctx, *, body: str):
         """Evaluates a code"""
 
@@ -119,6 +123,7 @@ class Admin:
                 await ctx.send(f'```py\n{value}{ret}\n```')
 
     @commands.command(pass_context=True, hidden=True)
+    @checks.admin_or_permissions()
     async def repl(self, ctx):
         """Launches an interactive REPL session."""
         variables = {
@@ -209,6 +214,7 @@ class Admin:
 
 
     @commands.command(hidden=True)
+    @checks.admin_or_permissions()
     async def sql(self, ctx, *, query: str):
         """Run some SQL."""
         # the imports are here because I imagine some people would want to use
