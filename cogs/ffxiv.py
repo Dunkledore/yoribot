@@ -312,7 +312,7 @@ class FFXIV:
     async def send_all_news(self):
         await self.bot.wait_until_ready()
         while self == self.bot.get_cog("FFXIV"):
-            self.update_news(None)
+            await self.update_news(None)
             newsset = self.settings["news"]
             now = datetime.datetime(2017, 1, 1).utcnow()
             before = now - self.updatefrequency
