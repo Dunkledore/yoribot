@@ -209,6 +209,16 @@ class Admin:
 
 
     @commands.command(hidden=True)
+    async def guilds(self, ctx)
+        """List of guilds the bot is in"""
+        string = "List of  guilds the bot is in: \n"
+        for guild in self.bot.guilds:
+            string += guild.name + "\n"
+
+        await ctx.send(string)
+
+
+    @commands.command(hidden=True)
     async def sql(self, ctx, *, query: str):
         """Run some SQL."""
         # the imports are here because I imagine some people would want to use
