@@ -17,9 +17,9 @@ class Music:
 		lisnener_reaction_count = 0
 		reactioners = await reaction.users().flatten()
 		for user in reactioners:
-			if not user.voice_client:
+			if not user.voice:
 				continue
-			if user.voice_client.channel.id == reaction.message.guild.voice_client.channel.members:
+			if user.voice.channel.id == reaction.message.guild.voice_client.channel.members:
 				lisnener_reaction_count += 1
 
 		return (lisnener_reaction_count) > ((listeners-1)/2)
