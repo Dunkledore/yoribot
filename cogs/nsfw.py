@@ -57,6 +57,7 @@ class Nsfw:
             em.set_author(name="Random Image from Yandere:", icon_url="http://bit.ly/2hHIfF6")
             em.set_image(url=image)
             em.set_footer(text= "Random image from https://yande.re")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -74,6 +75,7 @@ class Nsfw:
             em.set_author(name="Random Image from Konachan:", icon_url="http://bit.ly/2hHIfF6")
             em.set_image(url='https:'+ image)
             em.set_footer(text= "Random image from https://konachan.com")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -91,6 +93,7 @@ class Nsfw:
             em.set_author(name="Random Image from rule34:", icon_url="http://bit.ly/2hHIfF6")
             em.set_image(url='http:'+ image)
             em.set_footer(text= "Random image from https://rule34.xxx")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -108,6 +111,7 @@ class Nsfw:
             em.set_author(name="Random Image from Gelbooru:", icon_url="http://bit.ly/2hHIfF6")
             em.set_image(url=image)
             em.set_footer(text= "Random image from https://www.gelbooru.com/")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -125,6 +129,7 @@ class Nsfw:
             em.set_author(name="Random Image from tibib:", icon_url="http://bit.ly/2hHIfF6")
             em.set_image(url="http:"+image)
             em.set_footer(text= "Random image from https://www.tbib.org/")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -142,6 +147,7 @@ class Nsfw:
             em.set_author(name="Random Image from Xbooru:", icon_url="http://bit.ly/2hHIfF6")
             em.set_image(url=image)
             em.set_footer(text= "Random image from https://xbooru.com")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
