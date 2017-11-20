@@ -82,6 +82,10 @@ class Nsfw:
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
             await ctx.send('http:' + image)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from rule34:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url='http:'+image)
+            em.set_footer(text= "Random image from https://rule34.xxx")
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -95,21 +99,27 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
-            await ctx.send(image)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from Gelbooru:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=image)
+            em.set_footer(text= "Random image from https://www.gelbooru.com/")
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def tbib(self, ctx):
-        """Random Image From DrunkenPumken"""
+        """Random Image From tibib."""
         try:
             query = ("https://www.tbib.org/index.php?page=post&s=random")
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
-            await ctx.send("http:" + image)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from tibib:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url="http:"+image)
+            em.set_footer(text= "Random image from https://www.tbib.org/")
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -123,11 +133,10 @@ class Nsfw:
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
-            await ctx.send(image)
             em = discord.Embed(color=ctx.message.author.color, description=" ")
-            em.set_author(name="Random Image from Furrybooru:", icon_url="http://bit.ly/2hHIfF6")
-            em.set_image(url=clean)
-            em.set_footer(text= "Random image from http://furry.booru.org")
+            em.set_author(name="Random Image from Xbooru:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=image)
+            em.set_footer(text= "Random image from https://xbooru.com")
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
