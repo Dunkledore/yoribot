@@ -25,11 +25,11 @@ class Discomegle:
 
         em = discord.Embed(color=ctx.message.author.color, description="Anonymously speak with other members on your server through Yori - like a text version of chatrandom or omegle.")
         em.set_author(name="Discomegle", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-        em.add_field(name='joinpool', value="Joins the pool of random people to chat with.")
-        em.add_field(name='next', value="Moves on to another partner.")
-        em.add_field(name='leavepool', value="Disconnects you from the pool/chat.")
-        em.add_field(name='check', value="Lets you know how many people are in the pool.")
-        em.set_footer(text= "Use the help command or visit http://yoribot.com for more commands.")
+        em.add_field(name='joinpool', value="Joins the pool of random people to chat with.", inline=False)
+        em.add_field(name='next', value="Moves on to another partner.", inline=False)
+        em.add_field(name='leavepool', value="Disconnects you from the pool/chat.", inline=False)
+        em.add_field(name='check', value="Lets you know how many people are in the pool.", inline=False)
+        em.set_footer(text= "Use the help command or visit http://yoribot.com for more commands.", inline=False)
         await ctx.send(embed=em)
 
     async def direct_message(self, message):
