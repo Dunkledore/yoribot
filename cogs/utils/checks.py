@@ -8,7 +8,6 @@ from discord.ext import commands
 # admin (Administrator). Having these signify certain bypasses.
 # Of course, the owner will always be able to execute commands.
 
-developers = [146893225850961920,234353120455426048,123900100081745922]
 
 async def check_permissions(ctx, perms, *, check=all):
     is_owner = await ctx.bot.is_owner(ctx.author)
@@ -69,6 +68,7 @@ def is_owner():
 
 def is_developer():
     async def pred(ctx):
+    	developers = [146893225850961920,234353120455426048,123900100081745922]
         return ctx.author.id in developers
     return commands.check(pred)
 
