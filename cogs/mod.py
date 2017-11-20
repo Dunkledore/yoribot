@@ -316,15 +316,6 @@ class Mod:
             await ctx.send('updated')
 
 
-
-
-
-
-
-                
-
-        
-
     @commands.command(aliases=['newmembers'])
     @commands.guild_only()
     async def newusers(self, ctx, *, count=5):
