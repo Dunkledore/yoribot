@@ -42,7 +42,7 @@ class Admin:
         await ctx.send('Pong')
 
     @commands.command(hidden=True)
-    @checks.is_owner()
+    @checks.is_developer()
     async def load(self, ctx, *, module):
         """Loads a module."""
         try:
