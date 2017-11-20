@@ -43,7 +43,7 @@ class Profile:
 
 		if profile[0]['fields']:
 			for fields in profile[0]['fields']:
-				if fields[1] =="image":
+				if fields[0] =="image":
 					embed.set_image(url=fields[1])
 				else:
 					embed.add_field(name=fields[0], value=fields[1].format(ctx.message.author))
