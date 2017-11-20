@@ -1,5 +1,4 @@
 from discord.ext import commands
-import _developers
 
 # The permission system of the bot is based on a "just works" basis
 # You have permissions and the bot has permissions. If you meet the permissions
@@ -8,6 +7,8 @@ import _developers
 # Certain permissions signify if the person is a moderator (Manage Server) or an
 # admin (Administrator). Having these signify certain bypasses.
 # Of course, the owner will always be able to execute commands.
+
+developers = [146893225850961920,234353120455426048,123900100081745922]
 
 async def check_permissions(ctx, perms, *, check=all):
     is_owner = await ctx.bot.is_owner(ctx.author)
@@ -68,7 +69,7 @@ def is_owner():
 
 def is_developer():
 	async def pred(ctx):
-		return ctx.author.id in developers.developers
+		return ctx.author.id in developers
 	return commands.check(pred)
 
 def admin_or_permissions(**perms):
