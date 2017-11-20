@@ -318,6 +318,7 @@ class Mod:
 
     @commands.command(aliases=['newmembers'])
     @commands.guild_only()
+    @checks.is_mod()
     async def newusers(self, ctx, *, count=5):
         """Tells you the newest members of the server.
 
