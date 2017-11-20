@@ -79,6 +79,7 @@ class Music:
 
 	@commands.command(no_pm=True)
 	async def play(self, ctx, *, query=None):
+		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query)
 
@@ -86,11 +87,13 @@ class Music:
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def playnext(self, ctx, *, query=None):
+		"""Plays the song or playlist immediately after the track already playing"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True)
 
 	@commands.command(no_pm=True, aliases=['movehere'])
 	async def front(self, ctx):
+		"""Brings the music player to the front of the chat"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).movehere(ctx.channel)
 
@@ -98,24 +101,28 @@ class Music:
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def playnow(self, ctx, *, query=None):
+		"""Immediately plays the song - this will stop any song playing"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def pause(self, ctx):
+		"""Pauses the track currently playing"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).pause()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def resume(self, ctx):
+		"""Resumes a paused track"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).resume()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def skip(self, ctx, *, query=1):
+		"""Moves forward to the next song in the player queue."""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).skip(query=query)
 		await ctx.send("skipped")
@@ -123,12 +130,14 @@ class Music:
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def shuffle(self, ctx):
+		"""Mxes the songs in the queue"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).shuffle()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def stop(self, ctx):
+		"""Stops music playback."""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).stop()
 
@@ -136,12 +145,14 @@ class Music:
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def destroy(self, ctx):
+		"""Ends the music session - will clear all items from queue."""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).destroy()
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def volume(self, ctx, *, query=None):
+		"""Increase or decrease the volume"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
 
