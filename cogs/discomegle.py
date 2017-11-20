@@ -29,7 +29,7 @@ class Discomegle:
         em.add_field(name='next', value="Moves on to another partner.", inline=False)
         em.add_field(name='leavepool', value="Disconnects you from the pool/chat.", inline=False)
         em.add_field(name='check', value="Lets you know how many people are in the pool.", inline=False)
-        em.set_footer(text= "Use the help command or visit http://yoribot.com for more commands.", inline=False)
+        em.set_footer(text= "Use the help command or visit http://yoribot.com for more commands.")
         await ctx.send(embed=em)
 
     async def direct_message(self, message):
