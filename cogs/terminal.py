@@ -34,6 +34,7 @@ class terminal:
             dataIO.save_json(abspath(dirname(argv[0])) + '/data/terminal/settings.json', self.settings)
 
     @commands.command(pass_context=True, hidden=True)
+    @checks.admin_or_permissions()
     # @checks.is_owner()
     async def cmddebug(self, ctx):
         """This command is for debugging only"""
@@ -82,6 +83,7 @@ class terminal:
             await ctx.send(page)
 
     @commands.group(pass_context=True, hidden=True)
+    @checks.admin_or_permissions()
     # @checks.is_owner()
     async def system(self, ctx):
         """Returns system infromation"""
@@ -90,6 +92,7 @@ class terminal:
                                  uname()[0], uname()[2], python_version()))
 
     @commands.command(pass_context=True)
+    @checks.admin_or_permissions()
     # @checks.is_owner()
     async def cmd(self, ctx):
         """Starts up the prompt"""
@@ -116,6 +119,7 @@ class terminal:
                        ' `exit()` or `quit` to exit.'.format(self.prefix.replace("`", "\\`")))
 
     @commands.group(pass_context=True)
+    @checks.admin_or_permissions()
     # @checks.is_owner()
     async def cmdsettings(self, ctx):
         """Settings for terminal"""
@@ -125,6 +129,7 @@ class terminal:
                 await ctx.send(page)
 
     @cmdsettings.group(name="customcom", pass_context=True)
+    @checks.admin_or_permissions()
     # @checks.is_owner()
     async def _cc(self, ctx):
         """Custom commands for terminal"""
@@ -137,6 +142,7 @@ class terminal:
                 """
 
     @cmdsettings.command(name="os", pass_context=True)
+    @checks.admin_or_permissions()
     # @checks.is_owner()
     async def _os(self, ctx, os: str = None):
         """Set the prompt type of terminal to emulate another Operatingsystem.
@@ -183,6 +189,7 @@ class terminal:
         await ctx.send('Changed prefix to {} '.format(self.prefix.replace("`", "\\`")))
 
     @commands.command(name="sendlogs")
+    @checks.admin_or_permissions()
     #@checks.is_owner()
     async def enablelogs(self, ctx):
         """Sets a channel system logs should be sent to."""
@@ -192,6 +199,7 @@ class terminal:
         await ctx.send("System logs will now be sent to this channel.")
 
     @commands.command(name="nologs")
+    @checks.admin_or_permissions()
     #@checks.is_owner()
     async def disablelogs(self, ctx):
         """Disables sending system logs to a channel."""
@@ -201,6 +209,7 @@ class terminal:
         await ctx.send("System logs will no longer be sent.")
 
     @commands.command(name="lastlogs")
+    @checks.admin_or_permissions()
     #@checks.is_owner()
     async def sendlatestlogs(self,ctx):
         """Sends the last 10 log items."""
