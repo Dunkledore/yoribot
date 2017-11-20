@@ -12,10 +12,11 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
-	def has_majority(self, reaction):
+	async def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
 		lisnener_reaction_count = 0
-		async for user in reaction.user():
+		reactioners = await reaction.users().flatten()
+		for user in reactioners:
 			if user.voice_client.channel.id == reaction.message.guild.voice_client.channel.members:
 				lisnener_reaction_count += 1
 
@@ -48,7 +49,7 @@ class Music:
 
 			if valid_reaction:
 				is_mod = await self.is_mod(user, reaction.message.channel)
-				has_majority = self.has_majority(reaction)
+				has_majority = await self.has_majority(reaction)
 				# Remove reaction			
 				# Commands
 				if is_mod or has_majority:
