@@ -1,4 +1,5 @@
 from discord.ext import commands
+import developers
 
 # The permission system of the bot is based on a "just works" basis
 # You have permissions and the bot has permissions. If you meet the permissions
@@ -65,6 +66,11 @@ def is_owner():
         return await ctx.bot.is_owner(ctx.author)
     return commands.check(pred)
 
+def is_developer():
+	async def pred(ctx):
+		return ctx.author.id in developers.developers
+	return command.check(pred)
+
 def admin_or_permissions(**perms):
     perms['administrator'] = True
     async def predicate(ctx):
@@ -78,6 +84,3 @@ def is_in_guilds(*guild_ids):
             return False
         return guild.id in guild_ids
     return commands.check(predicate)
-
-def is_lounge_cpp():
-    return is_in_guilds(145079846832308224)
