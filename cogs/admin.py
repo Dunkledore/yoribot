@@ -217,7 +217,7 @@ class Admin:
 
         await ctx.send(string)
 
-    @command.command(hidden=True)
+    @commands.command(hidden=True)
     async def messageowners(self, ctx, *, message):
         """Send a message to all server owners the bot is in"""
 
