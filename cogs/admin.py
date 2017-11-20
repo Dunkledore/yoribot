@@ -209,7 +209,7 @@ class Admin:
 
 
     @commands.command(hidden=True)
-    async def guilds(self, ctx)
+    async def guilds(self, ctx):
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
         for guild in self.bot.guilds:
