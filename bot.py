@@ -29,8 +29,37 @@ logger.addHandler(handler)
 initial_extensions = (
     
     'cogs.admin',
+    'cogs.anime',
+    'cogs.antilink',
+    'cogs.comics',
+    'cogs.cookie',
+    'cogs.config',
+    'cogs.cookie',
+    'cogs.discomegle',
+    'cogs.ffxiv',
+    'cogs.fun',
+    'cogs.gallery',
+    'cogs.hangman',
+    'cogs.membership',
+    'cogs.meta',
     'cogs.mod',
-
+    'cogs.nsfw',
+    'cogs.poll',
+    'cogs.profile',
+    'cogs.race',
+    'cogs.rate',
+    'cogs.reminder',
+    'cogs.rift',
+    'cogs.rolemanager',
+    'cogs.rss',
+    'cogs.searches',
+    'cogs.stats',
+    'cogs.streamrole',
+    'cogs.tags',
+    'cogs.terminal',
+    'cogs.trivia',
+    'cogs.welcome',
+    'cogs.whoplays',
 )
 
 def _prefix_callable(bot, msg):
