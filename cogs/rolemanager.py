@@ -45,6 +45,8 @@ class RoleManager:
     async def on_message(self, message):
         if message.author.bot:
             return
+        if not message.guild:
+            return
         if str(message.guild.id) not in self.settings:
             return
 
