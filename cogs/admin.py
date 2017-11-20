@@ -217,6 +217,16 @@ class Admin:
 
         await ctx.send(string)
 
+    @command.command(hidden=True)
+    async def messageowners(self, ctx, *, message):
+        """Send a message to all server owners the bot is in"""
+
+        for guild in self.bot.guilds:
+            await guild.owner.send(message)
+
+        await ctx.send("Messages Delivered")
+
+
 
     @commands.command(hidden=True)
     async def sql(self, ctx, *, query: str):
