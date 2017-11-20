@@ -69,7 +69,7 @@ def is_owner():
 def is_developer():
 	async def pred(ctx):
 		return ctx.author.id in developers.developers
-	return command.check(pred)
+	return commands.check(pred)
 
 def admin_or_permissions(**perms):
     perms['administrator'] = True
