@@ -124,6 +124,10 @@ class Nsfw:
             soup = BeautifulSoup(page, 'html.parser')
             image = soup.find(id="image").get("src")
             await ctx.send(image)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from Furrybooru:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=clean)
+            em.set_footer(text= "Random image from http://furry.booru.org")
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -139,7 +143,11 @@ class Nsfw:
             image = soup.find(id="image").get("src")
             head, sep, tail = image.partition('?')
             clean = head.replace("//","/").replace("http:/", "http://")
-            await ctx.send(clean)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from Furrybooru:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=clean)
+            em.set_footer(text= "Random image from http://furry.booru.org")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -155,7 +163,11 @@ class Nsfw:
             image = soup.find(id="image").get("src")
             head, sep, tail = image.partition('?')
             clean = head.replace("//","/").replace("http:/", "http://")
-            await ctx.send(clean)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from DrunkenPumken:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=clean)
+            em.set_footer(text= "Random image from http://drunkenpumken.booru.org")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
@@ -172,11 +184,10 @@ class Nsfw:
                 page = await self.session.get(query)
                 json = await page.json()
                 if json != []:
-                    await ctx.send(random.choice(json)['jpeg_url'])
                     em = discord.Embed(color=ctx.message.author.color, description=" ")
                     em.set_author(name="Yandere image search:", icon_url="http://bit.ly/2hHIfF6")
                     em.set_image(url=random.choice(json)['jpeg_url'])
-                    em.set_footer(text= "Image of"+ query +"from https://yande.re/")
+                    em.set_footer(text= "Image of"+ tags +"from https://yande.re/")
                     await ctx.send(embed=em)
                 else:
                     await ctx.send(":warning: Yande.re has no images for requested tags.")
