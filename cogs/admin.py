@@ -6,6 +6,7 @@ import inspect
 import textwrap
 from contextlib import redirect_stdout
 import io
+from .utils import checks
 
 # to expose to the eval command
 import datetime
