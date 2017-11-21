@@ -94,7 +94,7 @@ class MemberAudit:
     async def audittoggle(self, ctx: commands.Context):
         """Turns membership event commands on or off."""
 
-		self.checksettings(ctx)
+        self.checksettings(ctx)
         server = ctx.message.guild
         self.settings[str(server.id)]["on"] = not self.settings[str(server.id)]["on"]
         if self.settings[str(server.id)]["on"]:
@@ -259,7 +259,7 @@ class MemberAudit:
         member  =  server.get_member(self.bot.user.id)
         return member.permissions_in(channel).send_messages
 
-
+        
 def check_folders():
     if not os.path.exists("data/membership"):
         print("Creating data/membership directory...")
