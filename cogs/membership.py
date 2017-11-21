@@ -37,8 +37,6 @@ class Membership:
             self.settings[str(server.id)] = deepcopy(default_settings)
             self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
-        if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
 
     @_membershipset.command(pass_context=True, no_pm=True, name="join",
                             aliases=["greeting", "welcome"])
@@ -48,7 +46,6 @@ class Membership:
         {0} is the member
         {1} is the server
         """
-
 
         server = ctx.message.guild
         self.settings[str(server.id)]["join_message"] = format_str
