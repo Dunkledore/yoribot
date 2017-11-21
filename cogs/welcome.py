@@ -83,7 +83,7 @@ class Welcome:
 
 	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
-	async def nowelcome(self, ctx, channel: discord.TextChannel):
+	async def nowelcome(self, ctx):
 		"""Call this to stop the welcome messages"""
 
 
