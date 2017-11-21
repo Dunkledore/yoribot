@@ -27,11 +27,8 @@ class MemberAudit:
         self.settings_path = "data/membership/settings.json"
         self.settings = dataIO.load_json(self.settings_path)
 
-    @commands.group(hidden=True, pass_context=True, no_pm=True, name="membershipset")
-    @checks.is_admin()
-    async def _membershipset(self, ctx: commands.Context):
-        """Sets membership settings."""
 
+    def checksettings(self, ctx):
         server = ctx.message.guild
         if str(server.id) not in self.settings:
             self.settings[str(server.id)] = deepcopy(default_settings)
@@ -46,7 +43,7 @@ class MemberAudit:
         {0} is the member
         {1} is the server
         """
-
+        self.checksettings(ctx)
         server = ctx.message.guild
         self.settings[str(server.id)]["join_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
@@ -60,7 +57,7 @@ class MemberAudit:
         {0} is the member
         {1} is the server
         """
-
+        self.checksettings(ctx)
         server = ctx.message.guild
         self.settings[str(server.id)]["leave_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
@@ -73,7 +70,7 @@ class MemberAudit:
         {0} is the member
         {1} is the server
         """
-
+        self.checksettings(ctx)
         server = ctx.message.guild
         self.settings[str(server.id)]["ban_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
@@ -86,7 +83,7 @@ class MemberAudit:
         {0} is the member
         {1} is the server
         """
-
+        self.checksettings(ctx)
         server = ctx.message.guild
         self.settings[str(server.id)]["unban_message"] = format_str
         dataIO.save_json(self.settings_path, self.settings)
@@ -97,6 +94,7 @@ class MemberAudit:
     async def audittoggle(self, ctx: commands.Context):
         """Turns membership event commands on or off."""
 
+		self.checksettings(ctx)
         server = ctx.message.guild
         self.settings[str(server.id)]["on"] = not self.settings[str(server.id)]["on"]
         if self.settings[str(server.id)]["on"]:
@@ -115,6 +113,8 @@ class MemberAudit:
 
          If none is specified, the default will be used.
          """
+        
+        self.checksettings(ctx)
         await ctx.send('Command Invoked')
         server = ctx.message.guild
 
