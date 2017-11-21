@@ -146,10 +146,7 @@ class Discomegle:
                 em = discord.Embed(description="**You have been paired. You can now start talking with your partner.**", colour=self.colour)
                 await user_two_channel.send(embed = em)  
 
-                try:
-                    await asyncio.sleep(5)
-                except:
-                    pass
+            await asyncio.sleep(5)
 
 def setup(bot):
     n = Discomegle(bot)
