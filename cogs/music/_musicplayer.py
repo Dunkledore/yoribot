@@ -505,7 +505,6 @@ class MusicPlayer:
             try:
                 if self.embed is not None:
                     await self.embed.sent_embed.add_reaction(e)
-                    print()
             except discord.DiscordException:
                 self.statuslog.error("I couldn't add the buttons. Check my permissions.")
             except Exception as e:
@@ -561,8 +560,8 @@ class MusicPlayer:
             try:
                 future = asyncio.run_coroutine_threadsafe(self.vplay(), self.bot.loop)
                 future.result()
-            except Exception as e:
-                print(e)
+            except:
+                pass
 
         if self.state != 'ready':
             logger.error("Attempt to play song from wrong state ('{}'), must be 'ready'.".format(self.state))
