@@ -142,14 +142,12 @@ class Membership:
             self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[str(server.id)]["on"]:
+        ch = self.get_welcome_channel(server)
+
+        if not self.settings[str(server.id)]["on"] or ch is None:
             return
-
         
-        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
         await ch.trigger_typing()
-
-
 
         if server is None:
             print("The server was None, so this was either a PM or an error."
@@ -173,10 +171,11 @@ class Membership:
             self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[str(server.id)]["on"]:
-            return
+        ch = self.get_welcome_channel(server)
 
-        ch = self.bot.get_channel(int(self.settings[str(member.guild.id)]["channel"]))
+        if not self.settings[str(server.id)]["on"] or ch is None:
+            return
+        
         await ch.trigger_typing()
 
         if server is None:
@@ -199,11 +198,12 @@ class Membership:
             self.settings[server.id] = deepcopy(default_settings)
             self.settings[server.id]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
+        
+        ch = self.get_welcome_channel(server)
 
-        if not self.settings[str(server.id)]["on"]:
+        if not self.settings[str(server.id)]["on"] or ch is None:
             return
-
-        ch = self.bot.get_channel(int(self.settings[str(server.id)]["channel"]))
+        
         await ch.trigger_typing()
 
         if server is None:
@@ -226,10 +226,11 @@ class Membership:
             self.settings[str(server.id)]["channel"] =  str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-        if not self.settings[str(server.id)]["on"]:
-            return
+        ch = self.get_welcome_channel(server)
 
-        ch = self.bot.get_channel(int(self.settings[str(server.id)]["channel"]))
+        if not self.settings[str(server.id)]["on"] or ch is None:
+            return
+        
         await ch.trigger_typing()
 
         if server is None:
