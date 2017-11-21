@@ -86,14 +86,12 @@ class Welcome:
 	async def nowelcome(self, ctx, channel: discord.TextChannel):
 		"""Call this to stop the welcome messages"""
 
-		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
-		try:
-			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
-		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
-		await ctx.send('Channel set')
+		alterquery = "DELETE FROM welcome_config WHERE guild_id = $1"
+
+		await ctx.db.execute(insertquery, ctx.guild.id)
+		
+		await ctx.send('I will no longer send a welcome messgae. To re-enable please use. ?setwelcomechannel')
 
 
 	async def on_member_join(self, member):
