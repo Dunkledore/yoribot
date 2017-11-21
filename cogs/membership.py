@@ -256,9 +256,6 @@ class Membership:
         if not channel:
             channel = self.get_welcome_channel(server)
         member  =  server.get_member(self.bot.user.id)
-        print(self.bot.user.id)
-        print(member)
-        print(channel)
         return member.permissions_in(channel).send_messages
 
 
