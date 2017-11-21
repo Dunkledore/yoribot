@@ -18,7 +18,7 @@ default_settings = {
 }
 
 
-class Membership:
+class MemberAudit:
 
     """Announces membership events on the server."""
 
@@ -28,7 +28,7 @@ class Membership:
         self.settings = dataIO.load_json(self.settings_path)
 
     @commands.group(hidden=True, pass_context=True, no_pm=True, name="membershipset")
-    @checks.admin_or_permissions(manage_server=True)
+    @checks.is_admin()
     async def _membershipset(self, ctx: commands.Context):
         """Sets membership settings."""
 
@@ -38,9 +38,10 @@ class Membership:
             self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-    @_membershipset.command(pass_context=True, no_pm=True, name="join",
+    @commands.command(pass_context=True, no_pm=True, name="join",
                             aliases=["greeting", "welcome"])
-    async def _join(self, ctx: commands.Context, *,
+    @checks.is_admin()
+    async def joinaudit(self, ctx: commands.Context, *,
                     format_str: str):
         """Sets the join/greeting/welcome message for the server.
         {0} is the member
@@ -52,9 +53,10 @@ class Membership:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Join message set."))
 
-    @_membershipset.command(pass_context=True, no_pm=True, name="leave",
+    @commands.command(pass_context=True, no_pm=True, name="leave",
                             aliases=["farewell"])
-    async def _leave(self, ctx: commands.Context, *,
+    @checks.is_admin()
+    async def leaveaudit(self, ctx: commands.Context, *,
                      format_str: str):
         """Sets the leave/farewell message for the server.
         {0} is the member
@@ -66,8 +68,9 @@ class Membership:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Leave message set."))
 
-    @_membershipset.command(pass_context=True, no_pm=True, name="ban")
-    async def _ban(self, ctx: commands.Context, *, format_str: str):
+    @commands.command(pass_context=True, no_pm=True, name="ban")
+    @checks.is_admin()
+    async def banaudit(self, ctx: commands.Context, *, format_str: str):
         """Sets the ban message for the server.
         {0} is the member
         {1} is the server
@@ -78,8 +81,9 @@ class Membership:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Ban message set."))
 
-    @_membershipset.command(pass_context=True, no_pm=True, name="unban")
-    async def _unban(self, ctx: commands.Context, *, format_str: str):
+    @commands.command(pass_context=True, no_pm=True, name="unban")
+    @checks.is_admin()
+    async def unbanaudit(self, ctx: commands.Context, *, format_str: str):
         """Sets the unban message for the server.
         {0} is the member
         {1} is the server
@@ -90,8 +94,9 @@ class Membership:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Unban message set."))
 
-    @_membershipset.command(pass_context=True, no_pm=True, name="toggle")
-    async def _toggle(self, ctx: commands.Context):
+    @commands.command(pass_context=True, no_pm=True, name="toggle")
+    @checks.is_admin()
+    async def audittoggle(self, ctx: commands.Context):
         """Turns membership event commands on or off."""
 
         server = ctx.message.guild
@@ -104,8 +109,9 @@ class Membership:
                 cf.info("Membership events will no longer be announced."))
         dataIO.save_json(self.settings_path, self.settings)
 
-    @_membershipset.command(pass_context=True, no_pm=True, name="channel")
-    async def _channel(self, ctx: commands.Context,
+    @commands.command(pass_context=True, no_pm=True, name="channel")
+    @checks.is_admin()
+    async def auditchannel(self, ctx: commands.Context,
                        channel: discord.TextChannel=None):
         """Sets the text channel to which the announcements will be sent.
 
@@ -272,7 +278,7 @@ def check_files():
 def setup(bot: commands.Bot):
     check_folders()
     check_files()
-    n = Membership(bot)
+    n = MemberAudit(bot)
     bot.add_listener(n.member_join, "on_member_join")
     bot.add_listener(n.member_leave, "on_member_remove")
     bot.add_listener(n.member_ban, "on_member_ban")
