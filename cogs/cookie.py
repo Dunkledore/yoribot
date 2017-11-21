@@ -104,7 +104,7 @@ class Cookie:
         action = "Cookie CD"
         settings = self.check_guild_settings(guild)
         self.account_check(settings, author)
-        if await self.check_cooldowns(author.id, action, settings):
+        if await self.check_cooldowns(author.id, action, settings, ctx):
             weighted_sample = [1] * 152 + [x for x in range(49) if x > 1]
             cookies = random.choice(weighted_sample)
             y = ":cookie: " * cookies
@@ -142,13 +142,13 @@ class Cookie:
             return await ctx.send("You can't steal from me because I am a cookie god.\nYou "
                                       "can try stealing from one of the mortals though :grin:")
 
-        if await self.check_cooldowns(author.id, action, settings):
+        if await self.check_cooldowns(author.id, action, settings, ctx):
             msg = self.steal_logic(settings, user, author)
             await ctx.send(":spy: Yori is on the prowl to steal :cookie:")
             await asyncio.sleep(4)
             await ctx.send(msg)
 
-    async def check_cooldowns(self, userid, action, settings):
+    async def check_cooldowns(self, userid, action, settings, ctx):
         path = settings["Config"][action]
         if abs(settings["Players"][str(userid)][action] - int(time.perf_counter())) >= path:
             settings["Players"][str(userid)][action] = int(time.perf_counter())
