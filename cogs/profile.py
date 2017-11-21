@@ -16,7 +16,7 @@ class Profile:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True)
 	async def profile(self, ctx, user: discord.Member=None):
 		"""Displays the profile of a mentioned user or the caller if no mention is provided"""
 
@@ -51,7 +51,7 @@ class Profile:
 
 		await ctx.send(embed=embed)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True)
 	async def profileadd(self, ctx, name=None, *, value=None):
 		"""Adds an embed field onto the profile message"""
 		
@@ -78,7 +78,7 @@ class Profile:
 				await ctx.db.execute(query, fields, ctx.message.author.id)
 				await ctx.send("Field added")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True)
 	async def age(self, ctx, age: int):
 		"""Sets the age of the caller"""
 
@@ -93,7 +93,7 @@ class Profile:
 			await ctx.db.execute(query, age, ctx.message.author.id)
 			await ctx.send("Age Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True)
 	async def gender(self, ctx, gender):
 		"""Sets the gender of the caller"""
 
@@ -108,7 +108,7 @@ class Profile:
 			await ctx.db.execute(query, gender, ctx.message.author.id)
 			await ctx.send("Gender Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True)
 	async def sexuality(self, ctx, sexuality):
 		"""Sets the sexuality of the caller"""
 
@@ -123,7 +123,7 @@ class Profile:
 			await ctx.db.execute(query, sexuality, ctx.message.author.id)
 			await ctx.send("Sexuality Set")
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['northamerica'])
+	@commands.command(pass_context=True, no_pm=True, aliases=['northamerica'])
 	async def NorthAmerica(self, ctx):
 		"""Sets the region of the caller to North America"""
 
@@ -136,7 +136,7 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "North America", ctx.message.author.id)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['europe'])
+	@commands.command(pass_context=True, no_pm=True, aliases=['europe'])
 	async def Europe(self, ctx):
 		"""Sets the region of the caller to Europe"""
 
@@ -149,7 +149,7 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Europe", ctx.message.author.id)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['africa'])
+	@commands.command(pass_context=True, no_pm=True, aliases=['africa'])
 	async def Africa(self, ctx):
 		"""Sets the region of the caller to Africa"""
 
@@ -162,7 +162,7 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Africa", ctx.message.author.id)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['oceania'])
+	@commands.command(pass_context=True, no_pm=True, aliases=['oceania'])
 	async def Oceania(self, ctx):
 		"""Sets the region of the caller to Oceania"""
 
@@ -175,7 +175,7 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Oceania", ctx.message.author.id)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['southamerica'])
+	@commands.command(pass_context=True, no_pm=True, aliases=['southamerica'])
 	async def SouthAmerica(self, ctx):
 		"""Sets the region of the caller to South America"""
 
@@ -188,7 +188,7 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "South America", ctx.message.author.id)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True, aliases=['asia'])
+	@commands.command(pass_context=True, no_pm=True,  aliases=['asia'])
 	async def Asia(self, ctx):
 		"""Sets the region of the caller to Asia"""
 
@@ -201,7 +201,7 @@ class Profile:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Asia", ctx.message.author.id)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(pass_context=True, no_pm=True)
 	async def profiledelete(self, ctx):
 		"""Removes and embed field from the profile message"""
 
