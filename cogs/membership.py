@@ -38,8 +38,7 @@ class MemberAudit:
             self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
             dataIO.save_json(self.settings_path, self.settings)
 
-    @commands.command(pass_context=True, no_pm=True, name="join",
-                            aliases=["greeting", "welcome"])
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def joinaudit(self, ctx: commands.Context, *,
                     format_str: str):
@@ -53,8 +52,7 @@ class MemberAudit:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Join message set."))
 
-    @commands.command(pass_context=True, no_pm=True, name="leave",
-                            aliases=["farewell"])
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def leaveaudit(self, ctx: commands.Context, *,
                      format_str: str):
@@ -68,7 +66,7 @@ class MemberAudit:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Leave message set."))
 
-    @commands.command(pass_context=True, no_pm=True, name="ban")
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def banaudit(self, ctx: commands.Context, *, format_str: str):
         """Sets the ban message for the server.
@@ -81,7 +79,7 @@ class MemberAudit:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Ban message set."))
 
-    @commands.command(pass_context=True, no_pm=True, name="unban")
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def unbanaudit(self, ctx: commands.Context, *, format_str: str):
         """Sets the unban message for the server.
@@ -94,7 +92,7 @@ class MemberAudit:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(cf.info("Unban message set."))
 
-    @commands.command(pass_context=True, no_pm=True, name="toggle")
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def audittoggle(self, ctx: commands.Context):
         """Turns membership event commands on or off."""
@@ -109,7 +107,7 @@ class MemberAudit:
                 cf.info("Membership events will no longer be announced."))
         dataIO.save_json(self.settings_path, self.settings)
 
-    @commands.command(pass_context=True, no_pm=True, name="channel")
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def auditchannel(self, ctx: commands.Context,
                        channel: discord.TextChannel=None):
