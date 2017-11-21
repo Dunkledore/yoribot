@@ -87,9 +87,9 @@ class Welcome:
 		"""Call this to stop the welcome messages"""
 
 
-		alterquery = "DELETE FROM welcome_config WHERE guild_id = $1"
+		query = "DELETE FROM welcome_config WHERE guild_id = $1"
 
-		await ctx.db.execute(insertquery, ctx.guild.id)
+		await ctx.db.execute(query, ctx.guild.id)
 		
 		await ctx.send('I will no longer send a welcome messgae. To re-enable please use. ?setwelcomechannel')
 
