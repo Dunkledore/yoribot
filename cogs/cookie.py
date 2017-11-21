@@ -39,7 +39,7 @@ class Cookie:
         self.file_path = "data/cookie/cookie.json"
         self.system = dataIO.load_json(self.file_path)
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group(pass_context=True, no_pm=True, hidden=True)
     @checks.is_mod()
     async def setcookie(self, ctx):
         """Cookie settings group command"""
@@ -58,7 +58,7 @@ class Cookie:
             msg = "Cooldown needs to be higher than 0."
         await ctx.send(msg)
 
-    @setcookie.command(name="cookiecd", pass_context=True)
+    @setcookie.command(name="cookiecd", pass_context=True, hidden=True)
     @checks.admin_or_permissions(manage_guild=True)
     async def _cookiecd_heist(self, ctx, cooldown: int):
         """Set the cooldown for cookie command"""
