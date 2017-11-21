@@ -16,7 +16,7 @@ class Welcome:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(no_pm=True, hidden=True)
 	@checks.is_mod()
 	async def welcome(self, ctx):
 		"""Will send the welcome message as if the caller just joined"""
@@ -35,7 +35,7 @@ class Welcome:
 
 		await ctx.send(embed=embed)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
 	async def welcomeadd(self, ctx, name=None, *, value=None):
 		"""Adds an embed field onto the welcome message"""
@@ -54,7 +54,7 @@ class Welcome:
 		else:
 			await ctx.send(f'Field {name} successfully created.')
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
+	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
 	async def welcomeremove(self, ctx, name=None):
 		"""Removes and embed field from the welcome message"""
@@ -67,8 +67,8 @@ class Welcome:
 			await ctx.db.execute(query, ctx.guild.id, name)
 			await ctx.send('Field Removed')
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.is_admin(manage_channels=True)
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
 	async def setwelcomechannel(self, ctx, channel: discord.TextChannel):
 		"""Use in the channel you want to set as the welcome channel"""
 
@@ -81,8 +81,8 @@ class Welcome:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
 		await ctx.send('Channel set')
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.is_admin(manage_channels=True)
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
 	async def nowelcome(self, ctx, channel: discord.TextChannel):
 		"""Call this to stop the welcome messages"""
 
