@@ -69,26 +69,16 @@ class Welcome:
 
 	@commands.command(pass_context=True, no_pm=True, hidden=True)
 	@checks.mod_or_permissions(manage_channels=True)
-	async def setwelcomechannel(self, ctx, channel):
+	async def setwelcomechannel(self, ctx, channel: discord.TextChannel):
 		"""Use in the channel you want to set as the welcome channel"""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
-		channelfound = False
-		for chan in ctx.guild.channels:
-			if chan.name == channel:
-				channel = chan 
-				channelfound = True
-		if not channelfound:
-			await ctx.send('Channel not found')
-			return
-
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
-
 		await ctx.send('Channel set')
 
 
