@@ -43,6 +43,7 @@ class Admin:
         await ctx.send('Pong')
 
     @commands.command(hidden=True)
+    @checks.is_developer()
     async def guilds(self, ctx):
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
