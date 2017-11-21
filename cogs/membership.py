@@ -127,7 +127,7 @@ class MemberAudit:
                 .format(channel))
             return
 
-        self.settings[str(server.id)]["channel"] = channel.id
+        self.settings[str(server.id)]["channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
         channel = self.get_welcome_channel(server)
         await channel.send(  ("{0.mention}, " +
