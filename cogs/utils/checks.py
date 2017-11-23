@@ -48,7 +48,7 @@ async def has_level(level, ctx):
         return True
 
     query = "SELECT * FROM mod_config WHERE guild_id = $1"
-    result = await ctx.db.fetch(query, ctx.guild.id)
+    results = await ctx.db.fetch(query, ctx.guild.id)
     mod_role = results[0]["mod_role"]
 
 
