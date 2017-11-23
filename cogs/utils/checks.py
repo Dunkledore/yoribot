@@ -71,12 +71,6 @@ def is_developer():
         return (ctx.author.id in developers)
     return commands.check(pred)
 
-def admin_or_permissions(**perms):
-    perms['administrator'] = True
-    async def predicate(ctx):
-        return await check_guild_permissions(ctx, perms, check=any)
-    return commands.check(predicate)
-
 def is_in_guilds(*guild_ids):
     def predicate(ctx):
         guild = ctx.guild
