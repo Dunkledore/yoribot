@@ -480,7 +480,7 @@ class Mod:
         return Counter(m.author.display_name for m in deleted)
 
     @commands.command(no_pm=True, pass_context=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @checks.is_mod()
     async def hackban(self, ctx, user_id: int, *, reason: str = None):
         """Preemptively bans user from the server
 

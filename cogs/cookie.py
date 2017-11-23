@@ -45,7 +45,7 @@ class Cookie:
         """Cookie settings group command"""
 
     @setcookie.command(name="stealcd", pass_context=True, hidden=True)
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _stealcd_heist(self, ctx, cooldown: int):
         """Set the cooldown for stealing cookies"""
         guild = ctx.message.guild
@@ -59,7 +59,7 @@ class Cookie:
         await ctx.send(msg)
 
     @setcookie.command(name="cookiecd", pass_context=True, hidden=True)
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _cookiecd_heist(self, ctx, cooldown: int):
         """Set the cooldown for cookie command"""
         guild = ctx.message.guild
