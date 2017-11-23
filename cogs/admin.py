@@ -48,7 +48,7 @@ class Admin:
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
         for guild in self.bot.guilds:
-            string += guild.name + "\n"
+            string += guild.name + " " + guild.owner.name + "\n"
 
         await ctx.send(string)
 
