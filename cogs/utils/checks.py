@@ -42,7 +42,7 @@ def is_nsfw():
         return ctx.message.channel.is_nsfw()
     return commands.check(pred)
 
-async def has_level(level, author)
+async def has_level(level, author):
     is_owner = await ctx.bot.is_owner(ctx.author)
     if is is_owner:
         return True
@@ -64,8 +64,6 @@ async def has_level(level, author)
             levels = ["mod"]
             return (level in levels)
     return False
-
-
 
 
 def is_mod():
