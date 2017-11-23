@@ -16,8 +16,8 @@ class Welcome:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_mod()
 	async def welcome(self, ctx):
 		"""Will send the welcome message as if the caller just joined"""
 		await self.show_welcome_message(ctx)
@@ -30,13 +30,13 @@ class Welcome:
 		embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
 		for fields in welcome:
-			embed.add_field(name=fields[2], value=fields[3].format(ctx.message.author))
+			embed.add_field(name=fields["name"], value=fields["value"].format(ctx.message.author))
 
 
 		await ctx.send(embed=embed)
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
 	async def welcomeadd(self, ctx, name=None, *, value=None):
 		"""Adds an embed field onto the welcome message"""
 		
@@ -54,8 +54,8 @@ class Welcome:
 		else:
 			await ctx.send(f'Field {name} successfully created.')
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
 	async def welcomeremove(self, ctx, name=None):
 		"""Removes and embed field from the welcome message"""
 
@@ -67,29 +67,31 @@ class Welcome:
 			await ctx.db.execute(query, ctx.guild.id, name)
 			await ctx.send('Field Removed')
 
-	@commands.command(pass_context=True, no_pm=True, hidden=True)
-	@checks.mod_or_permissions(manage_channels=True)
-	async def setwelcomechannel(self, ctx, channel):
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
+	async def setwelcomechannel(self, ctx, channel: discord.TextChannel):
 		"""Use in the channel you want to set as the welcome channel"""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
 
-		channelfound = False
-		for chan in ctx.guild.channels:
-			if chan.name == channel:
-				channel = chan 
-				channelfound = True
-		if not channelfound:
-			await ctx.send('Channel not found')
-			return
-
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
-
 		await ctx.send('Channel set')
+
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
+	async def nowelcome(self, ctx):
+		"""Call this to stop the welcome messages"""
+
+
+		query = "DELETE FROM welcome_config WHERE guild_id = $1"
+
+		await ctx.db.execute(query, ctx.guild.id)
+		
+		await ctx.send('I will no longer send a welcome messgae. To re-enable please use. ?setwelcomechannel')
 
 
 	async def on_member_join(self, member):
@@ -97,7 +99,9 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		con = self.bot.pool
 		chid = await con.fetchrow(query, member.guild.id)
-		ch = self.bot.get_channel(chid[2])
+		if chid is None:
+			return
+		ch = self.bot.get_channel(chid["channel_id"])
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await con.fetch(query, member.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
@@ -106,7 +110,7 @@ class Welcome:
 
 
 		for fields in welcome:
-			embed.add_field(name=fields[2], value=fields[3].format(member))
+			embed.add_field(name=fields["name"], value=fields["value"].format(member))
 
 
 		await ch.send(embed=embed)

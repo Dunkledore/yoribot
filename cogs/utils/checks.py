@@ -65,11 +65,11 @@ def is_owner():
         return await ctx.bot.is_owner(ctx.author)
     return commands.check(pred)
 
-def admin_or_permissions(**perms):
-    perms['administrator'] = True
-    async def predicate(ctx):
-        return await check_guild_permissions(ctx, perms, check=any)
-    return commands.check(predicate)
+def is_developer():
+    async def pred(ctx):
+        developers = [146893225850961920,234353120455426048,123900100081745922]
+        return (ctx.author.id in developers)
+    return commands.check(pred)
 
 def is_in_guilds(*guild_ids):
     def predicate(ctx):
@@ -78,6 +78,3 @@ def is_in_guilds(*guild_ids):
             return False
         return guild.id in guild_ids
     return commands.check(predicate)
-
-def is_lounge_cpp():
-    return is_in_guilds(145079846832308224)

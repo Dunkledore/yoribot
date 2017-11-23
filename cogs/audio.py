@@ -12,6 +12,26 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 
+	async def has_majority(self, reaction):
+		listeners = len(reaction.message.guild.voice_client.channel.members)
+		lisnener_reaction_count = 0
+		reactioners = await reaction.users().flatten()
+		for user in reactioners:
+			if not user.voice:
+				continue
+			if user.voice.channel.id == reaction.message.guild.voice_client.channel.members:
+				lisnener_reaction_count += 1
+
+		return (lisnener_reaction_count) > ((listeners-1)/2)
+
+	async def is_mod(self, user, channel, * , check=all):
+		is_owner = await self.bot.is_owner(user)
+		if is_owner:
+			return True
+		perms = {'manage_guild': True}
+		resolved = channel.permissions_for(user)
+		return check(getattr(resolved, name, None) == value for name, value in perms.items())
+
 	async def on_reaction_add(self, reaction, user):
 		"""The on_message event handler for this module
 
@@ -25,104 +45,124 @@ class Music:
 		channel = reaction.message.channel
 		emoji = reaction.emoji
 
-
 		# Commands section
 		if user != reaction.message.channel.guild.me:
 			valid_reaction = (reaction.message.id) == _data.cache[str(server.id)].embed.sent_embed.id
 
 			if valid_reaction:
-				# Remove reaction
-
-				await reaction.message.remove_reaction(emoji, user)
-			
+				is_mod = await self.is_mod(user, reaction.message.channel)
+				has_majority = await self.has_majority(reaction)
+				# Remove reaction			
 				# Commands
-				if emoji == "⏯":
-					await _data.cache[str(server.id)].toggle()
-				if emoji == "⏹":
-					await _data.cache[str(server.id)].stop()
-				if emoji == "⏭":
-					await _data.cache[str(server.id)].skip("1")
-				if emoji == "🔀":
-					await _data.cache[str(server.id)].shuffle()
-				if emoji == "🔉":
-					await _data.cache[str(server.id)].setvolume('-')
-				if emoji == "🔊":
-					await _data.cache[str(server.id)].setvolume('+')
-
-	async def on_message(self, message):
-		"""The on_message event handler for this module
-
-		Args:
-			message (discord.Message): Input message
-		"""
-
-		# Simplify message info
-		server = message.guild
-		author = message.author
-		channel = message.channel
-		content = message.content
-
-
-		# Only reply to server messages and don't reply to myself
-		if server is not None and author != channel.guild.me:
-			# Commands section
-			prefixes = tuple(self.bot.get_guild_prefixes(message.guild))
-			for prefix in prefixes:
-				if content.startswith(prefix):
-					# Parse message
-					package = content.split(" ")
-					command = package[0][len(prefix):]
-					args = package[1:]
-					arg = ' '.join(args)
-
-					# Lock on to server if not yet locked
-					if str(server.id) not in _data.cache or _data.cache[str(server.id)].state == 'destroyed':
-						_data.cache[str(server.id)] = _musicplayer.MusicPlayer(str(server.id), self.bot)
-
-					# Remove message
-					if command in ['play', 'playnext', 'playnow', 'pause', 'resume', 'skip', 'shuffle', 'volume', 'stop',
-								   'destroy', 'front', 'movehere']:
-						try:
-							await message.delete()
-						except discord.errors.NotFound:
-							logger.warning("Could not delete music player command message - NotFound")
-						except discord.errors.Forbidden:
-							logger.warning("Could not delete music player command message - Forbidden")
-
-					# Commands
-					if command == 'play':
-						await _data.cache[str(server.id)].play(author, channel, arg)
-
-					if command == 'playnext':
-						await _data.cache[str(server.id)].play(author, channel, arg, now=True)
-
-					if command == 'playnow':
-						await _data.cache[str(server.id)].play(author, channel, arg, now=True, stop_current=True)
-
-					elif command == 'pause':
-						await _data.cache[str(server.id)].pause()
-
-					elif command == 'resume':
-						await _data.cache[str(server.id)].resume()
-
-					elif command == 'skip':
-						await _data.cache[str(server.id)].skip(query=arg)
-
-					elif command == 'shuffle':
-						await _data.cache[str(server.id)].shuffle()
-
-					elif command == 'stop':
+				if is_mod or has_majority:
+					if emoji == "⏯":
+						await _data.cache[str(server.id)].toggle()
+					if emoji == "⏹":
 						await _data.cache[str(server.id)].stop()
+					if emoji == "⏭":
+							await _data.cache[str(server.id)].skip("1")
+					if emoji == "🔀":
+						await _data.cache[str(server.id)].shuffle()
+						async for ruser in reaction.users():
+							if ruser.id != self.bot.user.id:
+								await reaction.message.remove_reaction(emoji, ruser)
+					if emoji == "🔉":
+						await _data.cache[str(server.id)].setvolume('-')
+						async for ruser in reaction.users():
+							if ruser.id != self.bot.user.id:
+								await reaction.message.remove_reaction(emoji, ruser)
+					if emoji == "🔊":
+						await _data.cache[str(server.id)].setvolume('+')
+						async for ruser in reaction.users():
+							if ruser.id != self.bot.user.id:
+								await reaction.message.remove_reaction(emoji, ruser)
 
-					elif command == 'destroy':
-						await _data.cache[str(server.id)].destroy()
+	def getMusicPlayer(self, server_id):
+		if str(server_id) not in _data.cache or _data.cache[str(server_id)].state == 'destroyed':
+			_data.cache[str(server_id)] = _musicplayer.MusicPlayer(str(server_id), self.bot)
+			return _data.cache[str(server_id)]
+		else:
+			return _data.cache[str(server_id)]
 
-					elif command == 'volume':
-						await _data.cache[str(server.id)].setvolume(arg)
 
-					elif command == 'front' or command == 'movehere':
-						await _data.cache[str(server.id)].movehere(channel)
-					return
+	@commands.command(no_pm=True)
+	async def play(self, ctx, *, query=None):
+		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query)
+
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def playnext(self, ctx, *, query=None):
+		"""Plays the song or playlist immediately after the track already playing"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True)
+
+	@commands.command(no_pm=True, aliases=['movehere'])
+	async def front(self, ctx):
+		"""Brings the music player to the front of the chat"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).movehere(ctx.channel)
+
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def playnow(self, ctx, *, query=None):
+		"""Immediately plays the song - this will stop any song playing"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def pause(self, ctx):
+		"""Pauses the track currently playing"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).pause()
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def resume(self, ctx):
+		"""Resumes a paused track"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).resume()
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def skip(self, ctx, *, query=1):
+		"""Moves forward to the next song in the player queue."""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).skip(query=query)
+		await ctx.send("skipped")
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def shuffle(self, ctx):
+		"""Mxes the songs in the queue"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).shuffle()
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def stop(self, ctx):
+		"""Stops music playback."""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).stop()
+
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def destroy(self, ctx):
+		"""Ends the music session - will clear all items from queue."""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).destroy()
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def volume(self, ctx, *, query=None):
+		"""Increase or decrease the volume"""
+		await ctx.message.delete()
+		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
 
 def setup(bot):
 
