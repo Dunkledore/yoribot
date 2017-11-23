@@ -7,6 +7,9 @@ import aiohttp
 import os
 import re
 from urllib.parse import quote as urlencode
+import datetime
+import asyncio
+import time
 
 try:
     from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageOps
@@ -45,7 +48,23 @@ class FFXIV:
                        "Mateus", "Midgardsormr", "Sargatanas", "Siren", "Zalera"],
             "Primal": ["Behemoth", "Brynhildr", "Diabolos", "Excalibur", "Exodus", "Famfrit", "Hyperion", "Lamia",
                        "Leviathan", "Malboro", "Ultros"],
-            "Chaos": ["Cerberus", "Lich", "Louisoix", "Moogle", "Odin", "Phoenix", "Ragnarok", "Shiva", "Zodiark", "Omega"]
+            "Chaos": ["Cerberus", "Lich", "Louisoix", "Moogle", "Odin", "Phoenix", "Ragnarok", "Shiva", "Zodiark",
+                      "Omega"]
+        }
+        self.latestnews = {}
+        self.newsupdatetime = None
+        self.updatefrequency = datetime.timedelta(minutes=10)
+        self.newsiconurls = {
+            "maintenance": "https://img.finalfantasyxiv.com/lds/h/U/6qzbI-6AwlXAfGhCBZU10jsoLA.png",
+            "notices": "https://img.finalfantasyxiv.com/lds/h/c/GK5Y3gQsnlxMRQ_pORu6lKQAJ0.png",
+            "topics": "https://img.finalfantasyxiv.com/lds/h/W/_v7zlp4yma56rKwd8pIzU8wGFc.png",
+            "status": "https://img.finalfantasyxiv.com/lds/h/4/8PRdUkaKFa8R5BKeQjRyItGoxY.png"
+        }
+        self.newsurls = {
+            "topics": "https://na.finalfantasyxiv.com/lodestone/topics",
+            "maintenance": "https://na.finalfantasyxiv.com/lodestone/news/category/2",
+            "notices": "https://na.finalfantasyxiv.com/lodestone/news/category/1",
+            "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
 
     def save_settings(self):
@@ -56,18 +75,18 @@ class FFXIV:
 
     async def embed(self, ctx, authortext="", desc="", col="", footer=""):
         colors = {"red": 0xE74C3C, "green": 0x2ECC71, "yellow": 0xF1C40F, "purple": 0x9B59B6, "blue": 0x3498DB,
-                  "white": 0xFFFFFF}
+                  "white": 0xFFFFFF, "darkred": 0x73261E}
         c = colors[col] if col in colors.keys() else 0x000000
         em = discord.Embed(color=c, description=desc)
         em.set_author(name=authortext, icon_url="https://i.imgur.com/n3tqR2E.png")
         em.set_footer(text=footer)
-        await ctx.message.channel.send(embed=em)
+        await ctx.send(embed=em)
 
-    @commands.group(pass_context=True, invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def ffxiv(self, ctx):
         """FFXIV command group."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     def getDC(self, server):
         for dc in self.servers.keys():
@@ -137,7 +156,180 @@ class FFXIV:
                                     order_direction="asc")
         return recipes["recipes"]["results"]
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.group(name="news", invoke_without_command=True)
+    async def ffxiv_news(self, ctx):
+        """Lodestone news."""
+        if not ctx.invoked_subcommand:
+            return
+
+    @ffxiv_news.command(name="enable")
+    async def news_enable(self, ctx, *, type):
+        """Enable sending lodestone news in this channel. Type can be: notices, topics, maintenance, status or all."""
+
+        guildid = str(ctx.guild.id)
+        if "news" not in self.settings.keys():
+            self.settings["news"] = {}
+        if guildid not in self.settings["news"].keys():
+            self.settings["news"][guildid] = {}
+        self.save_settings()
+        newsset = self.settings["news"][guildid]
+        ch = str(ctx.channel.id)
+        if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
+            await self.embed(ctx, "Lodestone News",
+                             "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
+                             "red")
+            return
+        if ch in newsset.keys() and (type.lower() in newsset[ch] or "all" in newsset[ch]):
+            await self.embed(ctx, "Lodestone News", "Already sending those news here.", "red")
+            return
+        if ch not in newsset.keys():
+            newsset[ch] = []
+        if type.lower() == "all" or len(newsset[ch]) == 3:
+            newsset[ch] = ["all"]
+            await self.embed(ctx, "Lodestone News", "Now sending all lodestone news to this channel.", "green")
+        else:
+            newsset[ch].append(type.lower())
+            await self.embed(ctx, "Lodestone News", "Now sending lodestone " + type.lower() + (
+                " news" if type.lower in ["maintenance", "status"] else "") + "in this channel.", "green")
+        self.save_settings()
+
+    @ffxiv_news.command(name="disable")
+    async def news_disable(self, ctx, *, type):
+        """Disable sending lodestone news in this channel. Type can be: notices, topics, maintenance, status or all."""
+
+        guildid = str(ctx.guild.id)
+        if "news" not in self.settings.keys():
+            self.settings["news"] = {}
+        if ctx.guild.id not in self.settings["news"].keys():
+            self.settings["news"][guildid] = {}
+        self.save_settings()
+        newsset = self.settings["news"][guildid]
+        ch = str(ctx.channel.id)
+        if ch not in newsset.keys() or type.lower() not in newsset[ch]:
+            await self.embed(ctx, "Lodestone News", "No news are sent in this channel.", "red")
+            return
+        if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
+            await self.embed(ctx, "Lodestone News",
+                             "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
+                             "red")
+            return
+        if type.lower() == "all" or len(newsset[ch]) == 1:
+            newsset.pop(ch, "")
+            await self.embed(ctx, "Lodestone News", "Now not sending any news in this channel.", "green")
+        else:
+            newsset[ch].remove(type.lower())
+            await self.embed(ctx, "Lodestone News", "Not sending lodestone " + type.lower() + (
+                " news" if type.lower in ["maintenance", "status"] else "") + "in this channel anymore.", "green")
+        self.save_settings()
+
+    async def collectnews(self):
+        url = "http://xivdb.com/assets/lodestone.json"
+        async with aiohttp.ClientSession().get(url) as r:
+            d = await r.json()
+            return d
+
+    async def update_news(self, ctx):
+        if ctx is not None:
+            await ctx.send("Updating...")  # DEBUG
+        try:
+            d = await self.collectnews()
+            self.latestnews = {"maintenance": sorted(d["maintenance"], key=lambda k: k["time"], reverse=True),
+                               "topics": sorted(d["topics"], key=lambda k: k["time"], reverse=True),
+                               "status": sorted(d["status"], key=lambda k: k["time"], reverse=True),
+                               "notices": sorted(d["notices"], key=lambda k: k["time"], reverse=True)}
+            self.format_news()
+            self.newsupdatetime = datetime.datetime(2017, 1, 1).utcnow()
+            if ctx is not None:
+                await ctx.send("Updated.")  # DEBUG
+        except Exception as e:
+            self.latestnews = {"__ERROR__": str(e)}
+            return
+
+    def format_news(self):
+        if self.latestnews is None or "__ERROR__" in self.latestnews.keys() or self.latestnews == {}:
+            return
+        for item in self.latestnews["topics"]:
+            soup = BeautifulSoup(item["html"], "html.parser")
+            item["text"] = soup.get_text()
+
+    def get_news_after(self, timestamp):
+        if self.latestnews is None or "__ERROR__" in self.latestnews.keys() or self.latestnews == {}:
+            return
+        news = {"topics": [], "notices": [], "maintenance": [], "status": []}
+        for type in self.latestnews.keys():
+            # "2017-11-18 17:20:35"
+            for item in self.latestnews[type]:
+                itemtime = datetime.datetime().strptime(item["time"], "%Y-%m-%d %H:%M:%S")
+                if itemtime > timestamp:
+                    news[type].append(item)
+        return news
+
+    @ffxiv_news.command(name="latest")
+    async def latest_news(self, ctx, type="all", count=1):
+        """Sends the latest count (max. 20, 5 for `all`) news of the given type to this channel. Type can be: notices, topics, maintenance, status or all."""
+
+        count = int(count)
+        if type.lower() not in ("notices", "topics", "maintenance", "status", "all"):
+            await self.embed(ctx, "Lodestone News",
+                             "Invalid type. Please use one of the following:\n`notices`, `topics`, `maintenance`, `status`, `all`.",
+                             "red")
+            return
+        await ctx.send("Getting the latest " + str(count) + " " + type + " news.")  # DEBUG
+        if self.newsupdatetime is None or self.newsupdatetime < datetime.datetime(2017, 1,
+                                                                                  1).utcnow() - self.updatefrequency:
+            await self.update_news(ctx)
+        else:  # DEBUG
+            await ctx.send("No update needed.")
+        if "__ERROR__" in self.latestnews.keys():
+            await ctx.send("Error updating:" + self.latestnews["__ERROR__"])  # DEBUG
+            return
+        if count < 1:
+            count = 1
+        if count > 20 or (type == "all" and count > 5):
+            count = 5 if type == "all" else 20
+        await ctx.send(f"Sending the latest {count} {type} news.")  # DEBUG
+        if type == "all":
+            for t in self.latestnews.keys():
+                for i in range(count):
+                    await ctx.send(embed=self.newsembed(self.latestnews[t][i], t))
+        else:
+            for i in range(count):
+                await ctx.send(embed=self.newsembed(self.latestnews[type][i], type))
+
+    def newsembed(self, newsitem, type):
+        titles = {"maintenance": "Maintenance", "notices": "Notice", "topics": "Topic", "status": "Status"}
+        em = discord.Embed(color=0x73261E, type="rich",
+                           title=("" if "tag" not in newsitem.keys() or newsitem["tag"] == "" else newsitem[
+                                                                                                       "tag"] + " ") +
+                                 "Lodestone News: " + newsitem["title"],
+                           url=newsitem["url"], description="" if "text" not in newsitem.keys() else newsitem["text"])
+        if "banner" in newsitem.keys():
+            em.set_image(url=newsitem["banner"])
+        em.set_author(name=titles[type], url=self.newsurls[type], icon_url=self.newsiconurls[type])
+        em.set_footer(text=newsitem["time"] + " (UTC)")
+        return em
+
+    async def send_all_news(self):
+        await self.bot.wait_until_ready()
+        while self == self.bot.get_cog("FFXIV"):
+            await self.update_news(None)
+            newsset = self.settings["news"]
+            now = datetime.datetime(2017, 1, 1).utcnow()
+            before = now - self.updatefrequency
+            news = self.get_news_after(before)
+            for guildid in newsset.keys():
+                guild = self.bot.get_guild(guildid)
+                if guild is not None:
+                    for ch in newsset[guild].keys():
+                        chan = guild.get_channel(ch)
+                        if chan is not None:
+                            for type in news.keys():
+                                if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
+                                    for item in news[type]:
+                                        await chan.send(embed=self.newsembed(item, type))
+            await asyncio.sleep(self.updatefrequency.seconds)
+
+    @ffxiv.command()
     async def recipe(self, ctx, *, itemname):
         """Displays a recipe. Provide item name or recipe ID."""
         recipeid = ""
@@ -162,13 +354,13 @@ class FFXIV:
             await self.embed(ctx, "XIVDB Error", recipe["error"], "red")
             return
         await self.draw_recipe(recipe)
-        await ctx.message.channel.send(file = discord.File("data/ffxiv/{}.tmp.png".format(recipeid)))
+        await ctx.message.channel.send(file=discord.File("data/ffxiv/{}.tmp.png".format(recipeid)))
         try:
             os.remove("data/ffxiv/{}.tmp.png".format(recipeid))
         except:
             pass
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.command()
     async def status(self, ctx, server=None):
         """Displays FFXIV server status."""
         url = "http://na.finalfantasyxiv.com/lodestone/worldstatus/"
@@ -206,7 +398,7 @@ class FFXIV:
                     d = "**" + server + "** is currently " + ("**ONLINE**" if st[server] == 1 else "**ONLINE**")
                     await self.embed(ctx, "FFXIV Server Status", d, "green" if st[server] == 1 else "red")
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.command()
     async def iam(self, ctx, server, firstname, lastname):
         """Tell me who your character on FFXIV is!"""
         server = server.title()
@@ -227,7 +419,7 @@ class FFXIV:
                 self.save_settings()
                 await self.embed(ctx, "FFXIV Character Info", "Your character has been saved successfully!", "green")
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.command()
     async def deleteme(self, ctx):
         """Forget about your character."""
         if not str(ctx.message.author.id) in self.settings["characters"].keys():
@@ -237,7 +429,7 @@ class FFXIV:
         self.save_settings()
         await self.embed(ctx, "FFXIV Character Info", "Character Info deleted. Who were you again?", "green")
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.command()
     async def charinfo(self, ctx, server, firstname, lastname):
         """Find out more about a character."""
         server = server.title()
@@ -273,9 +465,9 @@ class FFXIV:
                     self.settings["characters"]["_nonmember"][str(charid)]["img_ver"] = self.IMAGE_VERSION
                     self.save_settings()
                 with open("data/ffxiv/profiles/{}.png".format(charid), "rb") as f:
-                    await ctx.message.channel.send(file = discord.File(f))
+                    await ctx.message.channel.send(file=discord.File(f))
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.command()
     async def whoami(self, ctx):
         """Don't remember who you are? I'll help you find yourself!"""
         if not str(ctx.message.author.id) in self.settings["characters"].keys():
@@ -306,9 +498,9 @@ class FFXIV:
             self.settings["characters"]["_nonmember"][charid]["img_ver"] = self.IMAGE_VERSION
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await ctx.message.channel.send(file = discord.File(f))
+            await ctx.message.channel.send(file=discord.File(f))
 
-    @ffxiv.command(pass_context=True)
+    @ffxiv.command()
     async def whois(self, ctx, user: discord.User):
         """Find out who your friend is in-game!"""
         if not str(user.id) in self.settings["characters"].keys():
@@ -338,7 +530,7 @@ class FFXIV:
             await self.draw_profile(charinfo)
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
-            await ctx.message.channel.send(file = discord.File(f))
+            await ctx.message.channel.send(file=discord.File(f))
 
     async def draw_profile(self, cdata):
         regular_fnt = ImageFont.truetype(font_bold_file, 22)
@@ -697,11 +889,11 @@ class FFXIV:
             except:
                 pass
 
-    @commands.group(pass_context=True, invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def fflogs(self, ctx):
         """Display FFlogs rankings and parse infos."""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            return
 
     def getregion(self, server):
         for r in self.fflogs_data["regions"].keys():
@@ -724,7 +916,7 @@ class FFXIV:
             except:
                 return {"__ERROR__": "Invalid JSON or no response."}
 
-    @fflogs.command(pass_context=True)
+    @fflogs.command()
     async def setkey(self, ctx, key):
         """Sets which API key the bot should use for getting FFlogs info (provide the public key)."""
         if not self.bot.is_owner(ctx.author):
@@ -790,8 +982,8 @@ class FFXIV:
             fn.title() + " " + ln.title() if fn + ln != "" else charinfo["name"]) + " (" + (
                              sn.title() if sn != "" else charinfo["server"]) + ")", embedtext, "green")
 
-    @fflogs.command(pass_context=True)
-    async def me(self, ctx, *, options = ""):
+    @fflogs.command()
+    async def me(self, ctx, *, options=""):
         """Gets current FFlogs rankings for the character you've saved with [p]ffxiv iam."""
         if not str(ctx.message.author.id) in self.settings["characters"].keys():
             await self.embed(ctx, "FFlogs Info",
@@ -799,8 +991,8 @@ class FFXIV:
             return
         await self.fflogs_chardata(ctx, charid=self.settings["characters"][ctx.message.author.id]["id"])
 
-    @fflogs.command(pass_context=True)
-    async def char(self, ctx, server, firstname, lastname, *, options = ""):
+    @fflogs.command()
+    async def char(self, ctx, server, firstname, lastname, *, options=""):
         """Gets current FFlogs rankings for the specified character."""
         if self.fflogs_settings["api_key"] == "":
             await self.embed(ctx, "FFlogs Info: Error",
@@ -812,21 +1004,21 @@ class FFXIV:
             return
         await self.fflogs_chardata(ctx, fn=firstname, ln=lastname, sn=server)
 
-    # def parseoptions(self, string):
-    #     args = {}
+        # def parseoptions(self, string):
+        #     args = {}
 
 
-    # @fflogs.command(pass_context=True)
-    # async def listoptions(self, ctx):
-    #     embedtext = """**Supported options to be appended:**
-    #
-    #     **fight**: Specifies the fight to pull a ranking from
-    #     **class**: Only show rankings of this class
-    #     **group**: Show rankings from the specified group. Get a list with `[p]fflogs listfights`
-    #
-    #     Options are passed as key:value and separated by commata, e.g.
-    #     `fight:Exdeath,class:Warrior`"""
-    #     await self.embed(ctx, "FFlogs Info", embedtext, "purple")
+        # @fflogs.command(pass_context=True)
+        # async def listoptions(self, ctx):
+        #     embedtext = """**Supported options to be appended:**
+        #
+        #     **fight**: Specifies the fight to pull a ranking from
+        #     **class**: Only show rankings of this class
+        #     **group**: Show rankings from the specified group. Get a list with `[p]fflogs listfights`
+        #
+        #     Options are passed as key:value and separated by commata, e.g.
+        #     `fight:Exdeath,class:Warrior`"""
+        #     await self.embed(ctx, "FFlogs Info", embedtext, "purple")
 
 
 def setup(bot):
@@ -845,4 +1037,6 @@ def setup(bot):
     if not os.path.exists("data/ffxiv/fflogs/settings.json"):
         print("Creating data/ffxiv/fflogs/settings.json file...")
         dataIO.save_json("data/ffxiv/fflogs/settings.json", {"api_key": ""})
-    bot.add_cog(FFXIV(bot))
+    n = FFXIV(bot)
+    bot.add_cog(n)
+    bot.loop.create_task(n.send_all_news())

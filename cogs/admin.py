@@ -6,6 +6,7 @@ import inspect
 import textwrap
 from contextlib import redirect_stdout
 import io
+from .utils import checks
 
 # to expose to the eval command
 import datetime
@@ -37,10 +38,32 @@ class Admin:
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
     @commands.command(hidden=True)
+    @checks.is_developer()
     async def ping(self, ctx):
         await ctx.send('Pong')
 
     @commands.command(hidden=True)
+    @checks.is_developer()
+    async def guilds(self, ctx):
+        """List of guilds the bot is in"""
+        string = "List of  guilds the bot is in: \n"
+        for guild in self.bot.guilds:
+            string += "**Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
+
+        await ctx.send(string)
+
+    @commands.command(hidden=True)
+    @checks.is_owner()
+    async def messageowners(self, ctx, *, message):
+        """Send a message to all server owners the bot is in"""
+
+        for guild in self.bot.guilds:
+            await guild.owner.send(message)
+
+        await ctx.send("Messages Delivered")
+
+    @commands.command(hidden=True)
+    @checks.is_developer()
     async def load(self, ctx, *, module):
         """Loads a module."""
         try:
@@ -51,6 +74,7 @@ class Admin:
             await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(hidden=True)
+    @checks.is_developer()
     async def unload(self, ctx, *, module):
         """Unloads a module."""
         try:
@@ -61,6 +85,7 @@ class Admin:
             await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(name='reload', hidden=True)
+    @checks.is_developer()
     async def _reload(self, ctx, *, module):
         """Reloads a module."""
         try:
@@ -72,6 +97,7 @@ class Admin:
             await ctx.send('\N{OK HAND SIGN}')
 
     @commands.command(pass_context=True, hidden=True, name='eval')
+    @checks.is_developer()
     async def _eval(self, ctx, *, body: str):
         """Evaluates a code"""
 
@@ -119,6 +145,7 @@ class Admin:
                 await ctx.send(f'```py\n{value}{ret}\n```')
 
     @commands.command(pass_context=True, hidden=True)
+    @checks.is_developer()
     async def repl(self, ctx):
         """Launches an interactive REPL session."""
         variables = {
@@ -209,6 +236,7 @@ class Admin:
 
 
     @commands.command(hidden=True)
+    @checks.is_developer()
     async def sql(self, ctx, *, query: str):
         """Run some SQL."""
         # the imports are here because I imagine some people would want to use

@@ -45,6 +45,8 @@ class RoleManager:
     async def on_message(self, message):
         if message.author.bot:
             return
+        if not message.guild:
+            return
         if str(message.guild.id) not in self.settings:
             return
 
@@ -101,7 +103,6 @@ class RoleManager:
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
         Example:
         [p]iam add "role name" name of the role"""
-
         if not ctx.message.guild.me.permissions_in(ctx.message.channel).manage_roles:
             em = discord.Embed(color=ctx.message.author.color,
                                description="I do not have the manage roles permission here,"
@@ -131,16 +132,16 @@ class RoleManager:
             await ctx.send(embed=em)
 
 
-    @commands.command(pass_context=True, no_pm=True, hidden=True)
-    @checks.admin_or_permissions()
+    @commands.command(pass_context=True, no_pm=True)
+    @checks.is_mod()
     async def addroles(self, ctx, group, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
         for rolename in role_names.split(','):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
     @commands.command(pass_context=True, no_pm=True)
-    @checks.admin_or_permissions()
-    async def removerole(self, ctx, role, hidden=True):
+    @checks.is_mod()
+    async def removerole(self, ctx, role):
         """Takes a role off the list of self-assignable roles."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,

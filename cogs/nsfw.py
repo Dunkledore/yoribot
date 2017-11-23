@@ -12,12 +12,8 @@ class Nsfw:
         self.bot = bot
         self.session = aiohttp.ClientSession()
 
-    @commands.group(pass_context=True, hidden=True)
-    @checks.is_nsfw()
-    async def nsfw(self, ctx):
-        """Nsfw Commands - use ``*help nsfw`` for more commands."""
 
-    @nsfw.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_nsfw()
     async def dick(self, ctx, user):
         """Show's the size of the user's dick (157% accurate)"""
@@ -27,7 +23,7 @@ class Nsfw:
         y = "=" *  x
         await ctx.send("{}\'s dick:' ** 8{}D **".format(ctx.message.mentions[0].name, y))
 
-    @nsfw.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_nsfw()
     async def boobs(self, ctx, user):
         """Shows the size of the user's boobs (157% accurate)"""
@@ -37,7 +33,7 @@ class Nsfw:
         y = " " *  x
         await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(ctx.message.mentions[0].name, y, y))
 
-    @nsfw.command(pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_nsfw()
     async def ass(self, ctx, user):
         """Shows the size of the user's ass (157% accurate)"""
@@ -47,7 +43,7 @@ class Nsfw:
         y = " " *  x
         await ctx.send("{}\'s ass:' ** ({}!{}) **".format(ctx.message.mentions[0].name, y, y))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def yandere(self, ctx):
         """Random Image From Yandere"""
@@ -61,7 +57,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def konachan(self, ctx):
         """Random Image From Konachan"""
@@ -75,7 +71,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def rule34(self, ctx):
         """Random Image From rule34"""
@@ -89,7 +85,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def gelbooru(self, ctx):
         """Random Image From Gelbooru"""
@@ -103,7 +99,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def tbib(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -117,7 +113,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def xbooru(self, ctx):
         """Random Image From Xbooru"""
@@ -131,7 +127,7 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def furrybooru(self, ctx):
         """Random Image From Furrybooru"""
@@ -143,11 +139,15 @@ class Nsfw:
             image = soup.find(id="image").get("src")
             head, sep, tail = image.partition('?')
             clean = head.replace("//","/").replace("http:/", "http://")
-            await ctx.send(clean)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from Furrybooru:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=clean)
+            em.set_footer(text= "Random image from http://furry.booru.org")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def drunkenpumken(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -159,11 +159,15 @@ class Nsfw:
             image = soup.find(id="image").get("src")
             head, sep, tail = image.partition('?')
             clean = head.replace("//","/").replace("http:/", "http://")
-            await ctx.send(clean)
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name="Random Image from DrunkenPumken:", icon_url="http://bit.ly/2hHIfF6")
+            em.set_image(url=clean)
+            em.set_footer(text= "Random image from http://drunkenpumken.booru.org")
+            await ctx.send(embed=em)
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @nsfw.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def ysearch(self, ctx, *tags: str):
         """Search Yandere With A Tag"""
@@ -176,11 +180,17 @@ class Nsfw:
                 page = await self.session.get(query)
                 json = await page.json()
                 if json != []:
-                    await ctx.send(random.choice(json)['jpeg_url'])
+                    em = discord.Embed(color=ctx.message.author.color, description=" ")
+                    em.set_author(name="Yandere image search:", icon_url="http://bit.ly/2hHIfF6")
+                    em.set_image(url=random.choice(json)['jpeg_url'])
+                    em.set_footer(text= "Image of"+ tags +"from https://yande.re/")
+                    await ctx.send(embed=em)
                 else:
                     await ctx.send(":warning: Yande.re has no images for requested tags.")
             except Exception as e:
                 await ctx.send(":x: `{}`".format(e))
+
+
 
 def setup(bot):
     n = Nsfw(bot)
