@@ -55,7 +55,7 @@ async def has_level(level, ctx):
 
 
     if (ctx.author.id in [146893225850961920,234353120455426048,123900100081745922]):
-        levels = ["developers","admin","mod"]
+        levels = ["developer","admin","mod"]
         return (level in levels)
     admin = await check_guild_permissions(ctx,{'administrator': True})
     if admin:
