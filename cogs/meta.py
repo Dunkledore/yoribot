@@ -336,7 +336,7 @@ class Meta:
 
     @commands.command(hidden=True)
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @checks.is_admin()
     async def botpermissions(self, ctx, *, channel: discord.TextChannel = None):
         """Shows the bot's permissions in a specific channel.
 

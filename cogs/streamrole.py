@@ -26,7 +26,7 @@ class StreamRole:
         self.settings = dataIO.load_json(self.settings_path)
 
     @commands.group(pass_context=True, no_pm=True, name="streamroleset")
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _streamroleset(self, ctx):
         """Sets StreamRole settings."""
 
@@ -37,7 +37,7 @@ class StreamRole:
 
 
     @_streamroleset.command(pass_context=True, no_pm=True, name="toggle")
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _toggle(self, ctx):
         """Toggles StreamRole on/off."""
 
@@ -61,7 +61,7 @@ class StreamRole:
         dataIO.save_json(self.settings_path, self.settings)
 
     @_streamroleset.command(pass_context=True, no_pm=True, name="role")
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _role(self, ctx, role: discord.Role):
         """Sets the role that StreamRole assigns to
         members that are streaming.

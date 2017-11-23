@@ -110,7 +110,7 @@ class Race:
         """Race cog's settings group command"""
 
     @setrace.command(name="time", pass_context=True)
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _time_setrace(self, ctx, time: int):
         """Set the time players have to enter a race
 
@@ -136,7 +136,7 @@ class Race:
         await ctx.send("Wait time set to {}s".format(time))
 
     @setrace.command(name="mode", pass_context=True)
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _mode_setrace(self, ctx, mode: str):
         """Set the race mode
 
@@ -164,13 +164,8 @@ class Race:
         self.save_settings()
         await ctx.send("Mode now set to {}.".format(mode))
 
-    @race.command(name="version")
-    async def _version_race(self, ctx):
-        """Displays the version of race"""
-        await ctx.send("You are running race version {}".format(self.version))
-
     @race.command(name="reset", pass_context=True, hidden=True)
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.is_admin()
     async def _reset_race(self, ctx):
         """Reset race parameters DEBUG USE ONLY"""
         guild = ctx.message.guild
