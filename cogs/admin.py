@@ -53,6 +53,21 @@ class Admin:
         await ctx.send(string)
 
     @commands.command(hidden=True)
+    @checks.is_admin()
+    async def modrole(self, ctx, role: discord.Role):
+        """Sets the mod role"""
+
+        insertquery = "INSERT INTO mod_config (guild_id, mod_role) VALUES ($1, $2)"
+        alterquery = "UPDATE mod_config SET mod_role = $2 WHERE guild_id = $1"
+
+        try:
+            await ctx.db.execute(insertquery, ctx.guild.id, role.id)
+        except asyncpg.UniqueViolationError:
+            await ctx.db.execute(alterquery, ctx.guild.id, role.id)
+        await ctx.send('Role set')
+
+    
+    @commands.command(hidden=True)
     @checks.is_owner()
     async def messageowners(self, ctx, *, message):
         """Send a message to all server owners the bot is in"""
