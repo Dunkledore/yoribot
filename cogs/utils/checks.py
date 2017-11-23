@@ -44,7 +44,7 @@ def is_nsfw():
 
 async def has_level(level, author):
     is_owner = await ctx.bot.is_owner(ctx.author)
-    if is is_owner:
+    if is_owner:
         return True
 
     query = "SELECT * FROM mod_config WHERE guild_id = $1"
