@@ -1,4 +1,5 @@
 from discord.ext import commands
+import asyncpg
 
 # The permission system of the bot is based on a "just works" basis
 # You have permissions and the bot has permissions. If you meet the permissions
