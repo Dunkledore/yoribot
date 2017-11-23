@@ -13,14 +13,6 @@ async def check_permissions(ctx, perms, *, check=all):
     if is_owner:
         return True
 
-    resolved = ctx.channel.permissions_for(ctx.author)
-    return check(getattr(resolved, name, None) == value for name, value in perms.items())
-
-def has_permissions(*, check=all, **perms):
-    async def pred(ctx):
-        return await check_permissions(ctx, perms, check=check)
-    return commands.check(pred)
-
 async def check_guild_permissions(ctx, perms, *, check=all):
     is_owner = await ctx.bot.is_owner(ctx.author)
     if is_owner:
@@ -32,43 +24,68 @@ async def check_guild_permissions(ctx, perms, *, check=all):
     resolved = ctx.author.guild_permissions
     return check(getattr(resolved, name, None) == value for name, value in perms.items())
 
+    resolved = ctx.channel.permissions_for(ctx.author)
+    return check(getattr(resolved, name, None) == value for name, value in perms.items())
+
+def has_permissions(*, check=all, **perms):
+    async def pred(ctx):
+        return await check_permissions(ctx, perms, check=check)
+    return commands.check(pred)
+
 def has_guild_permissions(*, check=all, **perms):
     async def pred(ctx):
         return await check_guild_permissions(ctx, perms, check=check)
     return commands.check(pred)
-
-# These do not take channel overrides into account
 
 def is_nsfw():
     def pred(ctx):
         return ctx.message.channel.is_nsfw()
     return commands.check(pred)
 
+async def has_level(level, author)
+    is_owner = await ctx.bot.is_owner(ctx.author)
+    if is is_owner:
+        return True
+
+    query = "SELECT * FROM mod_config WHERE guild_id = $1"
+    result = await ctx.db.fetch(query, ctx.guild.id)
+    mod_role = results[0]["mod_role"]
+
+
+
+    if (ctx.author.id in [146893225850961920,234353120455426048,123900100081745922]):
+        levels = ["developers","admin","mod"]
+        return (level in levels)
+    if check_guild_permissions(ctx,{'administrator': True}):
+        levels = ["admin","mod"]
+        return (level in levels)
+    for role in ctx.roles:
+        if role.id = mod_role:
+            levels = ["mod"]
+            return (level in levels)
+    return False
+
+
+
+
 def is_mod():
     async def pred(ctx):
-        return await check_guild_permissions(ctx, {'manage_guild': True})
+       return await has_level("mod", ctx)
     return commands.check(pred)
 
 def is_admin():
     async def pred(ctx):
-        return await check_guild_permissions(ctx, {'administrator': True})
-    return commands.check(pred)
-
-def mod_or_permissions(**perms):
-    perms['manage_guild'] = True
-    async def predicate(ctx):
-        return await check_guild_permissions(ctx, perms, check=any)
-    return commands.check(predicate)
-
-def is_owner():
-    async def pred(ctx):
-        return await ctx.bot.is_owner(ctx.author)
+        return await has_level("admin", ctx)
     return commands.check(pred)
 
 def is_developer():
     async def pred(ctx):
-        developers = [146893225850961920,234353120455426048,123900100081745922]
-        return (ctx.author.id in developers)
+        return await has_level("developer", ctx)
+    return commands.check(pred)
+
+def is_owner():
+    async def pred(ctx):
+        return await has_level("owner", ctx)
     return commands.check(pred)
 
 def is_in_guilds(*guild_ids):
