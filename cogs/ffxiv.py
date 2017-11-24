@@ -81,7 +81,7 @@ class FFXIV:
         em.set_author(name=authortext, icon_url="https://i.imgur.com/n3tqR2E.png")
         em.set_footer(text=footer)
         if imgurl != "":
-            em.set_image(imgurl)
+            em.set_image(url=imgurl)
         await ctx.send(embed=em)
 
     @commands.group(invoke_without_command=True)
