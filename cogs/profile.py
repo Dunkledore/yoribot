@@ -30,10 +30,25 @@ class Profile:
 		em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
 		await ctx.send(embed=em)
 
+	async def sendYori(self, ctx):
+
+		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
+		embed.set_author(name=ctx.bot.user.name, icon_url=ctx.message.guild.icon_url)
+		embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+		embed.add_field(name='Age', value= "Old Enough")
+		embed.add_field(name='Region', value="Anywhere and Everywhere")
+		embed.add_field(name='Gender', value="Agender")
+		embed.add_field(name='Sexuality', value="Asexual")
+		embed.add_field(name='About Me', value="I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:")
+		await ctx.send(embed=embed)
+
 	@commands.command(pass_context=True, no_pm=True)
 	async def profile(self, ctx, user: discord.Member=None):
 		"""Displays the profile of a mentioned user or the caller if no mention is provided"""
 
+		if user == ctx.bot.user:
+			await self.sendYori()
+			return
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		query = "SELECT * FROM profile WHERE user_id = $1;"
 		if user is None:
