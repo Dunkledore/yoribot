@@ -9,6 +9,8 @@ from urllib.parse import quote_plus
 import datetime
 from .utils import checks
 import aiohttp
+import asyncio
+import asyncpg
 import os
 
 defaults = [
