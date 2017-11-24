@@ -49,6 +49,7 @@ class Fun:
     def __init__(self, bot):
         self.bot = bot
         self.thotchoices = fileIO("data/fun/thotchoices.json","load")
+        self.lines = dataIO.load_json("data/fun/lines.json")
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
                      "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
@@ -226,18 +227,25 @@ class Fun:
                 return
             else:
                 await ctx.send(tail)
+    @commands.command()
+    async def guard(self):
+        """Says a random guard line from Skyrim"""
+        await ctx.send(choice(self.lines))
+
 
 def check_folders():
     if not os.path.exists("data/fun"):
         print("Creating data/slap folder...")
         os.makedirs("data/fun")
 
-
 def check_files():
     f = "data/fun/items.json"
     if not fileIO(f, "check"):
         print("Creating empty items.json...")
         fileIO(f, "save", defaults)
+    if not os.path.isfile("data/fun/lines.json"):
+        raise RuntimeError(
+            "Required data is missing. Please reinstall this cog.")
 
 def setup(bot):
     bot.add_cog(Fun(bot))
