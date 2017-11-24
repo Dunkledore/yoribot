@@ -25,7 +25,7 @@ class Profile:
         em.add_field(name='Adding Sexuality', value='Use `` *sexuality <sexuality> for example: \n `` *sexuality Straight`` `` *sexuality Gay`` `` *sexuality Lesbian`` `` *sexuality Asexual``', inline=False)
         em.add_field(name='Adding Age', value='Use `` *age <age> for example: \n `` *age 20``.', inline=False)
         em.add_field(name='Custom Fields', value='You can add custom sections to your profile using `` *profileadd <section title> <contents>``'
-        	        '\n For example you might do `` *profileadd "About Me" I am an one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:''', inline=False)
+        	        '\n For example you might do `` *profileadd "About Me" I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:''', inline=False)
         em.set_image(url='https://i.gyazo.com/476ca3539836bfd7e5240f1f5366fa80.gif')
         em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
         await ctx.send(embed=em)
