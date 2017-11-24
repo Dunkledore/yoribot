@@ -222,7 +222,10 @@ class Fun:
             head, sep, tail = result.partition('?'or'.')
             await ctx.send(head+sep)
             await asyncio.sleep(10)
-            await ctx.send(tail)
+            if tail is None:
+                return
+            else:
+                await ctx.send(tail)
 
 def check_folders():
     if not os.path.exists("data/fun"):
