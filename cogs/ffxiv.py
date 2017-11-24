@@ -515,7 +515,7 @@ class FFXIV:
         if not "data" in charinfo.keys() or not "portrait" in charinfo["data"].keys():
             await self.embed(ctx, "FFXIV Glamour", "No portrait found.", "red")
         imgurl = charinfo["data"]["portrait"]
-        await self.embed(ctx, "FFXIV Glamour", "", "green", "", imgurl)
+        await self.embed(ctx, charinfo["name"], "", "green", "FFXIV Glamour", imgurl)
 
     @ffxiv.command(aliases=["glamor"])
     async def glamour(self, ctx, user: discord.User):
@@ -530,7 +530,7 @@ class FFXIV:
         if not "data" in charinfo.keys() or not "portrait" in charinfo["data"].keys():
             await self.embed(ctx, "FFXIV Glamour", "No portrait found.", "red")
         imgurl = charinfo["data"]["portrait"]
-        await self.embed(ctx, "FFXIV Glamour", "", "green", "", imgurl)
+        await self.embed(ctx, charinfo["name"], "", "green", "FFXIV Glamour", imgurl)
 
     @ffxiv.command(aliases=["charglamor"])
     async def charglamour(self, ctx, server, firstname, lastname):
@@ -550,7 +550,7 @@ class FFXIV:
                 if not "data" in charinfo.keys() or not "portrait" in charinfo["data"].keys():
                     await self.embed(ctx, "FFXIV Glamour", "No portrait found.", "red")
                 imgurl = charinfo["data"]["portrait"]
-                await self.embed(ctx, "FFXIV Glamour", "", "green", "", imgurl)
+                await self.embed(ctx, charinfo["name"], "", "green", "FFXIV Glamour", imgurl)
 
     @ffxiv.command()
     async def whois(self, ctx, user: discord.User):
