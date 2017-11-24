@@ -34,7 +34,7 @@ class Games():
             item = None
             base_item = None
         def check(m):
-        return m.author.id == ctx.message.author.id and channel == ctx.message.channel
+            return m.author.id == ctx.message.author.id and channel == ctx.message.channel
 
         await ctx.author.send("Type your user name. You can reply in this private msg")
             msg = await self.bot.wait_for('message',timeout=30, check=check)
