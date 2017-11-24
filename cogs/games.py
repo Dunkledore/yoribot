@@ -33,7 +33,11 @@ class Games():
         while not entry_done:
             item = None
             base_item = None
-            msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
+        def check(m):
+        return m.author.id == ctx.message.author.id and channel == ctx.message.channel
+
+        await ctx.author.send("Type your user name. You can reply in this private msg")
+            msg = await self.bot.wait_for('message',timeout=30, check=check)
             if msg is None:
                 await ctx.send("You didn't enter anything!")
                 return
