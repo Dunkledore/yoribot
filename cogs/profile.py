@@ -16,7 +16,7 @@ class Profile:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
     
-    @commands.command()
+    @commands.command(pass_context=True, no_pm=True)
     async def profilehelp(self, ctx):
         em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
         em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
