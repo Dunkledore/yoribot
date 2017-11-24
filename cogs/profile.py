@@ -18,15 +18,15 @@ class Profile:
 	
 	@commands.command()
 	async def profilehelp(self, ctx):
+		prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
 		em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
 		em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-		em.add_field(name='Adding Your Region', value='Use one of the following commands: \n `` *north america`` `` *south america`` `` *europe`` `` *africa`` `` *asia`` `` *oceania``', inline=False)
-		em.add_field(name='Adding Gender', value='Use `` *gender <gender>`` for example:\n `` *gender Male`` or `` *gender Female`` or `` *Intersex`` ', inline=False)
-		em.add_field(name='Adding Sexuality', value='Use `` *sexuality <sexuality> for example: \n `` *sexuality Straight`` `` *sexuality Gay`` `` *sexuality Lesbian`` `` *sexuality Asexual``', inline=False)
-		em.add_field(name='Adding Age', value='Use `` *age <age> for example: \n `` *age 20``.', inline=False)
-		em.add_field(name='Custom Fields', value='You can add custom sections to your profile using `` *profileadd <section title> <contents>``'
-					'\n For example you might do `` *profileadd "About Me" I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:''', inline=False)
-		em.set_image(url='https://i.gyazo.com/476ca3539836bfd7e5240f1f5366fa80.gif')
+		em.add_field(name='Adding Your Region', value='Use one of the following commands: \n `` ' + prefix + 'north america`` `` ' + prefix + 'south america`` `` ' + prefix + 'europe`` `` ' + prefix + 'africa`` `` ' + prefix + 'asia`` `` ' + prefix + 'oceania``', inline=False)
+		em.add_field(name='Adding Gender', value='Use `` ' + prefix + 'gender <gender>`` for example:\n `` ' + prefix + 'gender Male`` or `` ' + prefix + 'gender Female`` or `` ' + prefix + 'genderntersex`` ', inline=False)
+		em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality> for example: \n `` ' + prefix + 'sexuality Straight`` `` ' + prefix + 'sexuality Gay`` `` ' + prefix + 'sexuality Lesbian`` `` ' + prefix + 'sexuality Asexual``', inline=False)
+		em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age> for example: \n `` ' + prefix + 'age 20``.', inline=False)
+		em.add_field(name='Custom Fields', value='You can add custom sections to your profile using `` ' + prefix + 'profileadd <section title> <contents>``'
+					'\n For example you might do `` ' + prefix + 'profileadd "About Me" I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:''', inline=False)
 		em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
 		await ctx.send(embed=em)
 
