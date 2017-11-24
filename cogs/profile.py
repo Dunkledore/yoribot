@@ -23,8 +23,8 @@ class Profile:
 		em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
 		em.add_field(name='Adding Your Region', value='Use one of the following commands: \n `` ' + prefix + 'north america`` `` ' + prefix + 'south america`` `` ' + prefix + 'europe`` `` ' + prefix + 'africa`` `` ' + prefix + 'asia`` `` ' + prefix + 'oceania``', inline=False)
 		em.add_field(name='Adding Gender', value='Use `` ' + prefix + 'gender <gender>`` for example:\n `` ' + prefix + 'gender Male`` or `` ' + prefix + 'gender Female`` or `` ' + prefix + 'genderntersex`` ', inline=False)
-		em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality> for example: \n `` ' + prefix + 'sexuality Straight`` `` ' + prefix + 'sexuality Gay`` `` ' + prefix + 'sexuality Lesbian`` `` ' + prefix + 'sexuality Asexual``', inline=False)
-		em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age> for example: \n `` ' + prefix + 'age 20``.', inline=False)
+		em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality> for example: \n `` `` ' + prefix + 'sexuality Straight`` `` ' + prefix + 'sexuality Gay`` `` ' + prefix + 'sexuality Lesbian`` `` ' + prefix + 'sexuality Asexual``', inline=False)
+		em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age> for example: \n `` ``' + prefix + 'age 20``.', inline=False)
 		em.add_field(name='Custom Fields', value='You can add custom sections to your profile using `` ' + prefix + 'profileadd <section title> <contents>``'
 					'\n For example you might do `` ' + prefix + 'profileadd "About Me" I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:''', inline=False)
 		em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
