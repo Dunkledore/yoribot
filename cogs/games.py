@@ -33,7 +33,7 @@ class Games():
         while not entry_done:
             item = None
             base_item = None
-            msg = await self.bot.wait_for_message(timeout=30, author=author, channel=channel)
+            msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
             if msg is None:
                 await ctx.send("You didn't enter anything!")
                 return
@@ -47,7 +47,7 @@ class Games():
                     return
                 if item["Value"] == -1:
                     await ctx.send("Enter the item use to make this {}".format(item["Item"]))
-                    base_msg = await self.bot.wait_for_message(timeout=30, author=author, channel=channel)
+                    base_msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
                     if base_msg is None:
                         await ctx.send("You didn't enter anything!")
                         return
@@ -57,7 +57,7 @@ class Games():
                         await ctx.send("That item was not found.")
                         return
                 await ctx.send("Enter the item's quality: ")
-                qual_msg = await self.bot.wait_for_message(timeout=30, author=author, channel=channel)
+                qual_msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
                 if qual_msg is None:
                     await ctx.send("You didn't enter anything!")
                     return
