@@ -217,8 +217,8 @@ class Fun:
         api = 'https://icanhazdadjoke.com/'
         async with aiohttp.request('GET', api, headers={'Accept': 'text/plain'}) as r:
             result = await r.text()
-            head, sep, tail = result.partition('?')
-            await ctx.send(head+'?')
+            head, sep, tail = result.partition('?'or'.')
+            await ctx.send(head+sep)
             await asyncio.sleep(10)
             await ctx.send(tail)
 
