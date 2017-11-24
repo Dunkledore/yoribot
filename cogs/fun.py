@@ -217,7 +217,10 @@ class Fun:
         api = 'https://icanhazdadjoke.com/'
         async with aiohttp.request('GET', api, headers={'Accept': 'text/plain'}) as r:
             result = await r.text()
-            await ctx.send(result)
+            head, sep, tail = result.partition('?')
+            await ctx.send(head+'?')
+            await asyncio.sleep(10)
+            await ctx.send(tail)
 
 def check_folders():
     if not os.path.exists("data/fun"):
