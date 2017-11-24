@@ -36,44 +36,44 @@ class Games():
         def check(m):
             return m.author.id == ctx.message.author.id and channel == ctx.message.channel
         msg = await self.bot.wait_for('message',timeout=30, check=check)
-            if msg is None:
-                await ctx.send("You didn't enter anything!")
+        if msg is None:
+            await ctx.send("You didn't enter anything!")
+            return
+        if msg.content.lower() == "done":
+            entry_done = True
+        else:
+            try:
+                item = next(it for it in self.fair_items if it["Item"] == msg.content.lower())
+            except StopIteration:
+                await ctx.send("That item was not found. If it's the mayor's shorts, you'll get 750 star tokens")
                 return
-            if msg.content.lower() == "done":
-                entry_done = True
-            else:
-                try:
-                    item = next(it for it in self.fair_items if it["Item"] == msg.content.lower())
-                except StopIteration:
-                    await ctx.send("That item was not found. If it's the mayor's shorts, you'll get 750 star tokens")
-                    return
-                if item["Value"] == -1:
-                    await ctx.send("Enter the item use to make this {}".format(item["Item"]))
-                    base_msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
-                    if base_msg is None:
-                        await ctx.send("You didn't enter anything!")
-                        return
-                    try:
-                        base_item = next(it for it in self.fair_items if it["Item"] == msg.content.lower())
-                    except StopIteration:
-                        await ctx.send("That item was not found.")
-                        return
-                await ctx.send("Enter the item's quality: ")
-                qual_msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
-                if qual_msg is None:
+            if item["Value"] == -1:
+                await ctx.send("Enter the item use to make this {}".format(item["Item"]))
+                base_msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
+                if base_msg is None:
                     await ctx.send("You didn't enter anything!")
                     return
-                quality = qual_msg.content
-                if base_item:
-                    base_item_value = base_item["Value"]
-                    if item["Item"] == "wine":
-                        item["Value"] = math.floor(base_item_value * 3)
-                    elif item["Item"] == "jelly" or item["Item"] == "pickles":
-                        item["Value"] == math.floor(base_item_value * 2)
-                    elif item["Item"] == "juice":
-                        item["Value"] == math.floor(base_item_value * 2.25)
-                item["Quality"] = quality.lower()
-                items.append(item)
+                try:
+                    base_item = next(it for it in self.fair_items if it["Item"] == msg.content.lower())
+                except StopIteration:
+                    await ctx.send("That item was not found.")
+                    return
+            await ctx.send("Enter the item's quality: ")
+            qual_msg = await self.bot.wait_for('message',timeout=30, author=author, channel=channel)
+            if qual_msg is None:
+                await ctx.send("You didn't enter anything!")
+                return
+            quality = qual_msg.content
+            if base_item:
+                base_item_value = base_item["Value"]
+                if item["Item"] == "wine":
+                    item["Value"] = math.floor(base_item_value * 3)
+                elif item["Item"] == "jelly" or item["Item"] == "pickles":
+                    item["Value"] == math.floor(base_item_value * 2)
+                elif item["Item"] == "juice":
+                    item["Value"] == math.floor(base_item_value * 2.25)
+            item["Quality"] = quality.lower()
+            items.append(item)
         score = 14  # Base score
         category_list = []
         for piece in items:
