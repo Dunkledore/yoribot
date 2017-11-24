@@ -35,7 +35,7 @@ class Games():
             base_item = None
         def check(m):
             return m.author.id == ctx.message.author.id and channel == ctx.message.channel
-            msg = await self.bot.wait_for('message',timeout=30, check=check)
+        msg = await self.bot.wait_for('message',timeout=30, check=check)
             if msg is None:
                 await ctx.send("You didn't enter anything!")
                 return
