@@ -15,6 +15,20 @@ class Profile:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
+    
+    @commands.command()
+    async def profilehelp(self, ctx):
+        em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
+        em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
+        em.add_field(name='Adding Your Region', value='Use one of the following commands: \n `` *north america`` `` *south america`` `` *europe`` `` *africa`` `` *asia`` `` *oceania``', inline=False)
+        em.add_field(name='Adding Gender', value='Use `` *gender <gender>`` for example:\n `` *gender Male`` or `` *gender Female`` or `` *Intersex`` ', inline=False)
+        em.add_field(name='Adding Sexuality', value='Use `` *sexuality <sexuality> for example: \n `` *sexuality Straight`` `` *sexuality Gay`` `` *sexuality Lesbian`` `` *sexuality Asexual``', inline=False)
+        em.add_field(name='Adding Age', value='Use `` *age <age> for example: \n `` *age 20``.', inline=False)
+        em.add_field(name='Custom Fields', value='You can add custom sections to your profile using `` *profileadd <section title> <contents>``'
+        	        '\n For example you might do `` *profileadd "About Me" I am an one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:''', inline=False)
+        em.set_image(url='https://i.gyazo.com/476ca3539836bfd7e5240f1f5366fa80.gif')
+        em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
+        await ctx.send(embed=em)
 
 	@commands.command(pass_context=True, no_pm=True)
 	async def profile(self, ctx, user: discord.Member=None):
