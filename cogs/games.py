@@ -106,14 +106,14 @@ class Games():
     empty_penalty = 9 * (2 * (9 - len(items)))
     score += empty_penalty
 
-    if score >= 90:
-        await ctx.send("You win first place!")
-    elif score >= 75:
-        await ctx.send("You got second place!")
-    elif score >= 60:
-        await ctx.send("You got third place!")
-    else:
-        await ctx.send("You got fourth place!")
+        if score >= 90:
+            await ctx.send("You win first place!")
+        elif score >= 75:
+            await ctx.send("You got second place!")
+        elif score >= 60:
+            await ctx.send("You got third place!")
+        else:
+            await ctx.send("You got fourth place!")
 
 
 def setup(bot):
