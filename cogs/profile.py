@@ -47,7 +47,7 @@ class Profile:
 		"""Displays the profile of a mentioned user or the caller if no mention is provided"""
 
 		if user == ctx.bot.user:
-			await self.sendYori()
+			await self.sendYori(ctx)
 			return
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		query = "SELECT * FROM profile WHERE user_id = $1;"
