@@ -64,7 +64,7 @@ class Rift:
             await ctx.send("Rift embeds for this channel have been turned "+status+".")
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
-    @checks.mod_or_permissions(manage_channels=True)
+    @checks.is_mod()
     async def riftopen(self, ctx, name, channel):
         """Makes you able to communicate with other channels through Red.
 
@@ -131,7 +131,7 @@ class Rift:
         self.save_settings()
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
-    @checks.mod_or_permissions(manage_channels=True)
+    @checks.is_mod()
     async def riftconnect(self, ctx, riftname, channel):
         """Connects a channel to the specified rift."""
        
@@ -198,7 +198,7 @@ class Rift:
         self.save_settings()
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
-    @checks.mod_or_permissions(manage_channels=True)
+    @checks.is_mod()
     async def riftclose(self, ctx, riftname):
         """Closes the specified rift. Can only be used from a channel belonging to that rift."""
         if riftname not in self.open_rifts:
@@ -216,7 +216,7 @@ class Rift:
             print(e)
 
     @commands.command(pass_context=True,no_pm=True, hidden=True)
-    @checks.mod_or_permissions(manage_channels=True)
+    @checks.is_mod()
     async def riftlist(self, ctx):
         """Lists all the rifts this channel is in. """
         rnames = []
@@ -233,7 +233,7 @@ class Rift:
             await ctx.send(s)
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
-    @checks.mod_or_permissions(manage_channels=True)
+    @checks.is_mod()
     async def riftdisconnect(self, ctx, riftname):
         """Disconnects this channel from the specified rift."""
         if riftname not in self.open_rifts:

@@ -8,6 +8,9 @@ from enum import Enum
 from urllib.parse import quote_plus
 import datetime
 from .utils import checks
+import aiohttp
+import asyncio
+import asyncpg
 import os
 
 defaults = [
@@ -209,6 +212,20 @@ class Fun:
         elif intensity >= 10:
             msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
         await ctx.send(msg)
+
+    @commands.command()
+    async def dadjoke(self,ctx):
+        """Gets a random dad joke."""
+        api = 'https://icanhazdadjoke.com/'
+        async with aiohttp.request('GET', api, headers={'Accept': 'text/plain'}) as r:
+            result = await r.text()
+            head, sep, tail = result.partition('?'or'.')
+            await ctx.send(head+sep)
+            await asyncio.sleep(10)
+            if tail is None:
+                return
+            else:
+                await ctx.send(tail)
 
 def check_folders():
     if not os.path.exists("data/fun"):
