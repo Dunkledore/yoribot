@@ -1675,16 +1675,5 @@ class CardsAgainstHumanity:
         
         await self.bot.send_message(ctx.message.channel, msg)
 
-    @commands.command()
-    async def cahcredits(self):
-        """Code credits."""
-        message = await self._credit()
-        await ctx.send(message)
-
-    async def _credit(self):
-        message = "```This cog is made possible by CorpBot.\n"
-        message+= "Please visit https://github.com/corpnewt/CorpBot.py for more information.```"
-        return message
-
 def setup(bot):
     bot.add_cog(CardsAgainstHumanity(bot))
