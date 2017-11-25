@@ -44,6 +44,7 @@ class Admin:
         for guild in self.bot.guilds:
             if id == guild.id:
                 await guild.leave()
+                return
         await ctx.send("You are not in that guild")
 
 
