@@ -110,6 +110,7 @@ class Stats:
     async def about(self, ctx):
         """Tells you information about the bot itself."""
 
+        embed = discord.Embed()
         embed.title = 'About Me'
         embed.url = 'https://discord.gg/VB93Wj7'
         embed.colour = discord.Colour.blurple()
