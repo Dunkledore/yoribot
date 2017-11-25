@@ -39,6 +39,16 @@ class Admin:
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
     @commands.command(hidden=True)
+    @checks.is_owner()
+    async def leave(self, ctx, id : int):
+        for guild in self.bot.guilds:
+            if id == guild.id:
+                await guild.leave()
+        await ctx.send("You are not in that guild")
+
+
+
+    @commands.command(hidden=True)
     @checks.is_developer()
     async def ping(self, ctx):
         await ctx.send('Pong')
@@ -49,7 +59,7 @@ class Admin:
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
         for guild in self.bot.guilds:
-            string += "**Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
+            string += "**ID: "+ guild.id + "**Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
 
         await ctx.send(string)
 
