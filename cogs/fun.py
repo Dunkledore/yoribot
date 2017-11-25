@@ -3,6 +3,7 @@ from discord.ext import commands
 from .utils.dataIO import fileIO
 from random import choice as randchoice
 from random import randint
+from random import choice as rnd
 from random import choice
 from enum import Enum
 from urllib.parse import quote_plus
@@ -55,6 +56,13 @@ class Fun:
                      "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
                      "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+        self.toggle = False
+        self.feelings = "data/funfeelings.json"
+        self.system = dataIO.load_json(self.feelings)
+
+    def save_emotes(self):
+        dataIO.save_json(self.feelings, self.system)
+        dataIO.is_valid_json("data/fun/feelings.json")
 
     @commands.command(pass_context=True, no_pm=True)
     async def riot(self, ctx, *text):
@@ -232,6 +240,54 @@ class Fun:
     async def guard(self,ctx):
         """Says a random guard line from Skyrim"""
         await ctx.send(choice(self.lines))
+    @commands.group(aliases=["kao"], invoke_without_command=True, pass_context=True)
+    async def kaomoji(self, ctx, *, category: str, n: int=None):
+        str_category = category.lower()
+        m = ctx.message
+        amount = len(self.system.get(str_category, []))
+        if str_category in self.system:
+            if n is None:
+                await ctx.send(rnd(self.system[str_category]))
+            else:
+                if n > amount:
+                    await ctx.send("The highest kaomoji count for " + str_category + " is "
+                                       + str(amount) + ". \n(╯°□°）╯︵ ┻━┻")
+                else:
+                    await ctx.send(self.system[str_category][n])
+            print(str_category + " kaomoji called")
+        else:
+            await ctx.send(str_category + " category couldn't be found. \n¯\_(ツ)_/¯")
+        if self.toggle is True:
+            try:
+                await self.bot.delete_message(m)
+                await ctx.send("Deleted command msg {}".format(m.id))
+            except discord.errors.Forbidden:
+                await ctx.send("Wanted to delete mid {} but no permissions".format(m.id))
+
+    @kaomoji.command(name="list")
+    async def _list(self,ctx):
+        """Shows all categories"""
+        categories = [i for i in self.system]
+        await ctx.send("```" + ', '.join(categories) + "```")
+        print("Kaomoji list called")
+
+    @kaomoji.command()
+    async def count(self, ctx, category: str):
+        """Displays count per category"""
+        str_category = category.lower()
+        amount = len(self.system[str_category])
+        await ctx.send("There are " + str(amount) + " kaomojis for " + str_category)
+
+    @kaomoji.command()
+    async def cleaner(self, ctx, on_off: str):
+        """Cleans up your commands"""
+        if on_off is True:
+            await ctx.send('Deleting commands is now ON.')
+            self.toggle = True
+        else:
+            await ctx.send('Deleting commands is now OFF.')
+            self.toggle = False
+
 
 
 def check_folders():
@@ -245,6 +301,9 @@ def check_files():
         print("Creating empty items.json...")
         fileIO(f, "save", defaults)
     if not os.path.isfile("data/fun/lines.json"):
+        raise RuntimeError(
+            "Required data is missing. Please reinstall this cog.")
+    if not os.path.isfile("data/fun/feelings.json"):
         raise RuntimeError(
             "Required data is missing. Please reinstall this cog.")
 
