@@ -42,8 +42,8 @@ class Profile:
 		if not brief:
 			if days:
 				 fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
-		else:
-			fmt = '{h} hours, {m} minutes, and {s} seconds'
+			else:
+				fmt = '{h} hours, {m} minutes, and {s} seconds'
 		else:
 			fmt = '{h}h {m}m {s}s'
 			if days:
