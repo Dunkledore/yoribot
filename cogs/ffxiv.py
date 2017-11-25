@@ -73,13 +73,15 @@ class FFXIV:
     def save_fflogs_settings(self):
         dataIO.save_json("data/ffxiv/fflogs/settings.json", self.fflogs_settings)
 
-    async def embed(self, ctx, authortext="", desc="", col="", footer=""):
+    async def embed(self, ctx, authortext="", desc="", col="", footer="", imgurl=""):
         colors = {"red": 0xE74C3C, "green": 0x2ECC71, "yellow": 0xF1C40F, "purple": 0x9B59B6, "blue": 0x3498DB,
                   "white": 0xFFFFFF, "darkred": 0x73261E}
         c = colors[col] if col in colors.keys() else 0x000000
         em = discord.Embed(color=c, description=desc)
         em.set_author(name=authortext, icon_url="https://i.imgur.com/n3tqR2E.png")
         em.set_footer(text=footer)
+        if imgurl != "":
+            em.set_image(url=imgurl)
         await ctx.send(embed=em)
 
     @commands.group(invoke_without_command=True)
@@ -499,6 +501,56 @@ class FFXIV:
             self.save_settings()
         with open("data/ffxiv/profiles/{}.png".format(charinfo["data"]["id"]), "rb") as f:
             await ctx.message.channel.send(file=discord.File(f))
+
+    @ffxiv.command(aliases=["myglamor"])
+    async def myglamour(self, ctx):
+        """Show your glamour to the world!"""
+        if not str(ctx.message.author.id) in self.settings["characters"].keys():
+            await self.embed(ctx, "FFXIV Glamour", "No character saved.", "red")
+            return
+        charinfo = await self._xivdb("character", id_=self.settings["characters"][str(ctx.message.author.id)]["id"])
+        if "error" in charinfo.keys():
+            await self.embed(ctx, "FFXIV Glamour: XIVDB Error", charinfo["error"], "red")
+            return
+        if not "data" in charinfo.keys() or not "portrait" in charinfo["data"].keys():
+            await self.embed(ctx, "FFXIV Glamour", "No portrait found.", "red")
+        imgurl = charinfo["data"]["portrait"]
+        await self.embed(ctx, charinfo["name"]+" ("+charinfo["server"]+")", "", "green", "FFXIV Glamour", imgurl)
+
+    @ffxiv.command(aliases=["glamor"])
+    async def glamour(self, ctx, user: discord.User):
+        """Show a user's glamour."""
+        if not str(user.id) in self.settings["characters"].keys():
+            await self.embed(ctx, "FFXIV Glamour", "No character saved.", "red")
+            return
+        charinfo = await self._xivdb("character", id_=self.settings["characters"][str(user.id)]["id"])
+        if "error" in charinfo.keys():
+            await self.embed(ctx, "FFXIV Glamour: XIVDB Error", charinfo["error"], "red")
+            return
+        if not "data" in charinfo.keys() or not "portrait" in charinfo["data"].keys():
+            await self.embed(ctx, "FFXIV Glamour", "No portrait found.", "red")
+        imgurl = charinfo["data"]["portrait"]
+        await self.embed(ctx, charinfo["name"]+" ("+charinfo["server"]+")", "", "green", "FFXIV Glamour", imgurl)
+
+    @ffxiv.command(aliases=["charglamor"])
+    async def charglamour(self, ctx, server, firstname, lastname):
+        """Show a character's glamour."""
+        server = server.title()
+        if self.getDC(server) == "":
+            await self.embed(ctx, "FFXIV Glamour", "That server doesn't exist.", "red")
+        else:
+            charid = await self._charsearch(server, firstname, lastname)
+            if isinstance(charid, dict):
+                await self.embed(ctx, "XIVDB Error", charid["__ERROR__"], "red")
+                return
+            if charid == "":
+                await self.embed(ctx, "FFXIV Glamour", "I couldn't find that character.", "red")
+            else:
+                charinfo = await self._xivdb("character", id_=charid)
+                if not "data" in charinfo.keys() or not "portrait" in charinfo["data"].keys():
+                    await self.embed(ctx, "FFXIV Glamour", "No portrait found.", "red")
+                imgurl = charinfo["data"]["portrait"]
+                await self.embed(ctx, charinfo["name"]+" ("+charinfo["server"]+")", "", "green", "FFXIV Glamour", imgurl)
 
     @ffxiv.command()
     async def whois(self, ctx, user: discord.User):

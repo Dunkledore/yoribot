@@ -9,17 +9,89 @@ import discord
 import asyncio
 import traceback
 import asyncpg
+import psutil
 
 class Profile:
 	"""Commands used to set up your server profile"""
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
+	
+	@commands.command()
+	async def profilehelp(self, ctx):
+		prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
+		em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
+		em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
+		em.add_field(name='Adding Your Region', value='Use one of the following commands: \n\n `` ' + prefix + 'north america`` `` ' + prefix + 'south america`` `` ' + prefix + 'europe`` `` ' + prefix + 'africa`` `` ' + prefix + 'asia`` `` ' + prefix + 'oceania``', inline=False)
+		em.add_field(name='Adding Gender', value='Use `` ' + prefix + 'gender <gender>`` for example:\n\n `` ' + prefix + 'gender Male`` or `` ' + prefix + 'gender Female`` or `` ' + prefix + 'genderntersex`` ', inline=False)
+		em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality> for example: \n\n `` `` ' + prefix + 'sexuality Straight`` `` ' + prefix + 'sexuality Gay`` `` ' + prefix + 'sexuality Lesbian`` `` ' + prefix + 'sexuality Asexual``', inline=False)
+		em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age> for example: \n\n `` ``' + prefix + 'age 20``.', inline=False)
+		em.add_field(name='Custom Fields', value='You can add custom sections to your profile using \n\n`` ' + prefix + 'profileadd <section title> <contents>``\n'
+					'\nFor example you might do: \n\n``' + prefix +'profileadd "About Me" I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features!``\n', inline=False)
+		em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
+		await ctx.send(embed=em)
+
+	
+	def get_bot_uptime(self, *, brief=False):
+		now = datetime.datetime.utcnow()
+		delta = now - self.bot.uptime
+		hours, remainder = divmod(int(delta.total_seconds()), 3600)
+		minutes, seconds = divmod(remainder, 60)
+		days, hours = divmod(hours, 24)
+
+		if not brief:
+			if days:
+				 fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+			else:
+				fmt = '{h} hours, {m} minutes, and {s} seconds'
+		else:
+			fmt = '{h}h {m}m {s}s'
+			if days:
+				fmt = '{d}d ' + fmt
+
+		return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+
+	async def sendYori(self, ctx):
+
+		total_members = sum(1 for _ in self.bot.get_all_members())
+		total_online = len({m.id for m in self.bot.get_all_members() if m.status is discord.Status.online})
+		total_unique = len(self.bot.users)
+		voice_channels = []
+		text_channels = []
+		for guild in self.bot.guilds:
+			voice_channels.extend(guild.voice_channels)
+			text_channels.extend(guild.text_channels)
+
+		text = len(text_channels)
+		voice = len(voice_channels)
+		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
+		embed.set_author(name=ctx.bot.user.name, icon_url=ctx.message.guild.icon_url)
+		embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+		embed.add_field(name='Age', value= "Old Enough")
+		embed.add_field(name='Region', value="Anywhere and Everywhere")
+		embed.add_field(name='Gender', value="Agender")
+		embed.add_field(name='Sexuality', value="Asexual")
+		embed.add_field(name='About Me', value="I am a one of the best Discord bots around - I am easy to use and I have a ton of fun features :grin:")
+		embed.add_field(name='Members', value=f'{total_members} total\n{total_unique} unique\n{total_online} unique online')
+		embed.add_field(name='Channels', value=f'{text + voice} total\n{text} text\n{voice} voice')
+		process = psutil.Process()
+		memory_usage = process.memory_full_info().uss / 1024**2
+		cpu_usage = process.cpu_percent() / psutil.cpu_count()
+		embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
+		embed.add_field(name='Guilds Playing Music', value=len(self.bot.voice_clients))
+		embed.add_field(name='Guilds', value=len(self.bot.guilds))
+		embed.add_field(name='Commands Run', value=sum(self.bot.command_stats.values()))
+		embed.add_field(name='Uptime', value=self.get_bot_uptime(brief=True))
+		embed.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
+		await ctx.send(embed=embed)
 
 	@commands.command(pass_context=True, no_pm=True)
 	async def profile(self, ctx, user: discord.Member=None):
 		"""Displays the profile of a mentioned user or the caller if no mention is provided"""
 
+		if user == ctx.bot.user:
+			await self.sendYori(ctx)
+			return
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		query = "SELECT * FROM profile WHERE user_id = $1;"
 		if user is None:
@@ -135,6 +207,7 @@ class Profile:
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "North America", ctx.message.author.id)
+			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, aliases=['europe'])
 	async def Europe(self, ctx):
@@ -148,6 +221,7 @@ class Profile:
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Europe", ctx.message.author.id)
+			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, aliases=['africa'])
 	async def Africa(self, ctx):
@@ -161,6 +235,7 @@ class Profile:
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Africa", ctx.message.author.id)
+			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, aliases=['oceania'])
 	async def Oceania(self, ctx):
@@ -174,6 +249,7 @@ class Profile:
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Oceania", ctx.message.author.id)
+			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True, aliases=['southamerica'])
 	async def SouthAmerica(self, ctx):
@@ -187,6 +263,7 @@ class Profile:
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "South America", ctx.message.author.id)
+			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True,  aliases=['asia'])
 	async def Asia(self, ctx):
@@ -200,6 +277,7 @@ class Profile:
 		else:
 			query = "UPDATE Profile SET region = $1 WHERE user_id = $2"
 			await ctx.db.execute(query, "Asia", ctx.message.author.id)
+			await ctx.send("Region Set")
 
 	@commands.command(pass_context=True, no_pm=True)
 	async def profiledelete(self, ctx):
@@ -236,7 +314,7 @@ class Profile:
 
 
 def setup(bot):
-    bot.add_cog(Profile(bot))
+	bot.add_cog(Profile(bot))
 
 
 
