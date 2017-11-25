@@ -31,6 +31,26 @@ class Profile:
 		em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
 		await ctx.send(embed=em)
 
+	
+    def get_bot_uptime(self, *, brief=False):
+        now = datetime.datetime.utcnow()
+        delta = now - self.bot.uptime
+        hours, remainder = divmod(int(delta.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+
+        if not brief:
+            if days:
+                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+            else:
+                fmt = '{h} hours, {m} minutes, and {s} seconds'
+        else:
+            fmt = '{h}h {m}m {s}s'
+            if days:
+                fmt = '{d}d ' + fmt
+
+        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+
 	async def sendYori(self, ctx):
 
 		total_members = sum(1 for _ in self.bot.get_all_members())
