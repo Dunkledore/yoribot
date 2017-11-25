@@ -468,8 +468,8 @@ class Stats:
             return
 
         e = discord.Embed(title='Command Error', colour=0xcc3366)
-        e.add_field(name='Name', value=ctx.command.qualified_name)
-        e.add_field(name='Author', value=f'{ctx.author} (ID: {ctx.author.id})')
+        e.add_field(name='Command Name', value=ctx.command.qualified_name)
+        e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')
 
         fmt = f'Channel: {ctx.channel} (ID: {ctx.channel.id})'
         if ctx.guild:
