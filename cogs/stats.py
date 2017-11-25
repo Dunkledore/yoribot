@@ -52,6 +52,12 @@ class Stats:
     async def on_socket_response(self, msg):
         self.bot.socket_stats[msg.get('t')] += 1
 
+    @property
+    def webhook(self):
+        wh_id, wh_token = self.bot.config.stat_webhook
+        hook = discord.Webhook.partial(id=wh_id, token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
+        return hook
+
 
     @commands.command(hidden=True)
     @commands.is_owner()
@@ -73,14 +79,6 @@ class Stats:
         output = '\n'.join(f'{k:<{width}}: {c}' for k, c in common)
 
         await ctx.send(f'```\n{output}\n```')
-
-    @commands.command(hidden=True)
-    async def socketstats(self, ctx):
-        delta = datetime.datetime.utcnow() - self.bot.uptime
-        minutes = delta.total_seconds() / 60
-        total = sum(self.bot.socket_stats.values())
-        cpm = total / minutes
-        await ctx.send(f'{total} socket events observed ({cpm:.2f}/minute):\n{self.bot.socket_stats}')
 
     def get_bot_uptime(self, *, brief=False):
         now = datetime.datetime.utcnow()
@@ -109,20 +107,13 @@ class Stats:
     @commands.command()
     async def about(self, ctx):
         """Tells you information about the bot itself."""
-        cmd = r'git show -s HEAD~3..HEAD --format="[{}](https://github.com/Rapptz/RoboDanny/commit/%H) %s (%cr)"'
-        if os.name == 'posix':
-            cmd = cmd.format(r'\`%h\`')
-        else:
-            cmd = cmd.format(r'`%h`')
 
-        revision = os.popen(cmd).read().strip()
-        embed = discord.Embed(description='Latest Changes:\n' + revision)
-        embed.title = 'Official Bot Server Invite'
-        embed.url = 'https://discord.gg/0118rJdtd1rVJJfuI'
+        embed.title = 'About Me'
+        embed.url = 'https://discord.gg/VB93Wj7'
         embed.colour = discord.Colour.blurple()
 
-        owner = self.bot.get_user(self.bot.owner_id)
-        embed.set_author(name=str(owner), icon_url=owner.avatar_url)
+
+        embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
 
         # statistics
         total_members = sum(1 for _ in self.bot.get_all_members())
