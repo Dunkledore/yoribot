@@ -449,7 +449,8 @@ class Stats:
         if guild.me:
             e.timestamp = guild.me.joined_at
 
-        await self.webhook.send(embed=e)
+        hook = await self.webhook()
+        await hook.send(embed=e)
 
     async def on_guild_join(self, guild):
         e = discord.Embed(colour=0x53dda4, title='New Guild') # green colour
@@ -480,7 +481,8 @@ class Stats:
         exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
         e.description = f'```py\n{exc}\n```'
         e.timestamp = datetime.datetime.utcnow()
-        await self.webhook.send(embed=e)
+        hook = await self.webhook()
+        await hook.send(embed=e)
 
 old_on_error = commands.Bot.on_error
 
@@ -490,7 +492,7 @@ async def on_error(self, event, *args, **kwargs):
     e.description = f'```py\n{traceback.format_exc()}\n```'
     e.timestamp = datetime.datetime.utcnow()
 
-    hook = await self.get_cog('Stats').webhook
+    hook = await self.get_cog('Stats').webhook()
     try:
         await hook.send(embed=e)
     except:
