@@ -381,7 +381,7 @@ class Mod:
         channel = channel or ctx.channel
 
         try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
+            await ctx.guild.edit(verification_level=discord.VerificationLevel.medium)
         except discord.HTTPException:
             await ctx.send('\N{WARNING SIGN} Could not set verification level.')
 
