@@ -107,7 +107,7 @@ class Searches:
             result = await m.json()
             message = choice(result)
             fortune = discord.Embed(colour=user.colour)
-            fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
+            fortune.add_field(name="{}'s Fortune: \n{}".format(user.display_name, message["message"]))
             await ctx.send(embed=fortune)
 
 def setup(bot):
