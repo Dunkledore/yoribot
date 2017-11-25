@@ -229,7 +229,7 @@ class Fun:
             else:
                 await ctx.send(tail)
     @commands.command()
-    async def guard(self):
+    async def guard(self,ctx):
         """Says a random guard line from Skyrim"""
         await ctx.send(choice(self.lines))
 
