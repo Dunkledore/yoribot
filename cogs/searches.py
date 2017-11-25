@@ -10,10 +10,11 @@ from xml.etree import ElementTree as ET
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
+import aiohttp
+import json
 import random
 from random import randint
 from random import choice
-
 
 class Searches:
     """Different search commands - YouTube, Google, random cat, random dog. """
@@ -110,7 +111,7 @@ class Searches:
             result = await m.json()
             message = choice(result)
             fortune = discord.Embed(colour=user.colour)
-            fortune.add_field(name="{}'s Fortune: \n{}".format(user.display_name, message["message"]))
+            fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
             await ctx.send(embed=fortune)
 
 def setup(bot):
