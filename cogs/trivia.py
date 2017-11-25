@@ -29,7 +29,7 @@ class Trivia:
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
     @commands.group(pass_context=True, no_pm=True, hidden=True)
-    @checks.mod_or_permissions(administrator=True)
+    @checks.is_mod()
     async def triviaset(self, ctx):
         """Allows you to change the settings for Trivia"""
         guild = ctx.message.guild

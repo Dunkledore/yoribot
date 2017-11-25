@@ -52,6 +52,14 @@ class Stats:
     async def on_socket_response(self, msg):
         self.bot.socket_stats[msg.get('t')] += 1
 
+    async def webhook(self):
+        query =  "SELECT * FROM webhook"
+        results = await self.bot.pool.fetch(query)
+        wh_id = results[0]["wh_id"]
+        wh_token = results[0]["wh_token"]
+        hook = discord.Webhook.partial(id=int(wh_id), token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
+        return hook
+
 
     @commands.command(hidden=True)
     @commands.is_owner()
@@ -73,14 +81,6 @@ class Stats:
         output = '\n'.join(f'{k:<{width}}: {c}' for k, c in common)
 
         await ctx.send(f'```\n{output}\n```')
-
-    @commands.command(hidden=True)
-    async def socketstats(self, ctx):
-        delta = datetime.datetime.utcnow() - self.bot.uptime
-        minutes = delta.total_seconds() / 60
-        total = sum(self.bot.socket_stats.values())
-        cpm = total / minutes
-        await ctx.send(f'{total} socket events observed ({cpm:.2f}/minute):\n{self.bot.socket_stats}')
 
     def get_bot_uptime(self, *, brief=False):
         now = datetime.datetime.utcnow()
@@ -109,20 +109,14 @@ class Stats:
     @commands.command()
     async def about(self, ctx):
         """Tells you information about the bot itself."""
-        cmd = r'git show -s HEAD~3..HEAD --format="[{}](https://github.com/Rapptz/RoboDanny/commit/%H) %s (%cr)"'
-        if os.name == 'posix':
-            cmd = cmd.format(r'\`%h\`')
-        else:
-            cmd = cmd.format(r'`%h`')
 
-        revision = os.popen(cmd).read().strip()
-        embed = discord.Embed(description='Latest Changes:\n' + revision)
-        embed.title = 'Official Bot Server Invite'
-        embed.url = 'https://discord.gg/0118rJdtd1rVJJfuI'
+        embed = discord.Embed()
+        embed.title = 'About Me'
+        embed.url = 'https://discord.gg/VB93Wj7'
         embed.colour = discord.Colour.blurple()
 
-        owner = self.bot.get_user(self.bot.owner_id)
-        embed.set_author(name=str(owner), icon_url=owner.avatar_url)
+
+        embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
 
         # statistics
         total_members = sum(1 for _ in self.bot.get_all_members())
@@ -144,6 +138,7 @@ class Stats:
         memory_usage = self.process.memory_full_info().uss / 1024**2
         cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
         embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
+        embed.add_field(name='Guilds Playing Music', value=len(self.bot.voice_clients))
 
 
         embed.add_field(name='Guilds', value=len(self.bot.guilds))
@@ -455,7 +450,8 @@ class Stats:
         if guild.me:
             e.timestamp = guild.me.joined_at
 
-        await self.webhook.send(embed=e)
+        hook = await self.webhook()
+        await hook.send(embed=e)
 
     async def on_guild_join(self, guild):
         e = discord.Embed(colour=0x53dda4, title='New Guild') # green colour
@@ -474,8 +470,8 @@ class Stats:
             return
 
         e = discord.Embed(title='Command Error', colour=0xcc3366)
-        e.add_field(name='Name', value=ctx.command.qualified_name)
-        e.add_field(name='Author', value=f'{ctx.author} (ID: {ctx.author.id})')
+        e.add_field(name='Command Name', value=ctx.command.qualified_name)
+        e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')
 
         fmt = f'Channel: {ctx.channel} (ID: {ctx.channel.id})'
         if ctx.guild:
@@ -486,7 +482,8 @@ class Stats:
         exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
         e.description = f'```py\n{exc}\n```'
         e.timestamp = datetime.datetime.utcnow()
-        await self.webhook.send(embed=e)
+        hook = await self.webhook()
+        await hook.send(embed=e)
 
 old_on_error = commands.Bot.on_error
 
@@ -496,7 +493,7 @@ async def on_error(self, event, *args, **kwargs):
     e.description = f'```py\n{traceback.format_exc()}\n```'
     e.timestamp = datetime.datetime.utcnow()
 
-    hook = self.get_cog('Stats').webhook
+    hook = await self.get_cog('Stats').webhook()
     try:
         await hook.send(embed=e)
     except:

@@ -1,5 +1,6 @@
 from discord.ext import commands
 import asyncio
+import asyncpg
 import traceback
 import discord
 import inspect
@@ -38,6 +39,16 @@ class Admin:
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
     @commands.command(hidden=True)
+    @checks.is_owner()
+    async def leave(self, ctx, id : int):
+        for guild in self.bot.guilds:
+            if id == guild.id:
+                await guild.leave()
+        await ctx.send("You are not in that guild")
+
+
+
+    @commands.command(hidden=True)
     @checks.is_developer()
     async def ping(self, ctx):
         await ctx.send('Pong')
@@ -48,10 +59,25 @@ class Admin:
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
         for guild in self.bot.guilds:
-            string += "**Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
+            string += "**ID: **"+ str(guild.id) + " **Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
 
         await ctx.send(string)
 
+    @commands.command(hidden=True)
+    @checks.is_admin()
+    async def modrole(self, ctx, role: discord.Role):
+        """Sets the mod role"""
+
+        insertquery = "INSERT INTO mod_config (guild_id, mod_role) VALUES ($1, $2)"
+        alterquery = "UPDATE mod_config SET mod_role = $2 WHERE guild_id = $1"
+
+        try:
+            await ctx.db.execute(insertquery, ctx.guild.id, role.id)
+        except asyncpg.UniqueViolationError:
+            await ctx.db.execute(alterquery, ctx.guild.id, role.id)
+        await ctx.send('Role set')
+
+    
     @commands.command(hidden=True)
     @checks.is_owner()
     async def messageowners(self, ctx, *, message):
