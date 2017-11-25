@@ -33,6 +33,17 @@ class Profile:
 
 	async def sendYori(self, ctx):
 
+		total_members = sum(1 for _ in self.bot.get_all_members())
+		total_online = len({m.id for m in self.bot.get_all_members() if m.status is discord.Status.online})
+		total_unique = len(self.bot.users)
+		voice_channels = []
+		text_channels = []
+		for guild in self.bot.guilds:
+			voice_channels.extend(guild.voice_channels)
+			text_channels.extend(guild.text_channels)
+
+		text = len(text_channels)
+		voice = len(voice_channels)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name=ctx.bot.user.name, icon_url=ctx.message.guild.icon_url)
 		embed.set_thumbnail(url=ctx.bot.user.avatar_url)
