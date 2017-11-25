@@ -54,7 +54,10 @@ class Stats:
 
     @property
     def webhook(self):
-        wh_id, wh_token = self.bot.config.stat_webhook
+        query =  "SELECT * FROM webhook"
+        results = self.bot.db.fetch(query)
+        wh_id = results[0]["wh_id"]
+        wh_token = results[0]["wh_token"]
         hook = discord.Webhook.partial(id=wh_id, token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
         return hook
 
