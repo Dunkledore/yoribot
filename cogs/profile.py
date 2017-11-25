@@ -56,7 +56,7 @@ class Profile:
 		embed.add_field(name='Channels', value=f'{text + voice} total\n{text} text\n{voice} voice')
 		process = psutil.Process()
 		memory_usage = process.memory_full_info().uss / 1024**2
-		cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
+		cpu_usage = process.cpu_percent() / psutil.cpu_count()
 		embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
 		embed.add_field(name='Guilds', value=len(self.bot.guilds))
 		embed.add_field(name='Commands Run', value=sum(self.bot.command_stats.values()))
