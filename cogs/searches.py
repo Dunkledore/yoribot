@@ -10,6 +10,9 @@ from xml.etree import ElementTree as ET
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
+import random
+from random import randint
+from random import choice
 
 
 class Searches:
