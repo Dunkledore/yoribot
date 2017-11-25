@@ -49,7 +49,7 @@ class Profile:
 			if days:
 				fmt = '{d}d ' + fmt
 
-		  return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+		return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
 	async def sendYori(self, ctx):
 
