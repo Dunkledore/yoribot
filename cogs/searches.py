@@ -101,7 +101,7 @@ class Searches:
         await ctx.send("That's it! https://www.google.com/search?q="+query)
     
     @commands.command(pass_context=True, no_pm=True)
-    async def getfortune(self, ctx):
+    async def fortune(self, ctx):
         """What is your fortune? Well then, lets find out..."""
         
         user = ctx.message.author
