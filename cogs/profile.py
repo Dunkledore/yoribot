@@ -78,6 +78,7 @@ class Profile:
 		memory_usage = process.memory_full_info().uss / 1024**2
 		cpu_usage = process.cpu_percent() / psutil.cpu_count()
 		embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
+		embed.add_field(name='Guilds Playing Music', value=len(self.bot.voice_channels))
 		embed.add_field(name='Guilds', value=len(self.bot.guilds))
 		embed.add_field(name='Commands Run', value=sum(self.bot.command_stats.values()))
 		embed.add_field(name='Uptime', value=self.get_bot_uptime(brief=True))
