@@ -58,6 +58,7 @@ class Stats:
         wh_id = results[0]["wh_id"]
         wh_token = results[0]["wh_token"]
         hook = discord.Webhook.partial(id=int(wh_id), token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
+        await hook.send("Hello")
         return hook
 
 
