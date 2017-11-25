@@ -52,8 +52,7 @@ class Stats:
     async def on_socket_response(self, msg):
         self.bot.socket_stats[msg.get('t')] += 1
 
-    @property
-    def webhook(self):
+    async def webhook(self):
         query =  "SELECT * FROM webhook"
         results = await self.bot.pool.fetch(query)
         wh_id = results[0]["wh_id"]
@@ -490,7 +489,7 @@ async def on_error(self, event, *args, **kwargs):
     e.description = f'```py\n{traceback.format_exc()}\n```'
     e.timestamp = datetime.datetime.utcnow()
 
-    hook = self.get_cog('Stats').webhook
+    hook = await self.get_cog('Stats').webhook
     try:
         await hook.send(embed=e)
     except:
