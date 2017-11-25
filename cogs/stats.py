@@ -138,6 +138,7 @@ class Stats:
         memory_usage = self.process.memory_full_info().uss / 1024**2
         cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
         embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
+        embed.add_field(name='Guilds Playing Music', value=len(self.bot.voice_clients))
 
 
         embed.add_field(name='Guilds', value=len(self.bot.guilds))
