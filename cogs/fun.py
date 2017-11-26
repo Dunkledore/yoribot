@@ -227,7 +227,7 @@ class Fun:
             head, sep, tail = result.partition('?'or'.')
             await ctx.send(head+sep)
             await asyncio.sleep(10)
-            if tail is None:
+            if tail is None or tail == "":
                 return
             else:
                 await ctx.send(tail)
