@@ -16,17 +16,12 @@ import asyncpg
 import os
 
 defaults = [
-    "Twentysix's Floppy Disk",
-    "Eslyium's Hentai Collection",
+    "Dunkledore's Floppy Disk",
+    "Seneth's Hentai Collection",
     "A Nuke",
     "A Loaf Of Bread",
     "My Hand",
-    "Will's SquidBot",
-    "JennJenn's Penguin Army",
-    "Red's Transistor",
-    "Asu\u10e6's Wrath",
-    "Irdumb's Cookie jar"]
-
+    "Granola's wet fish"]
 
 class RPS(Enum):
     rock     = "\N{MOYAI}"
@@ -50,6 +45,7 @@ class Fun:
 
     def __init__(self, bot):
         self.bot = bot
+        self.items = fileIO("data/slap/items.json", "load")
         self.thotchoices = fileIO("data/fun/thotchoices.json","load")
         self.lines = dataIO.load_json("data/fun/lines.json")
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
@@ -81,7 +77,6 @@ class Fun:
     async def slap(self, ctx, user: discord.Member=None):
         """Slap a user"""
         botid = self.bot.user.id
-        person = user.nick
         if user is None:
             user = ctx.message.author
             await ctx.send("Dont make me slap you instead " + user.name)
@@ -92,7 +87,7 @@ class Fun:
                                " multiple times with " +
                                (randchoice(self.items) + "-"))
         else:
-            await ctx.send("-slaps " + user.name + " with " +
+            await ctx.send("-slaps " + user.nick + " with " +
                                (randchoice(self.items) + "-"))
 
     @slap.command()
