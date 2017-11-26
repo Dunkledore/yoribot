@@ -314,6 +314,7 @@ class FFXIV:
     @ffxiv_news.command(name="start")
     async def send_all_news(self, ctx):
         print("(News) Started send_all_news")
+        ctx.send("Started.")
         await self.bot.wait_until_ready()
         print("(News) Ready")
         debugchannel = self.bot.get_channel(381089525880979467)
