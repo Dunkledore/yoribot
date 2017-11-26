@@ -157,7 +157,7 @@ class RoleManager:
         if roleinfo is None:
             em = discord.Embed(color=ctx.message.author.color, description="That is not a valid self-assignable role.")
             em.set_author(name=role, icon_url="http://bit.ly/2qlsl5I")
-            await self.bot.send_message(ctx.message.channel, embed=em)
+            await ctx.send(embed=em)
             return
         else:
             del self.settings[str(ctx.message.guild.id)]['sars'][roleinfo[0]][roleinfo[2]]
@@ -183,7 +183,7 @@ class RoleManager:
             em.set_author(name=role, icon_url="http://bit.ly/2qlsl5I")
             em.set_footer(
                 text="If the role has spaces use quotations when trying to remove it. *role remove \"Example 1\"")
-            await self.bot.send_message(ctx.message.channel, embed=em)
+            await ctx.send(embed=em)
         else:
             try:
                 if not ctx.message.guild.me.permissions_in(ctx.message.channel).manage_roles:
