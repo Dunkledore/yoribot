@@ -90,10 +90,10 @@ class Fun:
             botname = self.bot.user.name
             await ctx.send("-" + botname + " slaps " + user.mention +
                                " multiple times with " +
-                               (rndchoice(self.items) + "-"))
+                               (randchoice(self.items) + "-"))
         else:
             await ctx.send("-slaps " + user.name + " with " +
-                               (rndchoice(self.items) + "-"))
+                               (randchoice(self.items) + "-"))
 
     @slap.command()
     async def add(self, ctx, item):
