@@ -561,6 +561,7 @@ class MusicPlayer:
             try:
                 future = asyncio.run_coroutine_threadsafe(self.vplay(), self.bot.loop)
                 future.result()
+                self.update_queue()
             except:
                 pass
 
