@@ -87,7 +87,7 @@ class Fun:
                                " multiple times with " +
                                (randchoice(self.items) + "-"))
         else:
-            await ctx.send("-slaps " + user.nick + " with " +
+            await ctx.send("-slaps " + user.nick or user.name + " with " +
                                (randchoice(self.items) + "-"))
 
     @slap.command()
