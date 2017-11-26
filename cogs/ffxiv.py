@@ -311,6 +311,8 @@ class FFXIV:
         em.set_footer(text=newsitem["time"] + " (UTC)")
         return em
 
+    @ffxiv_news.command(name="start")
+    @checks.is_developer()
     async def send_all_news(self):
         await self.bot.wait_until_ready()
         debugchannel = self.bot.get_channel(381089525880979467)
@@ -1103,4 +1105,4 @@ def setup(bot):
         dataIO.save_json("data/ffxiv/fflogs/settings.json", {"api_key": ""})
     n = FFXIV(bot)
     bot.add_cog(n)
-    bot.loop.create_task(n.send_all_news())
+    #bot.loop.create_task(n.send_all_news())
