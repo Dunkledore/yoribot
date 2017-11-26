@@ -292,6 +292,7 @@ def check_folders():
 
 def check_files():
     f = "data/fun/items.json"
+    print fileIO(f, "check")
     if not fileIO(f, "check"):
         print("Creating empty items.json...")
         fileIO(f, "save", defaults)
