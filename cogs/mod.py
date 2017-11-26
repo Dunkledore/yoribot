@@ -835,8 +835,10 @@ class Mod:
 
         if len(to_send) > 2000:
             await ctx.send(f'Successfully removed {deleted} messages.', delete_after=10)
+            await ctx.message.delete()
         else:
             await ctx.send(to_send, delete_after=10)
+            await ctx.message.delete()
 
     @clear.command()
     async def embeds(self, ctx, search=100):
