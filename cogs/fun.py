@@ -45,7 +45,7 @@ class Fun:
 
     def __init__(self, bot):
         self.bot = bot
-        self.items = fileIO("data/slap/items.json", "load")
+        self.items = fileIO("data/fun/items.json", "load")
         self.thotchoices = fileIO("data/fun/thotchoices.json","load")
         self.lines = dataIO.load_json("data/fun/lines.json")
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
