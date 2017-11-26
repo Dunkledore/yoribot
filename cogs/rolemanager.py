@@ -121,6 +121,7 @@ class RoleManager:
             grole = discord.utils.get(ctx.guild.role_hierarchy, name=role)
             if not grole:
                 await ctx.send("Role: " + role + " not found")
+                return
             if group not in self.settings[str(ctx.message.guild.id)]['sars']:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
             for drole in ctx.guild.role_hierarchy:
