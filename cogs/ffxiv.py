@@ -53,7 +53,7 @@ class FFXIV:
         }
         self.latestnews = {}
         self.newsupdatetime = None
-        self.updatefrequency = datetime.timedelta(minutes=10).seconds
+        self.updatefrequency = datetime.timedelta(minutes=10)
         self.newsiconurls = {
             "maintenance": "https://img.finalfantasyxiv.com/lds/h/U/6qzbI-6AwlXAfGhCBZU10jsoLA.png",
             "notices": "https://img.finalfantasyxiv.com/lds/h/c/GK5Y3gQsnlxMRQ_pORu6lKQAJ0.png",
@@ -261,7 +261,7 @@ class FFXIV:
         for type in self.latestnews.keys():
             # "2017-11-18 17:20:35"
             for item in self.latestnews[type]:
-                itemtime = datetime.datetime().strptime(item["time"], "%Y-%m-%d %H:%M:%S")
+                itemtime = datetime.datetime(2017,1,1).strptime(item["time"], "%Y-%m-%d %H:%M:%S")
                 if itemtime > timestamp:
                     news[type].append(item)
         return news
