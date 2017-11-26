@@ -316,8 +316,7 @@ class Mod:
             await ctx.send('updated')
 
 
-    @commands.command(aliases=['newmembers'])
-    @commands.guild_only()
+    @commands.command(aliases=['newmembers'], no_pm=True)
     @checks.is_mod()
     async def newusers(self, ctx, *, count=5):
         """Tells you the newest members of the server.
@@ -342,7 +341,7 @@ class Mod:
 
         await ctx.send(embed=e)
 
-    @commands.group(aliases=['raids'], invoke_without_command=True)
+    @commands.group(aliases=['raids'], invoke_without_command=True, no_pm=True)
     @checks.is_mod()
     async def raid(self, ctx):
         """Controls raid mode on the server.
@@ -366,7 +365,6 @@ class Mod:
         await ctx.send(fmt)
 
     @raid.command(name='on', aliases=['enable', 'enabled'])
-    @checks.is_mod()
     async def raid_on(self, ctx, *, channel: discord.TextChannel = None):
         """Enables basic raid mode on the server.
 
@@ -397,7 +395,6 @@ class Mod:
         await ctx.send(f'Raid mode enabled. Broadcasting join messages to {channel.mention}.')
 
     @raid.command(name='off', aliases=['disable', 'disabled'])
-    @checks.is_mod()
     async def raid_off(self, ctx):
         """Disables raid mode on the server.
 
@@ -424,7 +421,6 @@ class Mod:
         await ctx.send('Raid mode disabled. No longer broadcasting join messages.')
 
     @raid.command(name='strict')
-    @checks.is_mod()
     async def raid_strict(self, ctx, *, channel: discord.TextChannel = None):
         """Enables strict raid mode on the server.
 
@@ -516,7 +512,7 @@ class Mod:
                                "server.")
 
     @commands.command()
-    @checks.has_permissions(manage_messages=True)
+    @checks.is_mod()
     async def cleanup(self, ctx, search=100):
         """Cleans up the bot's messages from the channel.
 
@@ -545,9 +541,8 @@ class Mod:
 
         await ctx.send('\n'.join(messages), delete_after=10)
 
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(kick_members=True)
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def kick(self, ctx, member: discord.Member, *, reason: ActionReason = None):
         """Kicks a member from the server.
 
@@ -562,9 +557,8 @@ class Mod:
         await member.kick(reason=reason)
         await ctx.send('\N{OK HAND SIGN}')
 
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def ban(self, ctx, member: MemberID, *, reason: ActionReason = None):
         """Bans a member from the server.
 
@@ -582,9 +576,8 @@ class Mod:
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
         await ctx.send('\N{OK HAND SIGN}')
 
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def massban(self, ctx, reason: ActionReason, *members: MemberID):
         """Mass bans multiple members from the server.
 
@@ -604,9 +597,8 @@ class Mod:
 
         await ctx.send('\N{OK HAND SIGN}')
 
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(kick_members=True)
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def softban(self, ctx, member: MemberID, *, reason: ActionReason = None):
         """Soft bans a member from the server.
 
@@ -627,9 +619,8 @@ class Mod:
         await ctx.guild.unban(obj, reason=reason)
         await ctx.send('\N{OK HAND SIGN}')
 
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def unban(self, ctx, member: BannedMember, *, reason: ActionReason = None):
         """Unbans a member from the server.
 
@@ -650,9 +641,8 @@ class Mod:
         else:
             await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}).')
 
-    @commands.command()
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def tempban(self, ctx, duration: time.FutureTime, member: MemberID, *, reason: ActionReason = None):
         """Temporarily bans a member for the specified duration.
 
@@ -704,9 +694,8 @@ class Mod:
         reason = f'Automatic unban from timer made on {timer.created_at} by {moderator}.'
         await guild.unban(discord.Object(id=member_id), reason=reason)
 
-    @commands.group(invoke_without_command=True)
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
+    @commands.group(invoke_without_command=True, no_pm=True)
+    @checks.is_mod()
     async def mentionspam(self, ctx, count: int=None):
         """Enables auto-banning accounts that spam mentions.
 
@@ -754,8 +743,6 @@ class Mod:
         await ctx.send(f'Now auto-banning members that mention more than {count} users.')
 
     @mentionspam.command(name='ignore', aliases=['bypass'])
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
     async def mentionspam_ignore(self, ctx, *channels: discord.TextChannel):
         """Specifies what channels ignore mentionspam auto-bans.
 
@@ -780,8 +767,6 @@ class Mod:
         await ctx.send(f'Mentions are now ignored on {", ".join(c.mention for c in channels)}.')
 
     @mentionspam.command(name='unignore', aliases=['protect'])
-    @commands.guild_only()
-    @checks.has_permissions(ban_members=True)
     async def mentionspam_unignore(self, ctx, *channels: discord.TextChannel):
         """Specifies what channels to take off the ignore list.
 
@@ -802,9 +787,8 @@ class Mod:
         self.get_guild_config.invalidate(self, ctx.guild.id)
         await ctx.send('Updated mentionspam ignore list.')
 
-    @commands.group(aliases=['purge'])
-    @commands.guild_only()
-    @checks.has_permissions(manage_messages=True)
+    @commands.group(aliases=['purge'], no_pm=True)
+    @checks.is_mod()
     async def clear(self, ctx):
         """Removes messages that meet a criteria.
 
