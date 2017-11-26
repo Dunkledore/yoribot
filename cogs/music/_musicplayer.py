@@ -286,7 +286,6 @@ class MusicPlayer:
                     pass
 
             self.vclient.stop()
-            self.update_queue()
 
 
     async def shuffle(self):
