@@ -314,10 +314,11 @@ class FFXIV:
     @ffxiv_news.command(name="start")
     @checks.is_developer()
     async def send_all_news(self):
+        print("(News) Started send_all_news")
         await self.bot.wait_until_ready()
+        print("(News) Ready")
         debugchannel = self.bot.get_channel(381089525880979467)
         debugchannel.send("News: Started send_all_news")
-        print("(News) Started send_all_news")
         while self == self.bot.get_cog("FFXIV"):
             debugchannel.send("News: Updating the news...")
             print("(News) Updating")
