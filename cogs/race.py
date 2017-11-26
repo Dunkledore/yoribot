@@ -174,7 +174,6 @@ class Race:
         await ctx.send("Parameters reset.")
 
     @race.command(name="start", pass_context=True)
-    @commands.cooldown(1, 120, commands.BucketType.guild)
     async def _start_race(self, ctx):
         """Start an animal race and enter yourself as participant
 
@@ -184,7 +183,6 @@ class Race:
                 msg will be edited multiple times to represent the race.
 
             Notes:
-                Must wait 2 minutes after every race to start a new one.
                 You cannot start a race if a race is already active.
                 A race is considered active once this command is used.
                 A race is considered started once the track is displayed.
