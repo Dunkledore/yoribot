@@ -312,8 +312,7 @@ class FFXIV:
         return em
 
     @ffxiv_news.command(name="start")
-    @checks.is_developer()
-    async def send_all_news(self):
+    async def send_all_news(self, ctx):
         print("(News) Started send_all_news")
         await self.bot.wait_until_ready()
         print("(News) Ready")
