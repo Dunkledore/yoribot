@@ -85,7 +85,7 @@ class Fun:
         if user is None:
             user = ctx.message.author
             await ctx.send("Dont make me slap you instead " + user.name)
-        elif user.id == bot.id:
+        elif user.id == botid:
             user = ctx.message.author
             botname = self.bot.user.name
             await ctx.send("-" + botname + " slaps " + user.mention +
