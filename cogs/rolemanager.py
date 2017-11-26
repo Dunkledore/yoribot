@@ -118,6 +118,9 @@ class RoleManager:
                 em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
                 await ctx.send(embed=em)
                 return
+            if drole not in ctx.guild.role_hierarchy:
+                await ctx.send("Role: " + role + " not found")
+                return
             if group not in self.settings[str(ctx.message.guild.id)]['sars']:
                 self.settings[str(ctx.message.guild.id)]['sars'][group] = {}
             for drole in ctx.guild.role_hierarchy:
