@@ -315,13 +315,16 @@ class FFXIV:
         await self.bot.wait_until_ready()
         debugchannel = self.bot.get_channel(381089525880979467)
         debugchannel.send("News: Started send_all_news")
+        print("(News) Started send_all_news")
         while self == self.bot.get_cog("FFXIV"):
             debugchannel.send("News: Updating the news...")
+            print("(News) Updating")
             await self.update_news(None)
             newsset = self.settings["news"]
             now = datetime.datetime(2017, 1, 1).utcnow()
             before = now - self.updatefrequency
             news = self.get_news_after(before)
+            print("(News) Updated")
             for guildid in newsset.keys():
                 debugchannel.send(f"News: Processing Guild {guildid}")
                 guild = self.bot.get_guild(guildid)
@@ -330,12 +333,14 @@ class FFXIV:
                         chan = guild.get_channel(ch)
                         if chan is not None:
                             debugchannel.send(f"News: Sending news to Channel {ch}")
+                            print(f"(News) Sending news to channel {ch}")
                             for type in news.keys():
                                 if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
                                     for item in news[type]:
                                         debugchannel.send("News: Sending news item:```json\nstr(item)```")
                                         await chan.send(embed=self.newsembed(item, type))
             debugchannel.send("News: sleeping")
+            print("(News) waiting...")
             await asyncio.sleep(self.updatefrequency.seconds)
 
     @ffxiv.command()
