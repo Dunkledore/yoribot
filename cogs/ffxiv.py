@@ -53,7 +53,7 @@ class FFXIV:
         }
         self.latestnews = {}
         self.newsupdatetime = None
-        self.updatefrequency = datetime.timedelta(minutes=10)
+        self.updatefrequency = datetime.timedelta(minutes=10).seconds
         self.newsiconurls = {
             "maintenance": "https://img.finalfantasyxiv.com/lds/h/U/6qzbI-6AwlXAfGhCBZU10jsoLA.png",
             "notices": "https://img.finalfantasyxiv.com/lds/h/c/GK5Y3gQsnlxMRQ_pORu6lKQAJ0.png",
