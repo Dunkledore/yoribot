@@ -157,7 +157,7 @@ class Trivia:
     async def triviastop(self, ctx):
         """Stops Trivia"""
         session = self.get_trivia_by_channel(ctx.message.channel)
-        await session.end_game()
+        await session.end_game(ctx)
       
     @trivia.group(name="list", pass_context=True)
     async def trivia_list(self, ctx):
@@ -259,10 +259,10 @@ class TriviaSession():
         self.status = "stop"
         self.bot.dispatch("trivia_end", self)
 
-    async def end_game(self):
+    async def end_game(self, ctx):
         self.status = "stop"
         if self.scores:
-            await self.send_table()
+            await self.send_table(ctx)
         self.bot.dispatch("trivia_end", self)
 
 
@@ -271,10 +271,10 @@ class TriviaSession():
         guild = message.guild
         for score in self.scores.values():
             if score == self.settings["MAX_SCORE"]:
-                await self.end_game()
+                await self.end_game(ctx)
                 return True
         if self.question_list == []:
-            await self.end_game()
+            await self.end_game(ctx)
             return True
         self.current_line = choice(self.question_list)
         self.question_list.remove(self.current_line)
@@ -330,7 +330,7 @@ class TriviaSession():
         t = "+ Results: \n\n"
         for user, score in self.scores.most_common():
             t += "+ {}\t{}\n".format(user, score)
-        await message.channel.send(box(t, lang="diff"))
+        await ctx.channel.send(box(t, lang="diff"))
 
     async def check_answer(self, message):
         if message.author == self.bot.user:
