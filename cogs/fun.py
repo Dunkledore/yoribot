@@ -81,7 +81,7 @@ class Fun:
     async def slap(self, ctx, user: discord.Member=None):
         """Slap a user"""
         botid = self.bot.user.id
-        person = user.display_name
+        person = user.nick
         if user is None:
             user = ctx.message.author
             await ctx.send("Dont make me slap you instead " + user.name)
