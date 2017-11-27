@@ -50,7 +50,7 @@ class SocialMedia:
 			await ctx.db.execute(insertquery, ctx.guild.id, number)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, number)
-		await ctx.send('Role set')
+		await ctx.send('Number set')
 
 	@twitterset.command(hidden=True)
 	async def tweeter(self, ctx, role: discord.Role):
@@ -135,7 +135,7 @@ class SocialMedia:
 				return
 
 		if reaction.count >= results[0]["tweeter_reaction"]:
-			self.sendtweet(reaction.message.guild, reaction.message.content)
+			await self.sendtweet(reaction.message.guild, reaction.message.content)
 
 		
 
