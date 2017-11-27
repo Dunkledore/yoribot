@@ -23,9 +23,9 @@ class SocialMedia:
 		auth.set_access_token(creds[2], creds[3])
 		return tweepy.API(auth)
 
-	async def get_creds(self, ctx):
+	async def get_creds(self, guild):
 		query = "SELECT * FROM social_config WHERE guild_id = $1"
-		creds = await ctx.db.fetch(query, ctx.guild.id)
+		creds = await self.bot.pool.fetch(query, guild.id)
 		if creds:
 			if creds[0]:
 				return creds[0]["twitter"]
@@ -102,19 +102,43 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, twitter_creds)
 		await ctx.author.send('Details Saved')
 
-
 	@commands.command(no_pm=True)
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
-		
-		creds = await self.get_creds(ctx)
+		await self.sendtweet(ctx, tweet)
+		await ctx.message.delete()
+		await ctx.send("Tweet Tweeted")
+	
+
+	async def sendtweet(self, guild, tweet, ctx=None):
+		creds = await self.get_creds(guild)
 		if not creds:
-			await ctx.send("Your guild owner has not setup twitter credentials")
+			if ctx is None:
+				return
+			else:
+				await ctx.send("Your guild owner has not setup twitter credentials")
 		else:
 			api = self.get_api(creds)
 			status = api.update_status(status=tweet)
-			await ctx.message.delete()
-			await ctx.send("Tweet Tweeted")
+
+
+	async def on_reaction_add(self, reaction, user):
+		if reaction.emoji != "🐦":
+			return
+
+		query = "SELECT * FROM social_config WHERE guild_id = $1"
+		results = await sel.bot.pool.fetch(query, reaction.message.guild.id)
+		tweeter_role = results[0]["tweeter_role_id"]
+		for role in user.roles:
+			if role.id == tweeter_role:
+				self.sendtweet(reaction.message.guild, reaction.message.content)
+				return
+
+		if reaction.count >= results[0]["tweeter_reaction"]:
+			self.sendtweet(reaction.message.guild, reaction.message.content)
+
+		
+
 
 def setup(bot):
 	bot.add_cog(SocialMedia(bot))
