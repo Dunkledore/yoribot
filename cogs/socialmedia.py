@@ -41,9 +41,8 @@ class SocialMedia:
 			
 			query = "SELECT * FROM social_config WHERE guild_id = $1"
 			results = await self.bot.pool.fetch(query, ctx.guild.id)
-			if results is None:
-				if results[0] is None:
-					tweeter_role, tweeter_number = 0
+			if results is None or results[0] is None:
+				tweeter_role, tweeter_number = 0
 			else:
 				tweeter_role = results[0]["tweeter_role_id"]
 				tweeter_number = results[0]["tweeter_reaction"]
