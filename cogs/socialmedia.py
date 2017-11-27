@@ -43,8 +43,7 @@ class SocialMedia:
 			results = await self.bot.pool.fetch(query, ctx.guild.id)
 			if results is None:
 				tweeter_role, tweeter_number = 0
-			elif:
-				if results[0] is None:
+			elif results[0] is None:
 				tweeter_role, tweeter_number = 0
 			else:
 				tweeter_role = results[0]["tweeter_role_id"]
