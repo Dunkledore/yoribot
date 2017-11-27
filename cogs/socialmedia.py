@@ -78,7 +78,7 @@ class SocialMedia:
 
 		await ctx.author.send("Please send your consumer secret")
 		consumer_secret = await self.bot.wait_for('message', check=check, timeout=30.0)
-		consumer_secret = consumer_key.content
+		consumer_secret = consumer_secret.content
 		await asyncio.sleep(1)
 
 		await ctx.author.send("Please send your access token")
@@ -89,7 +89,7 @@ class SocialMedia:
 		await ctx.author.send("Please send your access token secret")
 		access_token_secret = await self.bot.wait_for('message', check=check, timeout=30.0)
 		access_token_secret = access_token_secret.content
-		
+
 		insertquery = "INSERT INTO social_config (guild_id, twitter) VALUES ($1, $2)"
 		alterquery = "UPDATE  SET twitter = $2 WHERE guild_id = $1"
 
