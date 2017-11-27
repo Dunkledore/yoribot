@@ -92,7 +92,7 @@ class SocialMedia:
 		access_token_secret = access_token_secret.content
 
 		insertquery = "INSERT INTO social_config (guild_id, twitter) VALUES ($1, $2)"
-		alterquery = "UPDATE  SET twitter = $2 WHERE guild_id = $1"
+		alterquery = "UPDATE social_config SET twitter = $2 WHERE guild_id = $1"
 
 		twitter_creds = [consumer_key,consumer_secret,access_token,access_token_secret]
 
