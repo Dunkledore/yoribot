@@ -30,30 +30,30 @@ class SocialMedia:
 
 	
 	@twitterset.command(hidden=True)
-    async def tweetnumber(self, ctx, number: int):
-        """Sets the number of bird reactions required to tweet something"""
+	async def tweetnumber(self, ctx, number: int):
+		"""Sets the number of bird reactions required to tweet something"""
 
-        insertquery = "INSERT INTO social_config (guild_id, tweeter_reaction) VALUES ($1, $2)"
-        alterquery = "UPDATE social_config SET tweeter_reaction = $2 WHERE guild_id = $1"
+		insertquery = "INSERT INTO social_config (guild_id, tweeter_reaction) VALUES ($1, $2)"
+		alterquery = "UPDATE social_config SET tweeter_reaction = $2 WHERE guild_id = $1"
 
-        try:
-            await ctx.db.execute(insertquery, ctx.guild.id, number)
-        except asyncpg.UniqueViolationError:
-            await ctx.db.execute(alterquery, ctx.guild.id, number)
-        await ctx.send('Role set')
+		try:
+			await ctx.db.execute(insertquery, ctx.guild.id, number)
+		except asyncpg.UniqueViolationError:
+			await ctx.db.execute(alterquery, ctx.guild.id, number)
+		await ctx.send('Role set')
 
 	@twitterset.command(hidden=True)
-    async def tweeter(self, ctx, role: discord.Role):
-        """Sets the mod role"""
+	async def tweeter(self, ctx, role: discord.Role):
+		"""Sets the mod role"""
 
-        insertquery = "INSERT INTO social_config (guild_id, tweeter_role_id) VALUES ($1, $2)"
-        alterquery = "UPDATE social_config SET tweeter_role_id = $2 WHERE guild_id = $1"
+		insertquery = "INSERT INTO social_config (guild_id, tweeter_role_id) VALUES ($1, $2)"
+		alterquery = "UPDATE social_config SET tweeter_role_id = $2 WHERE guild_id = $1"
 
-        try:
-            await ctx.db.execute(insertquery, ctx.guild.id, role.id)
-        except asyncpg.UniqueViolationError:
-            await ctx.db.execute(alterquery, ctx.guild.id, role.id)
-        await ctx.send('Role set')
+		try:
+			await ctx.db.execute(insertquery, ctx.guild.id, role.id)
+		except asyncpg.UniqueViolationError:
+			await ctx.db.execute(alterquery, ctx.guild.id, role.id)
+		await ctx.send('Role set')
 
 	@twitterset.command():
 	async def tweetcreds(self, ctx):
