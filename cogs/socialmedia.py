@@ -131,7 +131,7 @@ class SocialMedia:
 		tweeter_role = results[0]["tweeter_role_id"]
 		for role in user.roles:
 			if role.id == tweeter_role:
-				self.sendtweet(reaction.message.guild, reaction.message.content)
+				await self.sendtweet(reaction.message.guild, reaction.message.content)
 				return
 
 		if reaction.count >= results[0]["tweeter_reaction"]:
