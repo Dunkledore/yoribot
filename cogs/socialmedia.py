@@ -68,8 +68,9 @@ class SocialMedia:
 	@twitterset.command()
 	async def tweetcreds(self, ctx):
 
+		author = ctx.author
 		async def check(m):
-			return m.author == ctx.author
+			return m.author == author
 
 		await ctx.author.send("Please send your cosumer key")
 		consumer_key = await self.bot.wait_for('message', check=check, timeout=30.0)
