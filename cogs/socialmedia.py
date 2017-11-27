@@ -55,7 +55,7 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, role.id)
 		await ctx.send('Role set')
 
-	@twitterset.command():
+	@twitterset.command()
 	async def tweetcreds(self, ctx):
 
 		async def check(m):
