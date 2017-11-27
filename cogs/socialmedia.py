@@ -73,12 +73,15 @@ class SocialMedia:
 
 		await ctx.author.send("Please send your cosumer key")
 		consumer_key = await self.bot.wait_for('message', check=check, timeout=30.0)
+		await asyncio.sleep(1)
 
 		await ctx.author.send("Please send your consumer secret")
 		consumer_secret = await self.bot.wait_for('message', check=check, timeout=30.0)
+		await asyncio.sleep(1)
 
 		await ctx.author.send("Please send your access token")
 		access_token = await self.bot.wait_for('message', check=check, timeout=30.0)
+		await asyncio.sleep(1)
 
 		await ctx.author.send("Please send your access token secret")
 		access_token_secret = await self.bot.wait_for('message', check=check, timeout=30.0)
