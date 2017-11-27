@@ -62,6 +62,9 @@ class SocialMedia:
 		await ctx.send(role_id)
 		await ctx.send(role)
 
+		for role in ctx.author.roles:
+			await ctx.send(role.id)
+
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, role_id)
 		except asyncpg.UniqueViolationError:
