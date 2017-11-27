@@ -69,7 +69,7 @@ class SocialMedia:
 	async def tweetcreds(self, ctx):
 
 		author = ctx.author
-		async def check(m):
+		def check(m):
 			return m.author == author
 
 		await ctx.author.send("Please send your cosumer key")
