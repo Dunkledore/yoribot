@@ -2,6 +2,7 @@ from .utils import db, checks, formats, cache
 from .utils.paginator import Pages
 
 from discord.ext import commands
+from .utils.chat_formatting import box
 import json
 import re
 import datetime
