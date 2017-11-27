@@ -102,7 +102,7 @@ def is_tweeter():
         results = await ctx.db.fetch(query, ctx.guild.id)
         tweeter_role = results[0]["tweeter_role_id"]
         for role in ctx.author.role:
-            if role.id == tweeter_role:
+            if str(role.id) == tweeter_role:
                 return True
         return False
 
