@@ -50,7 +50,7 @@ class SocialMedia:
 			msg = box("TweetRole {0}\n"
 					  "Reactions Until Tweet {1}\n".format(tweeter_role or "0", tweeter_number or "0"))
 			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
-			msg +- "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
+			msg += "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
 			em = discord.Embed(color=cx.message.author.color, description=msg)
 			em.set_author(name="Twitter Settings Help", icon_url="http://bit.ly/2qrhjLu")
 			await ctx.send(embed=em)
