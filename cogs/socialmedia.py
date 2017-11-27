@@ -105,7 +105,7 @@ class SocialMedia:
 	@commands.command(no_pm=True)
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
-		await self.sendtweet(ctx, tweet)
+		await self.sendtweet(ctx.guild, tweet)
 		await ctx.message.delete()
 		await ctx.send("Tweet Tweeted")
 	
