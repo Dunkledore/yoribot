@@ -112,7 +112,7 @@ class SocialMedia:
 			await ctx.send("Your guild owner has not setup twitter credentials")
 		else:
 			api = self.get_api(creds)
-			status = api.update.stauts(status = tweet)
+			status = api.update_status(status=tweet)
 			await ctx.messgae.delete()
 
 def setup(bot):
