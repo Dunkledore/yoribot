@@ -18,9 +18,9 @@ class SocialMedia:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 
-	def get_api(self, consumer_key, consumer_secret, access_token, access_token_secret):
-		auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-		auth.set_access_token(access_token, access_token_secret)
+	def get_api(self, creds):
+		auth = tweepy.OAuthHandler(creds[0], creds[1])
+		auth.set_access_token(creds[2], creds[4])
 		return tweepy.API(auth)
 
 	async def get_creds(self, ctx):
@@ -111,7 +111,7 @@ class SocialMedia:
 		if not creds:
 			await ctx.send("Your guild owner has not setup twitter credentials")
 		else:
-			api = get_api(creds)
+			api = self.get_api(creds)
 			status = api.update.stauts(status = tweet)
 			await ctx.messgae.delete()
 
