@@ -60,9 +60,9 @@ class SocialMedia:
 		alterquery = "UPDATE social_config SET tweeter_role_id = $2 WHERE guild_id = $1"
 
 		try:
-			await ctx.db.execute(insertquery, ctx.guild.id, role.id)
+			await ctx.db.execute(insertquery, ctx.guild.id, str(role.id))
 		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(alterquery, ctx.guild.id, role.id)
+			await ctx.db.execute(alterquery, ctx.guild.id, str(role.id))
 		await ctx.send('Role set')
 
 	@twitterset.command()
