@@ -20,7 +20,7 @@ class SocialMedia:
 
 	def get_api(self, creds):
 		auth = tweepy.OAuthHandler(creds[0], creds[1])
-		auth.set_access_token(creds[2], creds[4])
+		auth.set_access_token(creds[2], creds[3])
 		return tweepy.API(auth)
 
 	async def get_creds(self, ctx):
