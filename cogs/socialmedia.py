@@ -23,7 +23,7 @@ class SocialMedia:
 		auth.set_access_token(access_token, access_token_secret)
 		return tweepy.API(auth)
 
-	def get_creds(self, ctx):
+	async def get_creds(self, ctx):
 		query = "SELECT * FROM social_config WHERE guild_id = $1"
 		creds = await ctx.db.fetch(query, ctx.guild.id)
 		if creds:
@@ -99,7 +99,7 @@ class SocialMedia:
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
 		
-		creds = self.get_creds(ctx)
+		creds = await self.get_creds(ctx)
 		if not creds:
 			await ctx.send("Your guild owner has not setup twitter credentials")
 		else:
