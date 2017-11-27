@@ -101,7 +101,7 @@ def is_tweeter():
         query = "SELECT * FROM social_config WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
         tweeter_role = results[0]["tweeter_role_id"]
-        for role in ctx.author.role:
+        for role in ctx.author.roles:
             if str(role.id) == tweeter_role:
                 return True
         return False
