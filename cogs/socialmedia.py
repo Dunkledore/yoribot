@@ -35,8 +35,25 @@ class SocialMedia:
 	
 	@commands.group(no_pm=True)
 	@checks.is_developer()
-	async def twitterset(self,ctc):
-		a=1
+	async def twitterset(self,ctx):
+		if ctx.invoked_subcommand is None:
+			
+			query = "SELECT * FROM social_config WHERE guild_id = $1"
+			results = await self.bot.pool.fetch(query, reaction.message.guild.id)
+			if results is None:
+				if results[0] is None:
+					tweeter_role, tweeter_number = 0
+			else:
+				tweeter_role = results[0]["tweeter_role_id"]
+				tweeter_number = results[0]["tweeter_reaction"]
+			msg = box("TweetRole {0}\n"
+					  "Reactions Until Tweet {1}\n".format(tweeter_role or "0", tweeter_number or "0"))
+			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
+			msg +- "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
+			em = discord.Embed(color=cx.message.author.color, description=msg)
+			em.set_author(name="Twitter Settings Help", icon_url="http://bit.ly/2qrhjLu")
+			await ctx.send(embed=em)
+			
 
 	
 	@twitterset.command(hidden=True)
