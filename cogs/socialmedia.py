@@ -35,11 +35,11 @@ class SocialMedia:
 	
 	@commands.group(no_pm=True)
 	@checks.is_developer()
-	async def twitterset(self,ctx):
+	async def twitterset(self, ctx):
 		if ctx.invoked_subcommand is None:
 			
 			query = "SELECT * FROM social_config WHERE guild_id = $1"
-			results = await self.bot.pool.fetch(query, reaction.message.guild.id)
+			results = await self.bot.pool.fetch(query, ctx.guild.id)
 			if results is None:
 				if results[0] is None:
 					tweeter_role, tweeter_number = 0
