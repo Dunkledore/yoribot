@@ -26,6 +26,7 @@ class SocialMedia:
 	@commands.group(no_pm=True)
 	@checks.is_developer()
 	async def twitterset(self,ctc):
+		a=1
 
 	
 	@twitterset.command(hidden=True)
