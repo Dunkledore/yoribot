@@ -127,7 +127,7 @@ class SocialMedia:
 			return
 
 		query = "SELECT * FROM social_config WHERE guild_id = $1"
-		results = await sel.bot.pool.fetch(query, reaction.message.guild.id)
+		results = await self.bot.pool.fetch(query, reaction.message.guild.id)
 		tweeter_role = results[0]["tweeter_role_id"]
 		for role in user.roles:
 			if role.id == tweeter_role:
