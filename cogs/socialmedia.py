@@ -113,7 +113,8 @@ class SocialMedia:
 		else:
 			api = self.get_api(creds)
 			status = api.update_status(status=tweet)
-			await ctx.messgae.delete()
+			await ctx.message.delete()
+			await ctx.send("Tweet Tweeted")
 
 def setup(bot):
 	bot.add_cog(SocialMedia(bot))
