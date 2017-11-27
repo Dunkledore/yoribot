@@ -104,7 +104,7 @@ def is_tweeter():
         tweeter_role = results[0]["tweeter_role_id"]
         await ctx.send(tweeter_role)
         for role in ctx.author.roles:
-            if str(role.id) == tweeter_role:
+            if role.id == tweeter_role:
                 return True
         return False
 
