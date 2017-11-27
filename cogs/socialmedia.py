@@ -47,8 +47,8 @@ class SocialMedia:
 			else:
 				tweeter_role = results[0]["tweeter_role_id"]
 				tweeter_number = results[0]["tweeter_reaction"]
-			msg = box("TweetRole ID:  {0}\n"
-					  "Reactions until tweet: {1}\n".format(tweeter_role or "0", tweeter_number or "0"))
+			msg = box("Tweeter role ID:  {0}\n"
+					  "🐦 Reactions until tweet: {1}\n".format(tweeter_role or "0", tweeter_number or "0"))
 			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
 			msg += "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
 			em = discord.Embed(color=ctx.message.author.color, description=msg)
