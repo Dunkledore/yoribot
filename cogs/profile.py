@@ -105,6 +105,7 @@ class Profile:
 
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
+			return
 
 
 
