@@ -291,7 +291,7 @@ class Weather:
         return data
 
     @commands.command(name='temperature', aliases=['temp'])
-    async def _temperature(self, context, *, location: str):
+    async def _temperature(self, ctx, *, location: str):
         """Get the temperature only!"""
         if self.settings['WEATHER_API_KEY']:
             request = await self._api_request(location)
@@ -306,7 +306,7 @@ class Weather:
             await ctx.send('```{}```'.format(message))
 
     @commands.command(name='weather', aliases=['we'])
-    async def _weather(self, context, *, location: str):
+    async def _weather(self, ctx, *, location: str):
         """Get the weather!"""
         if self.settings['WEATHER_API_KEY']:
             request = await self._api_request(location)
@@ -327,7 +327,7 @@ class Weather:
 
     @commands.command(name='weatherkey')
     @checks.is_owner()
-    async def _weatherkey(self, context, key: str):
+    async def _weatherkey(self, ctx, key: str):
         """Acquire a key from  http://openweathermap.org/"""
         settings = dataIO.load_json(self.settings_file)
         settings['WEATHER_API_KEY'] = key
