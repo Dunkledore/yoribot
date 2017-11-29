@@ -234,6 +234,7 @@ class Rift:
                 s += "**{}**, ".format(n)
             s = s[:-2]
             await ctx.send(s)
+        await self.update_descriptions()
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.is_mod()
@@ -289,9 +290,9 @@ class Rift:
             await self.load_settings()
         orift = {k:v for k,v in self.open_rifts.items() if v}
         for rift in orift:
-            description = "Channels in Rift:"
+            description = "Channels in Rift: "
             for chan in orift[rift]:
-                description += chan.name + "in " + chan.guild.name + "|"
+                description += chan.name + " in " + chan.guild.name + " | "
             for chan in orift[rift]:
                 await chan.edit(topic=description)
 
