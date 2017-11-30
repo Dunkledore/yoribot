@@ -100,7 +100,7 @@ class SocialMedia:
 			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
 			msg += "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
 			msg += "\n {}twitterset tweetcreds".format(ctx.prefix)
-			msg +- "\n {}twitterset feedchannel <channel>".format(ctx.prefix)
+			msg += "\n {}twitterset feedchannel <channel>".format(ctx.prefix)
 			em = discord.Embed(color=ctx.message.author.color, description=msg)
 			em.set_author(name="Twitter Settings Help", icon_url="http://bit.ly/2qrhjLu")
 			await ctx.send(embed=em)
