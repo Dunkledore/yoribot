@@ -16,17 +16,12 @@ import asyncpg
 import os
 
 defaults = [
-    "Twentysix's Floppy Disk",
-    "Eslyium's Hentai Collection",
+    "Dunkledore's Floppy Disk",
+    "Seneth's Hentai Collection",
     "A Nuke",
     "A Loaf Of Bread",
     "My Hand",
-    "Will's SquidBot",
-    "JennJenn's Penguin Army",
-    "Red's Transistor",
-    "Asu\u10e6's Wrath",
-    "Irdumb's Cookie jar"]
-
+    "Granola's wet fish"]
 
 class RPS(Enum):
     rock     = "\N{MOYAI}"
@@ -50,6 +45,7 @@ class Fun:
 
     def __init__(self, bot):
         self.bot = bot
+        self.items = fileIO("data/fun/items.json", "load")
         self.thotchoices = fileIO("data/fun/thotchoices.json","load")
         self.lines = dataIO.load_json("data/fun/lines.json")
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
@@ -81,19 +77,18 @@ class Fun:
     async def slap(self, ctx, user: discord.Member=None):
         """Slap a user"""
         botid = self.bot.user.id
-        person = user.display_name
         if user is None:
             user = ctx.message.author
             await ctx.send("Dont make me slap you instead " + user.name)
-        elif user.id == bot.id:
+        elif user.id == botid:
             user = ctx.message.author
             botname = self.bot.user.name
             await ctx.send("-" + botname + " slaps " + user.mention +
                                " multiple times with " +
-                               (rndchoice(self.items) + "-"))
+                               (randchoice(self.items) + "-"))
         else:
-            await ctx.send("-slaps " + user.name + " with " +
-                               (rndchoice(self.items) + "-"))
+            await ctx.send("-slaps " + (user.nick or user.name) + " with " +
+                               (randchoice(self.items) + "-"))
 
     @slap.command()
     async def add(self, ctx, item):
@@ -232,7 +227,7 @@ class Fun:
             head, sep, tail = result.partition('?'or'.')
             await ctx.send(head+sep)
             await asyncio.sleep(10)
-            if tail is None:
+            if tail is None or tail == "":
                 return
             else:
                 await ctx.send(tail)
@@ -308,4 +303,6 @@ def check_files():
             "Required data is missing. Please reinstall this cog.")
 
 def setup(bot):
+    check_folders()
+    check_files()
     bot.add_cog(Fun(bot))

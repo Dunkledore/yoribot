@@ -129,6 +129,7 @@ class Rift:
                            "Use riftdisconnect to remove this channel from the rift, or"
                            "riftclose to close the rift.")
         self.save_settings()
+        await self.update_descriptions()
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.is_mod()
@@ -196,6 +197,7 @@ class Rift:
         self.embeds.setdefault(channel, True)
         await ctx.send("The channel is now connected to the rift.")
         self.save_settings()
+        await self.update_descriptions()
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.is_mod()
@@ -210,6 +212,7 @@ class Rift:
         del self.open_rifts[riftname]
         await ctx.send("Rift closed.")
         self.save_settings()
+        await self.update_descriptions()
 
     async def printchannels(self):
         for e in self.embeds.keys():
@@ -231,6 +234,7 @@ class Rift:
                 s += "**{}**, ".format(n)
             s = s[:-2]
             await ctx.send(s)
+        await self.update_descriptions()
 
     @commands.command(pass_context=True, no_pm=True, hidden=True)
     @checks.is_mod()
@@ -253,6 +257,7 @@ class Rift:
             self.open_rifts[riftname].remove(ctx.message.channel)
             await ctx.send("Disconnected from the rift.")
         self.save_settings()
+        await self.update_descriptions()
 
     async def on_message(self, msg):
         if not self.ready:
@@ -279,6 +284,19 @@ class Rift:
                         #        await msg.channel.send("Couldn't send your message." + baseerr)
                         #    except:
                         #        print("Couldn't send the message. An exception occured: ",baseerr)
+
+    async def update_descriptions(self):
+        if not self.ready:
+            await self.load_settings()
+        orift = {k:v for k,v in self.open_rifts.items() if v}
+        for rift in orift:
+            description = ":incoming_envelope: Connected Channels:   "
+            for chan in orift[rift]:
+                description += chan.name + "  in  " + chan.guild.name + "  ||  "
+            for chan in orift[rift]:
+                await chan.edit(topic=description)
+
+
 
     def save_settings(self):
         settings = {"open_rifts":{},"embeds":{}}
