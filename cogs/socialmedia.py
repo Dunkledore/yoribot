@@ -70,11 +70,9 @@ class SocialMedia:
 					alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
 
 					try:
-						await self.bot.pool.execute(insertquery, self.bot.get_guild(result["guild_id"]), tweet_id)
-						print("insert")
+						await self.bot.pool.execute(insertquery, result["guild_id"], tweet_id)
 					except asyncpg.UniqueViolationError:
-						await self.bot.pool.execute(alterquery, self.bot.get_guild(result["guild_id"]), tweet_id)
-						print("update")
+						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 			except Exception as e:
 				print(e)
 			await asyncio.sleep(30)
