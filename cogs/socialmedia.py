@@ -44,7 +44,7 @@ class SocialMedia:
 	async def feeds(self):
 		while True:
 			query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
-			results = self.bot.pool.execute(query)
+			results = await self.bot.pool.execute(query)
 			for result in results:
 				if not result["feed_channel"]:
 					continue
@@ -65,9 +65,9 @@ class SocialMedia:
 				alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
 
 				try:
-					await ctx.db.execute(insertquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+					await self.bot.pool.execute(insertquery, self.bot.get_guild(result["guild_id"]), tweet_id)
 				except asyncpg.UniqueViolationError:
-					await ctx.db.execute(alterquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+					await self.bot.pool.execute(alterquery, self.bot.get_guild(result["guild_id"]), tweet_id)
 			await asyncio.sleep(30)
 
 
