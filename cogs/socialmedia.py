@@ -33,7 +33,7 @@ class SocialMedia:
 		return None
 
 
-	def tweetToEmebed(self, tweet):
+	def tweetToEmbed(self, tweet):
 		em = discord.Embed(color=discord.Colour.teal())
 		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
 		em.add_field(name="", value=tweet.text)
