@@ -48,7 +48,7 @@ class SocialMedia:
 			
 			try:
 				print(results)
-				print(resutts[0])
+				print(results[0])
 				print(results[0]["feed_channel"])
 				for result in results:
 					if not result["feed_channel"]:
