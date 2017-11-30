@@ -1,5 +1,4 @@
 from discord.ext import commands
-from discord.ext.commands.cooldowns import BucketType
 
 from .utils import checks
 
@@ -108,7 +107,6 @@ class Hangman:
 				return game
 
 		@commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
-		@commands.cooldown(1, 7, BucketType.user)
 		async def guess(self, ctx, *, guess):
 				"""Makes a guess towards the guild's currently running hangman game
 
@@ -116,7 +114,6 @@ class Hangman:
 				RESULT: Hopefully a win!"""
 				game = self.games.get(ctx.message.guild.id)
 				if not game:
-						ctx.command.reset_cooldown(ctx)
 						await ctx.send("There are currently no hangman games running!")
 						return
 
@@ -126,7 +123,6 @@ class Hangman:
 				# And also add a message for a loss/win
 				if len(guess) == 1:
 						if guess in game.guessed_letters:
-								ctx.command.reset_cooldown(ctx)
 								await ctx.send("That letter has already been guessed!")
 								# Return here as we don't want to count this as a failure
 								return

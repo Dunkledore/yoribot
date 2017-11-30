@@ -261,7 +261,7 @@ class FFXIV:
         for type in self.latestnews.keys():
             # "2017-11-18 17:20:35"
             for item in self.latestnews[type]:
-                itemtime = datetime.datetime().strptime(item["time"], "%Y-%m-%d %H:%M:%S")
+                itemtime = datetime.datetime(2017,1,1).strptime(item["time"], "%Y-%m-%d %H:%M:%S")
                 if itemtime > timestamp:
                     news[type].append(item)
         return news
@@ -311,24 +311,39 @@ class FFXIV:
         em.set_footer(text=newsitem["time"] + " (UTC)")
         return em
 
-    async def send_all_news(self):
+    @ffxiv_news.command(name="start")
+    async def send_all_news(self, ctx):
+        print("(News) Started send_all_news")
+        await ctx.send("Started.")
         await self.bot.wait_until_ready()
+        print("(News) Ready")
+        debugchannel = self.bot.get_channel(381089525880979467)
+        debugchannel.send("News: Started send_all_news")
         while self == self.bot.get_cog("FFXIV"):
+            debugchannel.send("News: Updating the news...")
+            print("(News) Updating")
             await self.update_news(None)
             newsset = self.settings["news"]
             now = datetime.datetime(2017, 1, 1).utcnow()
             before = now - self.updatefrequency
             news = self.get_news_after(before)
+            print("(News) Updated")
             for guildid in newsset.keys():
+                debugchannel.send(f"News: Processing Guild {guildid}")
                 guild = self.bot.get_guild(guildid)
                 if guild is not None:
                     for ch in newsset[guild].keys():
                         chan = guild.get_channel(ch)
                         if chan is not None:
+                            debugchannel.send(f"News: Sending news to Channel {ch}")
+                            print(f"(News) Sending news to channel {ch}")
                             for type in news.keys():
                                 if newsset[guild][ch] == "all" or type in newsset[guild][ch]:
                                     for item in news[type]:
+                                        debugchannel.send("News: Sending news item:```json\nstr(item)```")
                                         await chan.send(embed=self.newsembed(item, type))
+            debugchannel.send("News: sleeping")
+            print("(News) waiting...")
             await asyncio.sleep(self.updatefrequency.seconds)
 
     @ffxiv.command()
@@ -1091,4 +1106,4 @@ def setup(bot):
         dataIO.save_json("data/ffxiv/fflogs/settings.json", {"api_key": ""})
     n = FFXIV(bot)
     bot.add_cog(n)
-    bot.loop.create_task(n.send_all_news())
+    #bot.loop.create_task(n.send_all_news())
