@@ -47,13 +47,12 @@ class SocialMedia:
 			results = await self.bot.pool.fetch(query)
 			
 			try:
-				print(results)
-				print(results[0])
-				print(results[0]["feed_channel"])
+
 				for result in results:
 					if not result["feed_channel"]:
 						continue
 					creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
+					print(creds)
 					api = self.get_api(creds)
 					me = api.me()
 					if not result["last_tweet"]:
