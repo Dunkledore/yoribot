@@ -44,7 +44,7 @@ class SocialMedia:
 	async def feeds(self):
 		while True:
 			query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
-			results = await self.bot.pool.execute(query)
+			results = await self.bot.pool.fetch(query)
 			print(results)
 			print(resutts[0])
 			print(results[0]["feed_channel"])
