@@ -96,7 +96,7 @@ class SocialMedia:
 			msg = box("Reactions until tweet: {0} 🐦\n"
 					  "Tweeter role ID:  {1}\n"
 					  "Twitter Feed Channel {2}\n"
-					  .format(tweeter_number or "0", tweeter_role or "0", feed_channel or "OFF"))
+					  .format(tweeter_number or "0", tweeter_role or "0", self.bot.get_channel(feed_channel) or "OFF"))
 			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
 			msg += "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
 			msg += "\n {}twitterset tweetcreds"
