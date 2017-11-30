@@ -45,6 +45,7 @@ class SocialMedia:
 		while True:
 			query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 			results = await self.bot.pool.execute(query)
+			print("here")
 			for result in results:
 				if not result["feed_channel"]:
 					continue
