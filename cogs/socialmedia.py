@@ -92,7 +92,7 @@ class SocialMedia:
 			else:
 				tweeter_role = results[0]["tweeter_role_id"]
 				tweeter_number = results[0]["tweeter_reaction"]
-				feed_channel; = results[0]["feedchannel"]
+				feed_channel = results[0]["feedchannel"]
 			msg = box("Reactions until tweet: {0} 🐦\n"
 					  "Tweeter role ID:  {1}\n"
 					  "Twitter Feed Channel {2}\n"
