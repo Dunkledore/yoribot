@@ -45,30 +45,32 @@ class SocialMedia:
 		while True:
 			query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 			results = await self.bot.pool.execute(query)
-			print("here")
-			for result in results:
-				if not result["feed_channel"]:
-					continue
-				creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
-				api = self.get_api(creds)
-				me = api.me()
-				if not result["last_tweet"]:
-					tweets = api.user_timeline(id=me.id,count=20)
-				else:
-					tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
+			try:
+				for result in results:
+					if not result["feed_channel"]:
+						continue
+					creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
+					api = self.get_api(creds)
+					me = api.me()
+					if not result["last_tweet"]:
+						tweets = api.user_timeline(id=me.id,count=20)
+					else:
+						tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
 
-				for tweet in tweets:
-					channel = self.bot.get_channel(result["feed_channel"])
-					await channel.send(embed=self.tweetToEmbed(tweet))
-					tweet_id = tweet.id
+					for tweet in tweets:
+						channel = self.bot.get_channel(result["feed_channel"])
+						await channel.send(embed=self.tweetToEmbed(tweet))
+						tweet_id = tweet.id
 
-				insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
-				alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
+					insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
+					alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
 
-				try:
-					await self.bot.pool.execute(insertquery, self.bot.get_guild(result["guild_id"]), tweet_id)
-				except asyncpg.UniqueViolationError:
-					await self.bot.pool.execute(alterquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+					try:
+						await self.bot.pool.execute(insertquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+					except asyncpg.UniqueViolationError:
+						await self.bot.pool.execute(alterquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+			except Exception as e:
+				print(e)
 			await asyncio.sleep(30)
 
 
