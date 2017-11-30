@@ -33,7 +33,44 @@ class SocialMedia:
 		return None
 
 
-	
+	def tweetToEmebed(self, tweet):
+		em = discord.Embed(color=discord.Colour.teal())
+		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
+		em.add_field(name="", value=tweet.text)
+		return em
+
+
+
+	async def feeds():
+		while True:
+			query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
+			results = self.bot.pool.execute(query)
+			for result in results:
+				if not result["feed_channel"]:
+					continue
+				creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
+				api = self.get_api(creds)
+				me = api.me()
+				if not result["last_tweet"]:
+					tweets = api.user_timeline(id=me.id,count=20)
+				else:
+					tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
+
+				for tweet in tweets:
+					channel = self.bot.get_channel(result["feed_channel"])
+					await channel.send(embed=self.tweetToEmbed(tweet))
+					tweet_id = tweet.id
+
+				insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
+				alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
+
+				try:
+					await ctx.db.execute(insertquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+				except asyncpg.UniqueViolationError:
+					await ctx.db.execute(alterquery, self.bot.get_guild(result["guild_id"]), tweet_id)
+			await asyncio.sleep(30)
+
+
 	@commands.group(no_pm=True)
 	@checks.is_developer()
 	async def twitterset(self, ctx):
@@ -58,6 +95,18 @@ class SocialMedia:
 			await ctx.send(embed=em)
 			
 
+	@twitterset.command(hidden=True)
+	async def feedchannel(self, ctx, channel : discord.TextChannel):
+
+
+		insertquery = "INSERT INTO social_config (guild_id, feed_channel) VALUES ($1, $2)"
+		alterquery = "UPDATE social_config SET feed_channel = $2 WHERE guild_id = $1"
+
+		try:
+			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
+		except asyncpg.UniqueViolationError:
+			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
+		await ctx.send('Channel')
 	
 	@twitterset.command(hidden=True)
 	async def tweetnumber(self, ctx, number: int):
@@ -161,7 +210,9 @@ class SocialMedia:
 
 
 def setup(bot):
-	bot.add_cog(SocialMedia(bot))
+	n = SocialMedia(bot)
+	bot.add_cog(n)
+	bot.loop.create_task(n.feeds())
 
 
 
