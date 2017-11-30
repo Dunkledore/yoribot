@@ -92,11 +92,15 @@ class SocialMedia:
 			else:
 				tweeter_role = results[0]["tweeter_role_id"]
 				tweeter_number = results[0]["tweeter_reaction"]
+				feed_channel; = results[0]["feedchannel"]
 			msg = box("Reactions until tweet: {0} 🐦\n"
 					  "Tweeter role ID:  {1}\n"
-					  .format(tweeter_number or "0", tweeter_role or "0"))
+					  "Twitter Feed Channel {2}\n"
+					  .format(tweeter_number or "0", tweeter_role or "0", feed_channel or "OFF"))
 			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
 			msg += "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
+			msg += "\n {}twitterset tweetcreds"
+			msg +- "\n {}twitterset feedchannel <channel>"
 			em = discord.Embed(color=ctx.message.author.color, description=msg)
 			em.set_author(name="Twitter Settings Help", icon_url="http://bit.ly/2qrhjLu")
 			await ctx.send(embed=em)
