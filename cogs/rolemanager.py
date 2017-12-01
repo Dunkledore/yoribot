@@ -83,18 +83,21 @@ class RoleManager:
             return
         else:
             text = "**The following are available for you to self-assign**:\n\n"
+            firstrole = ""
             for g in sorted(self.settings[str(ctx.message.guild.id)]['sars'].keys()):
                 text += "**" + g + "**:\n"
                 for r in sorted(self.settings[str(ctx.message.guild.id)]['sars'][g].keys()):
                     text += r + "**,** "
+                    if firstrole == "":
+                        firstrole = r
                 text = (text[:-6] if text[-2] == "*" else text) + "\n\n"
             em = discord.Embed(color=ctx.message.author.color, description=text)
             em.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
             text = ""
             if len(self.bot.get_guild_prefixes(ctx.message.guild))<3:
-                text = "To add roles use [p]rolename"
+                text = "To add roles use [p]<rolename>, for example [p]"+ firstrole
             else:
-                text = "To add roles use " + str(self.bot.get_guild_prefixes(ctx.message.guild)[2])+ "rolename"
+                text = "To add roles use " + str(self.bot.get_guild_prefixes(ctx.message.guild)[2])+ "<rolename>, for example " + str(self.bot.get_guild_prefixes(ctx.message.guild)[2]) + firstrole
             em.set_footer(text=text)
             await ctx.send(embed=em)
             return
