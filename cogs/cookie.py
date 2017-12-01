@@ -120,7 +120,11 @@ class Cookie:
         settings = self.check_guild_settings(guild)
         self.account_check(settings, author)
         cookies = settings["Players"][str(author.id)]["Cookies"]
-        y= ":cookie:" * cookies
+        if (cookies < 200):
+            y= ":cookie:" * cookies
+        else:
+            y=":cookie:" * 200
+
         await ctx.send("Yori sees you have **{}** cookies in the jar. "
                                "\n {} ".format(cookies,y))
 
