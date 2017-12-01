@@ -368,7 +368,8 @@ class MusicPlayer:
         self.logger.debug("movehere command")
 
         # Delete the old message
-        await self.embed.delete()
+        if self.embed:
+            await self.embed.delete()
         # Set the channel to this channel
         self.embed.channel = channel
         # Send a new embed to the channel
@@ -560,6 +561,7 @@ class MusicPlayer:
             try:
                 future = asyncio.run_coroutine_threadsafe(self.vplay(), self.bot.loop)
                 future.result()
+                self.update_queue()
             except:
                 pass
 

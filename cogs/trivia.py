@@ -28,14 +28,14 @@ class Trivia:
         settings = dataIO.load_json(self.file_path)
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
-    @commands.group(pass_context=True, no_pm=True, hidden=True)
+    @commands.group(no_pm=True, hidden=True)
     @checks.is_mod()
     async def triviaset(self, ctx):
         """Allows you to change the settings for Trivia"""
         guild = ctx.message.guild
         if ctx.invoked_subcommand is None:
             settings = self.settings[guild.id]
-            msg = box("Red gains points: {BOT_PLAYS}\n"
+            msg = box("Yori gains points: {BOT_PLAYS}\n"
             "Seconds to answer: {DELAY}\n"
             "Points to win: {MAX_SCORE}\n"
             "Reveal answer on timeout: {REVEAL_ANSWER}\n"
@@ -48,7 +48,7 @@ class Trivia:
             em.set_author(name="Trivia Settings Help", icon_url="http://bit.ly/2qrhjLu")
             await ctx.send(embed=em)
 
-    @triviaset.command(pass_context=True)
+    @triviaset.command()
     async def maxscore(self, ctx, score : int=-1):
         guild = ctx.message.guild
         if score < 0:
@@ -71,7 +71,7 @@ class Trivia:
             em.set_author(name="Uh-Oh!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @triviaset.command(pass_context=True)
+    @triviaset.command()
     async def timelimit(self, ctx, seconds : int=-1):
         guild = ctx.message.guild
         if seconds < 0:
@@ -94,7 +94,7 @@ class Trivia:
             em.set_author(name="Uh-Oh!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @triviaset.command(pass_context=True)
+    @triviaset.command()
     async def botplays(self, ctx):
         guild = ctx.message.guild
         if self.settings[guild.id]["BOT_PLAYS"]:
@@ -111,7 +111,7 @@ class Trivia:
             await ctx.send(embed=em)
         self.save_settings()
 
-    @triviaset.command(pass_context=True)
+    @triviaset.command()
     async def revealanswer(self, ctx):
         guild = ctx.message.guild
         if self.settings[guild.id]["REVEAL_ANSWER"]:
@@ -126,7 +126,7 @@ class Trivia:
             await ctx.send(embed=em)
         self.save_settings()
 
-    @commands.group(pass_context=True, invoke_without_command=True, no_pm=True)
+    @commands.group(invoke_without_command=True, no_pm=True)
     async def trivia(self, ctx, list_name: str):
         message = ctx.message
         guild = message.guild
@@ -153,13 +153,19 @@ class Trivia:
             em.set_author(name="OOPS!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(no_pm=True)
     async def triviastop(self, ctx):
         """Stops Trivia"""
         session = self.get_trivia_by_channel(ctx.message.channel)
-        await session.end_game()
+        await session.end_game(ctx)
+
+    @trivia.group(name="stop")
+    async def _stop(self, ctx):
+        """Stops Trivia"""
+        session = self.get_trivia_by_channel(ctx.message.channel)
+        await session.end_game(ctx)
       
-    @trivia.group(name="list", pass_context=True)
+    @trivia.group(name="list")
     async def trivia_list(self, ctx):
         message = ctx.message
         guild = message.guild
@@ -259,10 +265,10 @@ class TriviaSession():
         self.status = "stop"
         self.bot.dispatch("trivia_end", self)
 
-    async def end_game(self):
+    async def end_game(self, ctx):
         self.status = "stop"
         if self.scores:
-            await self.send_table()
+            await self.send_table(ctx)
         self.bot.dispatch("trivia_end", self)
 
 
@@ -271,10 +277,10 @@ class TriviaSession():
         guild = message.guild
         for score in self.scores.values():
             if score == self.settings["MAX_SCORE"]:
-                await self.end_game()
+                await self.end_game(ctx)
                 return True
         if self.question_list == []:
-            await self.end_game()
+            await self.end_game(ctx)
             return True
         self.current_line = choice(self.question_list)
         self.question_list.remove(self.current_line)
@@ -330,7 +336,7 @@ class TriviaSession():
         t = "+ Results: \n\n"
         for user, score in self.scores.most_common():
             t += "+ {}\t{}\n".format(user, score)
-        await message.channel.send(box(t, lang="diff"))
+        await ctx.channel.send(box(t, lang="diff"))
 
     async def check_answer(self, message):
         if message.author == self.bot.user:

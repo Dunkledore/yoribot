@@ -105,6 +105,7 @@ class Profile:
 
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
+			return
 
 
 
@@ -129,6 +130,12 @@ class Profile:
 		
 		if (name is None) or (value is None):
 			await ctx.send('Please enter both a field and a value')
+			return
+		elif len(name) > 256:
+			await ctx.send("Field names must be 256 characters or shorter")
+			return
+		elif len(value) > 1024:
+			await ctx.send("Field content must be 1024 characters or shorter")
 			return
 		else:
 			query = "SELECT * FROM Profile WHERE user_id = $1"
