@@ -25,7 +25,7 @@ class Profile:
         em.add_field(name='Adding Your Region', value='Use one of the following commands:\n\n``' + prefix + 'northamerica`` `` ' + prefix + 'southamerica`` `` ' + prefix + 'europe`` `` ' + prefix + 'africa`` `` ' + prefix + 'asia`` `` ' + prefix + 'oceania``', inline=False)
         em.add_field(name='Adding Gender', value='Use `` ' + prefix + 'gender <gender>`` for example:\n\n``' + prefix + 'gender Male`` **or** `` ' + prefix + 'gender Female`` **or** `` ' + prefix + 'gender intersex`` ', inline=False)
         em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality>`` for example:\n\n``' + prefix + 'sexuality Straight`` **or** ``' + prefix + 'sexuality Gay`` **or** ``' + prefix + 'sexuality Lesbian`` **or** ``' + prefix + 'sexuality Asexual``', inline=False)
-        em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age>`` for example: \n\n ``' + prefix + 'age 20``.', inline=False)
+        em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age>`` for example:\n\n``' + prefix + 'age 20``', inline=False)
         em.add_field(name='Custom Fields', value='You can add custom sections to your profile using \n\n`` ' + prefix + 'profileadd``\n'
                     '\nThe bot will then prompt you for a section title and content.\n', inline=False)
         em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
