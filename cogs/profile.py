@@ -141,13 +141,13 @@ class Profile:
             name = await self.bot.wait_for('message', timeout=30.0, check=check)
             while len(name) > 256:
                 await ctx.send("Field names must be 256 characters or shorter")
-                   name = await self.bot.wait_for('message', timeout=30.0, check=check)
+                name = await self.bot.wait_for('message', timeout=30.0, check=check)
         if (value is None):
             await ctx.send("What would you like the content to be?")
             value = await self.bot.wait_for('message', timeout=30.0, check=check)
             while len(value) > 1024:
                 await ctx.send("Field content must be 1024 characters or shorter")
-                   value = await self.bot.wait_for('message', timeout=30.0, check=check)
+                value = await self.bot.wait_for('message', timeout=30.0, check=check)
 
         query = "SELECT * FROM Profile WHERE user_id = $1"
         results = await ctx.db.fetch(query, ctx.message.author.id)
