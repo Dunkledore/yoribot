@@ -248,7 +248,10 @@ class AnimeList:
                 
                     return m.content.isdigit() and int(m.content) in range(1, len(root) + 1) and ctx.author.id == m.author.id
 
-                resp = await self.bot.wait_for('message', timeout=15, check=check)
+                try:
+                    resp = await self.bot.wait_for('message', timeout=15, check=check)
+                except:
+                    return
                 if resp is None:
                     return
 
