@@ -207,8 +207,6 @@ class RoleManager:
                 em = discord.Embed(color=ctx.message.author.color, description="An error occured removing the role")
                 em.set_author(name=e.__class__.__name__, icon_url="http://bit.ly/2qlsl5I")
                 await ctx.send(embed=em)
-                print (e.__traceback__.tb_lineno)
-                print (e.__traceback__.tb_frame)
 
     def save_settings(self):
         dataIO.save_json("data/rolemanager/settings.json", self.settings)
