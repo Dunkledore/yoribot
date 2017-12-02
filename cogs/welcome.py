@@ -23,17 +23,26 @@ class Welcome:
 		await self.show_welcome_message(ctx)
 
 	async def show_welcome_message(self, ctx):
+		member = ctx.author
+		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
+		con = self.bot.pool
+		config = await con.fetchrow(query, member.guild.id)
+		if chid is None:
+			return
+		ch = ctx.message.channel
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
-		welcome = await ctx.db.fetch(query, ctx.guild.id)
+		welcome = await con.fetch(query, member.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
-		embed.set_author(name='Welcome to ' + ctx.message.guild.name + ', ' + ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
-		embed.set_thumbnail(url=ctx.message.author.avatar_url)
+		embed.set_author(name='Welcome to ' + member.guild.name + ' ' + member.name, icon_url=member.guild.icon_url)
+		embed.set_thumbnail(url=member.avatar_url)
 
 		for fields in welcome:
-			embed.add_field(name=fields["name"], value=fields["value"].format(ctx.message.author))
+			embed.add_field(name=fields["name"], value=fields["value"].format(member))
 
+		if config["text_message"]:
+			await ch.send(config["text_message"].format(member))
+		await ch.send(embed=embed)
 
-		await ctx.send(embed=embed)
 
 	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
@@ -89,6 +98,20 @@ class Welcome:
 
 	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
+	async def welcometext(self, ctx, *, text):
+		"""Set a non-embed welcome message"""
+
+		insertquery = "INSERT INTO welcome_config (guild_id, text_message) VALUES ($1, $2)"
+		alterquery = "UPDATE welcome_config SET text_message = $2 WHERE guild_id = $1"
+
+		try:
+			await ctx.db.execute(insertquery, ctx.guild.id, text)
+		except asyncpg.UniqueViolationError:
+			await ctx.db.execute(alterquery, ctx.guild.id, text)
+		await ctx.send('Message set')
+
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
 	async def nowelcome(self, ctx):
 		"""Call this to stop the welcome messages"""
 
@@ -104,21 +127,21 @@ class Welcome:
 
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		con = self.bot.pool
-		chid = await con.fetchrow(query, member.guild.id)
+		config = await con.fetchrow(query, member.guild.id)
 		if chid is None:
 			return
-		ch = self.bot.get_channel(chid["channel_id"])
+		ch = self.bot.get_channel(config["channel_id"])
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
 		welcome = await con.fetch(query, member.guild.id)
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name='Welcome to ' + member.guild.name + ' ' + member.name, icon_url=member.guild.icon_url)
 		embed.set_thumbnail(url=member.avatar_url)
 
-
 		for fields in welcome:
 			embed.add_field(name=fields["name"], value=fields["value"].format(member))
 
-
+		if config["text_message"]:
+			await ch.send(config["text_message"].format(member))
 		await ch.send(embed=embed)
 
 def setup(bot):
