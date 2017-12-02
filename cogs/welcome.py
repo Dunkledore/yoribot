@@ -27,7 +27,7 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		con = self.bot.pool
 		config = await con.fetchrow(query, member.guild.id)
-		if chid is None:
+		if config is None:
 			return
 		ch = ctx.message.channel
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
@@ -128,7 +128,7 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		con = self.bot.pool
 		config = await con.fetchrow(query, member.guild.id)
-		if chid is None:
+		if config is None:
 			return
 		ch = self.bot.get_channel(config["channel_id"])
 		query = "SELECT * FROM welcome WHERE guild_id = $1;"
