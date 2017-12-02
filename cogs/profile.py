@@ -23,8 +23,8 @@ class Profile:
         em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
         em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
         em.add_field(name='Adding Your Region', value='Use one of the following commands:\n\n``' + prefix + 'northamerica`` `` ' + prefix + 'southamerica`` `` ' + prefix + 'europe`` `` ' + prefix + 'africa`` `` ' + prefix + 'asia`` `` ' + prefix + 'oceania``', inline=False)
-        em.add_field(name='Adding Gender', value='Use `` ' + prefix + 'gender <gender>`` for example:\n\n``' + prefix + 'gender Male`` or `` ' + prefix + 'gender Female`` or `` ' + prefix + 'gender intersex`` ', inline=False)
-        em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality>`` for example:\n\n`` `` ' + prefix + 'sexuality Straight`` `` ' + prefix + 'sexuality Gay`` `` ' + prefix + 'sexuality Lesbian`` `` ' + prefix + 'sexuality Asexual``', inline=False)
+        em.add_field(name='Adding Gender', value='Use `` ' + prefix + 'gender <gender>`` for example:\n\n``' + prefix + 'gender Male`` **or** `` ' + prefix + 'gender Female`` **or** `` ' + prefix + 'gender intersex`` ', inline=False)
+        em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality>`` for example:\n\n``' + prefix + 'sexuality Straight`` **or** ``' + prefix + 'sexuality Gay`` **or** ``' + prefix + 'sexuality Lesbian`` **or** ``' + prefix + 'sexuality Asexual``', inline=False)
         em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age> for example: \n\n `` ``' + prefix + 'age 20``.', inline=False)
         em.add_field(name='Custom Fields', value='You can add custom sections to your profile using \n\n`` ' + prefix + 'profileadd``\n'
                     '\nThe bot will then prompt you for a section title and content.\n', inline=False)
