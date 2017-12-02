@@ -36,7 +36,7 @@ class RoleManager:
             em.set_author(name="Uh-oh", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
         else:
-            role = discord.utils.get(ctx.message.guild.roles, id=roleinfo[1])
+            role = discord.utils.get(ctx.message.guild.roles, id=int(roleinfo[1]))
             await ctx.message.author.add_roles(role)
             em = discord.Embed(color=ctx.message.author.color, description="The role has been assigned to you!")
             em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
