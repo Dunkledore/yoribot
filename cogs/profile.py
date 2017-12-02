@@ -139,12 +139,14 @@ class Profile:
         if (name is None):
             await ctx.send("What would you like the title to be?")
             name = await self.bot.wait_for('message', timeout=30.0, check=check)
+            name = name.content
             while len(name) > 256:
                 await ctx.send("Field names must be 256 characters or shorter")
                 name = await self.bot.wait_for('message', timeout=30.0, check=check)
         if (value is None):
             await ctx.send("What would you like the content to be?")
             value = await self.bot.wait_for('message', timeout=30.0, check=check)
+            value = value.content
             while len(value) > 1024:
                 await ctx.send("Field content must be 1024 characters or shorter")
                 value = await self.bot.wait_for('message', timeout=30.0, check=check)
