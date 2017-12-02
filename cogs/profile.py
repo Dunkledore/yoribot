@@ -27,7 +27,7 @@ class Profile:
         em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality> for example: \n\n `` `` ' + prefix + 'sexuality Straight`` `` ' + prefix + 'sexuality Gay`` `` ' + prefix + 'sexuality Lesbian`` `` ' + prefix + 'sexuality Asexual``', inline=False)
         em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age> for example: \n\n `` ``' + prefix + 'age 20``.', inline=False)
         em.add_field(name='Custom Fields', value='You can add custom sections to your profile using \n\n`` ' + prefix + 'profileadd``\n'
-                    '\nThe bot will then prompt you for a section title and content.``\n', inline=False)
+                    '\nThe bot will then prompt you for a section title and content.\n', inline=False)
         em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
         await ctx.send(embed=em)
 
