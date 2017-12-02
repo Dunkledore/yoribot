@@ -173,7 +173,7 @@ class Profile:
 			await ctx.send("Age Set")
 
 	@commands.command(pass_context=True, no_pm=True)
-	async def gender(self, ctx, gender):
+	async def gender(self, ctx, *, gender):
 		"""Sets the gender of the caller"""
 
 		query = "SELECT * FROM Profile WHERE user_id = $1"
@@ -188,7 +188,7 @@ class Profile:
 			await ctx.send("Gender Set")
 
 	@commands.command(pass_context=True, no_pm=True)
-	async def sexuality(self, ctx, sexuality):
+	async def sexuality(self, ctx, *, sexuality):
 		"""Sets the sexuality of the caller"""
 
 		query = "SELECT * FROM Profile WHERE user_id = $1"
