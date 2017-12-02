@@ -197,7 +197,7 @@ class RoleManager:
                     await ctx.send(embed=em)
                     return
                 else:
-                    role = discord.utils.get(ctx.message.guild.roles, id=roleinfo[1])
+                    role = discord.utils.get(ctx.message.guild.roles, id=int(roleinfo[1]))
                     await ctx.message.author.remove_roles(role)
                     em = discord.Embed(color=ctx.message.author.color, description="Role removed")
                     em.set_author(name=role, icon_url="http://bit.ly/2r2cpXh")
@@ -208,6 +208,7 @@ class RoleManager:
                 em.set_author(name=e.__class__.__name__, icon_url="http://bit.ly/2qlsl5I")
                 await ctx.send(embed=em)
                 print (e.__traceback__.tb_lineno)
+                print (e.__traceback__.tb_frame)
 
     def save_settings(self):
         dataIO.save_json("data/rolemanager/settings.json", self.settings)
