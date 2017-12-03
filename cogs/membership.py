@@ -158,9 +158,10 @@ class MemberAudit:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await channel.send(self.settings[str(server.id)][
-                                            "join_message"]
-                                        .format(member, server))
+            await channel.send(embed=discord.Embed(
+                                title = "📥 Member Join",
+                                description = self.settings[str(server.id)]["join_message"].format(member, server)
+                                ))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member))
@@ -186,9 +187,11 @@ class MemberAudit:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await channel.send(self.settings[str(server.id)][
-                                            "leave_message"]
-                                        .format(member, server))
+            await channel.send(embed=discord.Embed(
+                                title = "📤 Member Leave",
+                                description = self.settings[str(server.id)]["leave_message"].format(member, server)
+                                ))
+
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member))
@@ -214,8 +217,10 @@ class MemberAudit:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await channel.send(self.settings[str(server.id)]["ban_message"]
-                                        .format(user, server))
+            await channel.send(embed=discord.Embed(
+                                title = "🔨 Member Banned",
+                                description = self.settings[str(server.id)]["join_message"].format(member, server)
+                                ))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(user.name))
@@ -242,9 +247,10 @@ class MemberAudit:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await channel.send(self.settings[str(server.id)][
-                                            "unban_message"]
-                                        .format(user, server))
+            await channel.send(embed=discord.Embed(
+                                title = "🕊️ Member Leave",
+                                description = self.settings[str(server.id)]["leave_message"].format(member, server)
+                                ))
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(user.name))
