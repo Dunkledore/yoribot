@@ -254,7 +254,7 @@ class Tags:
 
     @tag.command(aliases=['add'])
     @suggest_box()
-    async def create(self, ctx, name: TagName, *, content: commands.clean_content):
+    async def create(self, ctx, name: TagName, *, content):
         """Creates a new tag owned by you.
 
         This tag is server-specific and cannot be used in other servers.
