@@ -334,6 +334,9 @@ class Profile:
                         return
                 await ctx.send("No field with that name")
 
+    async def on_message(self, msg):
+        print(1/0)
+
 
 def setup(bot):
     bot.add_cog(Profile(bot))
