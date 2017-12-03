@@ -507,4 +507,4 @@ def setup(bot):
         bot.socket_stats = Counter()
 
     bot.add_cog(Stats(bot))
-    commands.Bot.on_error = on_error
+
