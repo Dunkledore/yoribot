@@ -494,10 +494,10 @@ class Stats:
         e.timestamp = datetime.datetime.utcnow()
 
         hook = await self.webhook()
-            try:
-                await hook.send(embed=e)
-            except:
-                pass
+        try:
+            await hook.send(embed=e)
+        except:
+            pass
 
 def setup(bot):
     if not hasattr(bot, 'command_stats'):
