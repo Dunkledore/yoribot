@@ -488,6 +488,7 @@ class Stats:
 
 
     async def on_error(self, event, *args, **kwargs):
+        print("error")
         e = discord.Embed(title='Event Error', colour=0xa32952)
         e.add_field(name='Event', value=event)
         e.description = f'```py\n{traceback.format_exc()}\n```'
