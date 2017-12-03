@@ -487,13 +487,13 @@ class Stats:
 
 
 
-        async def on_error(self, event, *args, **kwargs):
-            e = discord.Embed(title='Event Error', colour=0xa32952)
-            e.add_field(name='Event', value=event)
-            e.description = f'```py\n{traceback.format_exc()}\n```'
-            e.timestamp = datetime.datetime.utcnow()
+    async def on_error(self, event, *args, **kwargs):
+        e = discord.Embed(title='Event Error', colour=0xa32952)
+        e.add_field(name='Event', value=event)
+        e.description = f'```py\n{traceback.format_exc()}\n```'
+        e.timestamp = datetime.datetime.utcnow()
 
-            hook = await self.webhook()
+        hook = await self.webhook()
             try:
                 await hook.send(embed=e)
             except:
