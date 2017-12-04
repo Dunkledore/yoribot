@@ -126,7 +126,7 @@ class Welcome:
 	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
 	async def welcomewhisper(self, ctx):
-		query = "UPDATE SET whsiper = NOT whisper WHERE guild_id = $1; SELECT whsiper FROM welcome_config where guild_id = $1"
+		query = "UPDATE welcome_config SET whsiper = NOT whisper WHERE guild_id = $1 RETURNING *"
 		whisper = await ctx.db.fetch(query, ctx.guild.id)
 		await ctx.send("Whisper set to " + str(whisper))
 
