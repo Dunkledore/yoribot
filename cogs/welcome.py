@@ -127,7 +127,7 @@ class Welcome:
 	@checks.is_admin()
 	async def welcomewhisper(self, ctx):
 		query = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
-		config = await ctx.db.value(query, ctx.guild.id)
+		config = await ctx.db.fetchval(query, ctx.guild.id)
 		await ctx.send("Whisper set to " + str(config))
 
 
