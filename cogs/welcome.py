@@ -150,8 +150,8 @@ class Welcome:
 			embed.add_field(name=fields["name"], value=fields["value"].format(member))
 
 		if config["whisper"]:
-			if config["text_message"]:
-				await member.send(config["text_message"].format(member))
+			if config["whisper"]:
+				await member.send(config["whisper"].format(member))
 			await member.send(embed=embed)
 		
 		if ch:
