@@ -123,6 +123,15 @@ class Welcome:
 		await ctx.send('I will no longer send a welcome messgae. To re-enable please use. ?setwelcomechannel')
 
 
+	@commands.command(no_pm=True, hidden=True)
+	@checks.is_admin()
+	async def welcomewhisper(self, ctx):
+		query = "UPDATE SET whsiper = NOT whisper WHERE guild_id = $1; SELECT whsiper FROM welcome_config where guild_id = $1"
+		whisper = await ctx.db.fetch(query, ctx.guild.id)
+		await ctx.send("Whisper set to " + str(whisper))
+
+
+
 	async def on_member_join(self, member):
 
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
@@ -140,9 +149,19 @@ class Welcome:
 		for fields in welcome:
 			embed.add_field(name=fields["name"], value=fields["value"].format(member))
 
-		if config["text_message"]:
-			await ch.send(config["text_message"].format(member))
-		await ch.send(embed=embed)
+		if config["whisper"]:
+			if config["text_message"]:
+				await member.send(config["text_message"].format(member))
+			await member.send(embed=embed)
+		
+		if ch:
+			if config["text_message"]:
+				await ch.send(config["text_message"].format(member))
+			await ch.send(embed=embed)
+
+
+		
+		
 
 def setup(bot):
     bot.add_cog(Welcome(bot))
