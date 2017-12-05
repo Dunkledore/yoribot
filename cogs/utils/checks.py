@@ -50,8 +50,11 @@ async def has_level(level, ctx):
 
     query = "SELECT * FROM mod_config WHERE guild_id = $1"
     results = await ctx.db.fetch(query, ctx.guild.id)
-    mod_role = results[0]["mod_role"]
-
+    mod_role = None
+    if results:
+        mod_role = results[0]["mod_role"]
+    else:
+        mod_role = None
 
 
     if (ctx.author.id in [146893225850961920,234353120455426048,123900100081745922]):
