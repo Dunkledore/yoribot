@@ -485,19 +485,20 @@ class Stats:
         hook = await self.webhook()
         await hook.send(embed=e)
 
-old_on_error = commands.Bot.on_error
 
-async def on_error(self, event, *args, **kwargs):
-    e = discord.Embed(title='Event Error', colour=0xa32952)
-    e.add_field(name='Event', value=event)
-    e.description = f'```py\n{traceback.format_exc()}\n```'
-    e.timestamp = datetime.datetime.utcnow()
 
-    hook = await self.get_cog('Stats').webhook()
-    try:
-        await hook.send(embed=e)
-    except:
-        pass
+    async def on_error(self, event, *args, **kwargs):
+        print("error")
+        e = discord.Embed(title='Event Error', colour=0xa32952)
+        e.add_field(name='Event', value=event)
+        e.description = f'```py\n{traceback.format_exc()}\n```'
+        e.timestamp = datetime.datetime.utcnow()
+
+        hook = await self.webhook()
+        try:
+            await hook.send(embed=e)
+        except:
+            pass
 
 def setup(bot):
     if not hasattr(bot, 'command_stats'):
@@ -507,7 +508,4 @@ def setup(bot):
         bot.socket_stats = Counter()
 
     bot.add_cog(Stats(bot))
-    commands.Bot.on_error = on_error
 
-def teardown(bot):
-    commands.Bot.on_error = old_on_error
