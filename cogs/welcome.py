@@ -126,9 +126,14 @@ class Welcome:
 	@commands.command(no_pm=True, hidden=True)
 	@checks.is_admin()
 	async def welcomewhisper(self, ctx):
-		query = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
-		whisper = await ctx.db.fetchval(query, ctx.guild.id)
-		await ctx.send("Whisper set to " + str(whisper))
+		altertquery = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
+        insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True)"
+        try:
+        	await ctx.db.execute(insertquery, ctx.guild.id)
+        	await ctx.send("Whisper set to True")
+        except asuncpg.UniqueViolationError:
+			whisper = await ctx.db.fetchval(query, ctx.guild.id)
+			await ctx.send("Whisper set to " + str(whisper))
 
 
 
