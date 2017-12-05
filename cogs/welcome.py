@@ -132,7 +132,7 @@ class Welcome:
 			await ctx.db.execute(insertquery, ctx.guild.id)
 			await ctx.send("Whisper set to True")
 		except asyncpg.UniqueViolationError:
-			whisper = await ctx.db.fetchval(query, ctx.guild.id)
+			whisper = await ctx.db.fetchval(altquery, ctx.guild.id)
 			await ctx.send("Whisper set to " + str(whisper))
 
 
