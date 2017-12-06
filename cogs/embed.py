@@ -28,7 +28,7 @@ class Embed:
                 return False
             return True
         
-        messages_to_delete = {}
+        messages_to_delete = []
         
         bot_message = await ctx.send("Please type the embed title")
         messages_to_delete.append(bot_message)
@@ -68,7 +68,7 @@ class Embed:
 
 
         more_fields = True
-        fields = {}
+        fields = []
         while(more_fields):
             bot_message = await ctx.send("Please type the field title or \"none\" to stop adding fields")
             messages_to_delete.append(bot_message)
@@ -83,7 +83,7 @@ class Embed:
                 field_content_message = await self.bot.wait_for('message', timeout=30.0, check=check)
                 field_content = field_content_message.content
                 messages_to_delete.append(field_content_message)
-                fields.append({field_title, field_content})
+                fields.append([field_title, field_content])
 
         for field in fields:
             embed.add_field(name=field[0], value=field[1])
