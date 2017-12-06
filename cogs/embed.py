@@ -28,7 +28,7 @@ class Embed:
                 return False
             return True
         
-        messages_to_delete = []
+        messages_to_delete = [ctx.message]
         
         bot_message = await ctx.send("Please type the embed title")
         messages_to_delete.append(bot_message)
