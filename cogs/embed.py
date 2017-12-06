@@ -69,7 +69,7 @@ class Embed:
 
         more_fields = True
         fields = {}
-        while(more_fields)
+        while(more_fields):
             bot_message = await ctx.send("Please type the field title or \"none\" to stop adding fields")
             messages_to_delete.append(bot_message)
             field_title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
