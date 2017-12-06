@@ -64,7 +64,7 @@ class Embed:
         else:
             embed = discord.Embed(title=title, description=description)
 
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.icon_url)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
 
 
         more_fields = True
