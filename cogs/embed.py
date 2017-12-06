@@ -30,7 +30,7 @@ class Embed:
         
         messages_to_delete = {}
         
-        bot_message = await ctx.send("Please type the embed title"):
+        bot_message = await ctx.send("Please type the embed title")
         messages_to_delete.append(bot_message)
         title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
         messages_to_delete.append(title_message)
@@ -42,7 +42,7 @@ class Embed:
             title = title_message.content
 
 
-        bot_message = await ctx.send("Please type the embed description"):
+        bot_message = await ctx.send("Please type the embed description")
         messages_to_delete.append(bot_message)
         description_message = await self.bot.wait_for('message', timeout=30.0, check=check)
         messages_to_delete.append(description_message)
@@ -54,7 +54,7 @@ class Embed:
             description = description_message.content
 
         
-        bot_message = await ctx.send("Please type the embed url or \"none\" for no url"):
+        bot_message = await ctx.send("Please type the embed url or \"none\" for no url")
         messages_to_delete.append(bot_message)
         url_message = await self.bot.wait_for('message', timeout=30.0, check=check)
         messages_to_delete.append(url_message)
