@@ -241,6 +241,18 @@ class SocialMedia:
 				return
 
 		if reaction.count >= results[0]["tweeter_reaction"]:
+
+			if reaction.message.attachments:
+				if reaction.message.attachments[0].height:
+					filename = 'temp.jpg'
+					request = requests.get(reaction.message.attachments[0].url, stream=True)
+					if request.status_code == 200:
+						with open(filename, 'wb') as image:
+							for chunk in request:
+								image.write(chunk)
+				await self.sentweet(reaction.message.guild, recation.message.content, None, filename)
+				return
+
 			await self.sendtweet(reaction.message.guild, reaction.message.content)
 
 		
