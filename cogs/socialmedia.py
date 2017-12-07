@@ -37,6 +37,9 @@ class SocialMedia:
 		em = discord.Embed(color=discord.Colour.teal())
 		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
 		em.add_field(name="Tweet", value=tweet.text)
+		if 'media' in tweet.entities:
+			if tweet.entities['media'][0]['type'] == 'photo':
+				em.set_image(url=tweets.entities['media'][0]['media_url_https'])
 		return em
 
 
