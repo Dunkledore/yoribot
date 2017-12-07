@@ -246,7 +246,7 @@ class SocialMedia:
 							with open(filename, 'wb') as image:
 								for chunk in request:
 									image.write(chunk)
-					await self.sentweet(reaction.message.guild, recation.message.content, None, filename)
+					await self.sendweet(reaction.message.guild, recation.message.content, None, filename)
 					return
 
 				await self.sendtweet(reaction.message.guild, reaction.message.content)
