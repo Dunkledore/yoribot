@@ -65,7 +65,7 @@ class SocialMedia:
 					else:
 						tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
 
-					tweet_id = results["last_tweet"]
+					tweet_id = result["last_tweet"]
 					for tweet in tweets:
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
@@ -80,7 +80,7 @@ class SocialMedia:
 					except asyncpg.UniqueViolationError:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 		except Exception as e:
-			print(e.tb_lineno)
+			print(e)
 
 			await asyncio.sleep(30)
 
@@ -241,9 +241,7 @@ class SocialMedia:
 			if role.id == tweeter_role or reaction.count >= results[0]["tweeter_reaction"]:
 
 				if reaction.message.attachments:
-					print("attatch")
 					if reaction.message.attachments[0].height:
-						print("height")
 						filename = 'temp.jpg'
 						request = requests.get(reaction.message.attachments[0].url, stream=True)
 						if request.status_code == 200:
