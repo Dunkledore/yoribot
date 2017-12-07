@@ -197,9 +197,9 @@ class SocialMedia:
 				filename = 'temp.jpg'
 				request = requests.get(ctx.message.attachments[0].url, stream=True)
 				if request.status_code == 200:
-			        with open(filename, 'wb') as image:
-			            for chunk in request:
-			                image.write(chunk)
+					with open(filename, 'wb') as image:
+						for chunk in request:
+							image.write(chunk)
 
 			await self.sendtweet(ctx.guild, tweet, ctx, filename)
 			await ctx.message.delete()
