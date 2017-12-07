@@ -222,7 +222,7 @@ class SocialMedia:
 			api = self.get_api(creds)
 
 			if attatchment:
-				status = api.update_with_media(attatchment, tweet)
+				status = api.update_with_media(attatchment, status=tweet)
 				os.remove(attatchment)
 			else:
 				status = api.update_status(status=tweet)
