@@ -64,6 +64,7 @@ class SocialMedia:
 					for tweet in tweets:
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
+						print(tweet)
 						tweet_id = tweet.id
 
 					insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
@@ -81,6 +82,8 @@ class SocialMedia:
 	@commands.group(no_pm=True)
 	@checks.is_developer()
 	async def twitterset(self, ctx):
+		"""Admin twitter related commands"""
+
 		if ctx.invoked_subcommand is None:
 			
 			query = "SELECT * FROM social_config WHERE guild_id = $1"
