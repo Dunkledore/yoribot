@@ -13,6 +13,7 @@ import traceback
 import asyncpg
 import psutil
 import tweepy
+import os
 
 class SocialMedia:
 	"""Commands used to set up your server profile"""
