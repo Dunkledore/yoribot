@@ -65,6 +65,7 @@ class SocialMedia:
 					else:
 						tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
 
+					tweet_id = results["last_tweet"]
 					for tweet in tweets:
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
