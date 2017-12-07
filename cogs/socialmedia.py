@@ -6,6 +6,7 @@ from .utils.chat_formatting import box
 import json
 import re
 import datetime
+import requests
 import discord
 import asyncio
 import traceback
@@ -191,12 +192,26 @@ class SocialMedia:
 	@commands.command(no_pm=True)
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
-		await self.sendtweet(ctx.guild, tweet)
+		if ctx.message.attachments:
+			if ctx.message.attachments[0].height:
+				filename = 'temp.jpg'
+				request = requests.get(ctx.message.attachments[0].url, stream=True)
+				if request.status_code == 200:
+			        with open(filename, 'wb') as image:
+			            for chunk in request:
+			                image.write(chunk)
+
+			await self.sendtweet(ctx.guild, tweet, ctx, filename)
+			await ctx.message.delete()
+			await ctx.send("Tweet Tweeted")
+			return
+		
+		await self.sendtweet(ctx.guild, tweet, ctx)		
 		await ctx.message.delete()
 		await ctx.send("Tweet Tweeted")
 	
 
-	async def sendtweet(self, guild, tweet, ctx=None):
+	async def sendtweet(self, guild, tweet, ctx=None, attatchment=None):
 		creds = await self.get_creds(guild)
 		if not creds:
 			if ctx is None:
@@ -205,7 +220,11 @@ class SocialMedia:
 				await ctx.send("Your guild owner has not setup twitter credentials")
 		else:
 			api = self.get_api(creds)
-			status = api.update_status(status=tweet)
+
+			if attatchment:
+				status = api.update_with_media(attatchment, tweet)
+			else:
+				status = api.update_status(status=tweet)
 
 
 	async def on_reaction_add(self, reaction, user):
