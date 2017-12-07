@@ -241,7 +241,9 @@ class SocialMedia:
 		if reaction.count >= results[0]["tweeter_reaction"]:
 
 			if reaction.message.attachments:
+				print("attatch")
 				if reaction.message.attachments[0].height:
+					print("height")
 					filename = 'temp.jpg'
 					request = requests.get(reaction.message.attachments[0].url, stream=True)
 					if request.status_code == 200:
