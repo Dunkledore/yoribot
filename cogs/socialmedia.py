@@ -79,8 +79,8 @@ class SocialMedia:
 						await self.bot.pool.execute(insertquery, result["guild_id"], tweet_id)
 					except asyncpg.UniqueViolationError:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
-			except Exception as e:
-				print(e)
+		except Exception as e:
+			print(e)
 
 			await asyncio.sleep(30)
 
