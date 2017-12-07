@@ -234,26 +234,22 @@ class SocialMedia:
 		results = await self.bot.pool.fetch(query, reaction.message.guild.id)
 		tweeter_role = results[0]["tweeter_role_id"]
 		for role in user.roles:
-			if role.id == tweeter_role:
+			if role.id == tweeter_role or reaction.count >= results[0]["tweeter_reaction"]:
+
+				if reaction.message.attachments:
+					print("attatch")
+					if reaction.message.attachments[0].height:
+						print("height")
+						filename = 'temp.jpg'
+						request = requests.get(reaction.message.attachments[0].url, stream=True)
+						if request.status_code == 200:
+							with open(filename, 'wb') as image:
+								for chunk in request:
+									image.write(chunk)
+					await self.sentweet(reaction.message.guild, recation.message.content, None, filename)
+					return
+
 				await self.sendtweet(reaction.message.guild, reaction.message.content)
-				return
-
-		if reaction.count >= results[0]["tweeter_reaction"]:
-
-			if reaction.message.attachments:
-				print("attatch")
-				if reaction.message.attachments[0].height:
-					print("height")
-					filename = 'temp.jpg'
-					request = requests.get(reaction.message.attachments[0].url, stream=True)
-					if request.status_code == 200:
-						with open(filename, 'wb') as image:
-							for chunk in request:
-								image.write(chunk)
-				await self.sentweet(reaction.message.guild, recation.message.content, None, filename)
-				return
-
-			await self.sendtweet(reaction.message.guild, reaction.message.content)
 
 		
 
