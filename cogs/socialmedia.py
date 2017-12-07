@@ -80,7 +80,7 @@ class SocialMedia:
 					except asyncpg.UniqueViolationError:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 		except Exception as e:
-			print(e)
+			print(e.tb_lineno)
 
 			await asyncio.sleep(30)
 
