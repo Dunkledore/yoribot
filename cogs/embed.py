@@ -75,6 +75,12 @@ class Embed:
             field_title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
             messages_to_delete.append(field_title_message)
             field_title = field_title_message.content
+            while len(field_title) > 256:
+                bot_message = await ctx.send("Character limit of 256 please enter less now")
+                messages_to_delete.append(bot_message)
+                field_title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+                messages_to_delete.append(field_title_message)
+                field_title = field_title_message.content
             if field_title in ["None", "none", "\"none\"", "\"None\""]:
                 more_fields = False
             else:
@@ -83,6 +89,13 @@ class Embed:
                 field_content_message = await self.bot.wait_for('message', timeout=30.0, check=check)
                 field_content = field_content_message.content
                 messages_to_delete.append(field_content_message)
+                while len(field_content) > 1024:
+                    bot_message = await ctx.send("Character limit of 1024 please enter less now")
+                    messages_to_delete.append(bot_message)
+                    field_content_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+                    messages_to_delete.append(field_content_message)
+                    field_content = field_content_message.content
+
                 fields.append([field_title, field_content])
 
         for field in fields:
