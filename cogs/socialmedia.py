@@ -223,6 +223,7 @@ class SocialMedia:
 
 			if attatchment:
 				status = api.update_with_media(attatchment, tweet)
+				os.remove(attatchment)
 			else:
 				status = api.update_status(status=tweet)
 
