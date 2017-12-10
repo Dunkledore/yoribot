@@ -54,7 +54,7 @@ class Away:
         await ctx.send(msg)
 
     @commands.command(pass_context=True, name="toggleaway")
-    @checks.mod_or_permissions(administrator=True)
+    @checks.is_mod
     async def _ignore(self,ctx, context):
         guild = context.message.guild
         if guild.id in self.data:
