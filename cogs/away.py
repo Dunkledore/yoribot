@@ -17,9 +17,9 @@ class Away:
         if guild.id not in self.data:
             for mention in message.mentions:
                 tmp[mention] = True
-            if message.author.id != self.bot.user.id:
+            if message.str(author.id) != self.bot.user.id:
                 for author in tmp:
-                    if author.id in self.data:
+                    if str(author.id) in self.data:
                         try:
                             avatar = author.avatar_url if author.avatar else author.default_avatar_url
                             if self.data[str(author.id)]['MESSAGE']:
@@ -40,15 +40,15 @@ class Away:
     async def _away(self,ctx, *message: str):
         """Tell the bot you're away or back."""
         author = ctx.message.author
-        if author.id in self.data:
+        if str(author.id) in self.data:
             del self.data[str(author.id)]
             msg = 'You\'re now back.'
         else:
-            self.data[ctx.message.author.id] = {}
+            self.data[ctx.message.str(author.id)] = {}
             if len(str(message)) < 256:
-                self.data[ctx.message.author.id]['MESSAGE'] = ' '.join(ctx.message.clean_content.split()[1:])
+                self.data[ctx.message.str(author.id)]['MESSAGE'] = ' '.join(ctx.message.clean_content.split()[1:])
             else:
-                self.data[ctx.message.author.id]['MESSAGE'] = True
+                self.data[ctx.message.str(author.id)]['MESSAGE'] = True
             msg = 'You\'re now set as away.'
         dataIO.save_json('data/away/away.json', self.data)
         await ctx.send(msg)
@@ -57,7 +57,7 @@ class Away:
     @checks.is_mod()
     async def _ignore(self,ctx):
         guild = ctx.message.guild
-        if guild.id in self.data:
+        if str(guild.id) in self.data:
             del self.data[str(guild.id)]
             message = 'Not ignoring this guild anymore.'
         else:
