@@ -45,7 +45,7 @@ class Away:
             msg = 'You\'re now back.'
         else:
             self.data[ctx.message.author.id] = {}
-            message = message.content
+            message = ctx.message.content
             if len(message) < 256:
                 self.data[ctx.message.author.id]['MESSAGE'] = ' '.join(ctx.message.clean_content.split()[1:])
             else:
