@@ -39,16 +39,16 @@ class Away:
     @commands.command(pass_context=True, name="away")
     async def _away(self,ctx, *message: str):
         """Tell the bot you're away or back."""
-        author = context.message.author
+        author = ctx.message.author
         if author.id in self.data:
             del self.data[author.id]
             msg = 'You\'re now back.'
         else:
-            self.data[context.message.author.id] = {}
+            self.data[ctx.message.author.id] = {}
             if len(str(message)) < 256:
-                self.data[context.message.author.id]['MESSAGE'] = ' '.join(context.message.clean_content.split()[1:])
+                self.data[ctx.message.author.id]['MESSAGE'] = ' '.join(ctx.message.clean_content.split()[1:])
             else:
-                self.data[context.message.author.id]['MESSAGE'] = True
+                self.data[ctx.message.author.id]['MESSAGE'] = True
             msg = 'You\'re now set as away.'
         dataIO.save_json('data/away/away.json', self.data)
         await ctx.send(msg)
@@ -56,7 +56,7 @@ class Away:
     @commands.command(pass_context=True, name="toggleaway")
     @checks.is_mod()
     async def _ignore(self,ctx):
-        guild = context.message.guild
+        guild = ctx.message.guild
         if guild.id in self.data:
             del self.data[guild.id]
             message = 'Not ignoring this guild anymore.'
