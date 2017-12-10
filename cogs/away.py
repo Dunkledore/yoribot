@@ -31,7 +31,7 @@ class Away:
                             await self.bot.send_message(message.channel, embed=em)
                         except:
                             if self.data[str(author.id)]['MESSAGE']:
-                                msg = '{} is currently away and has set the following message: `{}`'.format(author.display_name, self.data[author.id]['MESSAGE'])
+                                msg = '{} is currently away and has set the following message: `{}`'.format(author.display_name, self.data[str(author.id)]['MESSAGE'])
                             else:
                                 msg = '{} is currently away'.format(author.display_name)
                             await self.bot.send_message(message.channel, msg)
