@@ -40,8 +40,8 @@ class Away:
     async def _away(self,ctx, *message: str):
         """Tell the bot you're away or back."""
         author = ctx.message.author
-        if int(author.id) in self.data:
-            del self.data[int(author.id)]
+        if str(author.id) in self.data:
+            del self.data[str(author.id)]
             msg = 'You\'re now back.'
         else:
             self.data[ctx.message.author.id] = {}
