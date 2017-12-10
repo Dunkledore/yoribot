@@ -37,7 +37,7 @@ class Away:
                             await self.bot.send_message(message.channel, msg)
 
     @commands.command(pass_context=True, name="away")
-    async def _away(self,ctx, context, *message: str):
+    async def _away(self,ctx, *message: str):
         """Tell the bot you're away or back."""
         author = context.message.author
         if author.id in self.data:
@@ -55,7 +55,7 @@ class Away:
 
     @commands.command(pass_context=True, name="toggleaway")
     @checks.is_mod()
-    async def _ignore(self,ctx, context):
+    async def _ignore(self,ctx):
         guild = context.message.guild
         if guild.id in self.data:
             del self.data[guild.id]
