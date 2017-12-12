@@ -696,7 +696,7 @@ class Mod:
 
     @commands.command(name="mute", no_pm=True)
     @checks.is_mod()
-    async def mute(self, ctx, user:discord.Member, channel:discord.Channel=None):
+    async def mute(self, ctx, user:discord.Member, channel:discord.TextChannel=None):
         """Mutes a user in the specified channel, if not specified, in the channel the command is used from."""
         if channel is None:
             channel = ctx.channel
