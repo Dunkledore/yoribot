@@ -11,7 +11,7 @@ class XmasClock:
         self.bot = bot
 
     @commands.command()
-    async def xmasclock(self):
+    async def xmasclock(self,ctx):
         """Display days left 'til xmas"""
 
         now = datetime.datetime.now()
@@ -25,7 +25,7 @@ class XmasClock:
 
         delta = xmasday - today
 
-        await self.bot.say("```" + str(delta.days) + " days left until Xmas!```")
+        await ctx.send("```" + str(delta.days) + " days left until Xmas!```")
 
 
 def setup(bot):
