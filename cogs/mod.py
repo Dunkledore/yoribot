@@ -701,7 +701,6 @@ class Mod:
         if channel is None:
             channel = ctx.channel
         await channel.set_permissions(user,reason=f"Mute by {ctx.author}", send_messages=False)
-        #channel.overwrites_for(user).update(send_messages=False)
         await ctx.send(f"{user.name} has been muted in {channel.name}.")
 
     @commands.command(name="unmute", no_pm=True)
@@ -711,7 +710,6 @@ class Mod:
         if channel is None:
             channel = ctx.channel
         await channel.set_permissions(user,reason=f"Unmute by {ctx.author}", send_messages=None)
-        #channel.overwrites_for(user).update(send_messages=None)
         await ctx.send(f"{user.name} has been unmuted in {channel.name}.")
 
     @commands.command(name="muteall", no_pm=True)
@@ -720,7 +718,6 @@ class Mod:
         """Mutes a user in all channels of this server."""
         for tchan in ctx.guild.text_channels:
             await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
-            #tchan.overwrites_for(user).update(send_messages=False)
         await ctx.send(f"{user.name} has been muted in this server.")
 
     @commands.command(name="unmuteall", no_pm=True)
@@ -730,8 +727,19 @@ class Mod:
         for tchan in ctx.guild.text_channels:
             if tchan.overwrites_for(user) and not tchan.overwrites_for(user).is_empty():
                 await tchan.set_permissions(user, reason=f"Unmute in all channels by {ctx.author}", send_messages=None)
-                #tchan.overwrites_for(user).update(send_messages=None)
         await ctx.send(f"{user.name} has been unmuted in this server.")
+
+    @commands.command(name="cleanoverrides", no_pm=True)
+    @checks.is_admin()
+    async def cleanoverrides(self, ctx):
+        """Removes all empty overrides from the server."""
+        count = 0
+        for tchan in ctx.guild.text_channels:
+            for overwrite in tchan.overwrites:
+                if overwrite[1].is_empty():
+                    tchan.overwrites.remove(overwrite)
+                    count += 1
+        await ctx.send("No overwrites to clean up." if count == 0 else f"Cleaned up {count} overwrites.")
 
     @commands.group(invoke_without_command=True, no_pm=True)
     @checks.is_mod()
