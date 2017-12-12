@@ -701,7 +701,7 @@ class Mod:
         if channel is None:
             channel = ctx.channel
         #channel.set_permissions(user,reason=f"Mute by {ctx.author}", send_messages=False)
-        channel.overwrites_for(user).update(send_messages=False)
+        await channel.overwrites_for(user).update(send_messages=False)
         await ctx.send(f"{user.name} has been muted in {channel.name}.")
 
     @commands.command(name="unmute", no_pm=True)
@@ -711,7 +711,7 @@ class Mod:
         if channel is None:
             channel = ctx.channel
         #channel.set_permissions(user,reason=f"Unmute by {ctx.author}", send_messages=None)
-        channel.overwrites_for(user).update(send_messages=None)
+        await channel.overwrites_for(user).update(send_messages=None)
         await ctx.send(f"{user.name} has been unmuted in {channel.name}.")
 
     @commands.command(name="muteall", no_pm=True)
@@ -720,7 +720,7 @@ class Mod:
         """Mutes a user in all channels of this server."""
         for tchan in ctx.guild.text_channels:
             #tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
-            tchan.overwrites_for(user).update(send_messages=False)
+            await tchan.overwrites_for(user).update(send_messages=False)
         await ctx.send(f"{user.name} has been muted in this server.")
 
     @commands.command(name="unmuteall", no_pm=True)
@@ -730,7 +730,7 @@ class Mod:
         for tchan in ctx.guild.text_channels:
             if tchan.overwrites_for(user) and not tchan.overwrites_for(user).is_empty():
                 #tchan.set_permissions(user, reason=f"Unmute in all channels by {ctx.author}", send_messages=None)
-                tchan.overwrites_for(user).update(send_messages=None)
+                await tchan.overwrites_for(user).update(send_messages=None)
         await ctx.send(f"{user.name} has been unmuted in this server.")
 
     @commands.group(invoke_without_command=True, no_pm=True)
