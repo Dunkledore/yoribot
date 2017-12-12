@@ -737,7 +737,8 @@ class Mod:
         for tchan in ctx.guild.text_channels:
             for overwrite in tchan.overwrites:
                 if overwrite[1].is_empty():
-                    tchan.overwrites.remove(overwrite)
+                    # tchan.overwrites.remove(overwrite)
+                    await tchan.set_permissions(overwrite[0], overwrite=None)
                     count += 1
         await ctx.send("No overwrites to clean up." if count == 0 else f"Cleaned up {count} overwrites.")
 
