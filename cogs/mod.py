@@ -341,13 +341,13 @@ class Mod:
 
         await ctx.send(embed=e)
 
-    @commands.group(aliases=['raids'], invoke_without_command=True, no_pm=True)
+    @commands.group(aliases=['raidmode'], invoke_without_command=True, no_pm=True)
     @checks.is_mod()
     async def raid(self, ctx):
         """Controls raid mode on the server.
 
         Calling this command with no arguments will show the current raid
-        mode information.
+        mode information. Other options are on and off. 
 
         You must have Manage Server permissions to use this command or
         its subcommands.
@@ -368,9 +368,11 @@ class Mod:
     async def raid_on(self, ctx, *, channel: discord.TextChannel = None):
         """Enables basic raid mode on the server.
 
-        When enabled, server verification level is set to table flip
-        levels and allows the bot to broadcast new members joining
-        to a specified channel.
+        When enabled, the moderation level for the server will be set
+        to medium (users must be registered with Discord for 5 min 
+        before they are able to speak). The channel this command is
+        used in will show information on joining members color-coded
+        from green to red based on how likely the person is a troll.
 
         If no channel is given, then the bot will broadcast join
         messages on the channel this command was used in.
