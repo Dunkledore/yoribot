@@ -427,7 +427,7 @@ class FFXIV:
                 await self.embed(ctx, "XIVDB Error", charid["__ERROR__"], "red")
                 return
             if charid == "":
-                await self.embed(ctx, "FFXIV Character Info", "I couldn't find that character.", "red")
+                await self.embed(ctx, "FFXIV Character Info", "I couldn't find that character.\n\nIf you are sure you typed your character name correctly, visit\nhttps://xivdb.com/character/add and follow the instructions, then try again after a few minutes.", "red")
             else:
                 if not ctx.message.author.id in self.settings["characters"].keys() or not isinstance(
                         self.settings["characters"][str(ctx.message.author.id)], dict):

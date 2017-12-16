@@ -2,10 +2,11 @@ from copy import deepcopy
 import os
 
 import discord
+import datetime
 from discord.ext import commands
 
 from .utils.dataIO import dataIO
-from .utils import checks, chat_formatting as cf
+from .utils import checks, time, chat_formatting as cf
 
 
 default_settings = {
@@ -20,7 +21,7 @@ default_settings = {
 
 class MemberAudit:
 
-    """Announces membership events on the server."""
+    """Sets up a channel where you can receive notifications of when people join, leave, are banned or unbanned."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -158,10 +159,14 @@ class MemberAudit:
 
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server, channel):
-            await channel.send(embed=discord.Embed(
-                                title = "📥 Member Join",
-                                description = self.settings[str(server.id)]["join_message"].format(member, server)
-                                ))
+            embed = discord.Embed(title = "📥 Member Join", description = self.settings[str(server.id)]["join_message"].format(member, server))
+            embed.timestamp = datetime.datetime.utcnow()
+            embed.set_footer(text='Created')
+            embed.set_author(name=str(member), icon_url=member.avatar_url)
+            embed.add_field(name='ID', value=member.id)
+            embed.add_field(name='Joined', value=member.joined_at)
+            embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+            await channel.send(embed=embed)
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member))

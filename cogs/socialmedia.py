@@ -6,12 +6,14 @@ from .utils.chat_formatting import box
 import json
 import re
 import datetime
+import requests
 import discord
 import asyncio
 import traceback
 import asyncpg
 import psutil
 import tweepy
+import os
 
 class SocialMedia:
 	"""Commands used to set up your server profile"""
@@ -37,17 +39,19 @@ class SocialMedia:
 		em = discord.Embed(color=discord.Colour.teal())
 		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
 		em.add_field(name="Tweet", value=tweet.text)
+		if 'media' in tweet.entities:
+			if tweet.entities['media'][0]['type'] == 'photo':
+				em.set_image(url=tweet.entities['media'][0]['media_url_https'])
 		return em
 
 
 
 	async def feeds(self):
-		while True:
-			query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
-			results = await self.bot.pool.fetch(query)
-			
-			try:
-
+		try:
+			while True:
+				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
+				results = await self.bot.pool.fetch(query)
+				
 				for result in results:
 					if not result["feed_channel"]:
 						continue
@@ -61,9 +65,11 @@ class SocialMedia:
 					else:
 						tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
 
+					tweet_id = result["last_tweet"]
 					for tweet in tweets:
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
+						print(tweet)
 						tweet_id = tweet.id
 
 					insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
@@ -73,14 +79,17 @@ class SocialMedia:
 						await self.bot.pool.execute(insertquery, result["guild_id"], tweet_id)
 					except asyncpg.UniqueViolationError:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
-			except Exception as e:
-				print(e)
+		except Exception as e:
+			print(e)
+
 			await asyncio.sleep(30)
 
 
 	@commands.group(no_pm=True)
 	@checks.is_developer()
 	async def twitterset(self, ctx):
+		"""Admin twitter related commands"""
+
 		if ctx.invoked_subcommand is None:
 			
 			query = "SELECT * FROM social_config WHERE guild_id = $1"
@@ -185,12 +194,26 @@ class SocialMedia:
 	@commands.command(no_pm=True)
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
-		await self.sendtweet(ctx.guild, tweet)
+		if ctx.message.attachments:
+			if ctx.message.attachments[0].height:
+				filename = 'temp.jpg'
+				request = requests.get(ctx.message.attachments[0].url, stream=True)
+				if request.status_code == 200:
+					with open(filename, 'wb') as image:
+						for chunk in request:
+							image.write(chunk)
+
+			await self.sendtweet(ctx.guild, tweet, ctx, filename)
+			await ctx.message.delete()
+			await ctx.send("Tweet Tweeted")
+			return
+		
+		await self.sendtweet(ctx.guild, tweet, ctx)		
 		await ctx.message.delete()
 		await ctx.send("Tweet Tweeted")
 	
 
-	async def sendtweet(self, guild, tweet, ctx=None):
+	async def sendtweet(self, guild, tweet, ctx=None, attatchment=None):
 		creds = await self.get_creds(guild)
 		if not creds:
 			if ctx is None:
@@ -199,7 +222,12 @@ class SocialMedia:
 				await ctx.send("Your guild owner has not setup twitter credentials")
 		else:
 			api = self.get_api(creds)
-			status = api.update_status(status=tweet)
+
+			if attatchment:
+				status = api.update_with_media(attatchment, status=tweet)
+				os.remove(attatchment)
+			else:
+				status = api.update_status(status=tweet)
 
 
 	async def on_reaction_add(self, reaction, user):
@@ -210,12 +238,20 @@ class SocialMedia:
 		results = await self.bot.pool.fetch(query, reaction.message.guild.id)
 		tweeter_role = results[0]["tweeter_role_id"]
 		for role in user.roles:
-			if role.id == tweeter_role:
-				await self.sendtweet(reaction.message.guild, reaction.message.content)
-				return
+			if role.id == tweeter_role or reaction.count >= results[0]["tweeter_reaction"]:
 
-		if reaction.count >= results[0]["tweeter_reaction"]:
-			await self.sendtweet(reaction.message.guild, reaction.message.content)
+				if reaction.message.attachments:
+					if reaction.message.attachments[0].height:
+						filename = 'temp.jpg'
+						request = requests.get(reaction.message.attachments[0].url, stream=True)
+						if request.status_code == 200:
+							with open(filename, 'wb') as image:
+								for chunk in request:
+									image.write(chunk)
+					await self.sendtweet(reaction.message.guild, reaction.message.content, None, filename)
+					return
+
+				await self.sendtweet(reaction.message.guild, reaction.message.content)
 
 		
 

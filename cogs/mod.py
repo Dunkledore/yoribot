@@ -341,13 +341,13 @@ class Mod:
 
         await ctx.send(embed=e)
 
-    @commands.group(aliases=['raids'], invoke_without_command=True, no_pm=True)
+    @commands.group(aliases=['raidmode'], invoke_without_command=True, no_pm=True)
     @checks.is_mod()
     async def raid(self, ctx):
         """Controls raid mode on the server.
 
         Calling this command with no arguments will show the current raid
-        mode information.
+        mode information. Other options are on and off. 
 
         You must have Manage Server permissions to use this command or
         its subcommands.
@@ -368,9 +368,11 @@ class Mod:
     async def raid_on(self, ctx, *, channel: discord.TextChannel = None):
         """Enables basic raid mode on the server.
 
-        When enabled, server verification level is set to table flip
-        levels and allows the bot to broadcast new members joining
-        to a specified channel.
+        When enabled, the moderation level for the server will be set
+        to medium (users must be registered with Discord for 5 min 
+        before they are able to speak). The channel this command is
+        used in will show information on joining members color-coded
+        from green to red based on how likely the person is a troll.
 
         If no channel is given, then the bot will broadcast join
         messages on the channel this command was used in.
@@ -693,6 +695,54 @@ class Mod:
 
         reason = f'Automatic unban from timer made on {timer.created_at} by {moderator}.'
         await guild.unban(discord.Object(id=member_id), reason=reason)
+
+    @commands.command(name="mute", no_pm=True)
+    @checks.is_mod()
+    async def mute(self, ctx, user:discord.Member, channel:discord.TextChannel=None):
+        """Mutes a user in the specified channel, if not specified, in the channel the command is used from."""
+        if channel is None:
+            channel = ctx.channel
+        await channel.set_permissions(user,reason=f"Mute by {ctx.author}", send_messages=False)
+        await ctx.send(f"{user.name} has been muted in {channel.name}.")
+
+    @commands.command(name="unmute", no_pm=True)
+    @checks.is_mod()
+    async def unmute(self, ctx, user:discord.Member, channel:discord.TextChannel=None):
+        """Unmutes a user in the specified channel, if not specified, in the channel the command is used from."""
+        if channel is None:
+            channel = ctx.channel
+        await channel.set_permissions(user,reason=f"Unmute by {ctx.author}", send_messages=None)
+        await ctx.send(f"{user.name} has been unmuted in {channel.name}.")
+
+    @commands.command(name="muteall", no_pm=True)
+    @checks.is_mod()
+    async def muteall(self, ctx, user:discord.Member):
+        """Mutes a user in all channels of this server."""
+        for tchan in ctx.guild.text_channels:
+            await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
+        await ctx.send(f"{user.name} has been muted in this server.")
+
+    @commands.command(name="unmuteall", no_pm=True)
+    @checks.is_mod()
+    async def unmuteall(self, ctx, user:discord.Member):
+        """Unmutes a user in all channels of this server."""
+        for tchan in ctx.guild.text_channels:
+            if tchan.overwrites_for(user) and not tchan.overwrites_for(user).is_empty():
+                await tchan.set_permissions(user, reason=f"Unmute in all channels by {ctx.author}", send_messages=None)
+        await ctx.send(f"{user.name} has been unmuted in this server.")
+
+    @commands.command(name="cleanoverrides", no_pm=True)
+    @checks.is_admin()
+    async def cleanoverrides(self, ctx):
+        """Removes all empty overrides from the server."""
+        count = 0
+        for tchan in ctx.guild.text_channels:
+            for overwrite in tchan.overwrites:
+                if overwrite[1].is_empty():
+                    # tchan.overwrites.remove(overwrite)
+                    await tchan.set_permissions(overwrite[0], overwrite=None)
+                    count += 1
+        await ctx.send("No overwrites to clean up." if count == 0 else f"Cleaned up {count} overwrites.")
 
     @commands.group(invoke_without_command=True, no_pm=True)
     @checks.is_mod()
