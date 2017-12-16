@@ -21,7 +21,7 @@ default_settings = {
 
 class MemberAudit:
 
-    """Announces membership events on the server."""
+    """Sets up a channel where you can receive notifications of when people join, leave, are banned or unbanned."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
