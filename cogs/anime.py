@@ -46,10 +46,6 @@ class AnimeList:
         cmd = "manga"
         await self.search_command(ctx, cmd, title)
 
-    @commands.group(pass_context=True)
-    async def mal(self, ctx):
-        """MAL Search Commands"""
-
     @mal.command(name="anime", pass_context=True)
     async def _anime_mal(self, ctx, user: discord.Member=None):
         """Lookup another user's MAL for anime"""

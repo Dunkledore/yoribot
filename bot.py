@@ -52,11 +52,13 @@ initial_extensions = (
     'cogs.reminder',
     'cogs.rift',
     'cogs.rolemanager',
+    'cogs.socialmedia',
     'cogs.searches',
     'cogs.stats',
     'cogs.streamrole',
     'cogs.tags',
     'cogs.terminal',
+    'cogs.trivia',
     'cogs.welcome',
     'cogs.whoplays',
 )

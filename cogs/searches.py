@@ -15,6 +15,8 @@ import json
 import random
 from random import randint
 from random import choice
+import datetime
+from datetime import date
 
 class Searches:
     """Different search commands - YouTube, Google, random cat, random dog. """
@@ -113,6 +115,23 @@ class Searches:
             fortune = discord.Embed(colour=user.colour)
             fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
             await ctx.send(embed=fortune)
+
+    @commands.command()
+    async def xmasclock(self,ctx):
+        """Display days left 'til xmas"""
+
+        now = datetime.datetime.now()
+        today = date(now.year, now.month, now.day)
+
+        year = now.year
+        if (now.month == 12 and now.day > 25):
+            year = now.year + 1
+
+        xmasday = date(year, 12, 25)
+
+        delta = xmasday - today
+
+        await ctx.send("```" + str(delta.days) + " days left until Xmas!```")
 
 def setup(bot):
     n = Searches(bot)

@@ -27,7 +27,7 @@ class Profile:
         em.add_field(name='Adding Sexuality', value='Use `` ' + prefix + 'sexuality <sexuality>`` for example:\n\n``' + prefix + 'sexuality Straight`` **or** ``' + prefix + 'sexuality Gay`` **or** ``' + prefix + 'sexuality Lesbian`` **or**\n``' + prefix + 'sexuality Asexual``', inline=False)
         em.add_field(name='Adding Age', value='Use `` ' + prefix + 'age <age>`` for example:\n\n``' + prefix + 'age 20``', inline=False)
         em.add_field(name='Custom Fields', value='You can add custom sections to your profile using \n\n`` ' + prefix + 'profileadd``\n'
-                    '\nThe bot will then prompt you for a section title and content.\n', inline=False)
+                    '\nThe bot will then prompt you for a section title and content. P.S. You have 5 mins to do this.\n', inline=False)
         em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
         await ctx.send(embed=em)
 
@@ -138,19 +138,19 @@ class Profile:
         
         if (name is None):
             await ctx.send("What would you like the title to be?")
-            name = await self.bot.wait_for('message', timeout=30.0, check=check)
+            name = await self.bot.wait_for('message', timeout=300.0, check=check)
             name = name.content
             while len(name) > 256:
                 await ctx.send("Field names must be 256 characters or shorter. Re-type the content")
-                name = await self.bot.wait_for('message', timeout=30.0, check=check)#
+                name = await self.bot.wait_for('message', timeout=300.0, check=check)#
                 name = name.content
         if (value is None):
             await ctx.send("What would you like the content to be?")
-            value = await self.bot.wait_for('message', timeout=30.0, check=check)
+            value = await self.bot.wait_for('message', timeout=300.0, check=check)
             value = value.content
             while len(value) > 1024:
                 await ctx.send("Field content must be 1024 characters or shorter. Re-type the content")
-                value = await self.bot.wait_for('message', timeout=30.0, check=check)
+                value = await self.bot.wait_for('message', timeout=300.0, check=check)
                 value = value.content
 
         query = "SELECT * FROM Profile WHERE user_id = $1"
