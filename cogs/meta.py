@@ -165,6 +165,7 @@ class Meta:
         await ctx.send(f'\N{OK HAND SIGN}')
 
     @commands.command(hidden=True)
+    @checks.is_developer()
     async def source(self, ctx, *, command: str = None):
         """Displays my full source code or for a specific command.
 
@@ -195,7 +196,7 @@ class Meta:
         await ctx.send(final_url)
 
     @commands.command(name='quit', hidden=True)
-    @checks.is_owner()
+    @checks.is_developer()
     async def _quit(self, ctx):
         """Quits the bot."""
         await self.bot.logout()
