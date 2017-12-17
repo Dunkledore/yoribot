@@ -235,7 +235,7 @@ class SocialMedia:
 				os.remove(attatchment)
 			else:
 				status = api.update_status(status=tweet)
-
+ 
 
 	async def on_reaction_add(self, reaction, user):
 		if reaction.emoji != "🐦" or reaction.channel.is_nsfw():
@@ -255,7 +255,7 @@ class SocialMedia:
 							with open(filename, 'wb') as image:
 								for chunk in request:
 									image.write(chunk)
-					await self.sendtweet(reaction.message.guild, reaction.message.content, None, filename)
+					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + user.name, None, filename)
 					return
 
 				await self.sendtweet(reaction.message.guild, reaction.message.content)
