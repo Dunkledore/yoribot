@@ -238,7 +238,7 @@ class SocialMedia:
  
 
 	async def on_reaction_add(self, reaction, user):
-		if reaction.emoji != "🐦" or reaction.channel.is_nsfw():
+		if reaction.emoji != "🐦" or reaction.message.channel.is_nsfw():
 			return
 
 		query = "SELECT * FROM social_config WHERE guild_id = $1"
