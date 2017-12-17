@@ -69,7 +69,6 @@ class SocialMedia:
 					for tweet in tweets:
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
-						print(tweet)
 						tweet_id = tweet.id
 
 					insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
