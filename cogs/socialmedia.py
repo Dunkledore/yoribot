@@ -55,9 +55,8 @@ class SocialMedia:
 				for result in results:
 					if not result["feed_channel"]:
 						continue
-					print('precreds')
+					print(results)
 					creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
-					print('creds')
 					if not creds:
 						continue
 					api = self.get_api(creds)
