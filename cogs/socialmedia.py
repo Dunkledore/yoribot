@@ -80,6 +80,7 @@ class SocialMedia:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 		except Exception as e:
 			print(e)
+			print('error')
 			print(e.tb_lineno)
 
 			await asyncio.sleep(30)
