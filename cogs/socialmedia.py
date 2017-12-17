@@ -258,7 +258,7 @@ class SocialMedia:
 					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + user.name, None, filename)
 					return
 
-				await self.sendtweet(reaction.message.guild, reaction.message.content)
+				await self.sendtweet(reaction.message.guild, reaction.message.clean_content)
 
 		
 
