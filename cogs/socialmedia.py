@@ -89,7 +89,7 @@ class SocialMedia:
 			print(e)
 
 
-			await asyncio.sleep(30)
+			await asyncio.sleep(61)
 
 
 	@commands.group(no_pm=True)
