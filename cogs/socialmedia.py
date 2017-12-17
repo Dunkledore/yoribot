@@ -20,11 +20,17 @@ class SocialMedia:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
+		self.api_cache = []
 
 	def get_api(self, creds):
+		for api in self.api_cache:
+			if api[0] == creds[0]:
+				return api[1];
 		auth = tweepy.OAuthHandler(creds[0], creds[1])
 		auth.set_access_token(creds[2], creds[3])
-		return tweepy.API(auth)
+		api = tweepy.API(auth)
+		api_cache.append([creds[0], api])
+		return api
 
 	async def get_creds(self, guild):
 		query = "SELECT * FROM social_config WHERE guild_id = $1"
