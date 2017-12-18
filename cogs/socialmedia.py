@@ -88,8 +88,6 @@ class SocialMedia:
 			except Exception as e:
 				"""Fail Silently"""
 
-
-
 			await asyncio.sleep(61)
 
 
