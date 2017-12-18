@@ -49,7 +49,8 @@ class Greet:
     @commands.command(no_pm=True)
     @checks.is_greeter()
     async def greet(self, ctx, member: discord.Member):
-        """Greets somone"""
+        """Greets someone"""
+
         await ctx.send('Greeting')
         query = "SELECT * FROM greet WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
