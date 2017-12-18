@@ -58,7 +58,7 @@ class Greet:
 
         role = discord.utils.get(ctx.message.guild.roles, id=int(results[0]['greeted_role_id']))
         await ctx.message.author.add_roles(role)
-        await ctx.send(member + 'greeted')
+        await ctx.send(member.name + 'greeted')
 
 
 def setup(bot: commands.Bot):
