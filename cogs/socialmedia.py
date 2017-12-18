@@ -133,7 +133,7 @@ class SocialMedia:
 			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
-		await ctx.send('Channel')
+		await ctx.send('Channel Set')
 	
 	@twitterset.command(hidden=True)
 	async def tweetnumber(self, ctx, number: int):
@@ -258,7 +258,7 @@ class SocialMedia:
 					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + user.name, None, filename)
 					return
 
-				await self.sendtweet(reaction.message.guild, reaction.message.clean_content)
+				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + user.name)
 
 		
 
