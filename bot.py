@@ -53,6 +53,7 @@ initial_extensions = (
     'cogs.rift',
     'cogs.rolemanager',
     'cogs.searches',
+    'cogs.socialmedia',
     'cogs.stats',
     'cogs.streamrole',
     'cogs.tags',
