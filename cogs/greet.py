@@ -45,7 +45,6 @@ class Greet:
     async def greet(self, ctx, member: discord.Member):
         """Greets someone"""
 
-        await ctx.send('Greeting')
         query = "SELECT * FROM greet WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
         if not results:
