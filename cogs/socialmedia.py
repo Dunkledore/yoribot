@@ -56,6 +56,7 @@ class SocialMedia:
 		await self.bot.wait_until_ready()
 		while True:
 			try:
+
 				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 				results = await self.bot.pool.fetch(query)
 				
@@ -73,7 +74,7 @@ class SocialMedia:
 						tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
 
 					tweet_id = result["last_tweet"]
-					for tweet in tweets:
+					for tweet in reversed(tweets):
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
 						tweet_id = tweet.id
