@@ -54,13 +54,9 @@ class SocialMedia:
 
 	async def feeds(self):
 		await self.bot.wait_until_ready()
-<<<<<<< HEAD
-		try:
-			while True:
-=======
 		while True:
 			try:
->>>>>>> dev
+
 				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 				results = await self.bot.pool.fetch(query)
 				
