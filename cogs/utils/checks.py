@@ -98,12 +98,25 @@ def is_guild_owner():
 
 def is_tweeter():
     async def pref(ctx):
-        is_owner = await ctx.bot.is_owner(ctx.author)
-        if is_owner:
+        if ctx.user == ctx.guild.owner:
             return True
         query = "SELECT * FROM social_config WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
         tweeter_role = results[0]["tweeter_role_id"]
+        for role in ctx.author.roles:
+            if role.id == tweeter_role:
+                return True
+        return False
+
+    return commands.check(pref)
+
+def is_greeter():
+    async def pref(ctx):
+        if ctx.user == ctx.guild.owner:
+            return True
+        query = "SELECT * FROM greet WHERE guild_id = $1"
+        results = await ctx.db.fetch(query, ctx.guild.id)
+        tweeter_role = results[0]["greeter_role_id"]
         for role in ctx.author.roles:
             if role.id == tweeter_role:
                 return True
