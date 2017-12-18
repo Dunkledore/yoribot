@@ -1,14 +1,8 @@
-from copy import deepcopy
-import os
-
-import discord
-import datetime
 import asyncpg
+import discord
 from discord.ext import commands
 
-from .utils.dataIO import dataIO
-from .utils import checks, time, chat_formatting as cf
-
+from .utils import checks
 
 
 class Greet:
