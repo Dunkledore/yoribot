@@ -116,7 +116,7 @@ def is_guild_owner():
 
 def is_tweeter():
     async def pref(ctx):
-        if ctx.user == ctx.guild.owner:
+        if ctx.message.author == ctx.guild.owner:
             return True
         query = "SELECT * FROM social_config WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
@@ -131,7 +131,7 @@ def is_tweeter():
 
 def is_greeter():
     async def pref(ctx):
-        if ctx.user == ctx.guild.owner:
+        if ctx.message.author == ctx.guild.owner:
             return True
         query = "SELECT * FROM greet WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
