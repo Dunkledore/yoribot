@@ -119,7 +119,9 @@ def is_greeter():
         tweeter_role = results[0]["greeter_role_id"]
         for role in ctx.author.roles:
             if role.id == tweeter_role:
+                await ctx.send('True')
                 return True
+        await ctx.send('False')
         return False
 
     return commands.check(pref)
