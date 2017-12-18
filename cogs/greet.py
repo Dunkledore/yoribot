@@ -3,6 +3,7 @@ import os
 
 import discord
 import datetime
+import asyncpg
 from discord.ext import commands
 
 from .utils.dataIO import dataIO
