@@ -46,7 +46,7 @@ class Greet:
         await ctx.send('Role set')
 
     @commands.command(no_pm=True)
-    @check.is_greeter()
+    @checks.is_greeter()
     async def greet(self, ctx, member: discord.Member):
         """Greets somone"""
 
