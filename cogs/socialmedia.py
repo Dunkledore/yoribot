@@ -54,8 +54,13 @@ class SocialMedia:
 
 	async def feeds(self):
 		await self.bot.wait_until_ready()
+<<<<<<< HEAD
 		try:
 			while True:
+=======
+		while True:
+			try:
+>>>>>>> dev
 				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 				results = await self.bot.pool.fetch(query)
 				
@@ -85,8 +90,9 @@ class SocialMedia:
 						await self.bot.pool.execute(insertquery, result["guild_id"], tweet_id)
 					except asyncpg.UniqueViolationError:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
-		except Exception as e:
-			print(e)
+			except Exception as e:
+				"""Fail Silently"""
+
 
 
 			await asyncio.sleep(61)
