@@ -40,7 +40,7 @@ class MemberAudit:
 
 	@commands.command(no_pm=True)
 	@checks.is_admin()
-	async def raid(self, ctx):
+	async def temp_raid(self, ctx):
 		await self._raid(ctx)
 
 	async def _raid(self, ctx): #Seperate definition to allow other definitions to call raid. 
