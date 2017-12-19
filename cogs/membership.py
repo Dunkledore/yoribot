@@ -38,7 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
-	@commands.commands(no_pm=True)
+	@commands.command(no_pm=True)
 	@checks.is_admin()
 	async def auto_raid(self, ctx):
 		"""Toggles Auto-Raid
