@@ -16,7 +16,8 @@ default_settings = {
 	"unban_message": "{0.display_name} has been unbanned.",
 	"on": False,
 	"channel": None,
-	"raid": False
+	"raid": False,
+	"auto-raid" : False
 }
 
 
@@ -37,6 +38,22 @@ class MemberAudit:
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
+	@commands.commands(no_pm=True)
+	@checks.is_admin()
+	async def auto-raid(self, ctx):
+		"""Toggles Auto-Raid
+		Auto-Raid On: Will turn raid on if 3 people join within 1 minute
+		Auto_Raid Off: Raid mode will never be automatically turned on"""
+
+		self.settings[str(ctx.guild.id)]["raid"] = not self.settings[str(ctx.guild.id)]["raid"]
+
+		if self.settings[str(ctx.guild.id)]["raid"]:
+			await ctx.send("Auto-Raid On")
+		else:
+			await ctx.send("Auto-Raid Off")
+
+		dataIO.save_json(self.settings_path, self.settings)
+
 
 	@commands.command(no_pm=True)
 	@checks.is_admin()
@@ -48,11 +65,7 @@ class MemberAudit:
 		Raid On: Moderation Level will be set to High. Users must be in for more than 10 minutes before speaking
 		Raid Off: Morderation Level will be set to Low. Users must have a email on their discord account befores speaking"""
 
-		if self.settings[str(ctx.guild.id)]["raid"]:
-			self.settings[str(ctx.guild.id)]["raid"] = not self.settings[str(ctx.guild.id)]["raid"]
-		else:
-			self.settings[str(ctx.guild.id)]["raid"] = True
-		
+		self.settings[str(ctx.guild.id)]["raid"] = not self.settings[str(ctx.guild.id)]["raid"]
 
 		if  self.settings[str(ctx.guild.id)]["raid"]:
 			try:
