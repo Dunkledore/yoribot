@@ -17,7 +17,7 @@ default_settings = {
 	"on": False,
 	"channel": None,
 	"raid": False,
-	"auto-raid" : False
+	"auto_raid" : False
 }
 
 
@@ -40,7 +40,7 @@ class MemberAudit:
 
 	@commands.commands(no_pm=True)
 	@checks.is_admin()
-	async def auto-raid(self, ctx):
+	async def auto_raid(self, ctx):
 		"""Toggles Auto-Raid
 		Auto-Raid On: Will turn raid on if 3 people join within 1 minute
 		Auto_Raid Off: Raid mode will never be automatically turned on"""
