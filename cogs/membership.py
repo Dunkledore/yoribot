@@ -15,7 +15,7 @@ default_settings = {
 	"ban_message": "{0.display_name} has been banned.",
 	"unban_message": "{0.display_name} has been unbanned.",
 	"on": False,
-	"channel": None
+	"channel": None,
 	"raid": False
 }
 
@@ -37,24 +37,36 @@ class MemberAudit:
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
+
 	@commands.command(no_pm=True)
 	@checks.is_admin()
 	async def raid(self, ctx):
+		await self._raid(ctx)
+
+	async def _raid(self, ctx): #Seperate definition to allow other definitions to call raid. 
 		"""Toggles Raid Mode
 		Raid On: Moderation Level will be set to High. Users must be in for more than 10 minutes before speaking
 		Raid Off: Morderation Level will be set to Low. Users must have a email on their discord account befores speaking"""
 
-		self.settings[str(ctx.guild.id)]["raid"] =  not self.settings[str(ctx.guild.id)]["raid"]
+		if self.settings[str(ctx.guild.id)]["raid"]:
+			self.settings[str(ctx.guild.id)]["raid"] = not self.settings[str(ctx.guild.id)]["raid"]
+		else:
+			self.settings[str(ctx.guild.id)]["raid"] = True
+		
+
 		if  self.settings[str(ctx.guild.id)]["raid"]:
 			try:
 				await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
+				await ctx.send('Raid On')
 			except discord.HTTPException:
 				await ctx.send('\N{WARNING SIGN} Could not set verification level.')
 		else:
 			try:
 				await ctx.guild.edit(verification_level=discord.VerificationLevel.low)
+				await ctx.send('Raid Off')
 			except discord.HTTPException:
 				await ctx.send('\N{WARNING SIGN} Could not set verification level.')
+		
 		dataIO.save_json(self.settings_path, self.settings)
 
 
