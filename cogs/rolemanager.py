@@ -38,7 +38,7 @@ class RoleManager:
         else:
             role = discord.utils.get(ctx.message.guild.roles, id=int(roleinfo[1]))
             await ctx.message.author.add_roles(role)
-            em = discord.Embed(color=ctx.message.author.color, description=("You have been successfully assigned the role of " + role.name + "!"))
+            em = discord.Embed(color=ctx.message.author.color, description=("You have been successfully assigned the role of \"" + role.name + "\"!"))
             em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
             await ctx.send(embed=em)
 
@@ -61,7 +61,7 @@ class RoleManager:
                     return
                 role = discord.utils.get(message.guild.roles, id=int(roleinfo[1]))
                 await message.author.add_roles(role)
-                em = discord.Embed(color=message.author.color, description=("You have been successfully assigned the role of " + role.name + "!"))
+                em = discord.Embed(color=message.author.color, description=("You have been successfully assigned the role of \"" + role.name + "\"!"))
                 em.set_author(name="Success!", icon_url="http://bit.ly/2qi2m3a")
                 await message.channel.send(embed=em)
                 return
