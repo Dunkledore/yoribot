@@ -175,6 +175,7 @@ class Nsfw:
             query = ("http://gayorzea.com/?random")
             page = await self.session.get(query)
             page = await page.text()
+            await ctx.send(page)
             soup = BeautifulSoup(page,'html.parser')
             findimage = soup.find("div",{"id" : "image-viewer-container"}).find("img")
             image = await findimage.json()
