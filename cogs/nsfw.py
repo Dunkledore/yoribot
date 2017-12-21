@@ -176,7 +176,7 @@ class Nsfw:
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page,'html.parser')
-            find = soup.find('image_src')
+            find = soup.find('link')
             await ctx.send(find)
             image = await findimage.json()
             if image != []:
