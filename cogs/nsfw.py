@@ -176,12 +176,16 @@ class Nsfw:
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page,'html.parser')
-            image = soup.find('input', {'id' : 'modal-share-url'}).get('value')
-            em = discord.Embed(color=ctx.message.author.color, description=" ")
-            em.set_author(name="Random Image from Gayorzea:", icon_url="http://bit.ly/2hHIfF6")
-            em.set_image(url=image)
-            em.set_footer(text= "Random image from http://gayorzea.com")
-            await ctx.send(image)
+            findimage = soup.find("div",{"id" : "image-viewer-container"}).find("img")
+            image = await findimage.json()
+            if image != []:
+                em = discord.Embed(color=ctx.message.author.color, description=" ")
+                em.set_author(name="Random Image from Gayorzea:", icon_url="http://bit.ly/2hHIfF6")
+                em.set_image(url=random.choice(image)['jpeg_url'])
+                em.set_footer(text= "Random image from http://gayorzea.com")
+                await ctx.send(embed=em)
+            else:
+                await ctx.send(":warning: Gayorzea returned no results")
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
