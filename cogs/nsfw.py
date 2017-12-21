@@ -178,7 +178,7 @@ class Nsfw:
             soup = BeautifulSoup(page,'html.parser')
             found = soup.find_all('script')
             for script in found:
-                await ctx.send(str(script))
+                await ctx.send(str(script[0:1999]))
             image = await findimage.json()
             if image != []:
                 em = discord.Embed(color=ctx.message.author.color, description=" ")
