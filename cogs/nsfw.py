@@ -156,7 +156,7 @@ class Nsfw:
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page, 'html.parser')
-            image = soup.find(="image").get("src")
+            image = soup.find(id="image").get("src")
             head, sep, tail = image.partition('?')
             clean = head.replace("//","/").replace("http:/", "http://")
             em = discord.Embed(color=ctx.message.author.color, description=" ")
