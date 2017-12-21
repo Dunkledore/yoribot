@@ -176,10 +176,10 @@ class Nsfw:
             page = await self.session.get(query)
             page = await page.text()
             soup = BeautifulSoup(page,'html.parser')
-            image = soup.find('input', {id:'embed-code-1'}).get('value')
+            imagelinks = soup.findAll('img', src=True)
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name="Random Image from Gayorzea:", icon_url="http://bit.ly/2hHIfF6")
-            em.set_image(url=image)
+            em.set_image(url=imagelinks)
             em.set_footer(text= "Random image from http://gayorzea.com")
             await ctx.send(embed=em)
         except Exception as e:
