@@ -180,7 +180,6 @@ class Nsfw:
             for script in found:
                 if "image_viewer_full_fix" in str(script):
                     await ctx.send(str(script))
-                if script.
             image = await findimage.json()
             if image != []:
                 em = discord.Embed(color=ctx.message.author.color, description=" ")
