@@ -170,12 +170,17 @@ class Music:
 			return
 		id=str(message.guild.id)
 		await message.channel.send(str(self.counter))
-		if id in _data.cache and _data.cache[id].state != 'destroyed' and message.channel==_data.cache[id].mchannel:
-			self.counter[id]=+1
-			
-			if self.counter[id]%5==0:
-				self.counter[id]=0
-				await self.getMusicPlayer(id).movehere(message.channel)
+		if id in _data.cache:
+			await message.channel.send('i am in the cache')
+			if _data.cache[id].state != 'destroyed' :
+				await message.channel.send('i am not destroyed')
+				if message.channel==_data.cache[id].mchannel:
+					await message.channel.send('i am in the correct channel')
+					self.counter[id]=+1
+					
+					if self.counter[id]%5==0:
+						self.counter[id]=0
+						await self.getMusicPlayer(id).movehere(message.channel)
 
 def setup(bot):
 
