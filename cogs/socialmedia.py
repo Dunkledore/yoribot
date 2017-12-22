@@ -74,10 +74,11 @@ class SocialMedia:
 
 					tweet_id = result["last_tweet"]
 					for tweet in reversed(tweets):
-						print('here')
 						channel = self.bot.get_channel(result["feed_channel"])
+						print('here')
 						await channel.send(embed=self.tweetToEmbed(tweet))
 						tweet_id = tweet.id
+						print('here1')
 
 					insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
 					alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
