@@ -75,9 +75,7 @@ class SocialMedia:
 					tweet_id = result["last_tweet"]
 					for tweet in reversed(tweets):
 						channel = self.bot.get_channel(result["feed_channel"])
-						print('here')
 						await channel.send(embed=self.tweetToEmbed(tweet))
-						print('here1')
 						tweet_id = tweet.id
 
 
