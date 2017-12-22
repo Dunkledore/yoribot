@@ -176,7 +176,7 @@ class Music:
 				await message.channel.send('i am not destroyed')
 				if message.channel==_data.cache[id].mchannel:
 					await message.channel.send('i am in the correct channel')
-					self.counter[id]=+1
+					self.counter[id]+=1
 					
 					if self.counter[id]%5==0:
 						self.counter[id]=0
