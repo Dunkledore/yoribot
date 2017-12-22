@@ -11,7 +11,7 @@ class Music:
 
 	def __init__(self,bot):
 		self.bot = bot
-		self.counter=[]
+		self.counter={}
 
 	async def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
