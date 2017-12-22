@@ -63,7 +63,6 @@ class SocialMedia:
 					if not result["feed_channel"]:
 						continue
 					creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
-					print('got creds')
 					if not creds:
 						continue
 					api = self.get_api(creds)
@@ -88,6 +87,7 @@ class SocialMedia:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 			except Exception as e:
 				"""Fail Silently"""
+				print(e)
 
 			await asyncio.sleep(61)
 
