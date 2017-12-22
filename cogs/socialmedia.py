@@ -67,7 +67,6 @@ class SocialMedia:
 						continue
 					api = self.get_api(creds)
 					me = api.me()
-					print('here')
 					if not result["last_tweet"]:
 						tweets = api.user_timeline(id=me.id,count=20)
 					else:
@@ -75,6 +74,7 @@ class SocialMedia:
 
 					tweet_id = result["last_tweet"]
 					for tweet in reversed(tweets):
+						print('here')
 						channel = self.bot.get_channel(result["feed_channel"])
 						await channel.send(embed=self.tweetToEmbed(tweet))
 						tweet_id = tweet.id
