@@ -57,13 +57,14 @@ class SocialMedia:
 		await self.bot.wait_until_ready()
 		while True:
 			try:
-				print('here')
 				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 				results = await self.bot.pool.fetch(query)
 				
 				for result in results:
 					if not result["feed_channel"]:
+						print('here')
 						continue
+						print('here1')
 					creds = await self.get_creds(self.bot.get_guild(result["guild_id"]))
 					if not creds:
 						continue
