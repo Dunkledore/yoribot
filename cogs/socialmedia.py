@@ -69,6 +69,7 @@ class SocialMedia:
 						continue
 					api = self.get_api(creds)
 					me = api.me()
+					print('here')
 					if not result["last_tweet"]:
 						tweets = api.user_timeline(id=me.id,count=20)
 					else:
