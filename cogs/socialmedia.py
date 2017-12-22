@@ -44,7 +44,7 @@ class SocialMedia:
 	def tweetToEmbed(self, tweet):
 		em = discord.Embed(title="Follow Us on Twitter", url=tweet.user.url, color=discord.Colour.teal())
 		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
-		em.add_field(name="Tweet", value=tweet.text)
+		em.add_field(name="**Sent:** "+ tweet.created_at, value=tweet.text)
 		em.set_footer(text="**Followers:**  " + str(tweet.user.followers_count) + "**Following:**  " + str(tweet.user.friends_count) + "**Tweets:**  " + str(tweet.user.statuses_count))
 		if 'media' in tweet.entities:
 			if tweet.entities['media'][0]['type'] == 'photo':
