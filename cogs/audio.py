@@ -167,7 +167,7 @@ class Music:
 	
 	async def on_message(self, message):
 		id=str(message.guild.id)
-		await message.send(str(self.counter))
+		await message.channel.send(str(self.counter))
 		if id in _data.cache and _data.cache[id].state != 'destroyed' and message.channel==_data.cache[id].mchannel:
 			self.counter[id]=+1
 			
