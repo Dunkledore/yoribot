@@ -166,15 +166,13 @@ class Music:
 		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
 	
 	async def on_message(self, message):
-		await message=str(message.guild.id)
-		if  self.getMusicPlayer(message).state==('ready'):
-			if  message in data.cache:
-				await self.counter[message]=+1
+		id=str(message.guild.id)
+		if id in _data.cache and _data.cache[id].state != 'destroyed' and message.channel==_data.cache[id].mchannel:
+			self.counter[id]=+1
 			
-			if self.counter[message]%5==0:
-				await self.counter[message]=0
-				await self.getMusicPlayer(message).
-				await self.getMusicPlayer(message).movehere(message.channel)
+			if self.counter[id]%5==0:
+				self.counter[id]=0
+				self.getMusicPlayer(id).movehere(message.channel)
 		
 		
 			
