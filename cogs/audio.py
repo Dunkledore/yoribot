@@ -169,7 +169,6 @@ class Music:
 		if message.author == self.bot.user:
 			return
 		id=str(message.guild.id)
-		await message.channel.send(str(self.counter))
 		if id in _data.cache and _data.cache[id].state != 'destroyed' and message.channel==_data.cache[id].mchannel:
 					if id not in self.counter:
 						self.counter[id]=0
