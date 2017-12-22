@@ -42,9 +42,11 @@ class SocialMedia:
 
 
 	def tweetToEmbed(self, tweet):
-		em = discord.Embed(color=discord.Colour.teal())
-		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
-		em.add_field(name="Tweet", value=tweet.text)
+		em = discord.Embed(title="Follow Us", url="http://twitter.com/"+tweet.user.screen_name, color=discord.Colour.teal())
+		em.set_author(name=tweet.user.name, icon_url="http://bit.ly/2p7n1Xw")
+		em.set_thumbnail(url=tweet.user.profile_image_url)
+		em.add_field(name="Followers:  " + str(tweet.user.followers_count) + " |   Following: " + str(tweet.user.friends_count) + " |   Tweets:  " + str(tweet.user.statuses_count), value="\n\n"+tweet.text)
+		em.set_footer(text="Sent: "+ str(tweet.created_at))
 		if 'media' in tweet.entities:
 			if tweet.entities['media'][0]['type'] == 'photo':
 				em.set_image(url=tweet.entities['media'][0]['media_url_https'])
@@ -56,10 +58,8 @@ class SocialMedia:
 		await self.bot.wait_until_ready()
 		while True:
 			try:
-
 				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 				results = await self.bot.pool.fetch(query)
-				
 				for result in results:
 					if not result["feed_channel"]:
 						continue
@@ -79,6 +79,7 @@ class SocialMedia:
 						await channel.send(embed=self.tweetToEmbed(tweet))
 						tweet_id = tweet.id
 
+
 					insertquery = "INSERT INTO social_config (guild_id, last_tweet) VALUES ($1, $2)"
 					alterquery = "UPDATE social_config SET last_tweet = $2 WHERE guild_id = $1"
 
@@ -88,6 +89,7 @@ class SocialMedia:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 			except Exception as e:
 				"""Fail Silently"""
+				print(e)
 
 			await asyncio.sleep(61)
 
@@ -255,10 +257,10 @@ class SocialMedia:
 							with open(filename, 'wb') as image:
 								for chunk in request:
 									image.write(chunk)
-					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + user.name, None, filename)
+					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author, None, filename)
 					return
 
-				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + user.name)
+				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author)
 
 		
 
