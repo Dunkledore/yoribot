@@ -82,7 +82,7 @@ class MusicPlayer:
         # Gui variables
         self.mchannel = None
         self.embed = None
-        self.queue_display = 5
+        self.queue_display = 10
         self.nowplayinglog = logging.getLogger("{}.{}.nowplaying".format(__name__, self.server_id))
         self.queuelog = logging.getLogger("{}.{}.queue".format(__name__, self.server_id))
         self.queuelenlog = logging.getLogger("{}.{}.queuelen".format(__name__, self.server_id))
