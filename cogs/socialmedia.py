@@ -57,7 +57,7 @@ class SocialMedia:
 		await self.bot.wait_until_ready()
 		while True:
 			try:
-
+				print('here')
 				query = "SELECT guild_id, feed_channel, last_tweet FROM social_config"
 				results = await self.bot.pool.fetch(query)
 				
@@ -69,7 +69,6 @@ class SocialMedia:
 						continue
 					api = self.get_api(creds)
 					me = api.me()
-					print('here')
 					if not result["last_tweet"]:
 						tweets = api.user_timeline(id=me.id,count=20)
 					else:
