@@ -172,10 +172,7 @@ class Music:
 			
 			if self.counter[id]%5==0:
 				self.counter[id]=0
-				self.getMusicPlayer(id).movehere(message.channel)
-		
-		
-			
+				await self.getMusicPlayer(id).movehere(message.channel)
 
 def setup(bot):
 
