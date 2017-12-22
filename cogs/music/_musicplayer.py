@@ -549,6 +549,7 @@ class MusicPlayer:
                 else:
                     songname = self.queue[i][1]
             except IndexError:
+                pass
                 #songname = "---"
             #queue_display.append("{}: {}\n".format(str(i + 1), songname))
 
