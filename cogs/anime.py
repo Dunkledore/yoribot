@@ -46,38 +46,6 @@ class AnimeList:
         cmd = "manga"
         await self.search_command(ctx, cmd, title)
 
-    @mal.command(name="anime", pass_context=True)
-    async def _anime_mal(self, ctx, user: discord.Member=None):
-        """Lookup another user's MAL for anime"""
-        author = ctx.message.author
-        cmd = "anime"
-        if not user:
-            user = author
-        await self.fetch_profile(user, author, cmd)
-
-    @mal.command(name="manga", pass_context=True)
-    async def _manga_mal(self, ctx, user: discord.Member=None):
-        """Lookup another user's MAL for manga"""
-        author = ctx.message.author
-        cmd = "manga"
-        if not user:
-            user = author
-        await self.fetch_profile(user, author, cmd)
-
-    @mal.command(name="set", pass_context=True)
-    @commands.cooldown(1, 30, commands.BucketType.user)
-    async def _set_mal(self, ctx, username):
-        """Set your MAL username
-        You can change your username once every 30 seconds.
-        """
-        author = ctx.message.author
-        if "Users" not in self.credentials:
-            self.credentials["Users"] = {}
-
-        self.credentials["Users"][author.id] = username
-        dataIO.save_json(self.file_path, self.credentials)
-        await ctx.send("Your MAL is now set to {}".format(username))
-
     async def search_command(self, ctx, cmd, title):
         if self.verify_credentials():
             await self.fetch_info(ctx, cmd, title)
@@ -86,64 +54,6 @@ class AnimeList:
                                "An account on <https://myanimelist.net> is required. "
                                "When the owner is ready, setup this cog with {}animeset "
                                "to enter the credentials".format(ctx.prefix))
-
-    async def fetch_profile(self, user, author, cmd):
-        user_name = self.name_lookup(user)
-        author_name = self.name_lookup(author)
-
-        url = "https://myanimelist.net/malappinfo.php?u={}&status=all&type=" + cmd
-        user_col, user_data = await self.fetch_user_mal(user_name, url, cmd)
-        if not user_col:
-            return await ctx.send("I couldn't find a profile with that name.")
-        if user == author:
-            author_col = "SELF"
-        else:
-            author_col, _ = await self.fetch_user_mal(author_name, url, cmd)
-
-        await self.send_profile(user, author_col, user_col, user_data, user_name, url, cmd)
-
-    async def send_profile(self, user, author_col, user_col, user_data, user_name, url, cmd):
-
-        if author_col == "SELF":
-            share = ['Not Applicable']
-            different = ['Not Applicable']
-        elif author_col:
-            intersect = user_col.intersection(author_col)
-            difference = author_col.difference(user_col)
-            share = random.sample(intersect, len(intersect) if len(intersect) < 5 else 5)
-            if not share:
-                share = ["Nothing Mutual"]
-            different = random.sample(difference, len(difference) if len(difference) < 5 else 5)
-            if not different:
-                different = ["Nothing different"]
-        else:
-            share = ["Author's MAL not set"]
-            different = ["Author's MAL not set"]
-
-        if cmd == "anime":
-            medium = "Watching"
-            emojis = [":film_frames:", ":vhs:", ":octagonal_sign:"]
-        else:
-            medium = "Reading"
-            emojis = [":book:", ":books:", ":bookmark:"]
-
-        link = "https://myanimelist.net/animelist/{}".format(user_name)
-        description = ("**{}**\n[{}]({})\nTotal {}: "
-                       "{}".format(user.name, user_name, link, cmd.title(), len(user_col)))
-        embed = discord.Embed(colour=0x0066FF, description=description)
-        embed.title = "My Anime List Profile"
-        embed.set_thumbnail(url="https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256."
-                                "png")
-        embed.add_field(name=":calendar_spiral: Days Spent {}".format(medium), value=user_data[4],
-                        inline=False)
-        embed.add_field(name="{} {}".format(emojis[0], medium), value=user_data[0])
-        embed.add_field(name="{} Completed".format(emojis[1]), value=user_data[1])
-        embed.add_field(name="{} On Hold".format(emojis[2]), value=user_data[2])
-        embed.add_field(name=":wastebasket: Dropped", value=user_data[3])
-        embed.add_field(name=":link: Five Shared", value='\n'.join(share), inline=False)
-        embed.add_field(name=":trident: Five Different", value='\n'.join(different))
-        await ctx.send(embed=embed)
-
     async def owner_set(self, ctx):
         
         def check(m):
@@ -168,40 +78,6 @@ class AnimeList:
             await ctx.author.send("Setup complete. Account details added.\nTry searching for "
                                    "an anime using {}anime".format(ctx.prefix))
             return
-
-    async def fetch_user_mal(self, name, url, cmd):
-        with aiohttp.ClientSession() as session:
-            async with session.get(url.format(name)) as response:
-                data = await response.text()
-                try:
-                    root = ET.fromstring(data)
-
-                except ET.ParseError:
-                    return '', ''
-
-                else:
-                    if len(root) == 0:
-                        return '', ''
-
-                    collection = {x.find('series_title').text for x in root.findall(cmd)}
-                    entry = root.find('myinfo')
-                    if cmd == "anime":
-                        info = [entry.find(x).text for x in ['user_watching', 'user_completed',
-                                                             'user_onhold', 'user_dropped',
-                                                             'user_days_spent_watching']]
-                        return collection, info
-                    else:
-                        info = [entry.find(x).text for x in ['user_reading', 'user_completed',
-                                                             'user_onhold', 'user_dropped',
-                                                             'user_days_spent_watching']]
-                        return collection, info
-
-    def name_lookup(self, name):
-        try:
-            acc_name = self.credentials["Users"][name.id]
-            return acc_name
-        except KeyError:
-            return name.name
 
     async def credential_verfication(self, username, password, author):
         auth = aiohttp.BasicAuth(login=username, password=password)
