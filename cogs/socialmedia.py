@@ -88,6 +88,7 @@ class SocialMedia:
 			except Exception as e:
 				"""Fail Silently"""
 				print(e)
+				print(e.tb_lineo)
 
 			await asyncio.sleep(61)
 
