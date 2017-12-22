@@ -11,6 +11,7 @@ class Music:
 
 	def __init__(self,bot):
 		self.bot = bot
+		self.counter=[]
 
 	async def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
@@ -163,6 +164,20 @@ class Music:
 		"""Increase or decrease the volume"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
+	
+	async def on_message(self, message):
+		await message=str(message.guild.id)
+		if  self.getMusicPlayer(message).state==('ready'):
+			if  message in data.cache:
+				await self.counter[message]=+1
+			
+			if self.counter[message]%5==0:
+				await self.counter[message]=0
+				await self.getMusicPlayer(message).
+				await self.getMusicPlayer(message).movehere(message.channel)
+		
+		
+			
 
 def setup(bot):
 
