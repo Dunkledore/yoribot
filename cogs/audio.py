@@ -166,7 +166,7 @@ class Music:
 		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
 	
 	async def on_message(self, message):
-		if message.author = self.bot.user:
+		if message.author == self.bot.user:
 			return
 		id=str(message.guild.id)
 		await message.channel.send(str(self.counter))
