@@ -42,9 +42,9 @@ class SocialMedia:
 
 
 	def tweetToEmbed(self, tweet):
-		em = discord.Embed(title="Follow Us", url="http://twitter.com/"+tweet.user.screen_name, description=tweet.text + "\n\n" + str(tweet.created_at), color=discord.Colour.teal())
+		em = discord.Embed(title="Follow Us", url="http://twitter.com/"+tweet.user.screen_name, description=tweet.text + "\n\nSent: " + str(tweet.created_at), color=discord.Colour.teal())
 		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
-		em.set_footer(text="Tweets: " + str(tweet.user.statuses_count) + "| Followers: " +str(tweet.user.followers_count) + "| Following: " + str(tweet.user.friends_count), icon_url="http://bit.ly/2mDlBim")
+		em.set_footer(text="Tweets: " + str(tweet.user.statuses_count) + " | Followers: " +str(tweet.user.followers_count) + " | Following: " + str(tweet.user.friends_count), icon_url="http://bit.ly/2mDlBim")
 		if 'media' in tweet.entities:
 			if tweet.entities['media'][0]['type'] == 'photo':
 				em.set_image(url=tweet.entities['media'][0]['media_url_https'])
