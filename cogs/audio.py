@@ -174,7 +174,7 @@ class Music:
 						self.counter[id]=0
 					self.counter[id]+=1
 						
-					if self.counter[id]==5:
+					if self.counter[id]==11:
 						self.counter[id]=0
 						await self.getMusicPlayer(id).movehere(message.channel)
 
