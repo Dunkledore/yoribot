@@ -255,10 +255,10 @@ class SocialMedia:
 							with open(filename, 'wb') as image:
 								for chunk in request:
 									image.write(chunk)
-					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author, None, filename)
+					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author.name, None, filename)
 					return
 
-				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author)
+				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author.name)
 
 		
 
