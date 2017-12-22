@@ -166,6 +166,8 @@ class Music:
 		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
 	
 	async def on_message(self, message):
+		if message.author = self.bot.user:
+			return
 		id=str(message.guild.id)
 		await message.channel.send(str(self.counter))
 		if id in _data.cache and _data.cache[id].state != 'destroyed' and message.channel==_data.cache[id].mchannel:
