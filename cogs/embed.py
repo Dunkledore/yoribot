@@ -109,7 +109,7 @@ class Embed:
         messages_to_delete.append(footer_message)
         footer = footer_message.content
         if footer not in ["None", "none", "\"none\"", "\"None\""]:
-            embed.set_footer(footer)
+            embed.set_footer(text=footer)
 
 
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
