@@ -108,7 +108,7 @@ class Embed:
         footer_message = await self.bot.wait_for('message', timeout=30.0, check=check)
         messages_to_delete.append(footer_message)
         footer = footer_message.content
-        if url not in ["None", "none", "\"none\"", "\"None\""]:
+        if footer not in ["None", "none", "\"none\"", "\"None\""]:
             embed.set_footer(footer)
 
 
