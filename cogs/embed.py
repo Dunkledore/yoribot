@@ -12,7 +12,7 @@ import asyncpg
 import psutil
 
 class Embed:
-    """Commands used to set up your server profile"""
+    """Commands used to send embeds"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
