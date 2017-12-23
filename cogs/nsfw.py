@@ -1,4 +1,5 @@
 import discord
+import MySQLdb
 from discord.ext import commands
 from bs4 import BeautifulSoup
 import random
@@ -170,26 +171,8 @@ class Nsfw:
     @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
     async def gayorzea(self, ctx):
-        """Random Image From Gayorzea"""
-        try:
-            query = ("http://gayorzea.com/?random")
-            page = await self.session.get(query)
-            page = await page.text()
-            soup = BeautifulSoup(page,'html.parser')
-            found = soup.find_all('script')
-            for script in found:
-                await ctx.send(str(script)[0:1999])
-            image = await findimage.json()
-            if image != []:
-                em = discord.Embed(color=ctx.message.author.color, description=" ")
-                em.set_author(name="Random Image from Gayorzea:", icon_url="http://bit.ly/2hHIfF6")
-                em.set_image(url=random.choice(image)['jpeg_url'])
-                em.set_footer(text= "Random image from http://gayorzea.com")
-                await ctx.send(embed=em)
-            else:
-                await ctx.send(":warning: Gayorzea returned no results")
-        except Exception as e:
-            await ctx.send(":x: **Error:** `{}`".format(e))
+       """Random image from gayorzea.com coming soon"""
+
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
