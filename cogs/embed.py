@@ -20,6 +20,8 @@ class Embed:
     @commands.command(no_pm=True)
     @checks.is_mod()
     async def qembed(self, ctx, channel: discord.TextChannel, title, *, description):
+        """A Quck way to send an embed to a channel"""
+
         embed = discord.Embed(title=title, description=description)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         await channel.send(embed=embed)
@@ -28,6 +30,7 @@ class Embed:
     @commands.command(no_pm=True)
     @checks.is_mod()
     async def embed(self, ctx, channel: discord.TextChannel):
+        """A Lengthy way to send a detailed embed to a channel"""
 
 
         def check(m):
