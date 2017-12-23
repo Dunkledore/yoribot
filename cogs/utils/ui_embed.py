@@ -82,7 +82,7 @@ class UI:
         """Deletes the existing GUI if available"""
 
         try:
-            await self.bot.delete_message(self.sent_embed)
+            await self.sent_embed.delete()
         except:
             pass
 
