@@ -18,6 +18,15 @@ class Embed:
         self.bot = bot
     
     @commands.command(no_pm=True)
+    @checks.is_mod()
+    async def qembed(self, ctx, channel: discord.TextChannel, title, *, description):
+        embed = discord.Embed(title=title, description=description)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        await channel.send(embed=embed)
+
+
+    @commands.command(no_pm=True)
+    @checks.is_mod()
     async def embed(self, ctx, channel: discord.TextChannel):
 
 
