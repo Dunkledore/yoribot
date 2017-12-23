@@ -37,6 +37,7 @@ initial_extensions = (
     'cogs.config',
     'cogs.cookie',
     'cogs.discomegle',
+    'cogs.embed',
     'cogs.ffxiv',
     'cogs.fun',
     'cogs.hangman',
