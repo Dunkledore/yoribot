@@ -16,33 +16,33 @@ class Nsfw:
 
     @commands.command(pass_context=True)
     @checks.is_nsfw()
-    async def dick(self, ctx, user):
+    async def dick(self, ctx, user : discord.Member):
         """Show's the size of the user's dick (157% accurate)"""
 
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        random.seed(int(user.id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 15)
         y = "=" *  x
-        await ctx.send("{}\'s dick:' ** 8{}D **".format(ctx.message.mentions[0].name, y))
+        await ctx.send("{}\'s dick:' ** 8{}D **".format(user.name, y))
 
     @commands.command(pass_context=True)
     @checks.is_nsfw()
-    async def boobs(self, ctx, user):
+    async def boobs(self, ctx, user : discord.Member):
         """Shows the size of the user's boobs (157% accurate)"""
 
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        random.seed(int(user.id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 5)
         y = " " *  x
-        await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(ctx.message.mentions[0].name, y, y))
+        await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(user.name, y, y))
 
     @commands.command(pass_context=True)
     @checks.is_nsfw()
-    async def ass(self, ctx, user):
+    async def ass(self, ctx, user : discord.Member):
         """Shows the size of the user's ass (157% accurate)"""
 
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        random.seed(int(user.id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 5)
         y = " " *  x
-        await ctx.send("{}\'s ass:' ** ({}!{}) **".format(ctx.message.mentions[0].name, y, y))
+        await ctx.send("{}\'s ass:' ** ({}!{}) **".format(user.name, y, y))
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.is_nsfw()
