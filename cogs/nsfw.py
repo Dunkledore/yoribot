@@ -1,5 +1,4 @@
 import discord
-import MySQLdb
 from discord.ext import commands
 from bs4 import BeautifulSoup
 import random
