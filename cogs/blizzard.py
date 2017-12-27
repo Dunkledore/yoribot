@@ -663,7 +663,7 @@ def setup(bot):
         check_files()
         n = Blizzard(bot)
         bot.add_cog(n)
-    else:
+    except:
         error_text = ("Make sure beautifulsoup4 and bleach are installed."
                       "\n`pip install beautifulsoup4`"
                       "\n`pip install bleach`")
