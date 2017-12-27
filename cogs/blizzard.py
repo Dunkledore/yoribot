@@ -658,7 +658,7 @@ def check_files():
 
 
 def setup(bot):
-    if soup_available and bleach_available:
+    try:
         check_folders()
         check_files()
         n = Blizzard(bot)
