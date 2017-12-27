@@ -6,7 +6,6 @@ from numbers import Number
 
 import aiohttp
 import discord
-from __main__ import send_cmd_help
 from cogs.utils import checks
 from discord.ext import commands
 from discord.ext.commands import formatter
@@ -150,9 +149,6 @@ class Blizzard:
     @commands.group(name="blizzard", pass_context=True)
     async def blizzard(self, ctx):
         """Change blizzard cog settings."""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @blizzard.command(name="apikey", pass_context=True)
     @checks.is_owner()
