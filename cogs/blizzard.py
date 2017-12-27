@@ -69,8 +69,7 @@ class Blizzard:
         if message:
             return await self.bot.edit_message(message, messages[page])
         else:
-            return await self.bot.send_message(ctx.message.channel,
-                                               messages[page])
+            return await self.bot.ctx.send(messages[page])
 
     async def _info_menu(self, ctx, messages, **kwargs):
         page = kwargs.get("page", 0)
@@ -189,9 +188,6 @@ class Blizzard:
     async def battletag(self, ctx):
         """Change your battletag settings."""
 
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
-
     @battletag.command(name="set", pass_context=True)
     async def _set_battletag(self, ctx, tag: str):
         """Set your battletag"""
@@ -219,9 +215,6 @@ class Blizzard:
     @commands.group(name="hearthstone", pass_context=True)
     async def hearthstone(self, ctx):
         """Hearthstone utilities"""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @hearthstone.command(name="notes", pass_context=True)
     async def _notes_hearthstone(self, ctx):
@@ -357,9 +350,6 @@ class Blizzard:
     async def starcraft2(self, ctx):
         """Starcraft2 utilities"""
 
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
-
     @starcraft2.command(name="notes", pass_context=True)
     async def _notes_starcraft2(self, ctx):
         """Latest Starcraft2 patch notes"""
@@ -368,9 +358,6 @@ class Blizzard:
     @commands.group(name="warcraft", pass_context=True)
     async def warcraft(self, ctx):
         """World of Warcraft utilities"""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @warcraft.command(name="notes", pass_context=True)
     async def _notes_warcraft(self, ctx):
@@ -402,9 +389,6 @@ class Blizzard:
     @commands.group(name="diablo3", pass_context=True)
     async def diablo3(self, ctx):
         """Diablo3 utilities"""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @diablo3.command(name="notes", pass_context=True)
     async def _notes_diablo3(self, ctx):
@@ -500,9 +484,6 @@ class Blizzard:
     @commands.group(name="hots", pass_context=True)
     async def hots(self, ctx):
         """Heroes of the Storm utilities"""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @hots.command(name="notes", pass_context=True)
     async def _notes_hots(self, ctx):
