@@ -12,7 +12,12 @@ from discord.ext.commands import formatter
 
 from .utils.dataIO import dataIO
 from bs4 import BeautifulSoup
-import bleach
+
+try:
+    import bleach
+    bleach_available = True
+except:
+    bleach_available = False
 
 # Special thanks to judge2020 for telling me about this method for getting
 # patch notes. https://github.com/judge2020/BattleNetUpdateChecker
