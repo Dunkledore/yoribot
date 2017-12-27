@@ -344,7 +344,7 @@ class Blizzard:
 
     @overwatch.command(name="notes", pass_context=True)
     async def _notes_overwatch(self, ctx):
-        await self.format_patch_notes(ctx, 'overwatch')
+        await self.format_patch_notes('overwatch')
 
     @commands.group(name="starcraft2", pass_context=True)
     async def starcraft2(self, ctx):
@@ -353,7 +353,7 @@ class Blizzard:
     @starcraft2.command(name="notes", pass_context=True)
     async def _notes_starcraft2(self, ctx):
         """Latest Starcraft2 patch notes"""
-        await self.format_patch_notes(ctx, 'starcraft2')
+        await self.format_patch_notes('starcraft2')
 
     @commands.group(name="warcraft", pass_context=True)
     async def warcraft(self, ctx):
@@ -362,7 +362,7 @@ class Blizzard:
     @warcraft.command(name="notes", pass_context=True)
     async def _notes_warcraft(self, ctx):
         """Latest World of Warcraft patch notes"""
-        await self.format_patch_notes(ctx, 'warcraft')
+        await self.format_patch_notes('warcraft')
 
     @warcraft.command(name="token", pass_context=True)
     async def _token_warcraft(self, ctx, realm: str='na'):
@@ -393,7 +393,7 @@ class Blizzard:
     @diablo3.command(name="notes", pass_context=True)
     async def _notes_diablo3(self, ctx):
         """Latest Diablo3 patch notes"""
-        await self.format_patch_notes(ctx, 'diablo3')
+        await self.format_patch_notes('diablo3')
 
     @diablo3.command(name="stats", pass_context=True)
     async def _stats_diablo3(self, ctx, tag: str=None, region: str=None):
