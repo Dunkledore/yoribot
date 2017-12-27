@@ -11,18 +11,8 @@ from discord.ext import commands
 from discord.ext.commands import formatter
 
 from .utils.dataIO import dataIO
-
-try:
-    from bs4 import BeautifulSoup
-    soup_available = True
-except:
-    soup_available = False
-
-try:
-    import bleach
-    bleach_available = True
-except:
-    bleach_available = False
+from bs4 import BeautifulSoup
+import bleach
 
 # Special thanks to judge2020 for telling me about this method for getting
 # patch notes. https://github.com/judge2020/BattleNetUpdateChecker
@@ -73,7 +63,7 @@ class Blizzard:
             "no": "\N{CROSS MARK}"
         }
         self.expired_embed = discord.Embed(title="This menu has exipred due "
-                                           "to inactivity.")
+                                           "to ina*btivity.")
 
     async def show_menu(self, ctx, message, messages, page):
         if message:
@@ -241,9 +231,6 @@ class Blizzard:
     @commands.group(name="overwatch", pass_context=True)
     async def overwatch(self, ctx):
         """Overwatch utilities"""
-
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
 
     @overwatch.command(name="stats", pass_context=True)
     async def _stats_overwatch(self, ctx, tag: str=None, region: str=None):
