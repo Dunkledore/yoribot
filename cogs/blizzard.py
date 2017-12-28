@@ -112,7 +112,8 @@ class Blizzard:
                 page = 0
 
         except asyncio.TimeoutError:
-            return ctx.send("Menu timed out - please use the command again to use the menu.")
+            await ctx.send("Menu timed out - please use the command again to use the menu.")
+            return ["no", message]
             self.paginating = False
 
         return await self._info_menu(
