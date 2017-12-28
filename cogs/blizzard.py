@@ -112,7 +112,7 @@ class Blizzard:
             page = 0
 
         try:
-            await message.remove_reaction(emoji[react], reaction.user)
+            await message.remove_reaction(emoji[react], user)
         except discord.errors.Forbidden:
             await ctx.send('I require the "manage messages" permission '
                                'to make these menus work.')
@@ -552,7 +552,7 @@ class Blizzard:
             result = await self._info_menu(ctx, note_list[0],
                 timeout=self.settings.setdefault('notes_timeout', 60))
             if result[0] == "no":
-                await self.bot.delete_message(result[1])
+                await result[1].delete()
             else:
                 await self.bot.edit_message(result[1], embed=self.expired_embed)
         elif self.settings['notes_format'] == 'full':
