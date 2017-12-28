@@ -340,7 +340,7 @@ class Blizzard:
         await self.format_patch_notes(ctx, 'warcraft')
 
     @commands.command(pass_context=True)
-    async def wowtoken(self, ctx, *, realm: str='us'):
+    async def wowtoken(self, ctx, *, realm):
         """WoW Token Prices"""
 
         url = self.wowtoken_url
@@ -349,7 +349,7 @@ class Blizzard:
             await ctx.send("'" + realm + "' is not a valid realm.")
             return
 
-        await self.print_token(url, self.wow_full_region(realm))
+        await self.print_token(url, self.wow_full_region(str[realm]))
 
     def wow_full_region(self, region: str):
         # Works only with wowtokenprices.com
