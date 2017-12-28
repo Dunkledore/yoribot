@@ -227,8 +227,6 @@ class Pages:
                     await self.message.clear_reactions()
                 except:
                     pass
-                finally:
-                    break
 
             try:
                 await self.message.remove_reaction(reaction, user)
