@@ -117,6 +117,10 @@ class Blizzard:
                 await self.message.clear_reactions()
             except:
                 pass
+        try:
+            await self.message.remove_reaction(reaction, user)
+        except:
+            pass # can't remove it so don't bother doing so
 
         return await self._info_menu(
             ctx, messages,
