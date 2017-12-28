@@ -340,7 +340,7 @@ class Blizzard:
         await self.format_patch_notes(ctx, 'warcraft')
 
     @commands.command(pass_context=True)
-    async def wowtoken(self, ctx, realm: str='us'):
+    async def wowtoken(self, ctx, *, realm: str='us'):
         """WoW Token Prices"""
 
         url = self.wowtoken_url
