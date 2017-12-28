@@ -349,7 +349,7 @@ class Blizzard:
             await ctx.send("'" + realm + "' is not a valid realm.")
             return
 
-        await self.print_token(url, self.wow_full_region(str[realm]))
+        await self.print_token(url, self.wow_full_region(realm))
 
     def wow_full_region(self, region: str):
         # Works only with wowtokenprices.com
