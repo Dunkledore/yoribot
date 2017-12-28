@@ -92,38 +92,31 @@ class Blizzard:
             return reaction.message.id == message.id and user == ctx.message.author
         try:
             reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=timeout)
+            if reaction is None:
+                return [None, message]
+
+            reacts = {v: k for k, v in emoji.items()}
+            react = reacts[reaction.emoji]
+
+            if react == "next":
+                page += 1
+            elif react == "back":
+                page -= 1
+            elif react == "no":
+                return ["no", message]
+
+            if page < 0:
+                page = choices - 1
+
+            if page == choices:
+                page = 0
         except asyncio.TimeoutError:
             self.paginating = False
+
             try:
                 await self.message.clear_reactions()
             except:
                 pass
-
-        if reaction is None:
-            return [None, message]
-
-        reacts = {v: k for k, v in emoji.items()}
-        react = reacts[reaction.emoji]
-
-        if react == "next":
-            page += 1
-        elif react == "back":
-            page -= 1
-        elif react == "no":
-            return ["no", message]
-
-        if page < 0:
-            page = choices - 1
-
-        if page == choices:
-            page = 0
-
-        try:
-            await message.remove_reaction(emoji[react], user)
-        except Exception as e:
-            await ctx.send('I require the "manage messages" permission '
-                               'to make these menus work.')
-            return ["no", message]
 
         return await self._info_menu(
             ctx, messages,
