@@ -83,9 +83,9 @@ class Blizzard:
         message = await self.show_menu(ctx, message, messages, page)
 
         if reactions_needed:
-            await self.bot.add_reaction(message, str(emoji['back']))
-            await self.bot.add_reaction(message, str(emoji['no']))
-            await self.bot.add_reaction(message, str(emoji['next']))
+            await message.add_reaction(str(emoji['back']))
+            await message.add_reaction(str(emoji['no']))
+            await message.add_reaction(str(emoji['next']))
 
         r = await self.bot.wait_for_reaction(
             message=message,
