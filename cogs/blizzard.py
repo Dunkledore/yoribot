@@ -74,7 +74,7 @@ class Blizzard:
 
     async def _info_menu(self, ctx, messages, **kwargs):
         page = kwargs.get("page", 0)
-        timeout = kwargs.get("timeout", 60)
+        timeout = kwargs.get("timeout", 30)
         emoji = kwargs.get("emoji", self.emoji)
         message = kwargs.get("message", None)
         choices = len(messages)
@@ -121,13 +121,9 @@ class Blizzard:
             message=message)
 
         try:
-            await self.message.clear_reactions()
+            await ctx.send("Menu timed out - please use the command again to enable navigation.")
         except:
             pass
-        try:
-            await self.message.remove_reaction(reaction, user)
-        except:
-            pass # can't remove it so don't bother doing so
 
     def dictgrab(self, my_dict, *keys):
         temp_dict = copy(my_dict)
