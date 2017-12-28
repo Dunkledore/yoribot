@@ -1,4 +1,4 @@
-package Utils;
+package com.yori.vr.utils;
 
 import lombok.Getter;
 import lombok.Setter;
