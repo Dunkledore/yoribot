@@ -87,7 +87,8 @@ class Blizzard:
             await message.add_reaction(str(emoji['no']))
             await message.add_reaction(str(emoji['next']))
 
-        r = await self.bot.wait_for_reaction(
+        r = await self.bot.wait_for(
+            'reaction'
             message=message,
             user=ctx.message.author,
             timeout=timeout)
