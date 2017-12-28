@@ -1,7 +1,9 @@
-package Handlers;
+package com.yori.vr.handlers;
 
-import Utils.Rift;
-import Utils.Rifts;
+import java.util.HashMap;
+
+import com.yori.vr.utils.Rift;
+
 import net.dv8tion.jda.core.audio.CombinedAudio;
 import net.dv8tion.jda.core.entities.Channel;
 
@@ -9,11 +11,13 @@ public class myAudioRecieveHandler implements net.dv8tion.jda.core.audio.AudioRe
 {
   private String riftName;
   private Channel channel;
+  private HashMap<String, Rift> rifts;
   
-  public myAudioRecieveHandler(String riftName, Channel channel)
+  public myAudioRecieveHandler(String riftName, Channel channel, HashMap<String, Rift> rifts)
   {
     this.riftName = riftName;
     this.channel = channel;
+    this.rifts = rifts;
   }
   
   public boolean canReceiveCombined()
@@ -28,7 +32,7 @@ public class myAudioRecieveHandler implements net.dv8tion.jda.core.audio.AudioRe
   
   public void handleCombinedAudio(CombinedAudio combinedAudio)
   {
-	  Rift rift = Rifts.rifts.get(riftName);
+	  Rift rift = rifts.get(riftName);
 
       if (channel.equals(rift.getChannel1()))
       {
