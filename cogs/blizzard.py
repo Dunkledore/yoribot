@@ -182,12 +182,8 @@ class Blizzard:
             await ctx.send("Please choose a duration between "
                                "{} and {} seconds.".format(min_max[0], min_max[1]))
 
-    @commands.group(name="battletag", pass_context=True)
-    async def battletag(self, ctx):
-        """Change your battletag settings."""
-
-    @battletag.command(name="set", pass_context=True)
-    async def _set_battletag(self, ctx, tag: str):
+    @commands.command(pass_context=True)
+    async def setblizzardtag(self, ctx, tag: str):
         """Set your battletag"""
 
         pattern = re.compile(r'.#\d{4,5}\Z')
@@ -199,8 +195,8 @@ class Blizzard:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send("Your battletag has been set.")
 
-    @battletag.command(name="clear", pass_context=True)
-    async def _clear_battletag(self, ctx):
+    @commands.command(pass_context=True)
+    async def clearblizzardtag(self, ctx):
         """Remove your battletag"""
 
         uid = ctx.message.author.id
@@ -210,26 +206,18 @@ class Blizzard:
             await ctx.send("I had no battletag stored for you.")
         dataIO.save_json(self.settings_path, self.settings)
 
-    @commands.group(name="hearthstone", pass_context=True)
-    async def hearthstone(self, ctx):
-        """Hearthstone utilities"""
-
-    @hearthstone.command(name="notes", pass_context=True)
-    async def _notes_hearthstone(self, ctx):
+    @commands.command(pass_context=True)
+    async def hearthstonepatch(self, ctx):
         """Latest Hearthstone patch notes"""
         await self.format_patch_notes(ctx, 'hearthstone')
 
-    @commands.group(name="overwatch", pass_context=True)
-    async def overwatch(self, ctx):
-        """Overwatch utilities"""
-
-    @overwatch.command(name="stats", pass_context=True)
-    async def _stats_overwatch(self, ctx, tag: str=None, region: str=None):
+    @commands.command(pass_context=True)
+    async def owstats(self, ctx, tag: str=None, region: str=None):
         """Overwatch stats for your battletag (case sensitive and PC only!).
         If battletag is ommitted, bot will use your battletag if stored.
         Region is optional and will autodetect with this priority: kr>eu>us
 
-        Example: [p]overwatch stats CoolDude#1234 kr
+        Example: [p]owstats CoolDude#1234 us
         """
 
         uid = ctx.message.author.id
@@ -340,30 +328,22 @@ class Blizzard:
             'us': 'US',
         }.get(region, ' ')
 
-    @overwatch.command(name="notes", pass_context=True)
-    async def _notes_overwatch(self, ctx):
+    @commands.command(pass_context=True)
+    async def owpatch(self, ctx):
         await self.format_patch_notes(ctx, 'overwatch')
 
-    @commands.group(name="starcraft2", pass_context=True)
-    async def starcraft2(self, ctx):
-        """Starcraft2 utilities"""
-
-    @starcraft2.command(name="notes", pass_context=True)
-    async def _notes_starcraft2(self, ctx):
+    @commands.command(pass_context=True)
+    async def sc2patch(self, ctx):
         """Latest Starcraft2 patch notes"""
         await self.format_patch_notes(ctx, 'starcraft2')
 
-    @commands.group(name="warcraft", pass_context=True)
-    async def warcraft(self, ctx):
-        """World of Warcraft utilities"""
-
-    @warcraft.command(name="notes", pass_context=True)
-    async def _notes_warcraft(self, ctx):
+    @commands.command(pass_context=True)
+    async def wowpatch(self, ctx):
         """Latest World of Warcraft patch notes"""
         await self.format_patch_notes(ctx, 'warcraft')
 
-    @warcraft.command(name="token", pass_context=True)
-    async def _token_warcraft(self, ctx, realm: str='na'):
+    @commands.command(pass_context=True)
+    async def wowtokent(self, ctx, realm: str='na'):
         """WoW Token Prices"""
 
         url = self.wowtoken_url
@@ -384,17 +364,14 @@ class Blizzard:
             'tw': 'taiwan'
         }.get(region, ' ')
 
-    @commands.group(name="diablo3", pass_context=True)
-    async def diablo3(self, ctx):
-        """Diablo3 utilities"""
 
-    @diablo3.command(name="notes", pass_context=True)
-    async def _notes_diablo3(self, ctx):
+    @commands.command(pass_context=True)
+    async def diablo3patch(self, ctx):
         """Latest Diablo3 patch notes"""
         await self.format_patch_notes(ctx, 'diablo3')
 
-    @diablo3.command(name="stats", pass_context=True)
-    async def _stats_diablo3(self, ctx, tag: str=None, region: str=None):
+    @commands.command(pass_context=True)
+    async def diablo3stats(self, ctx, tag: str=None, region: str=None):
         """Diablo3 stats for your battletag.
         If battletag is ommitted, bot will use your battletag if stored.
 
@@ -479,12 +456,8 @@ class Blizzard:
         embed.set_footer(text=kills)
         await ctx.send(embed=embed)
 
-    @commands.group(name="hots", pass_context=True)
-    async def hots(self, ctx):
-        """Heroes of the Storm utilities"""
-
-    @hots.command(name="notes", pass_context=True)
-    async def _notes_hots(self, ctx):
+    @commands.command(pass_context=True)
+    async def hotspatch(self, ctx):
         """Latest Heroes of the Storm patch notes"""
         await self.format_patch_notes(ctx, 'hots')
 
