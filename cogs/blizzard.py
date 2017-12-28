@@ -87,13 +87,13 @@ class Blizzard:
             await message.add_reaction(str(emoji['no']))
             await message.add_reaction(str(emoji['next']))
 
-        def check(reaction, user):
+        def check(self, reaction, user):
             coro = ctx.send(str(reaction.message == message and user == ctx.message.author))
             fut = asyncio.run_coroutine_threadsafe(coro, bot.loop)
             fut.result()
             return reaction.message == message and user == ctx.message.author
 
-        r = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
+        reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
 
         if r is None:
             return [None, message]
