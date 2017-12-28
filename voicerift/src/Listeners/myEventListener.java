@@ -1,11 +1,15 @@
 package Listeners;
 
-import Utils.Rift;
-import Handlers.*;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import com.yori.vr.handlers.myAudioRecieveHandler;
+import com.yori.vr.handlers.myAudioSendHandler;
+import com.yori.vr.utils.Rift;
+
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -34,7 +38,7 @@ public class myEventListener extends net.dv8tion.jda.core.hooks.ListenerAdapter
 			
 			String riftName = args[0];
 			
-			if (Utils.Rifts.rifts.containsKey(riftName))
+			if (com.yori.vr.utils.Rifts.rifts.containsKey(riftName))
 			{
 				e.getChannel().sendMessage("Rift already in use").queue();
 				return;
@@ -53,7 +57,7 @@ public class myEventListener extends net.dv8tion.jda.core.hooks.ListenerAdapter
 				  
 			Rift rift = new Rift(voiceChannel);
 			rift.setGuild1(guild);
-			Utils.Rifts.rifts.put(riftName, rift);
+			com.yori.vr.utils.Rifts.rifts.put(riftName, rift);
 		  
 			myAudioRecieveHandler reciever = new myAudioRecieveHandler(riftName, voiceChannel);
 		  	myAudioSendHandler sender = new myAudioSendHandler(riftName, voiceChannel);
@@ -76,7 +80,7 @@ public class myEventListener extends net.dv8tion.jda.core.hooks.ListenerAdapter
 		  
 			String riftName = args[0];
 		  
-			if (!Utils.Rifts.rifts.containsKey(riftName))
+			if (!com.yori.vr.utils.Rifts.rifts.containsKey(riftName))
 			{
 				e.getChannel().sendMessage("That is not a valid rift").queue();
 				return;
@@ -93,7 +97,7 @@ public class myEventListener extends net.dv8tion.jda.core.hooks.ListenerAdapter
 			VoiceChannel voiceChannel = voiceChannelList.get(0);
 		 
 		  
-			Rift rift = Utils.Rifts.rifts.get(riftName);
+			Rift rift = com.yori.vr.utils.Rifts.rifts.get(riftName);
 			rift.setGuild2(guild);
 			rift.join(voiceChannel);
 			myAudioRecieveHandler reciever = new myAudioRecieveHandler(riftName, voiceChannel);
@@ -116,7 +120,7 @@ public class myEventListener extends net.dv8tion.jda.core.hooks.ListenerAdapter
 				return;
 			}
 			
-			HashMap<String, Rift> rifts = Utils.Rifts.rifts;
+			HashMap<String, Rift> rifts = com.yori.vr.utils.Rifts.rifts;
 			if(!rifts.containsKey(riftName))
 			{
 				e.getChannel().sendMessage("Please enter a valid rift name").queue();
