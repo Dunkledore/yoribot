@@ -90,7 +90,7 @@ class Blizzard:
         def check(reaction, user):
             return reaction.message == message and user == ctx.message.author
 
-        r = await self.bot.wait_for('reaction', timeout=timeout)
+        r = await self.bot.wait_for('reaction', timeout=timeout, check=check)
 
         if r is None:
             return [None, message]
