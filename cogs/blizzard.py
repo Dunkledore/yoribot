@@ -114,7 +114,7 @@ class Blizzard:
 
         try:
             await message.remove_reaction(emoji[react], user)
-        except discord.errors.Forbidden:
+        except Exception as e:
             await ctx.send('I require the "manage messages" permission '
                                'to make these menus work.')
             return ["no", message]
