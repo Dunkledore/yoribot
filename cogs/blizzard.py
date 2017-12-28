@@ -88,7 +88,7 @@ class Blizzard:
             await message.add_reaction(str(emoji['next']))
 
         def check(reaction, user):
-            return reaction.message.id == message.id and user == ctx.message.author
+            return reaction.message.id == ctx.message.id and user == ctx.message.author
 
         reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
 
