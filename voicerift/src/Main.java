@@ -1,6 +1,8 @@
-import Listeners.myEventListener;
-import Utils.Rifts;
 import javax.security.auth.login.LoginException;
+
+import com.yori.vr.listeners.myEventListener;
+import com.yori.vr.utils.Rifts;
+
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
