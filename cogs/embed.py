@@ -129,8 +129,8 @@ class Embed:
         await channel.send(embed=embed)
 
         # Add to delete messages after
-        #for message in messages_to_delete:
-        #   await message.delete()
+        for message in messages_to_delete:
+            await message.delete()
                         
 
 
