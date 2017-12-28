@@ -113,6 +113,13 @@ class Blizzard:
         except asyncio.TimeoutError:
             self.paginating = False
 
+        return await self._info_menu(
+            ctx, messages,
+            page=page,
+            timeout=timeout,
+            emoji=emoji,
+            message=message)
+
             try:
                 await self.message.clear_reactions()
             except:
@@ -121,13 +128,6 @@ class Blizzard:
             await self.message.remove_reaction(reaction, user)
         except:
             pass # can't remove it so don't bother doing so
-
-        return await self._info_menu(
-            ctx, messages,
-            page=page,
-            timeout=timeout,
-            emoji=emoji,
-            message=message)
 
     def dictgrab(self, my_dict, *keys):
         temp_dict = copy(my_dict)
