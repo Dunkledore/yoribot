@@ -90,9 +90,17 @@ class Blizzard:
 
         def check(reaction, user):
             return reaction.message.id == message.id and user == ctx.message.author
-
-        reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=timeout)
-
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=timeout)
+        except asyncio.TimeoutError:
+            self.paginating = False
+            try:
+                await self.message.clear_reactions()
+            except:
+                pass
+            finally:
+                break
+                
         if reaction is None:
             return [None, message]
 
