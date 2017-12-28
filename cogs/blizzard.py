@@ -74,7 +74,7 @@ class Blizzard:
 
     async def _info_menu(self, ctx, messages, **kwargs):
         page = kwargs.get("page", 0)
-        timeout = kwargs.get("timeout", 30)
+        timeout = kwargs.get("timeout", 30.0)
         emoji = kwargs.get("emoji", self.emoji)
         message = kwargs.get("message", None)
         choices = len(messages)
@@ -91,7 +91,7 @@ class Blizzard:
         def check(reaction, user):
             return reaction.message.id == message.id and user == ctx.message.author
         try:
-            reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=timeout)
+            reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=30.0)
             if reaction is None:
                 return [None, message]
 
@@ -112,7 +112,6 @@ class Blizzard:
                 page = 0
 
         except asyncio.TimeoutError:
-            await self.message.remove_reaction(reaction, user)
             return ctx.send("Menu timed out - please use the command again to use the menu.")
             self.paginating = False
 
