@@ -291,9 +291,9 @@ class Blizzard:
         else:
             thumb_url = qplay['overall_stats']['avatar']
             qplay_stats = ''.join(['**Wins:** ', self.dictgrab(qplay, 'game_stats', 'games_won'),
-                                   '\n**Avg Elim:** ', self.dictgrab(qplay, 'average_stats', 'eliminations_avg'),
-                                   '\n**Avg Death:** ', self.dictgrab(qplay, 'average_stats', 'deaths_avg'),
-                                   '\n**Avg Heal:** ', self.dictgrab(qplay, 'average_stats', 'healing_done_avg')])
+                                   '\n**Best Kill Streak:** ', self.dictgrab(qplay, 'game_stats', 'kill_streak_best'),
+                                   '\n**Most Elims:** ', self.dictgrab(qplay, 'game_stats', 'eliminations_most_in_game'),
+                                   '\n**Kills Per Death:** ', self.dictgrab(qplay, 'game_stats', 'kpd')])
 
         comp = stats[region]['stats']['competitive']
         footer = None
