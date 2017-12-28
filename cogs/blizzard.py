@@ -89,6 +89,7 @@ class Blizzard:
 
         def check(reaction, user):
             print(str(reaction.message==message))
+            print(message)
             print(str(user==ctx.message.author))
             return reaction.message == message and user == ctx.message.author
 
