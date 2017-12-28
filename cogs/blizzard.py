@@ -67,7 +67,8 @@ class Blizzard:
 
     async def show_menu(self, ctx, message, messages, page):
         if message:
-            return await message.edit(content=messages[page])
+            await message.edit(content=messages[page])
+            return message
         else:
             return await ctx.send(messages[page])
 
