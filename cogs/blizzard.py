@@ -88,10 +88,10 @@ class Blizzard:
             await message.add_reaction(str(emoji['next']))
 
         def check(reaction, user):
-            return reaction.message == message and user = ctx.message.author
+            return reaction.message == message and user == ctx.message.author
 
         r = await self.bot.wait_for('reaction', timeout=timeout)
-        
+
         if r is None:
             return [None, message]
 
