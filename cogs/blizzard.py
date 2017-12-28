@@ -93,6 +93,7 @@ class Blizzard:
             fut.result()
             return reaction.message == message and user == ctx.message.author
 
+        await ctx.send("Before")
         reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
 
         if r is None:
