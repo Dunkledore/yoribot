@@ -91,7 +91,7 @@ class Blizzard:
         def check(reaction, user):
             return reaction.message.id == message.id and user == ctx.message.author
 
-        reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
+        reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=timeout)
 
         if reaction is None:
             return [None, message]
@@ -343,7 +343,7 @@ class Blizzard:
         await self.format_patch_notes(ctx, 'warcraft')
 
     @commands.command(pass_context=True)
-    async def wowtokent(self, ctx, realm: str='na'):
+    async def wowtoken(self, ctx, realm: str='us'):
         """WoW Token Prices"""
 
         url = self.wowtoken_url
@@ -555,7 +555,7 @@ class Blizzard:
             await ctx.send(page)
             await asyncio.sleep(1)
 
-    async def print_token(self, url, realm):
+    async def print_token(self, ctx, url, realm):
 
         thumb_url = 'http://wowtokenprices.com/assets/wowtokeninterlaced.png'
 
