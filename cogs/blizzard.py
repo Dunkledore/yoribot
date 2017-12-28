@@ -261,12 +261,12 @@ class Blizzard:
             return
 
         if region is None:
-            if stats['kr']:
-                region = 'kr'
+            if stats['us']:
+                region = 'us'
             elif stats['eu']:
                 region = 'eu'
-            elif stats['us']:
-                region = 'us'
+            elif stats['kr']:
+                region = 'kr'
             else:
                 await ctx.send('That battletag has no stats in any region.')
                 return
