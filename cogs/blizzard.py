@@ -96,7 +96,7 @@ class Blizzard:
             return [None, message]
 
         reacts = {v: k for k, v in emoji.items()}
-        react = reacts[reaction.reaction.emoji]
+        react = reacts[reaction.emoji]
 
         if react == "next":
             page += 1
