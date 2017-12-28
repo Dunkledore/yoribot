@@ -2,7 +2,7 @@ from discord.ext import commands
 import asyncio
 
 def to_emoji(c):
-    base = 0x1f1e6
+    base = 0x0031
     return chr(base + c)
 
 class Polls:
