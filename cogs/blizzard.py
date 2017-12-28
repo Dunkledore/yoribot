@@ -98,9 +98,7 @@ class Blizzard:
                 await self.message.clear_reactions()
             except:
                 pass
-            finally:
-                break
-                
+
         if reaction is None:
             return [None, message]
 
