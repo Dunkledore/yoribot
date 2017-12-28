@@ -120,10 +120,10 @@ class Blizzard:
             emoji=emoji,
             message=message)
 
-            try:
-                await self.message.clear_reactions()
-            except:
-                pass
+        try:
+            await self.message.clear_reactions()
+        except:
+            pass
         try:
             await self.message.remove_reaction(reaction, user)
         except:
