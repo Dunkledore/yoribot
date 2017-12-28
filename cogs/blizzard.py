@@ -92,7 +92,7 @@ class Blizzard:
 
         reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
 
-        if r is None:
+        if reaction is None:
             return [None, message]
 
         reacts = {v: k for k, v in emoji.items()}
@@ -112,7 +112,7 @@ class Blizzard:
             page = 0
 
         try:
-            await self.bot.remove_reaction(message, emoji[react], r.user)
+            await message.remove_reaction(emoji[react], reaction.user)
         except discord.errors.Forbidden:
             await ctx.send('I require the "manage messages" permission '
                                'to make these menus work.')
