@@ -187,7 +187,7 @@ class Blizzard:
         if pattern.search(tag) is None:
             await ctx.send("That doesn't look like a valid battletag.")
             return
-        uid = ctx.message.author.id
+        uid = str(ctx.message.author.id)
         self.settings['battletags'][uid] = tag
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send("Your battletag has been set.")
@@ -196,7 +196,7 @@ class Blizzard:
     async def clearblizzardtag(self, ctx):
         """Remove your battletag"""
 
-        uid = ctx.message.author.id
+        uid = str(ctx.message.author.id)
         if self.settings['battletags'].pop(uid, None) is not None:
             await ctx.send("Your battletag has been removed.")
         else:
@@ -217,7 +217,7 @@ class Blizzard:
         Example: [p]owstats CoolDude#1234 us
         """
 
-        uid = ctx.message.author.id
+        uid = str(ctx.message.author.id)
         # Little hack to detect if region was entered, but not battletag
         if (tag in ['kr', 'eu', 'us']) and (region is None):
             region = tag
@@ -375,7 +375,7 @@ class Blizzard:
         Example: [p]diablo3 stats CoolDude#1234
         """
 
-        uid = ctx.message.author.id
+        uid = str(ctx.message.author.id)
 
         # Little hack to detect if region was entered, but not battletag
         if tag is not None and tag.lower() in ['kr', 'eu', 'us', 'tw']\
