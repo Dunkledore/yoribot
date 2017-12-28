@@ -110,7 +110,9 @@ class Blizzard:
 
             if page == choices:
                 page = 0
+
         except asyncio.TimeoutError:
+            return ["no", message]
             self.paginating = False
 
         return await self._info_menu(
@@ -119,11 +121,6 @@ class Blizzard:
             timeout=timeout,
             emoji=emoji,
             message=message)
-
-        try:
-            await ctx.send("Menu timed out - please use the command again to enable navigation.")
-        except:
-            pass
 
     def dictgrab(self, my_dict, *keys):
         temp_dict = copy(my_dict)
