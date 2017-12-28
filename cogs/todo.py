@@ -85,4 +85,4 @@ class Todo:
             await todo.add_reaction(emoji)
 
 def setup(bot):
-    bot.add_cog(Polls(bot))
+    bot.add_cog(Todo(bot))
