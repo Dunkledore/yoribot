@@ -139,13 +139,9 @@ class Blizzard:
         else:
             return '-'
 
-    @commands.group(name="blizzard", pass_context=True)
-    async def blizzard(self, ctx):
-        """Change blizzard cog settings."""
-
-    @blizzard.command(name="apikey", pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_owner()
-    async def _apikey_blizzard(self, ctx, key: str):
+    async def blizzardkey(self, ctx, key: str):
         """Set the cog's battle.net API key, required for Diablo statistics.
         (get one at https://dev.battle.net/)
         Use a direct message to keep the key secret."""
@@ -154,9 +150,9 @@ class Blizzard:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send('API key set.')
 
-    @blizzard.command(name="noteformat", pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_owner()
-    async def _noteformat_blizzard(self, ctx, form: str):
+    async def patchinfoformat(self, ctx, form: str):
         """Set the format of the patch notes posted in chat.
         paged: post a single message with navigation menu
         full: post full notes in multiple messages
@@ -172,9 +168,9 @@ class Blizzard:
                                "`{}`, `{}`, or `{}`.".format(form, accept[0],
                                                              accept[1], accept[2]))
 
-    @blizzard.command(name="notetimeout", pass_context=True)
+    @commands.command(pass_context=True)
     @checks.is_owner()
-    async def _notetimeout_blizzard(self, ctx, timeout: int):
+    async def patchtimeout(self, ctx, timeout: int):
         """Set the timeout period (sec) of the patch notes reaction menus.
         Only relevant for 'paged' or 'embed' mode."""
 
