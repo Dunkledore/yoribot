@@ -2,7 +2,7 @@ from discord.ext import commands
 import asyncio
 
 def to_emoji(c):
-    base = 0x00031
+    base = 1\U000020e3
     return chr(base + c)
 
 class Todo:
