@@ -69,7 +69,7 @@ class Blizzard:
         if message:
             return await self.bot.edit_message(message, messages[page])
         else:
-            return await self.bot.ctx.send(messages[page])
+            return await ctx.send(messages[page])
 
     async def _info_menu(self, ctx, messages, **kwargs):
         page = kwargs.get("page", 0)
