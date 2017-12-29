@@ -5,27 +5,28 @@ import java.util.HashMap;
 
 import javax.security.auth.login.LoginException;
 
+import com.jagrosh.jdautilities.commandclient.CommandClient;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.commandclient.examples.AboutCommand;
 import com.jagrosh.jdautilities.commandclient.examples.PingCommand;
 import com.jagrosh.jdautilities.commandclient.examples.ShutdownCommand;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
+import com.yori.commands.CloseCommand;
 import com.yori.commands.JoinCommand;
 import com.yori.commands.StartCommand;
 import com.yori.vr.utils.Rift;
 
 import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class Yori
 {
     
-    public static void main(String[] args) throws IOException, LoginException, IllegalArgumentException, RateLimitedException
+    @SuppressWarnings("deprecation")
+	public static void main(String[] args) throws IOException, LoginException, IllegalArgumentException, RateLimitedException
     {
         // config.txt contains two lines
         //List<String> list = Files.readAllLines(Paths.get("config.txt"));
@@ -67,15 +68,18 @@ public class Yori
                 // command to start a voicerift
                 new StartCommand(rifts),
                 
-                // commnd to join a voicerift
+                // command to join a voicerift
                 new JoinCommand(rifts),
 
+                // commmand to close a voicerift
+                new CloseCommand(rifts),
                 // command to check bot latency
                 new PingCommand(),
-
+             
                 // command to shut off the bot
                 new ShutdownCommand());
 
+        CommandClient listener = client.build();
         // start getting a bot account set up
         JDABuilder JDABuilder = new JDABuilder(AccountType.BOT)
                 // set the token
@@ -87,13 +91,10 @@ public class Yori
 
                 // add the listeners
                 .addEventListener(waiter)
-                .addEventListener(client.build());
-  
+                .addEventListener(listener);  
                 
-                // start it up! d
-                JDA JDA = JDABuilder.buildAsync();
-                
-
+        // start it up! d
+        JDABuilder.buildAsync();
         		
     }
 }
