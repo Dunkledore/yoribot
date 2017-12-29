@@ -23,17 +23,16 @@ public class JoinCommand extends Command
 	{
 		this.rifts = rifts;
 		this.name = "Join";
-		this.guildOnly = false;
 		this.userPermissions = new Permission[]{Permission.ADMINISTRATOR};
 	}
 	
 	@Override
-	protected void execute(CommandEvent e) 
+	protected void execute(CommandEvent event) 
 	{
-		String argsString = e.getArgs();
+		String argsString = event.getArgs();
 		String args[] = argsString.split(" ");
-		MessageChannel messageChannel = e.getChannel();
-		Guild guild = e.getGuild();
+		MessageChannel messageChannel = event.getChannel();
+		Guild guild = event.getGuild();
 		
 		if (args.length != 2) 
 		{
@@ -49,7 +48,7 @@ public class JoinCommand extends Command
 			messageChannel.sendMessage("Rift does not exist").queue();
 			return;
 		}
-		List<net.dv8tion.jda.core.entities.VoiceChannel> channelsMatching = e.getGuild().getVoiceChannelsByName(riftChannelString, true);
+		List<net.dv8tion.jda.core.entities.VoiceChannel> channelsMatching = event.getGuild().getVoiceChannelsByName(riftChannelString, true);
 		if (channelsMatching.size() < 1)
 		{
 			messageChannel.sendMessage("Channel not found please specify a voice channel").queue();
@@ -69,7 +68,7 @@ public class JoinCommand extends Command
 		audioManager.openAudioConnection(voiceChannel);
 		audioManager.setReceivingHandler(reciever);
 		audioManager.setSendingHandler(sender);
-		e.getChannel().sendMessage("Voice Rift Joined").queue();
+		event.getChannel().sendMessage("Voice Rift Joined").queue();
 	}
 
 }
