@@ -33,7 +33,7 @@ public class Yori
 
         // the first is the bot token
         //String token = args[0];
-        String token = "***REMOVED***"; //just to test
+        String token = "MzgzMzQ1NjA5MTY5NTY3NzU0.DPi59A.dWx2UF904cQIHZkewpLLdlwwpaE"; //just to test
 
         // the second is the bot's owner's id
         //String ownerId = args[1];
