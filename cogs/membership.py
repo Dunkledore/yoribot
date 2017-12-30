@@ -221,7 +221,8 @@ class MemberAudit:
 			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
 			bannedin= ""
 			for guild in self.bot.guilds:
-				async for banentry in guild.bans:
+				bans = await guild.bans()
+				for banentry in bans:
 					if member == banentry['user']:
 						bannedin += guild.name + '\n'
 			if bannedin:
