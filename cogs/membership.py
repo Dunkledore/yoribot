@@ -211,7 +211,7 @@ class MemberAudit:
 					bannedin += guild.name + '\n'
 
 		created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
-		if created < 30 or bannedin`:
+		if created < 30 or bannedin:
 			colour = 0xdda453
 		else:
 			colour = 0x53dda4
