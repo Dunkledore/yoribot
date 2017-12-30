@@ -214,11 +214,19 @@ class MemberAudit:
 		if self.speak_permissions(server, channel):
 			embed = discord.Embed(title = "📥 Member Join", description = self.settings[str(server.id)]["join_message"].format(member, server), colour = colour)
 			embed.timestamp = datetime.datetime.utcnow()
-			embed.set_footer(text='Created')
+			embed.set_footer(text='Joined')
 			embed.set_author(name=str(member), icon_url=member.avatar_url)
 			embed.add_field(name='ID', value=member.id)
 			embed.add_field(name='Joined', value=member.joined_at)
 			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+			bannedin= ""
+			for guild in self.bot.guilds:
+				async for banentry in guild.bans:
+					if member == banentry['user']:
+						bannedin += guild.name + '\n'
+			if bannedin:
+				embed.add_field(name='Banned In', value = bannedin)
+
 			await channel.send(embed=embed)
 		else:
 			print("Tried to send message to channel, but didn't have"
