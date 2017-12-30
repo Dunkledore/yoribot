@@ -293,10 +293,10 @@ class Meta:
         fmt = f'Text {text_channels} ({secret_channels} secret)\nVoice {voice_channels} ({secret_voice} locked)'
         e.add_field(name='Channels', value=fmt)
 
-        fmt = f'<:online:316856575413321728> {member_by_status["online"]} ' \
-              f'<:idle:316856575098880002> {member_by_status["idle"]} ' \
-              f'<:dnd:316856574868193281> {member_by_status["dnd"]} ' \
-              f'<:offline:316856575501402112> {member_by_status["offline"]}\n' \
+        fmt = f':green_apple: {member_by_status["online"]} ' \
+              f':tangerine: {member_by_status["idle"]} ' \
+              f':apple: {member_by_status["dnd"]} ' \
+              f':black_circle:{member_by_status["offline"]}\n' \
               f'Total: {guild.member_count}'
 
         e.add_field(name='Members', value=fmt)
