@@ -203,9 +203,15 @@ class MemberAudit:
 				  " The user was {}.".format(
 					  member.name))
 			return 
+		bannedin= ""
+		for guild in self.bot.guilds:
+			bans = await guild.bans()
+			for banentry in bans:
+				if member == banentry[1]:
+					bannedin += guild.name + '\n'
 
 		created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
-		if created < 30:
+		if created < 30 or bannedin`:
 			colour = 0xdda453
 		else:
 			colour = 0x53dda4
@@ -219,12 +225,6 @@ class MemberAudit:
 			embed.add_field(name='ID', value=member.id)
 			embed.add_field(name='Joined', value=member.joined_at)
 			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
-			bannedin= ""
-			for guild in self.bot.guilds:
-				bans = await guild.bans()
-				for banentry in bans:
-					if member == banentry[1]:
-						bannedin += guild.name + '\n'
 			if bannedin:
 				embed.add_field(name='Banned In', value = bannedin)
 
