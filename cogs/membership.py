@@ -223,6 +223,8 @@ class MemberAudit:
 			for guild in self.bot.guilds:
 				bans = await guild.bans()
 				for banentry in bans:
+					await channel.send(str(member))
+					await channel.send(str(banentry[0]))
 					if member == banentry[0]:
 						bannedin += guild.name + '\n'
 			if bannedin:
