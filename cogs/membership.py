@@ -223,7 +223,7 @@ class MemberAudit:
 			for guild in self.bot.guilds:
 				bans = await guild.bans()
 				for banentry in bans:
-					if member == banentry['user']:
+					if member == banentry[0]:
 						bannedin += guild.name + '\n'
 			if bannedin:
 				embed.add_field(name='Banned In', value = bannedin)
