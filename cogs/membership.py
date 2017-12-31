@@ -95,8 +95,8 @@ class MemberAudit:
 	async def _log(self, ctx, member, action, reason):
 		"""Add an entry to a mod log about a member"""
 
-			query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
-			await ctx.db.execute(query, ctx.guild.id, member.id, member.nick or member.name, 'Note', reason, ctx.author.id, ctx.author.name)
+		query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
+		await ctx.db.execute(query, ctx.guild.id, member.id, member.nick or member.name, 'Note', reason, ctx.author.id, ctx.author.name)
 		
 		embed = await self.log_as_embed(member.id, ctx.guild.id)
 		await ctx.send(embed=embed)
