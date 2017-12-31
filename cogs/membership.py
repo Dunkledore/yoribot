@@ -398,11 +398,11 @@ class MemberAudit:
 
 	def get_mod_channel(self, guild :discord.Guild):
 		query = "SELECT * FROM mod_config WHERE guild_id = $1"
-    	results = await self.bot.pool.fetch(query, guild.id)
-    	if results:
-    		mod_channel_id = results[0]["mod_channel"]
-    		return guild.get_channel(mod_channel_id)
-    	return None
+		results = await self.bot.pool.fetch(query, guild.id)
+		if results:
+			mod_channel_id = results[0]["mod_channel"]
+			return guild.get_channel(mod_channel_id)
+		return None
 
 
 
