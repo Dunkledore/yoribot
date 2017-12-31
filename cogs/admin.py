@@ -77,6 +77,20 @@ class Admin:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
         await ctx.send('Role set')
 
+    @commands.command(hidden=True)
+    @checks.is_admin()
+    async def modchannel(self, ctx, role: discord.TextChannel):
+        """Sets the mod role"""
+
+        insertquery = "INSERT INTO mod_config (guild_id, mod_channel) VALUES ($1, $2)"
+        alterquery = "UPDATE mod_config SET mod_channel = $2 WHERE guild_id = $1"
+
+        try:
+            await ctx.db.execute(insertquery, ctx.guild.id, role.id)
+        except asyncpg.UniqueViolationError:
+            await ctx.db.execute(alterquery, ctx.guild.id, role.id)
+        await ctx.send('Channel set')
+
     
     @commands.command(hidden=True)
     @checks.is_owner()
