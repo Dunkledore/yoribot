@@ -206,8 +206,9 @@ class Mod:
                         try:
                             await item[0].delete()
                         except Exception as e:
+                            await message.channel.send(e)
                             pass
-                    for tchan in ctx.guild.text_channels:
+                    for tchan in message.guild.text_channels:
                         await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
                     mod_channel = await get_mod_channel(message.guild)
                     await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
