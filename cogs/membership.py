@@ -85,7 +85,7 @@ class MemberAudit:
 	@commands.command()
 	@checks.is_mod()
 	async def getbans(self, ctx):
-		bans = await ctx.guild.bans
+		bans = await ctx.guild.bans()
 		await ctx.send(str(bans))
 
 	
