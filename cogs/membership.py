@@ -96,7 +96,7 @@ class MemberAudit:
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def modlog(self, ctx, member)
+	async def modlog(self, ctx, member):
 	converter = commands.MemberConverter()
 	try:
 		converted = converter.convert(Member)
