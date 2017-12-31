@@ -203,6 +203,7 @@ class Mod:
             if len(self.media_count[message.guild][message.author]) > 2:
                 if (self.media_count[message.guild][message.author][-1][3] - self.media_count[message.guild][message.author][-3][3]).total_seconds() < 10:
                     for item in self.media_count[message.guild][message.author][-1:-3]:
+                        await message.channel.send(str(item))
                         try:
                             await item[0].delete()
                         except Exception as e:
