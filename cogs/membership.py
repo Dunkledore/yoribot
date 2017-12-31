@@ -281,6 +281,7 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(member))
+		await self._log(guild.id, user, 'Join')
 
 	async def member_leave(self, member: discord.Member):
 		server = member.guild
@@ -311,6 +312,7 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(member))
+		await self._log(guild.id, user, 'Leave')
 
 	async def member_ban(self, guild, user: discord.User):
 		server = guild
@@ -373,6 +375,7 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
+		await self._log(guild.id, user, 'Unban')
 
 	async def log_as_embed(self, user_id, guild_id):
 		query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
