@@ -101,14 +101,14 @@ class MemberAudit:
 		converter = commands.MemberConverter()
 		converted = None
 		try:
-			converted = converter.convert(ctx, Member)
+			converted = await converter.convert(ctx, Member)
 		except:
 			pass
 
 		if converted:
-			embed = self.log_as_embed(converted.id, ctx.guild.id)
+			embed = await self.log_as_embed(converted.id, ctx.guild.id)
 		else:
-			embed = self.log_as_embed(member, ctx.guild.id)
+			embed = await self.log_as_embed(member, ctx.guild.id)
 
 		if embed:
 			await ctx.send(embed=embed)
