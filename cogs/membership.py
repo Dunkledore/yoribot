@@ -97,24 +97,21 @@ class MemberAudit:
 	@commands.command(no_pm=True)
 	@checks.is_mod()
 	async def modlog(self, ctx, member):
-	converter = commands.MemberConverter()
-	try:
-		converted = converter.convert(Member)
-	except:
-		pass
+		converter = commands.MemberConverter()
+		try:
+			converted = converter.convert(Member)
+		except:
+			pass
 
-	if converted:
-		embed = log_as_embed(converted.id, ctx.guild.id)
-	else:
-		embed = log_to_embed(member)
+		if converted:
+			embed = log_as_embed(converted.id, ctx.guild.id)
+		else:
+			embed = log_to_embed(member)
 
-	if embed:
-		await ctx.send(embed=embed)
-	else:
-		await ctx.send("No mod logs found")
-
-
-
+		if embed:
+			await ctx.send(embed=embed)
+		else:
+			await ctx.send("No mod logs found")
 
 	@commands.command(no_pm=True)
 	@checks.is_admin()
