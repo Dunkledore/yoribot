@@ -390,7 +390,7 @@ class MemberAudit:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
 				actions += '- By ' + result['mod_name']
-			actions += ' - ' + results['date']
+			actions += ' - ' + result['date']
 			if actions:
 				actions += '\n'
 
