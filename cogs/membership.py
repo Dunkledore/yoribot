@@ -101,7 +101,7 @@ class MemberAudit:
 		converter = commands.MemberConverter()
 		converted = None
 		
-		converted = await converter.convert(ctx, Member)
+		converted = await converter.convert(ctx, member)
 
 
 		if converted:
