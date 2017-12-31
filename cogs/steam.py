@@ -23,7 +23,7 @@ class Steam:
             9: "9\U000020E3",
         }
 
-    @commands.command(pass_context=True, name='sales', aliases=['owners'])
+    @commands.command(pass_context=True, aliases=['owners'])
     async def gamesales(self, ctx, *, game):
         """Shows estimated amount of owners for the game"""
 
