@@ -99,17 +99,20 @@ class Race:
         self.config = dataIO.load_json('data/race/race.json')
         self.version = "1.1.02"
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group()
+    @commands.guild_only()
     async def race(self, ctx):
         """Race cog's group command"""
 
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group()
+    @commands.guild_only()
     @checks.is_admin()
     async def setrace(self, ctx):
         """Race cog's settings group command"""
 
-    @setrace.command(name="time", pass_context=True)
+    @setrace.command(name="time")
+    @commands.guild_only()
     @checks.is_admin()
     async def _time_setrace(self, ctx, time: int):
         """Set the time players have to enter a race
@@ -135,7 +138,7 @@ class Race:
         self.save_settings()
         await ctx.send("Wait time set to {}s".format(time))
 
-    @setrace.command(name="mode", pass_context=True)
+    @setrace.command(name="mode")
     @checks.is_admin()
     async def _mode_setrace(self, ctx, mode: str):
         """Set the race mode
@@ -164,7 +167,7 @@ class Race:
         self.save_settings()
         await ctx.send("Mode now set to {}.".format(mode))
 
-    @race.command(name="reset", pass_context=True)
+    @race.command(name="reset")
     @checks.is_admin()
     async def _reset_race(self, ctx):
         """Reset race parameters DEBUG USE ONLY"""
@@ -173,7 +176,7 @@ class Race:
         self.game_teardown(data, force=True)
         await ctx.send("Parameters reset.")
 
-    @race.command(name="start", pass_context=True)
+    @race.command(name="start")
     async def _start_race(self, ctx):
         """Start an animal race and enter yourself as participant
 
@@ -237,7 +240,7 @@ class Race:
         await ctx.send(embed=embed)
         self.game_teardown(data)
 
-    @race.command(name="enter", pass_context=True)
+    @race.command(name="enter")
     async def _enter_race(self, ctx):
         """Enter an animal race
 

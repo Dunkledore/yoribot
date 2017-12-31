@@ -85,7 +85,8 @@ class Profile:
         embed.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def profile(self, ctx, user: discord.Member=None):
         """Displays the profile of a mentioned user or the caller if no mention is provided"""
 
@@ -124,10 +125,14 @@ class Profile:
 
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def profileadd(self, ctx, name=None, *, value=None):
         """Use the command by itself for the bot to prompt you for the title and content or enter both after the command."""
         
+        if ctx.command.guild_only():
+            return
+
         def check(m):
             if m.author != ctx.message.author:
                 return False
@@ -172,7 +177,8 @@ class Profile:
             await ctx.db.execute(query, fields, ctx.message.author.id)
             await ctx.send("Field added")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def age(self, ctx, age: int):
         """Sets the age of the caller"""
 
@@ -187,7 +193,8 @@ class Profile:
             await ctx.db.execute(query, age, ctx.message.author.id)
             await ctx.send("Age Set")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def gender(self, ctx, *, gender):
         """Sets the gender of the caller"""
 
@@ -202,7 +209,8 @@ class Profile:
             await ctx.db.execute(query, gender, ctx.message.author.id)
             await ctx.send("Gender Set")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def sexuality(self, ctx, *, sexuality):
         """Sets the sexuality of the caller"""
 
@@ -217,7 +225,8 @@ class Profile:
             await ctx.db.execute(query, sexuality, ctx.message.author.id)
             await ctx.send("Sexuality Set")
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['northamerica'])
+    @commands.command(aliases=['northamerica'])
+    @commands.guild_only()
     async def NorthAmerica(self, ctx):
         """Sets the region of the caller to North America"""
 
@@ -232,7 +241,8 @@ class Profile:
             await ctx.db.execute(query, "North America", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['europe'])
+    @commands.command(aliases=['europe'])
+    @commands.guild_only()
     async def Europe(self, ctx):
         """Sets the region of the caller to Europe"""
 
@@ -247,7 +257,8 @@ class Profile:
             await ctx.db.execute(query, "Europe", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['africa'])
+    @commands.command(aliases=['africa'])
+    @commands.guild_only()
     async def Africa(self, ctx):
         """Sets the region of the caller to Africa"""
 
@@ -262,7 +273,8 @@ class Profile:
             await ctx.db.execute(query, "Africa", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['oceania'])
+    @commands.command(aliases=['oceania'])
+    @commands.guild_only()
     async def Oceania(self, ctx):
         """Sets the region of the caller to Oceania"""
 
@@ -277,7 +289,8 @@ class Profile:
             await ctx.db.execute(query, "Oceania", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(pass_context=True, no_pm=True, aliases=['southamerica'])
+    @commands.command(aliases=['southamerica'])
+    @commands.guild_only()
     async def SouthAmerica(self, ctx):
         """Sets the region of the caller to South America"""
 
@@ -292,7 +305,8 @@ class Profile:
             await ctx.db.execute(query, "South America", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(pass_context=True, no_pm=True,  aliases=['asia'])
+    @commands.command(aliases=['asia'])
+    @commands.guild_only()
     async def Asia(self, ctx):
         """Sets the region of the caller to Asia"""
 
@@ -307,7 +321,8 @@ class Profile:
             await ctx.db.execute(query, "Asia", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def profiledelete(self, ctx):
         """Removes and embed field from the profile message"""
 
@@ -315,7 +330,8 @@ class Profile:
         await ctx.db.execute(query, ctx.author.id)
         await ctx.send("Profile Deleted")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def profileremove(self, ctx, name=None):
         """Removes and embed field from the profile message"""
 

@@ -26,7 +26,8 @@ class Antilink:
         self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
         self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group()
+    @commands.guild_only()
     @checks.is_admin()
     async def antilinkset(self, ctx):
         """Manages the settings for antilink."""
@@ -34,7 +35,8 @@ class Antilink:
         if str(serverid) not in self.json:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
 
-    @antilinkset.command(pass_context=True, no_pm=True)
+    @antilinkset.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def ownerdm(self, ctx):
         """Enable/disables antilink owner dm in the server"""
@@ -47,7 +49,8 @@ class Antilink:
             await ctx.send('Owner DM now enabled')
         dataIO.save_json(self.location, self.json)
 
-    @antilinkset.command(pass_context=True, no_pm=True)
+    @antilinkset.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def toggle(self, ctx):
         """Enable/disables antilink in the server"""
@@ -60,7 +63,8 @@ class Antilink:
             await ctx.send('Antilink is now enabled')
         dataIO.save_json(self.location, self.json)
 
-    @antilinkset.command(pass_context=True, no_pm=True)
+    @antilinkset.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def message(self, ctx, *, text):
         """Set the message for when the user sends a illegal discord link"""
@@ -71,7 +75,8 @@ class Antilink:
         if self.json[str(serverid)]['dm'] is False:
             await ctx.send('Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinkset toggledm``')
 
-    @antilinkset.command(pass_context=True, no_pm=True)
+    @antilinkset.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def toggledm(self, ctx):
         serverid = ctx.message.guild.id

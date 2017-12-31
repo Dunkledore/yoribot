@@ -12,7 +12,8 @@ class Greet:
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def greeter(self, ctx, role: discord.Role):
         """Sets the greeter role"""
@@ -26,7 +27,8 @@ class Greet:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
         await ctx.send('Role set')
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def greeted(self, ctx, role: discord.Role):
         """Sets the greeted role"""
@@ -40,7 +42,8 @@ class Greet:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
         await ctx.send('Role set')
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_greeter()
     async def greet(self, ctx, member: discord.Member):
         """Greets someone"""

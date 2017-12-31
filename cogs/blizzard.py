@@ -134,7 +134,7 @@ class Blizzard:
         else:
             return '-'
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_owner()
     async def blizzardkey(self, ctx, key: str):
         """Set the cog's battle.net API key, required for Diablo statistics.
@@ -145,7 +145,7 @@ class Blizzard:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send('API key set.')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_owner()
     async def patchinfoformat(self, ctx, form: str):
         """Set the format of the patch notes posted in chat.
@@ -163,7 +163,7 @@ class Blizzard:
                                "`{}`, `{}`, or `{}`.".format(form, accept[0],
                                                              accept[1], accept[2]))
 
-    @commands.command(pass_context=True)
+    @commands.command(p)
     @checks.is_owner()
     async def patchtimeout(self, ctx, timeout: int):
         """Set the timeout period (sec) of the patch notes reaction menus.
@@ -179,7 +179,7 @@ class Blizzard:
             await ctx.send("Please choose a duration between "
                                "{} and {} seconds.".format(min_max[0], min_max[1]))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def setblizzardtag(self, ctx, tag: str):
         """Set your battletag"""
 
@@ -192,7 +192,7 @@ class Blizzard:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send("Your battletag has been set.")
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def clearblizzardtag(self, ctx):
         """Remove your battletag"""
 
@@ -203,12 +203,12 @@ class Blizzard:
             await ctx.send("I had no battletag stored for you.")
         dataIO.save_json(self.settings_path, self.settings)
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def hearthstonepatch(self, ctx):
         """Latest Hearthstone patch notes"""
         await self.format_patch_notes(ctx, 'hearthstone')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def owstats(self, ctx, tag: str=None, region: str=None):
         """Overwatch stats for your battletag (case sensitive and PC only!).
         If battletag is ommitted, bot will use your battletag if stored.
@@ -326,21 +326,21 @@ class Blizzard:
             'us': 'US',
         }.get(region, ' ')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def owpatch(self, ctx):
         await self.format_patch_notes(ctx, 'overwatch')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def sc2patch(self, ctx):
         """Latest Starcraft2 patch notes"""
         await self.format_patch_notes(ctx, 'starcraft2')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def wowpatch(self, ctx):
         """Latest World of Warcraft patch notes"""
         await self.format_patch_notes(ctx, 'warcraft')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def wowtoken(self, ctx, *, realm):
         """WoW Token Prices"""
 
@@ -363,12 +363,12 @@ class Blizzard:
         }.get(region, ' ')
 
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def diablo3patch(self, ctx):
         """Latest Diablo3 patch notes"""
         await self.format_patch_notes(ctx, 'diablo3')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def diablo3stats(self, ctx, tag: str=None, region: str=None):
         """Diablo3 stats for your battletag.
         If battletag is ommitted, bot will use your battletag if stored.
@@ -454,7 +454,7 @@ class Blizzard:
         embed.set_footer(text=kills)
         await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def hotspatch(self, ctx):
         """Latest Heroes of the Storm patch notes"""
         await self.format_patch_notes(ctx, 'hots')

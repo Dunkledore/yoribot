@@ -28,19 +28,21 @@ class AnimeList:
         self.file_path = "data/animelist/credentials.json"
         self.credentials = dataIO.load_json(self.file_path)
 
-    @commands.command(pass_context=True, hidden=True)
+    @commands.command(hidden=True)
     @checks.is_owner()
     async def animeset(self, ctx):
         """Sets your username and password from myanimelist"""
         await self.owner_set(ctx)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def anime(self, ctx, *, title):
         """Shows MAL information on an anime"""
         cmd = "anime"
         await self.search_command(ctx, cmd, title)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def manga(self, ctx, *, title):
         """Shows MAL information on a manga"""
         cmd = "manga"

@@ -140,11 +140,11 @@ class RSS(object):
         else:
             return True
 
-    @commands.group(pass_context=True)
+    @commands.group()
     async def rss(self, ctx):
         """RSS feed stuff"""
 
-    @rss.command(pass_context=True, name="add")
+    @rss.command(name="add")
     @checks.is_admin()
     async def _rss_add(self, ctx, name: str, url: str):
         """Add an RSS feed to the current channel"""
@@ -161,7 +161,7 @@ class RSS(object):
                 channel,
                 'Invalid or unavailable URL.')
 
-    @rss.command(pass_context=True, name="list")
+    @rss.command(name="list")
     @checks.is_admin()
     async def _rss_list(self, ctx):
         """List currently running feeds"""
@@ -169,7 +169,7 @@ class RSS(object):
         msg += "\n\t".join(self.feeds.get_feed_names(ctx.message.guild))
         await ctx.send(box(msg))
 
-    @rss.command(pass_context=True, name="template")
+    @rss.command(name="template")
     @checks.is_admin()
     async def _rss_template(self, ctx, feed_name: str, *, template: str):
         ("""Set a template for the feed alert
@@ -187,7 +187,7 @@ class RSS(object):
         else:
             await ctx.send('Feed not found!')
 
-    @rss.command(pass_context=True, name="force")
+    @rss.command(name="force")
     @checks.is_admin()
     async def _rss_force(self, ctx, feed_name: str):
         """Forces a feed alert"""
@@ -212,7 +212,7 @@ class RSS(object):
 
         await ctx.send(message)
 
-    @rss.command(pass_context=True, name="remove")
+    @rss.command(name="remove")
     @checks.is_admin()
     async def _rss_remove(self, ctx, name: str):
         """Removes a feed from this guild"""
