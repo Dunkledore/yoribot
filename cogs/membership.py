@@ -391,7 +391,7 @@ class MemberAudit:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
 				actions += '- By ' + result['mod_name']
-			actions += ' - ' + timeconverter.convert(result['date'])
+			actions += ' - ' + result['date'].strftime("%Y-%m-%d %H:%M:%S")
 			if actions:
 				actions += '\n'
 
