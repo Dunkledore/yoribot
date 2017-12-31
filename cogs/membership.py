@@ -84,9 +84,10 @@ class MemberAudit:
 
 	@commands.command()
 	@checks.is_mod()
-	async def getbans(self, ctx):
+	async def getbans(self, ctx, id):
 		bans = await ctx.guild.bans()
-		await ctx.send(str(bans))
+		name = discord.utils.get(bans, id=id)
+		await ctx.send(name)
 
 	
 	@commands.command(no_pm=True)
