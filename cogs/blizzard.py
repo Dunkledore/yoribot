@@ -290,8 +290,9 @@ class Blizzard:
             tier = None
         else:
             tier = comp['overall_stats']['tier']
-            footer = 'SR: ' + str(comp['overall_stats']['comprank'])
-            comp_stats = ''.join(['**Wins:** ', self.dictgrab(comp, 'game_stats', 'games_won'),
+            footer = 
+            comp_stats = ''.join(['SR: ' + str(comp['overall_stats']['comprank']),
+                                  '\n**Wins:** ', self.dictgrab(comp, 'game_stats', 'games_won'),
                                   '\n**Best Kill Streak:** ', self.dictgrab(comp, 'game_stats', 'kill_streak_best'),
                                   '\n**Most Elims:** ', self.dictgrab(comp, 'game_stats', 'eliminations_most_in_game'),
                                   '\n**Kills Per Death:** ', self.dictgrab(comp, 'game_stats', 'kpd')])
