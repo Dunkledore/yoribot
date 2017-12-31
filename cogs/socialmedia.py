@@ -93,7 +93,7 @@ class SocialMedia:
 
 
 	@commands.group(no_pm=True)
-	@checks.is_developer()
+	@checks.is_guild_owner()
 	async def twitterset(self, ctx):
 		"""Admin twitter related commands"""
 
