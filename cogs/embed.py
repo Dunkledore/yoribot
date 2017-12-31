@@ -17,7 +17,8 @@ class Embed:
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_mod()
     async def qembed(self, ctx, channel: discord.TextChannel, title, *, description):
         """A quick way to send an embed to a channel."""
@@ -27,7 +28,8 @@ class Embed:
         await channel.send(embed=embed)
 
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_mod()
     async def embed(self, ctx, channel: discord.TextChannel):
         """A lengthy way to send a detailed embed to a channel."""

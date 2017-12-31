@@ -23,7 +23,7 @@ class Steam:
             9: "9\U000020E3",
         }
 
-    @commands.command(pass_context=True, aliases=['owners'])
+    @commands.command(aliases=['owners'])
     async def gamesales(self, ctx, *, game):
         """Shows estimated amount of owners for the game"""
 
@@ -177,7 +177,7 @@ class Steam:
         else:
             await ctx.send('Something went wrong with Steam')
 
-    @commands.command(pass_context=True, name='steam')
+    @commands.command(name='steam')
     async def steamgame(self, ctx, *, game):
         """Gets the link to a game on Steam"""
 

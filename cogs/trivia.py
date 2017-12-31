@@ -28,7 +28,8 @@ class Trivia:
         settings = dataIO.load_json(self.file_path)
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
-    @commands.group(no_pm=True)
+    @commands.group()
+    @commands.guild_only()
     @checks.is_mod()
     async def triviaset(self, ctx):
         """Allows you to change the settings for Trivia"""
@@ -126,7 +127,8 @@ class Trivia:
             await ctx.send(embed=em)
         self.save_settings()
 
-    @commands.group(invoke_without_command=True, no_pm=True)
+    @commands.group(invoke_without_command=True)
+    @commands.guild_only()
     async def trivia(self, ctx, list_name: str):
         message = ctx.message
         guild = message.guild
@@ -153,7 +155,8 @@ class Trivia:
             em.set_author(name="OOPS!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def triviastop(self, ctx):
         """Stops Trivia"""
         session = self.get_trivia_by_channel(ctx.message.channel)

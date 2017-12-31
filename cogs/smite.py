@@ -30,7 +30,7 @@ class Smite:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='smite')
 
-    @smite.command(name="auth", pass_context=True)
+    @smite.command(name="auth")
     @checks.is_owner()
     async def _auth_smite(self, ctx, devid: str, key: str):
         """Set the cog's Smite API authorization credentials, required for statistics.
@@ -42,14 +42,14 @@ class Smite:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send('API access credentials set.')
 
-    @smite.command(name="ping", pass_context=True)
+    @smite.command(name="ping")
     @checks.is_owner()
     async def _ping_smite(self, ctx):
         """Ping the Smite API"""
 
         await self.ping()
 
-    @smite.command(name="nameset", pass_context=True)
+    @smite.command(name="nameset")
     async def _nameset_smite(self, ctx, name: str):
         """Set your Smite name"""
 
@@ -58,7 +58,7 @@ class Smite:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send("Your Smite name has been set.")
 
-    @smite.command(name="nameclear", pass_context=True)
+    @smite.command(name="nameclear")
     async def _nameclear_smite(self, ctx):
         """Remove your Smite name"""
 
@@ -69,7 +69,7 @@ class Smite:
             await ctx.send("I had no Smite name stored for you.")
         dataIO.save_json(self.settings_path, self.settings)
 
-    @smite.command(name="stats", pass_context=True)
+    @smite.command(name="stats")
     async def _stats_smite(self, ctx, name: str=None):
         """Smite stats for your in game name.
         If name is ommitted, bot will use your name if stored.

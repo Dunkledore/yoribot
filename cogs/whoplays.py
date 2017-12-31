@@ -7,7 +7,8 @@ class WhoPlays:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def whoplays(self, ctx, *, game):
         """Shows a list of all the people playing a game."""
         if len(game) <= 2:
@@ -47,7 +48,8 @@ class WhoPlays:
             em.set_author(name=text)
             await ctx.send(embed=em)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def cgames(self, ctx):
         """Shows the currently most played games"""
         user = ctx.message.author

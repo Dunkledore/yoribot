@@ -136,7 +136,7 @@ class Admin:
         else:
             await ctx.send('\N{OK HAND SIGN}')
 
-    @commands.command(pass_context=True, hidden=True, name='eval')
+    @commands.command(hidden=True, name='eval')
     @checks.is_developer()
     async def _eval(self, ctx, *, body: str):
         """Evaluates a code"""
@@ -184,7 +184,7 @@ class Admin:
                 self._last_result = ret
                 await ctx.send(f'```py\n{value}{ret}\n```')
 
-    @commands.command(pass_context=True, hidden=True)
+    @commands.command(hidden=True)
     @checks.is_developer()
     async def repl(self, ctx):
         """Launches an interactive REPL session."""

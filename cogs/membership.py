@@ -38,7 +38,8 @@ class MemberAudit:
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def auto_raid(self, ctx):
 		"""Toggles Auto-Raid
@@ -55,7 +56,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def temp_raid(self, ctx):
 		await self._raid(ctx)#temp to enable raid
@@ -81,16 +83,9 @@ class MemberAudit:
 				await ctx.send('\N{WARNING SIGN} Could not set verification level.')
 		
 		dataIO.save_json(self.settings_path, self.settings)
-
-	@commands.command()
-	@checks.is_mod()
-	async def getbans(self, ctx, id):
-		bans = await ctx.guild.bans()
-		name = discord.utils.get(bans, id=id)
-		await ctx.send(name)
-
 	
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def log(self, ctx, member: discord.Member, *, reason=None):
 		"""Add an entry to a mod log about a member"""
@@ -108,7 +103,8 @@ class MemberAudit:
 
 
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def modlog(self, ctx, member):
 		converter = commands.MemberConverter()
@@ -132,7 +128,8 @@ class MemberAudit:
 		else:
 			await ctx.send("Member not found")
 
-	@commands.command(no_pm=True)
+	@commands.command(n)
+	@commands.guild_only()
 	@checks.is_admin()
 	async def joinaudit(self, ctx: commands.Context, *,
 					format_str: str):
@@ -146,7 +143,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Join message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def leaveaudit(self, ctx: commands.Context, *,
 					 format_str: str):
@@ -160,7 +158,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Leave message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def banaudit(self, ctx: commands.Context, *, format_str: str):
 		"""Sets the ban message for the server.
@@ -173,7 +172,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Ban message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def unbanaudit(self, ctx: commands.Context, *, format_str: str):
 		"""Sets the unban message for the server.
@@ -186,7 +186,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Unban message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def audittoggle(self, ctx: commands.Context):
 		"""Turns membership event commands on or off."""
@@ -202,7 +203,8 @@ class MemberAudit:
 				cf.info("Membership events will no longer be announced."))
 		dataIO.save_json(self.settings_path, self.settings)
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def auditchannel(self, ctx: commands.Context,
 					   channel: discord.TextChannel=None):

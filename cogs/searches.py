@@ -29,7 +29,8 @@ class Searches:
         self.url_dog = "https://random.dog/woof.json"
         self.url_cat = "https://random.cat/meow"
 
-    @commands.command(pass_context=True, name='youtube', no_pm=True)
+    @commands.command(name='youtube')
+    @commands.guild_only()
     async def _youtube(self, ctx, *, query: str):
         """Search on Youtube"""
         try:
@@ -48,7 +49,8 @@ class Searches:
             message = 'Something went terribly wrong! [{}]'.format(e)
             await ctx.send(message)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def meow(self, ctx :commands.Context):
         """Gets a random cat picture."""
         await self.get_meow(ctx)
@@ -68,7 +70,8 @@ class Searches:
             em.set_footer(text= "Random cat image from https://random.cat")
             await ctx.send(embed=em)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def woof(self, ctx:commands.Context):
         """Gets a random dog picture."""
         await self.get_woof(ctx)
@@ -102,7 +105,8 @@ class Searches:
         await asyncio.sleep(2)
         await ctx.send("That's it! https://www.google.com/search?q="+query)
     
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def fortune(self, ctx):
         """What is your fortune? Well then, lets find out..."""
         

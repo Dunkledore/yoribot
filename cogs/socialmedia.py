@@ -92,7 +92,8 @@ class SocialMedia:
 			await asyncio.sleep(61)
 
 
-	@commands.group(no_pm=True)
+	@commands.group()
+	@commands.guild_only()
 	@checks.is_guild_owner()
 	async def twitterset(self, ctx):
 		"""Admin twitter related commands"""
@@ -123,6 +124,7 @@ class SocialMedia:
 			
 
 	@twitterset.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def feedchannel(self, ctx, channel : discord.TextChannel):
 
@@ -137,6 +139,7 @@ class SocialMedia:
 		await ctx.send('Channel Set')
 	
 	@twitterset.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def tweetnumber(self, ctx, number: int):
 		"""Sets the number of bird reactions required to tweet something"""
@@ -151,6 +154,7 @@ class SocialMedia:
 		await ctx.send('Number set')
 
 	@twitterset.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def tweeter(self, ctx, role: discord.Role):
 		"""Sets the mod role"""
@@ -165,6 +169,7 @@ class SocialMedia:
 		await ctx.send('Role set')
 
 	@twitterset.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def tweetcreds(self, ctx):
 
@@ -202,7 +207,8 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, twitter_creds)
 		await ctx.author.send('Details Saved')
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
 		if ctx.message.attachments:

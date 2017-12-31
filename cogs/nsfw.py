@@ -13,7 +13,7 @@ class Nsfw:
         self.session = aiohttp.ClientSession()
 
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_nsfw()
     async def dick(self, ctx, user : discord.Member):
         """Show's the size of the user's dick (157% accurate)"""
@@ -23,7 +23,7 @@ class Nsfw:
         y = "=" *  x
         await ctx.send("{}\'s dick:' ** 8{}D **".format(user.name, y))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_nsfw()
     async def boobs(self, ctx, user : discord.Member):
         """Shows the size of the user's boobs (157% accurate)"""
@@ -33,7 +33,7 @@ class Nsfw:
         y = " " *  x
         await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(user.name, y, y))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_nsfw()
     async def ass(self, ctx, user : discord.Member):
         """Shows the size of the user's ass (157% accurate)"""
@@ -43,7 +43,8 @@ class Nsfw:
         y = " " *  x
         await ctx.send("{}\'s ass:' ** ({}!{}) **".format(user.name, y, y))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def yandere(self, ctx):
         """Random Image From Yandere"""
@@ -57,7 +58,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def konachan(self, ctx):
         """Random Image From Konachan"""
@@ -71,7 +73,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def rule34(self, ctx):
         """Random Image From rule34"""
@@ -85,7 +88,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def gelbooru(self, ctx):
         """Random Image From Gelbooru"""
@@ -99,7 +103,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def tbib(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -113,7 +118,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def xbooru(self, ctx):
         """Random Image From Xbooru"""
@@ -127,7 +133,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def furrybooru(self, ctx):
         """Random Image From Furrybooru"""
@@ -147,7 +154,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def drunkenpumken(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -167,13 +175,15 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def gayorzea(self, ctx):
        """Random image from gayorzea.com coming soon"""
 
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def ysearch(self, ctx, *tags: str):
         """Search Yandere With A Tag"""
