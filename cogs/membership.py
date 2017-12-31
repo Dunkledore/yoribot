@@ -380,10 +380,10 @@ class MemberAudit:
 			if actions:
 				actions += '\n'
 
-		embed.add_field(name='Aliases', value=aliases, inline=false)
+		embed.add_field(name='Aliases', value=aliases, inline=False)
 
 		if actions:
-			embed.add_field(name='Actions', value=actions, inline=false)
+			embed.add_field(name='Actions', value=actions, inline=False)
 
 		if member:
 			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
