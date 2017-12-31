@@ -39,7 +39,7 @@ class CommandSearch:
             maxlen = len(max(matches, key=len))
             msg = "\n".join(["{0:{1}}  {2}".format(m, maxlen, str(commands_flat[m].cog_name)) for m in matches])
             for page in pagify(msg):
-            await ctx.author.send(box(page))
+                await ctx.author.send(box(page))
 
     def _add_command(self, name, command, commands_flat, prefix=""):
         """Adds command to a given dict"""
