@@ -396,7 +396,7 @@ class MemberAudit:
 	def get_welcome_channel(self, guild: discord.Guild):
 		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
 
-	def get_mod_channel(self, guild :discord.Guild):
+	async def get_mod_channel(self, guild :discord.Guild):
 		query = "SELECT * FROM mod_config WHERE guild_id = $1"
 		results = await self.bot.pool.fetch(query, guild.id)
 		if results:
