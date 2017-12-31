@@ -241,7 +241,7 @@ class Mod:
 
         if message.attachments:
             if not message.channel.is_nsfw():
-                for attachment in message.attachments
+                for attachment in message.attachments:
                 self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
 
             if len(self.media_count[message.guild][message.author] > 2):
