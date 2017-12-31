@@ -100,8 +100,10 @@ class MemberAudit:
 	async def modlog(self, ctx, member):
 		converter = commands.MemberConverter()
 		converted = None
-		
-		converted = await converter.convert(ctx, member)
+		try:
+			converted = await converter.convert(ctx, member)
+		except:
+			pass
 
 
 		if converted:
