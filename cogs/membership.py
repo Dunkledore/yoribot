@@ -352,8 +352,6 @@ class MemberAudit:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
 
-	async def 
-
 	def log_as_embed(self, user_id, guild_id):
 		query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
 		result = await self.bot.pool.fetch(query, user_id)
