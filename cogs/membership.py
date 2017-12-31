@@ -92,7 +92,8 @@ class MemberAudit:
 			query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 			await ctx.db.execute(query, ctx.guild.id, ctx.author.id, ctx.author.name, 'Note', reason, ctx.author.id, ctx.author.name)
 		
-		await ctx.send(embed=log_to_embed(member.id, ctx.guild.id))
+		embed = await log_as_embed(member.id, ctx.guild.id)
+		await ctx.send(embed=embed)
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
@@ -106,7 +107,7 @@ class MemberAudit:
 		if converted:
 			embed = log_as_embed(converted.id, ctx.guild.id)
 		else:
-			embed = log_to_embed(member)
+			embed = log_as_embed(member, ctx.guild.id)
 
 		if embed:
 			await ctx.send(embed=embed)
@@ -352,7 +353,7 @@ class MemberAudit:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
 
-	def log_as_embed(self, user_id, guild_id):
+	async def log_as_embed(self, user_id, guild_id):
 		query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
 		pool = self.bot.pool
 		result = await pool.fetch(query, user_id)
