@@ -88,6 +88,7 @@ class MemberAudit:
 	async def log(self, ctx, member: discord.Member, *, reason=None):
 		if reason:
 			self._log(ctx, member, 'Note', reason)
+		await ctx.send(reason)
 		embed = await self.log_as_embed(member.id, ctx.guild.id)
 		await ctx.send(embed=embed)
 
