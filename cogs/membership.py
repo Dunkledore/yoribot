@@ -384,13 +384,14 @@ class MemberAudit:
 		if not aliases:
 			return None
 		actions = ""
+		timeconverter = time.UserFriendlyTime()
 		for result in results:
 			actions += result['action']
 			if result['reason']:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
 				actions += '- By ' + result['mod_name']
-			actions += ' - ' + result['date']
+			actions += ' - ' + timeconverter.convert(result['date'])
 			if actions:
 				actions += '\n'
 
