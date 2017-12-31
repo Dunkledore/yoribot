@@ -117,7 +117,7 @@ class MemberAudit:
 		if embed:
 			await ctx.send(embed=embed)
 		else:
-			await ctx.send("No mod logs found")
+			await ctx.send("Member not found")
 
 	@commands.command(no_pm=True)
 	@checks.is_admin()
@@ -368,7 +368,8 @@ class MemberAudit:
 		member = self.bot.get_user(user_id)
 
 		aliases = ""
-		aliases += member.name + '\n'
+		if member:
+			aliases += member.name + '\n'
 		for result in results:
 			if result['user_name']:
 				if result['user_name'] not in aliases:
