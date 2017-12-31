@@ -366,7 +366,8 @@ class MemberAudit:
 		aliases += member.name
 		for result in results:
 			if result['user_name']:
-				aliases += result['user_name'] + '\n'
+				if user_name not in aliases:
+					aliases += result['user_name'] + '\n'
 		if not aliases:
 			return None
 		actions = ""
@@ -376,6 +377,8 @@ class MemberAudit:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
 				actions += '- By ' + result['mod_name']
+			if actions:
+				actions += '\n'
 
 		embed.add_field(name='Aliases', value=aliases)
 
