@@ -356,7 +356,7 @@ class MemberAudit:
 	async def log_as_embed(self, user_id, guild_id):
 		query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
 		pool = self.bot.pool
-		result = await pool.fetch(query, user_id, guild_id)
+		results = await pool.fetch(query, user_id, guild_id)
 		
 		embed = discord.Embed(title = 'Mod Log for: ' + str(user_id))
 		
