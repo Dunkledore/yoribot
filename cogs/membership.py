@@ -363,7 +363,7 @@ class MemberAudit:
 		member = self.bot.get_user(user_id)
 
 		aliases = ""
-		aliases += member.name
+		aliases += member.name + '\n'
 		for result in results:
 			if result['user_name']:
 				if result['user_name'] not in aliases:
