@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from .utils.chat_formatting import pagify, box
-from __main__ import send_cmd_help
 
 
 class CommandSearch:
