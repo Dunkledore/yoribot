@@ -82,10 +82,15 @@ class MemberAudit:
 		
 		dataIO.save_json(self.settings_path, self.settings)
 
+	@commands.command()
+	@checks.is_mod()
+	async def getbans(self, ctx):
+		bans = await ctx.guild.bans
+		await ctx.send(str(bans))
 
+	
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-
 	async def log(self, ctx, member: discord.Member, *, reason=None):
 		"""Add an entry to a mod log about a member"""
 		
@@ -390,7 +395,7 @@ class MemberAudit:
 			if result['reason']:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
-				actions += '- By ' + result['mod_name']
+				actions += ' - By ' + result['mod_name']
 			actions += ' - ' + result['date'].strftime("%Y-%m-%d %H:%M:%S")
 			if actions:
 				actions += '\n'
