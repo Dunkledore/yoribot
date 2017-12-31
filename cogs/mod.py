@@ -239,10 +239,11 @@ class Mod:
         if message.author not in self.media_count[guild]:
             self.media_count[message.guild][message.author] = []
 
+        await message.channel.send('pre attatch')
         if message.attachments:
+            await message.channel.send('post attatch')
             if not message.channel.is_nsfw():
                 for attachment in message.attachments:
-                    await message.channel.send('appending')
                     self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
 
             if len(self.media_count[message.guild][message.author] > 2):
