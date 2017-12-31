@@ -122,7 +122,8 @@ class SocialMedia:
 			await ctx.send(embed=em)
 			
 
-	@twitterset.command(hidden=True)
+	@twitterset.command()
+	@checks.is_admin()
 	async def feedchannel(self, ctx, channel : discord.TextChannel):
 
 
@@ -135,7 +136,8 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
 		await ctx.send('Channel Set')
 	
-	@twitterset.command(hidden=True)
+	@twitterset.command()
+	@checks.is_admin()
 	async def tweetnumber(self, ctx, number: int):
 		"""Sets the number of bird reactions required to tweet something"""
 
@@ -148,7 +150,8 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, number)
 		await ctx.send('Number set')
 
-	@twitterset.command(hidden=True)
+	@twitterset.command()
+	@checks.is_admin()
 	async def tweeter(self, ctx, role: discord.Role):
 		"""Sets the mod role"""
 
@@ -162,6 +165,7 @@ class SocialMedia:
 		await ctx.send('Role set')
 
 	@twitterset.command()
+	@checks.is_admin()
 	async def tweetcreds(self, ctx):
 
 		author = ctx.author

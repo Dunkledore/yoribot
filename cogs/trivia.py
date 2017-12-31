@@ -28,7 +28,7 @@ class Trivia:
         settings = dataIO.load_json(self.file_path)
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
-    @commands.group(no_pm=True, hidden=True)
+    @commands.group(no_pm=True)
     @checks.is_mod()
     async def triviaset(self, ctx):
         """Allows you to change the settings for Trivia"""

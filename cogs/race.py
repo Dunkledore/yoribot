@@ -104,7 +104,7 @@ class Race:
         """Race cog's group command"""
 
 
-    @commands.group(pass_context=True, no_pm=True, hidden=True)
+    @commands.group(pass_context=True, no_pm=True)
     @checks.is_admin()
     async def setrace(self, ctx):
         """Race cog's settings group command"""
@@ -164,7 +164,7 @@ class Race:
         self.save_settings()
         await ctx.send("Mode now set to {}.".format(mode))
 
-    @race.command(name="reset", pass_context=True, hidden=True)
+    @race.command(name="reset", pass_context=True)
     @checks.is_admin()
     async def _reset_race(self, ctx):
         """Reset race parameters DEBUG USE ONLY"""
