@@ -315,7 +315,7 @@ class Profile:
         await ctx.db.execute(query, ctx.author.id)
         await ctx.send("Profile Deleted")
 
-    @commands.command(pass_context=True, no_pm=True, hidden=True)
+    @commands.command(pass_context=True, no_pm=True)
     async def profileremove(self, ctx, name=None):
         """Removes and embed field from the profile message"""
 

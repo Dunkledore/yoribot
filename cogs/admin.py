@@ -48,7 +48,7 @@ class Admin:
 
 
 
-    @commands.command(hidden=True)
+    @commands.command()
     @checks.is_developer()
     async def ping(self, ctx):
         await ctx.send('Pong')
@@ -63,7 +63,7 @@ class Admin:
 
         await ctx.send(string)
 
-    @commands.command(hidden=True)
+    @commands.command()
     @checks.is_admin()
     async def modrole(self, ctx, role: discord.Role):
         """Sets the mod role"""
@@ -77,7 +77,7 @@ class Admin:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
         await ctx.send('Role set')
 
-    @commands.command(hidden=True)
+    @commands.command()
     @checks.is_admin()
     async def modchannel(self, ctx, role: discord.TextChannel):
         """Sets the mod role"""

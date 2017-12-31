@@ -75,7 +75,8 @@ class Meta:
 
         await ctx.send('\n'.join(map(to_string, characters)))
 
-    @commands.group(name='prefix', invoke_without_command=True, hidden=True)
+    @commands.group(name='prefix', invoke_without_command=True)
+    @checks.is_admin()
     async def prefix(self, ctx):
         """Manages the server's custom prefixes.
 
@@ -282,10 +283,7 @@ class Meta:
             e.set_image(url=guild.splash_url)
 
         info = []
-        info.append(ctx.tick(len(guild.features) >= 3, 'Partnered'))
 
-        sfw = guild.explicit_content_filter is not discord.ContentFilter.disabled
-        info.append(ctx.tick(sfw, 'Scanning Images'))
         info.append(ctx.tick(guild.member_count > 100, 'Large'))
 
         e.add_field(name='Info', value='\n'.join(map(str, info)))
@@ -319,7 +317,7 @@ class Meta:
         e.add_field(name='Denied', value='\n'.join(denied))
         await ctx.send(embed=e)
 
-    @commands.command(hidden=True)
+    @commands.command()
     @commands.guild_only()
     async def permissions(self, ctx, member: discord.Member = None, channel: discord.TextChannel = None):
         """Shows a member's permissions in a specific channel.
@@ -335,7 +333,7 @@ class Meta:
 
         await self.say_permissions(ctx, member, channel)
 
-    @commands.command(hidden=True)
+    @commands.command()
     @commands.guild_only()
     @checks.is_admin()
     async def botpermissions(self, ctx, *, channel: discord.TextChannel = None):
@@ -353,9 +351,9 @@ class Meta:
         member = ctx.guild.me
         await self.say_permissions(ctx, member, channel)
 
-    @commands.command(hidden=True, aliases=['invite'])
+    @commands.command(aliases=['invite'])
     async def join(self, ctx):
-        """Joins a server."""
+        """Provides the bot invite link."""
         perms = discord.Permissions.none()
         perms.read_messages = True
         perms.external_emojis = True
