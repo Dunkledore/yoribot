@@ -90,7 +90,6 @@ class MemberAudit:
 		"""Add an entry to a mod log about a member"""
 		
 		if reason:
-			await ctx.send('logging')
 			await self._log(ctx, member, 'Note', reason)
 
 		embed = await self.log_as_embed(member.id, ctx.guild.id)
@@ -391,8 +390,10 @@ class MemberAudit:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
 				actions += '- By ' + result['mod_name']
+			actions += ' - ' + result['date']
 			if actions:
 				actions += '\n'
+
 
 		embed.add_field(name='Aliases', value=aliases, inline=False)
 
