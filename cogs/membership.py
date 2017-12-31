@@ -96,15 +96,15 @@ class MemberAudit:
 		"""Add an entry to a mod log about a member"""
 		
 		if reason:
-			await self._log(ctx, member, 'Note', reason)
+			await self._log(ctx.guild.id, member, 'Note', reason, ctx.author.id, ctx.author.name)
 
 		embed = await self.log_as_embed(member.id, ctx.guild.id)
 		await ctx.send(embed=embed)
 
-	async def _log(self, ctx, member, action, reason):
+	async def _log(self, guild_id, member, action, reason=None, mod_id=None, mod_name=None):
 	
 		query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
-		await ctx.db.execute(query, ctx.guild.id, member.id, member.nick or member.name, 'Note', reason, ctx.author.id, ctx.author.name)
+		await ctx.db.execute(query, guild_id, member.id, member.nick or member.name, 'Note', reason, mod_id, mod_name)
 
 
 
@@ -340,6 +340,9 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
+		bans = await guild.bans()
+		reason = discord.utils.get(bans, user=user)[0]
+		await self._log(guild.id, user, 'Ban', reason)
 
 	async def member_unban(self, guild, user: discord.User):
 		server = guild
