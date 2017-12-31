@@ -109,7 +109,7 @@ def is_owner():
 
 def is_guild_owner():
     async def pred(ctx):
-        return ctx.user == ctx.guild.owner
+        return ctx.author == ctx.guild.owner
 
     return commands.check(pred)
 
