@@ -366,7 +366,7 @@ class MemberAudit:
 		aliases += member.name
 		for result in results:
 			if result['user_name']:
-				if user_name not in aliases:
+				if result['user_name'] not in aliases:
 					aliases += result['user_name'] + '\n'
 		if not aliases:
 			return None
