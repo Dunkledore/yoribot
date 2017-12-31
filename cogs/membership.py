@@ -85,10 +85,16 @@ class MemberAudit:
 
 	@commands.command(no_pm=True)
 	@checks.is_mod()
-	async def log(self, ctx, member : discord.Member,*,  reason=None):
+	async def log(self, ctx, member: discord.Member, *, reason=None):
+		if reason:
+			self._log(ctx, member, 'Note', reason)
+		embed = await self.log_as_embed(member.id, ctx.guild.id)
+		await ctx.send(embed=embed)
+
+
+	async def _log(self, ctx, member, action, reason):
 		"""Add an entry to a mod log about a member"""
 
-		if reason:
 			query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 			await ctx.db.execute(query, ctx.guild.id, member.id, member.nick or member.name, 'Note', reason, ctx.author.id, ctx.author.name)
 		
