@@ -192,7 +192,7 @@ class Mod:
         if message.guild not in self.media_count:
             self.media_count[message.guild] = {}
 
-        if message.author not in self.media_count[guild]:
+        if message.author not in self.media_count[message.guild]:
             self.media_count[message.guild][message.author] = []
 
         await message.channel.send('pre attatch')
