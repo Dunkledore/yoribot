@@ -109,7 +109,10 @@ class MemberAudit:
 		if converted:
 			embed = await self.log_as_embed(converted.id, ctx.guild.id)
 		else:
-			embed = await self.log_as_embed(member, ctx.guild.id)
+			try:
+				embed = await self.log_as_embed(int(member), ctx.guild.id)
+			except ValueError:
+				await ctx.send("Member not found")
 
 		if embed:
 			await ctx.send(embed=embed)
