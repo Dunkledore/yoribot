@@ -113,6 +113,7 @@ class Mod:
 
         # guild_id: set(user_id)
         self._recently_kicked = defaultdict(set)
+        self.media_count = {} #For anti media/image spam
 
     def __repr__(self):
         return '<cogs.Mod>'
@@ -128,6 +129,14 @@ class Mod:
                 await ctx.send(f'This entity does not exist: {original.text}')
             elif isinstance(original, discord.HTTPException):
                 await ctx.send('Somehow, an unexpected error occurred. Try again later?')
+
+    async def get_mod_channel(self, guild :discord.Guild):
+        query = "SELECT * FROM mod_config WHERE guild_id = $1"
+        results = await self.bot.pool.fetch(query, guild.id)
+        if results:
+            mod_channel_id = results[0]["mod_channel"]
+            return guild.get_channel(mod_channel_id)
+        return None
 
     @cache.cache()
     async def get_guild_config(self, guild_id):
@@ -223,6 +232,30 @@ class Mod:
         else:
             await message.channel.send(f'Banned {author} (ID: {author.id}) for spamming {mention_count} mentions.')
             log.info(f'Member {author} (ID: {author.id}) has been autobanned from guild ID {guild_id}')
+
+        if message.guild not in self.media_count:
+            self.media_count[message.guild] = {}
+
+        if message.author not in self.media_count[guild]:
+            self.media_count[message.guild][message.author] = []
+
+        if message.attachments:
+            if not message.channel.is_nsfw():
+                for attachment in message.attachments
+                self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
+
+            if len(self.media_count[message.guild][message.author] > 2):
+                if self.media_count[message.guild][message.author][-1][2] - self.media_count[message.guild][message.author][-3][2] < 10:
+                    for item in self.media_count[message.guild][message.author][-1:-3]:
+                        try:
+                            await item[0].delete()
+                        except Exception as e:
+                            pass
+                    for tchan in ctx.guild.text_channels:
+                        await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
+                    mod_channel = await get_mod_channel(message.guild)
+                    await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
+
 
     async def on_voice_state_update(self, user, before, after):
         if not isinstance(user, discord.Member):
