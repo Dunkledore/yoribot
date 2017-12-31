@@ -292,9 +292,9 @@ class Blizzard:
             tier = comp['overall_stats']['tier']
             footer = 'SR: ' + str(comp['overall_stats']['comprank'])
             comp_stats = ''.join(['**Wins:** ', self.dictgrab(comp, 'game_stats', 'games_won'),
-                                  '\n**Avg Elim:** ', self.dictgrab(comp, 'average_stats', 'eliminations_avg'),
-                                  '\n**Avg Death:** ', self.dictgrab(comp, 'average_stats', 'deaths_avg'),
-                                  '\n**Avg Heal:** ', self.dictgrab(comp, 'average_stats', 'healing_done_avg')])
+                                  '\n**Best Kill Streak:** ', self.dictgrab(comp, 'game_stats', 'kill_streak_best'),
+                                  '\n**Most Elims:** ', self.dictgrab(comp, 'game_stats', 'eliminations_most_in_game'),
+                                  '\n**Kills Per Death:** ', self.dictgrab(comp, 'game_stats', 'kpd')])
 
         icon_url = self.ow_tier_icon(tier)
 
