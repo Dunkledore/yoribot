@@ -58,7 +58,7 @@ class MemberAudit:
 	@commands.command(no_pm=True)
 	@checks.is_admin()
 	async def temp_raid(self, ctx):
-		await self._raid(ctx)
+		await self._raid(ctx)#temp to enable raid
 
 	async def _raid(self, ctx): #Seperate definition to allow other definitions to call raid. 
 		"""Toggles Raid Mode
@@ -81,6 +81,39 @@ class MemberAudit:
 				await ctx.send('\N{WARNING SIGN} Could not set verification level.')
 		
 		dataIO.save_json(self.settings_path, self.settings)
+
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def log(self, ctx, member : discord.Member, reason=None):
+		"""Add an entry to a mod log about a member"""
+
+		if reason:
+			query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
+			await ctx.db.execute(query, ctx.guild.id, ctx.author.id, ctx.author.name, 'Note', reason, ctx.author.id, ctx.author.name)
+		
+		await ctx.send(embed=log_to_embed(member.id, ctx.guild.id))
+
+	@commands.command(no_pm=True)
+	@checks.is_mod()
+	async def modlog(self, ctx, member)
+	converter = commands.MemberConverter()
+	try:
+		converted = converter.convert(Member)
+	except:
+		pass
+
+	if converted:
+		embed = log_as_embed(converted.id, ctx.guild.id)
+	else:
+		embed = log_to_embed(member)
+
+	if embed:
+		await ctx.send(embed=embed)
+	else:
+		await ctx.send("No mod logs found")
+
+
 
 
 	@commands.command(no_pm=True)
@@ -322,8 +355,59 @@ class MemberAudit:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
 
-	def get_welcome_channel(self, server: discord.Guild):
-		return server.get_channel(int(self.settings[str(server.id)]["channel"]))
+	async def 
+
+	def log_as_embed(self, user_id, guild_id):
+		query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
+		result = await self.bot.pool.fetch(query, user_id)
+		
+		embed = discord.Embed(title = 'Mod Log for: ' + str(user_id))
+		
+		member = self.bot.get_user(user_id)
+
+		aliases = ""
+		aliases += member.name
+		for result in results:
+			if result['user_name']:
+				aliases += result['user_name'] + '\n'
+		if not aliases:
+			return None
+		actions = ""
+		for result in results:
+			actions += result['action']
+			if result['reason']
+			actions += ' - ' + results['reason']
+			if results['mod_name']
+			actions += '- By ' + results['mod_name']
+
+		embed.add_field(name='Aliases', value=aliases)
+
+		if actions:
+			embed.add_field(name='Actions', value=actions)
+
+		if member:
+			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+
+		return embed
+
+
+
+
+
+
+
+	def get_welcome_channel(self, guild: discord.Guild):
+		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
+
+	def get_mod_channel(self, guild :discord.Guild):
+		query = "SELECT * FROM mod_config WHERE guild_id = $1"
+    	results = await self.bot.pool.fetch(query, guild.id)
+    	if results:
+    		mod_channel_id = results[0]["mod_channel"]
+    		return guild.get_channel(mod_channel_id)
+    	return None
+
+
 
 	def speak_permissions(self, server: discord.Guild,
 						  channel: discord.TextChannel=None):
