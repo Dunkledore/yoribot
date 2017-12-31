@@ -101,7 +101,7 @@ class MemberAudit:
 		converter = commands.MemberConverter()
 		converted = None
 		try:
-			converted = converter.convert(Member)
+			converted = converter.convert(ctx, Member)
 		except:
 			pass
 
