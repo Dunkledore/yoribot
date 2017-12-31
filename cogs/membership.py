@@ -104,7 +104,7 @@ class MemberAudit:
 	async def _log(self, guild_id, member, action, reason=None, mod_id=None, mod_name=None):
 	
 		query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
-		await self.bot.pool.execute(query, guild_id, member.id, member.nick or member.name, 'Note', reason, mod_id, mod_name)
+		await self.bot.pool.execute(query, guild_id, member.id, member.nick or member.name, action, reason, mod_id, mod_name)
 
 
 
