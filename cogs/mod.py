@@ -210,7 +210,7 @@ class Mod:
                             pass
                     for tchan in message.guild.text_channels:
                         await tchan.set_permissions(message.author, reason=f"Mute in all channels by {self.bot.user.name}", send_messages=False)
-                    mod_channel = await get_mod_channel(message.guild)
+                    mod_channel = await self.get_mod_channel(message.guild)
                     await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
 
 
