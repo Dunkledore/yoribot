@@ -100,10 +100,9 @@ class MemberAudit:
 	async def modlog(self, ctx, member):
 		converter = commands.MemberConverter()
 		converted = None
-		try:
-			converted = await converter.convert(ctx, Member)
-		except:
-			pass
+		
+		converted = await converter.convert(ctx, Member)
+
 
 		if converted:
 			embed = await self.log_as_embed(converted.id, ctx.guild.id)
