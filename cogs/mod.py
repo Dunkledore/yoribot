@@ -200,7 +200,7 @@ class Mod:
                 for attachment in message.attachments:
                     self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
 
-            if len(self.media_count[message.guild][message.author] > 2):
+            if len(self.media_count[message.guild][message.author]) > 2:
                 if self.media_count[message.guild][message.author][-1][2] - self.media_count[message.guild][message.author][-3][2] < 10:
                     for item in self.media_count[message.guild][message.author][-1:-3]:
                         try:
