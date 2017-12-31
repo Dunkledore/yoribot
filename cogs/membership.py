@@ -372,9 +372,9 @@ class MemberAudit:
 		actions = ""
 		for result in results:
 			actions += result['action']
-			if result['reason']
+			if result['reason']:
 			actions += ' - ' + results['reason']
-			if results['mod_name']
+			if results['mod_name']:
 			actions += '- By ' + results['mod_name']
 
 		embed.add_field(name='Aliases', value=aliases)
