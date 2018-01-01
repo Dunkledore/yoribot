@@ -33,7 +33,7 @@ class Away:
 	
 	async def send_summary(self,user):
 	#pms the user their summary 
-		await user.send(embed=create_summary(user))
+		await user.send(embed=self.create_summary(user))
 	
 	def record_message(self,user,message):
 	#stores message under that user's id
@@ -53,7 +53,7 @@ class Away:
 	def unmake_away(self,user):
 	#deletes users file entry and sends their summary
 	
-		await send_summary(user)
+		await self.send_summary(user)
 		del awaydata[user.id]
 	
 	async def send_away_message(self,user,channel):
@@ -61,7 +61,7 @@ class Away:
 		embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.add_field(name=user.nick+' is currently away', value="I'll deliver him your message when he gets back")
 		message = await channel.send(embed=embed)
-		await replace_message(user,message,channel)
+		await self.replace_message(user,message,channel)
 		
 	async def replace_message(self,user,message,channel):
 		if channel.id in away_data[user.id]["lastmessages"]
@@ -75,7 +75,7 @@ class Away:
 		user=ctx.message.author
 		
 		if not is_away(user):
-			make_away(user,awaymessage)
+			self.make_away(user,awaymessage)
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 			embed.add_field(name='You are now away', value= awaymessage)
 			await ctx.send(embed=embed)
@@ -92,7 +92,7 @@ class Away:
 		user=ctx.message.author
 		
 		if is_away(user):
-			unmake_away(user)
+			self.unmake_away(user)
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 			embed.add_field(name='Welcome Back', value=ctx.author.nick)
 			await ctx.send(embed=embed)
@@ -103,18 +103,18 @@ class Away:
 		
 		if message.mention_everyone
 			for user in message.channel.members
-				if is_away(user)
-					record_message(user,message)
+				if self.is_away(user)
+					self.record_message(user,message)
 		return
 		
 		if message.mentions:
 			counter=0
 			for user in message.mentions:
-				if is_away(user)
-					record_message(user,message)
-					send_away_message(user)
+				if self.is_away(user)
+					self.record_message(user,message)
+					self.send_away_message(user)
 					counter+=1	
-					send_away_message(user,message.channel)
+					self.send_away_message(user,message.channel)
 					
 			if counter == len(message.mentions) and if not message.attachments:
 				await message.delete()
