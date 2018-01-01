@@ -74,7 +74,7 @@ class Away:
 		
 		user=ctx.message.author
 		
-		if not is_away(user):
+		if not self.is_away(user):
 			self.make_away(user,awaymessage)
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 			embed.add_field(name='You are now away', value= awaymessage)
@@ -91,7 +91,7 @@ class Away:
 		
 		user=ctx.message.author
 		
-		if is_away(user):
+		if self.is_away(user):
 			await self.unmake_away(user)
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 			embed.add_field(name='Welcome Back', value=ctx.author.nick)
