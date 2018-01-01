@@ -102,7 +102,7 @@ class Away:
 	async def on_message(self, message):
 		
 		if message.mention_everyone:
-			for user in message.channel.members
+			for user in message.channel.members:
 				if self.is_away(user)
 					self.record_message(user,message)
 		return
