@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import asyncio
 import asyncpg
+import time
 
 
 class Away:
@@ -40,7 +41,7 @@ class Away:
 		for attachment in message.attachments:
 			attachmentlist.append(attachment.url)
 			
-		awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"timestamp":message.created_at,"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
+		awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"timestamp":message.created_at.strftime("%a %H:%M:%S"),"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
 
 	def is_away(self, user):
 	#checks if a user is away
