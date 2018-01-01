@@ -204,7 +204,7 @@ class Fun:
 
     @commands.command()
     @commands.guild_only()
-    async def hug(self, user : discord.Member, intensity : int=1):
+    async def hug(self, ctx, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
