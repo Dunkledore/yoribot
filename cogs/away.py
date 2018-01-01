@@ -64,7 +64,7 @@ class Away:
 		await self.replace_message(user,message,channel)
 		
 	async def replace_message(self,user,message,channel):
-		if channel.id in away_data[user.id]["lastmessages"]
+		if channel.id in away_data[user.id]["lastmessages"]:
 			await away_data[user.id]["lastmessages"][channel.id].delete()
 		away_data[user.id]["lastmessages"][channel.id]=message
 
@@ -101,7 +101,7 @@ class Away:
 				
 	async def on_message(self, message):
 		
-		if message.mention_everyone
+		if message.mention_everyone:
 			for user in message.channel.members
 				if self.is_away(user)
 					self.record_message(user,message)
@@ -110,7 +110,7 @@ class Away:
 		if message.mentions:
 			counter=0
 			for user in message.mentions:
-				if self.is_away(user)
+				if self.is_away(user):
 					self.record_message(user,message)
 					self.send_away_message(user)
 					counter+=1	
