@@ -59,7 +59,7 @@ class Greet:
             return
 
         role = discord.utils.get(ctx.message.guild.roles, id=int(results[0]['greeted_role_id']))
-        await ctx.message.author.add_roles(role)
+        await member.add_roles(role)
         await ctx.send(member.name + ' greeted')
 
 
