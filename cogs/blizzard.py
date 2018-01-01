@@ -290,7 +290,7 @@ class Blizzard:
             tier = None
         else:
             tier = comp['overall_stats']['tier']
-            footer = 
+            footer = "For more visit https://playoverwatch.com/"
             comp_stats = ''.join(['SR: ' + str(comp['overall_stats']['comprank']),
                                   '\n**Wins:** ', self.dictgrab(comp, 'game_stats', 'games_won'),
                                   '\n**Best Kill Streak:** ', self.dictgrab(comp, 'game_stats', 'kill_streak_best'),
