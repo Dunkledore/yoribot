@@ -41,7 +41,7 @@ class Away:
 		for attachment in message.attachments:
 			attachmentlist.append(attachment.url)
 			
-		self.awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"timestamp":message.created_at.strftime("%a %H:%M:%S"),"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
+		self.awaydata[user.id]["awaymessages"].append({"author":message.author.nick or message.author.name,"timestamp":message.created_at.strftime("%a %H:%M:%S"),"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
 
 	def is_away(self, user):
 	#checks if a user is away
@@ -70,7 +70,7 @@ class Away:
 
 	@commands.command()
 	async def away(self, ctx, *, awaymessage):
-		await ctx.message.delete()
+		#await ctx.message.delete()
 		
 		user=ctx.message.author
 		
@@ -87,7 +87,7 @@ class Away:
 	
 	@commands.command()
 	async def back(self, ctx):
-		await ctx.message.delete()
+		#await ctx.message.delete()
 		
 		user=ctx.message.author
 		
