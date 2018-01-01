@@ -94,7 +94,7 @@ class Away:
 		if self.is_away(user):
 			await self.unmake_away(user)
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
-			embed.add_field(name='Welcome Back', value=ctx.author.nick)
+			embed.add_field(name='Welcome Back', value=ctx.author.nick or ctx.author.name)
 			await ctx.send(embed=embed)
 		else:
 			return
@@ -105,7 +105,7 @@ class Away:
 			for user in message.channel.members:
 				if self.is_away(user):
 					self.record_message(user,message)
-		return
+			return
 		
 		if message.mentions:
 			counter=0
