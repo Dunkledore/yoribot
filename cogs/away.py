@@ -21,7 +21,7 @@ class Away:
 		
 		
 		for message in awaydata[user.id]["awaymessages"]:
-			senderinfo=message["author"]+ " in " + message["channel"]
+			senderinfo=message["timestamp"] + ": " + message["author"] + " in " + message["channel"]
 			content=message["content"]
 			if message["attachments"]:
 				for attachment in message["attachments"]:
@@ -40,7 +40,7 @@ class Away:
 		for attachment in message.attachments:
 			attachmentlist.append(attachment.url)
 			
-		awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
+		awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"timestamp":message.created_at,"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
 
 	def is_away(self, user):
 	#checks if a user is away
@@ -52,7 +52,7 @@ class Away:
 	def unmake_away(self,user):
 	#deletes users file entry and sends their summary
 	
-		send_summary(user)
+		await send_summary(user)
 		del awaydata[user.id]
 	
 	async def send_away_message(self,user,channel):
@@ -60,7 +60,7 @@ class Away:
 		embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.add_field(name=user.nick+' is currently away', value="I'll deliver him your message when he gets back")
 		message = await channel.send(embed=embed)
-		replace_message(user,message,channel)
+		await replace_message(user,message,channel)
 		
 	async def replace_message(self,user,message,channel):
 		if channel.id in away_data[user.id]["lastmessages"]
