@@ -22,7 +22,7 @@ class Away:
 		
 		
 		for message in self.awaydata[user.id]["awaymessages"]:
-			senderinfo=message["timestamp"] + ": " + message["author"] + " in " + message["channel"]
+			senderinfo=message["timestamp"] + " " + message["author"] + " in " + message["channel"]
 			content=message["content"]
 			if message["attachments"]:
 				for attachment in message["attachments"]:
@@ -59,7 +59,7 @@ class Away:
 	async def send_away_message(self,user,channel):
 		#some embed saying that the bloke is away
 		embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
-		embed.add_field(name=user.nick+' is currently away', value="I'll deliver him your message when he gets back")
+		embed.add_field(name=user.nick or user.name+' is currently away', value="I'll deliver him your message when he gets back")
 		message = await channel.send(embed=embed)
 		await self.replace_message(user,message,channel)
 		
