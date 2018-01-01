@@ -13,7 +13,7 @@ class Away:
 		
 	def make_away(self,user,awaymessage):
 	#create an entry in memory for said user including their id and message
-		awaydata[user.id]={"message":awaymessage,"lastmessages":{},"awaymessages":[]}
+		self.awaydata[user.id]={"message":awaymessage,"lastmessages":{},"awaymessages":[]}
 	
 	
 	def create_summary(self,user):
@@ -21,7 +21,7 @@ class Away:
 		summary=discord.Embed(title="Here's what you missed while you were gone:", colour=discord.Colour.blurple())
 		
 		
-		for message in awaydata[user.id]["awaymessages"]:
+		for message in self.awaydata[user.id]["awaymessages"]:
 			senderinfo=message["timestamp"] + ": " + message["author"] + " in " + message["channel"]
 			content=message["content"]
 			if message["attachments"]:
@@ -41,7 +41,7 @@ class Away:
 		for attachment in message.attachments:
 			attachmentlist.append(attachment.url)
 			
-		awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"timestamp":message.created_at.strftime("%a %H:%M:%S"),"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
+		self.awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"timestamp":message.created_at.strftime("%a %H:%M:%S"),"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
 
 	def is_away(self, user):
 	#checks if a user is away
@@ -54,7 +54,7 @@ class Away:
 	#deletes users file entry and sends their summary
 	
 		await self.send_summary(user)
-		del awaydata[user.id]
+		del self.awaydata[user.id]
 	
 	async def send_away_message(self,user,channel):
 		#some embed saying that the bloke is away
