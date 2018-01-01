@@ -39,12 +39,14 @@ class Cookie:
         self.file_path = "data/cookie/cookie.json"
         self.system = dataIO.load_json(self.file_path)
 
-    @commands.group(pass_context=True, no_pm=True, hidden=True)
+    @commands.group()
+    @commands.guild_only()
     @checks.is_mod()
     async def setcookie(self, ctx):
         """Cookie settings group command"""
 
-    @setcookie.command(name="stealcd", pass_context=True, hidden=True)
+    @setcookie.command(name="stealcd")
+    @commands.guild_only()
     @checks.is_admin()
     async def _stealcd_heist(self, ctx, cooldown: int):
         """Set the cooldown for stealing cookies"""
@@ -58,7 +60,8 @@ class Cookie:
             msg = "Cooldown needs to be higher than 0."
         await ctx.send(msg)
 
-    @setcookie.command(name="cookiecd", pass_context=True, hidden=True)
+    @setcookie.command(name="cookiecd")
+    @commands.guild_only()
     @checks.is_admin()
     async def _cookiecd_heist(self, ctx, cooldown: int):
         """Set the cooldown for cookie command"""
@@ -73,7 +76,8 @@ class Cookie:
         await ctx.send(msg)
 
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def give(self, ctx, user: discord.Member, cookies: int):
         """Gives another user your cookies"""
         author = ctx.message.author
@@ -96,7 +100,8 @@ class Cookie:
 
         await ctx.send(msg)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def cookie(self, ctx):
         """Obtain a random number of cookies. 12h cooldown"""
         author = ctx.message.author
@@ -112,7 +117,8 @@ class Cookie:
             dataIO.save_json(self.file_path, self.system)
             await ctx.send("You recieved {} cookie(s) from the cookie Gods! Nyaaaaaan!\n {}".format(cookies, y))
 
-    @commands.command(pass_context=True, no_pm=False, ignore_extra=False)
+    @commands.command(ignore_extra=False)
+    @commands.guild_only()
     async def jar(self, ctx):
         """See how many cookies are in your jar."""
         author = ctx.message.author
@@ -128,7 +134,8 @@ class Cookie:
         await ctx.send("Yori sees you have **{}** cookies in the jar. "
                                "\n {} ".format(cookies,y))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def steal(self, ctx, user: discord.Member=None):
         """Steal cookies from another user. 2h cooldown."""
         author = ctx.message.author

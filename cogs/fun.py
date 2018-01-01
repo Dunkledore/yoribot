@@ -60,20 +60,22 @@ class Fun:
         dataIO.save_json(self.feelings, self.system)
         dataIO.is_valid_json("data/fun/feelings.json")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def riot(self, ctx, *text):
         """RIOT!"""
         text = " ".join(text)
         await ctx.send('ヽ༼ຈل͜ຈ༽ﾉ **' + text + '** ヽ༼ຈل͜ຈ༽ﾉ')
     
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
         await ctx.send("{} {}".format(ctx.message.mentions[0].name, randchoice(self.thotchoices)))
     def save_items(self):
         fileIO("data/fun/items.json", 'save', self.items)
 
-    @commands.group(pass_context=True, invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def slap(self, ctx, user: discord.Member=None):
         """Slap a user"""
         botid = self.bot.user.id
@@ -123,7 +125,7 @@ class Fun:
         else:
             await ctx.send("{} Maybe higher than 1? ;P".format(author.mention))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def flip(self, ctx, user : discord.Member=None):
         """Flips a coin... or a user.
 
@@ -146,7 +148,7 @@ class Fun:
         else:
             await ctx.send("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def rps(self, ctx, your_choice : RPSParser):
         """Play rock paper scissors"""
         author = ctx.message.author
@@ -176,7 +178,7 @@ class Fun:
             await ctx.send("{} We're square {}!"
                                "".format(red_choice.value, author.mention))
 
-    @commands.command(pass_context=True, name="8", aliases=["8ball"])
+    @commands.command(name="8", aliases=["8ball"])
     async def _8ball(self, ctx, *, question : str):
         """Ask 8 ball a question
 
@@ -187,7 +189,7 @@ class Fun:
         else:
             await ctx.send("That doesn't look like a question.")
 
-    @commands.command(aliases=["sw"], pass_context=True)
+    @commands.command(aliases=["sw"])
     async def stopwatch(self, ctx):
         """Starts/stops stopwatch"""
         author = ctx.message.author
@@ -200,12 +202,13 @@ class Fun:
             await ctx.send(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
-    @commands.command(no_pm=True, hidden=True)
-    async def hug(self, user : discord.Member, intensity : int=1):
+    @commands.command()
+    @commands.guild_only()
+    async def hug(self, ctx, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = italics(user.display_name)
+        name = user.nick or user.name
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
@@ -235,7 +238,7 @@ class Fun:
     async def guard(self,ctx):
         """Says a random guard line from Skyrim"""
         await ctx.send(choice(self.lines))
-    @commands.group(aliases=["kao"], invoke_without_command=True, pass_context=True)
+    @commands.group(aliases=["kao"], invoke_without_command=True)
     async def kaomoji(self, ctx, *, category: str, n: int=None):
         str_category = category.lower()
         m = ctx.message

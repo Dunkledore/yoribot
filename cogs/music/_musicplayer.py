@@ -82,7 +82,7 @@ class MusicPlayer:
         # Gui variables
         self.mchannel = None
         self.embed = None
-        self.queue_display = 9
+        self.queue_display = 10
         self.nowplayinglog = logging.getLogger("{}.{}.nowplaying".format(__name__, self.server_id))
         self.queuelog = logging.getLogger("{}.{}.queue".format(__name__, self.server_id))
         self.queuelenlog = logging.getLogger("{}.{}.queuelen".format(__name__, self.server_id))
@@ -549,8 +549,10 @@ class MusicPlayer:
                 else:
                     songname = self.queue[i][1]
             except IndexError:
-                songname = "---"
-            queue_display.append("{}: {}\n".format(str(i + 1), songname))
+                pass
+                songname = None
+            if songname:
+                queue_display.append("{}: {}\n".format(str(i + 1), songname))
 
         self.queuelog.info(''.join(queue_display))
         self.queuelenlog.info(str(len(self.queue)))

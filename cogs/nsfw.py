@@ -13,37 +13,38 @@ class Nsfw:
         self.session = aiohttp.ClientSession()
 
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_nsfw()
-    async def dick(self, ctx, user):
+    async def dick(self, ctx, user : discord.Member):
         """Show's the size of the user's dick (157% accurate)"""
 
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        random.seed(int(user.id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 15)
         y = "=" *  x
-        await ctx.send("{}\'s dick:' ** 8{}D **".format(ctx.message.mentions[0].name, y))
+        await ctx.send("{}\'s dick:' ** 8{}D **".format(user.name, y))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_nsfw()
-    async def boobs(self, ctx, user):
+    async def boobs(self, ctx, user : discord.Member):
         """Shows the size of the user's boobs (157% accurate)"""
 
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        random.seed(int(user.id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 5)
         y = " " *  x
-        await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(ctx.message.mentions[0].name, y, y))
+        await ctx.send("{}\'s boobs:' ** ( .{}Y{}. ) **".format(user.name, y, y))
 
-    @commands.command(pass_context=True)
+    @commands.command()
     @checks.is_nsfw()
-    async def ass(self, ctx, user):
+    async def ass(self, ctx, user : discord.Member):
         """Shows the size of the user's ass (157% accurate)"""
 
-        random.seed(int(ctx.message.mentions[0].id) % int(ctx.message.created_at.timestamp()),)
+        random.seed(int(user.id) % int(ctx.message.created_at.timestamp()),)
         x = random.randint(1, 5)
         y = " " *  x
-        await ctx.send("{}\'s ass:' ** ({}!{}) **".format(ctx.message.mentions[0].name, y, y))
+        await ctx.send("{}\'s ass:' ** ({}!{}) **".format(user.name, y, y))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def yandere(self, ctx):
         """Random Image From Yandere"""
@@ -57,7 +58,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def konachan(self, ctx):
         """Random Image From Konachan"""
@@ -71,7 +73,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def rule34(self, ctx):
         """Random Image From rule34"""
@@ -85,7 +88,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def gelbooru(self, ctx):
         """Random Image From Gelbooru"""
@@ -99,7 +103,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def tbib(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -113,7 +118,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def xbooru(self, ctx):
         """Random Image From Xbooru"""
@@ -127,7 +133,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def furrybooru(self, ctx):
         """Random Image From Furrybooru"""
@@ -147,7 +154,8 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def drunkenpumken(self, ctx):
         """Random Image From DrunkenPumken"""
@@ -167,31 +175,15 @@ class Nsfw:
         except Exception as e:
             await ctx.send(":x: **Error:** `{}`".format(e))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def gayorzea(self, ctx):
-        """Random Image From Gayorzea"""
-        try:
-            query = ("http://gayorzea.com/?random")
-            page = await self.session.get(query)
-            page = await page.text()
-            soup = BeautifulSoup(page,'html.parser')
-            found = soup.find_all('script')
-            for script in found:
-                await ctx.send(str(script)[0:1999])
-            image = await findimage.json()
-            if image != []:
-                em = discord.Embed(color=ctx.message.author.color, description=" ")
-                em.set_author(name="Random Image from Gayorzea:", icon_url="http://bit.ly/2hHIfF6")
-                em.set_image(url=random.choice(image)['jpeg_url'])
-                em.set_footer(text= "Random image from http://gayorzea.com")
-                await ctx.send(embed=em)
-            else:
-                await ctx.send(":warning: Gayorzea returned no results")
-        except Exception as e:
-            await ctx.send(":x: **Error:** `{}`".format(e))
+       """Random image from gayorzea.com coming soon"""
 
-    @commands.command(pass_context=True, no_pm=True)
+
+    @commands.command()
+    @commands.guild_only()
     @checks.is_nsfw()
     async def ysearch(self, ctx, *tags: str):
         """Search Yandere With A Tag"""

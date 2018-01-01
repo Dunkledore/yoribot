@@ -12,10 +12,11 @@ class Greet:
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_admin()
     async def greeter(self, ctx, role: discord.Role):
-        """Sets the greeter role"""
+        """Sets the role for people who can greet new members"""
 
         insertquery = "INSERT INTO greet (guild_id, greeter_role_id) VALUES ($1, $2)"
         alterquery = "UPDATE greet SET greeter_role_id = $2 WHERE guild_id = $1"
@@ -26,10 +27,11 @@ class Greet:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
         await ctx.send('Role set')
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_admin()
-    async def greeted(self, ctx, role: discord.Role):
-        """Sets the greeted role"""
+    async def greetrole(self, ctx, role: discord.Role):
+        """Sets the role assigned to new members"""
 
         insertquery = "INSERT INTO greet (guild_id, greeted_role_id) VALUES ($1, $2)"
         alterquery = "UPDATE greet SET greeted_role_id = $2 WHERE guild_id = $1"
@@ -40,10 +42,11 @@ class Greet:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
         await ctx.send('Role set')
 
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_greeter()
     async def greet(self, ctx, member: discord.Member):
-        """Greets someone"""
+        """Assigns the greet role to a new member"""
 
         query = "SELECT * FROM greet WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
@@ -56,7 +59,7 @@ class Greet:
             return
 
         role = discord.utils.get(ctx.message.guild.roles, id=int(results[0]['greeted_role_id']))
-        await ctx.message.author.add_roles(role)
+        await member.add_roles(role)
         await ctx.send(member.name + ' greeted')
 
 

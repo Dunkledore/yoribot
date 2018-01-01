@@ -36,7 +36,8 @@ class StreamRole:
             dataIO.save_json(self.settings_path, self.settings)
 
 
-    @_streamroleset.command(pass_context=True, no_pm=True, name="toggle")
+    @_streamroleset.command(name="toggle")
+    @commands.guild_only()
     @checks.is_admin()
     async def _toggle(self, ctx):
         """Toggles StreamRole on/off."""
@@ -60,7 +61,8 @@ class StreamRole:
                 cf.info("StreamRole is now disabled."))
         dataIO.save_json(self.settings_path, self.settings)
 
-    @_streamroleset.command(pass_context=True, no_pm=True, name="role")
+    @_streamroleset.command(name="role")
+    @commands.guild_only()
     @checks.is_admin()
     async def _role(self, ctx, role: discord.Role):
         """Sets the role that StreamRole assigns to

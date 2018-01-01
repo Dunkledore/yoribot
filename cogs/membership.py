@@ -38,7 +38,8 @@ class MemberAudit:
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
-	@commands.command(no_pm=True)
+	@commands.command(hidden=True)
+	@commands.guild_only()
 	@checks.is_admin()
 	async def auto_raid(self, ctx):
 		"""Toggles Auto-Raid
@@ -55,10 +56,11 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 
 
-	@commands.command(no_pm=True)
+	@commands.command(hidden=True)
+	@commands.guild_only()
 	@checks.is_admin()
 	async def temp_raid(self, ctx):
-		await self._raid(ctx)
+		await self._raid(ctx)#temp to enable raid
 
 	async def _raid(self, ctx): #Seperate definition to allow other definitions to call raid. 
 		"""Toggles Raid Mode
@@ -81,9 +83,53 @@ class MemberAudit:
 				await ctx.send('\N{WARNING SIGN} Could not set verification level.')
 		
 		dataIO.save_json(self.settings_path, self.settings)
+	
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_mod()
+	async def log(self, ctx, member: discord.Member, *, reason=None):
+		"""Add an entry to a mod log about a member"""
+		
+		if reason:
+			await self._log(ctx.guild.id, member, 'Note', reason, ctx.author.id, ctx.author.name)
+
+		embed = await self.log_as_embed(member.id, ctx.guild.id)
+		await ctx.send(embed=embed)
+
+	async def _log(self, guild_id, member, action, reason=None, mod_id=None, mod_name=None):
+	
+		query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
+		await self.bot.pool.execute(query, guild_id, member.id, member.nick or member.name, action, reason, mod_id, mod_name)
 
 
-	@commands.command(no_pm=True)
+
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_mod()
+	async def modlog(self, ctx, member):
+		converter = commands.MemberConverter()
+		converted = None
+		try:
+			converted = await converter.convert(ctx, member)
+		except:
+			pass
+
+
+		if converted:
+			embed = await self.log_as_embed(converted.id, ctx.guild.id)
+		else:
+			try:
+				embed = await self.log_as_embed(int(member), ctx.guild.id)
+			except ValueError:
+				await ctx.send("Member not found")
+
+		if embed:
+			await ctx.send(embed=embed)
+		else:
+			await ctx.send("Member not found")
+
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def joinaudit(self, ctx: commands.Context, *,
 					format_str: str):
@@ -97,7 +143,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Join message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def leaveaudit(self, ctx: commands.Context, *,
 					 format_str: str):
@@ -111,7 +158,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Leave message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def banaudit(self, ctx: commands.Context, *, format_str: str):
 		"""Sets the ban message for the server.
@@ -124,7 +172,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Ban message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def unbanaudit(self, ctx: commands.Context, *, format_str: str):
 		"""Sets the unban message for the server.
@@ -137,7 +186,8 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 		await ctx.send(cf.info("Unban message set."))
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def audittoggle(self, ctx: commands.Context):
 		"""Turns membership event commands on or off."""
@@ -153,7 +203,8 @@ class MemberAudit:
 				cf.info("Membership events will no longer be announced."))
 		dataIO.save_json(self.settings_path, self.settings)
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def auditchannel(self, ctx: commands.Context,
 					   channel: discord.TextChannel=None):
@@ -203,9 +254,15 @@ class MemberAudit:
 				  " The user was {}.".format(
 					  member.name))
 			return 
+		bannedin= ""
+		for guild in self.bot.guilds:
+			bans = await guild.bans()
+			for banentry in bans:
+				if member == banentry[1]:
+					bannedin += guild.name + '\n'
 
 		created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
-		if created < 30:
+		if created < 30 or bannedin:
 			colour = 0xdda453
 		else:
 			colour = 0x53dda4
@@ -214,15 +271,19 @@ class MemberAudit:
 		if self.speak_permissions(server, channel):
 			embed = discord.Embed(title = "📥 Member Join", description = self.settings[str(server.id)]["join_message"].format(member, server), colour = colour)
 			embed.timestamp = datetime.datetime.utcnow()
-			embed.set_footer(text='Created')
+			embed.set_footer(text='Joined')
 			embed.set_author(name=str(member), icon_url=member.avatar_url)
 			embed.add_field(name='ID', value=member.id)
 			embed.add_field(name='Joined', value=member.joined_at)
 			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+			if bannedin:
+				embed.add_field(name='Banned In', value = bannedin)
+
 			await channel.send(embed=embed)
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(member))
+		await self._log(guild.id, user, 'Join')
 
 	async def member_leave(self, member: discord.Member):
 		server = member.guild
@@ -253,6 +314,7 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(member))
+		await self._log(guild.id, user, 'Leave')
 
 	async def member_ban(self, guild, user: discord.User):
 		server = guild
@@ -282,6 +344,9 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
+		bans = await guild.bans()
+		reason = discord.utils.get(bans, user=user)[0]
+		await self._log(guild.id, user, 'Ban', reason)
 
 	async def member_unban(self, guild, user: discord.User):
 		server = guild
@@ -312,9 +377,67 @@ class MemberAudit:
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
+		await self._log(guild.id, user, 'Unban')
 
-	def get_welcome_channel(self, server: discord.Guild):
-		return server.get_channel(int(self.settings[str(server.id)]["channel"]))
+	async def log_as_embed(self, user_id, guild_id):
+		query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
+		pool = self.bot.pool
+		results = await pool.fetch(query, user_id, guild_id)
+		
+		embed = discord.Embed(title = 'Mod Log for: ' + str(user_id))
+		
+		member = self.bot.get_user(user_id)
+
+		aliases = ""
+		if member:
+			aliases += member.name + '\n'
+		for result in results:
+			if result['user_name']:
+				if result['user_name'] not in aliases:
+					aliases += result['user_name'] + '\n'
+		if not aliases:
+			return None
+		actions = ""
+		timeconverter = time.UserFriendlyTime()
+		for result in results:
+			actions += result['action']
+			if result['reason']:
+				actions += ' - ' + result['reason']
+			if result['mod_name']:
+				actions += ' - By ' + result['mod_name']
+			actions += ' - ' + result['date'].strftime("%d-%m-%Y %H:%M:%S")
+			if actions:
+				actions += '\n'
+
+
+		embed.add_field(name='Aliases', value=aliases, inline=False)
+
+		if actions:
+			embed.add_field(name='Actions', value=actions, inline=False)
+
+		if member:
+			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+
+		return embed
+
+
+
+
+
+
+
+	def get_welcome_channel(self, guild: discord.Guild):
+		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
+
+	async def get_mod_channel(self, guild :discord.Guild):
+		query = "SELECT * FROM mod_config WHERE guild_id = $1"
+		results = await self.bot.pool.fetch(query, guild.id)
+		if results:
+			mod_channel_id = results[0]["mod_channel"]
+			return guild.get_channel(mod_channel_id)
+		return None
+
+
 
 	def speak_permissions(self, server: discord.Guild,
 						  channel: discord.TextChannel=None):

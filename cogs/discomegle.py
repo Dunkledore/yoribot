@@ -16,7 +16,8 @@ class Discomegle:
         self.link = {} # userid -> {target id, target user channel}
         self.colour = 0xAAAAAA
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def discomegle(self, ctx):
         """Chat with other discord people anonymously!"""
         user = ctx.message.author
