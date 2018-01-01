@@ -128,7 +128,7 @@ class MemberAudit:
 		else:
 			await ctx.send("Member not found")
 
-	@commands.command(n)
+	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def joinaudit(self, ctx: commands.Context, *,
