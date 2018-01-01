@@ -38,7 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@commands.guild_only()
 	@checks.is_admin()
 	async def auto_raid(self, ctx):
@@ -56,7 +56,7 @@ class MemberAudit:
 		dataIO.save_json(self.settings_path, self.settings)
 
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@commands.guild_only()
 	@checks.is_admin()
 	async def temp_raid(self, ctx):
