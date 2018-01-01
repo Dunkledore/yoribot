@@ -10,13 +10,12 @@ class Away:
 	
 		self.awaydata={}	
 		
-
-	async def make_away(self,user,awaymessage):
+	def make_away(self,user,awaymessage):
 	#create an entry in memory for said user including their id and message
 		awaydata[user.id]={"message":awaymessage,"lastmessages":{},"awaymessages":[]}
 	
 	
-	async def create_summary(self,user):
+	def create_summary(self,user):
 	#creates and returns the embed summary of what the user will have missed
 		summary=discord.Embed(title="Here's what you missed while you were gone:", colour=discord.Colour.blurple())
 		
@@ -35,7 +34,7 @@ class Away:
 	#pms the user their summary 
 		await user.send(embed=create_summary(user))
 	
-	async def record_message(self,user,message):
+	def record_message(self,user,message):
 	#stores message under that user's id
 		attachmentlist=[]
 		for attachment in message.attachments:
@@ -43,16 +42,14 @@ class Away:
 			
 		awaydata[user.id]["awaymessages"].append({"author":message.author.nick,"channel":message.channel.name,"content":message.content,"attachments":attachmentlist})
 
-		
-	
-	async def is_away(self, user):
+	def is_away(self, user):
 	#checks if a user is away
 		if user.id in self.awaydata:
 			return True
 		else 
 			return False
 	
-	async def unmake_away(self,user):
+	def unmake_away(self,user):
 	#deletes users file entry and sends their summary
 	
 		send_summary(user)
@@ -69,7 +66,6 @@ class Away:
 		if channel.id in away_data[user.id]["lastmessages"]
 			await away_data[user.id]["lastmessages"][channel.id].delete()
 		away_data[user.id]["lastmessages"][channel.id]=message
-	
 
 	@commands.command()
 	async def away(self, ctx, *, awaymessage):
