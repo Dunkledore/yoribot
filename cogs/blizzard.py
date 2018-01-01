@@ -163,7 +163,7 @@ class Blizzard:
                                "`{}`, `{}`, or `{}`.".format(form, accept[0],
                                                              accept[1], accept[2]))
 
-    @commands.command(p)
+    @commands.command()
     @checks.is_owner()
     async def patchtimeout(self, ctx, timeout: int):
         """Set the timeout period (sec) of the patch notes reaction menus.
