@@ -47,7 +47,7 @@ class Away:
 	#checks if a user is away
 		if user.id in self.awaydata:
 			return True
-		else 
+		else:
 			return False
 	
 	def unmake_away(self,user):
@@ -96,7 +96,7 @@ class Away:
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 			embed.add_field(name='Welcome Back', value=ctx.author.nick)
 			await ctx.send(embed=embed)
-		else
+		else:
 			return
 				
 	async def on_message(self, message):
