@@ -112,7 +112,7 @@ class Away:
 			for user in message.mentions:
 				if self.is_away(user):
 					self.record_message(user,message)
-					self.send_away_message(user)
+					self.send_away_message(user,message.channel)
 					counter+=1	
 					self.send_away_message(user,message.channel)
 					
