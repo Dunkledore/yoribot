@@ -405,7 +405,7 @@ class MemberAudit:
 				actions += ' - ' + result['reason']
 			if result['mod_name']:
 				actions += ' - By ' + result['mod_name']
-			actions += ' - ' + result['date'].strftime("%Y-%m-%d %H:%M:%S")
+			actions += ' - ' + result['date'].strftime("%d-%m-%Y %H:%M:%S")
 			if actions:
 				actions += '\n'
 
