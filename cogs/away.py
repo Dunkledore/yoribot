@@ -50,7 +50,7 @@ class Away:
 		else:
 			return False
 	
-	def unmake_away(self,user):
+	async def unmake_away(self,user):
 	#deletes users file entry and sends their summary
 	
 		await self.send_summary(user)
@@ -92,7 +92,7 @@ class Away:
 		user=ctx.message.author
 		
 		if is_away(user):
-			self.unmake_away(user)
+			await self.unmake_away(user)
 			embed=discord.Embed(title=' ', colour=discord.Colour.blurple())
 			embed.add_field(name='Welcome Back', value=ctx.author.nick)
 			await ctx.send(embed=embed)
