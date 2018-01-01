@@ -103,7 +103,7 @@ class Away:
 		
 		if message.mention_everyone:
 			for user in message.channel.members:
-				if self.is_away(user)
+				if self.is_away(user):
 					self.record_message(user,message)
 		return
 		
