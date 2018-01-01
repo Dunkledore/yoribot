@@ -208,7 +208,7 @@ class Fun:
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = user.display_name
+        name = user.nick or user.name
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
