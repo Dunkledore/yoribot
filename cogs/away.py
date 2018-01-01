@@ -116,7 +116,7 @@ class Away:
 					counter+=1	
 					self.send_away_message(user,message.channel)
 					
-			if counter == len(message.mentions) and if not message.attachments:
+			if counter == len(message.mentions) and not message.attachments:
 				await message.delete()
 def setup(bot):
     bot.add_cog(Away(bot))
