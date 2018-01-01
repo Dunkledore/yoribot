@@ -66,7 +66,7 @@ class Away:
 	async def replace_message(self,user,message,channel):
 		if channel.id in self.awaydata[user.id]["lastmessages"]:
 			await self.awaydata[user.id]["lastmessages"][channel.id].delete()
-		await awaydata[user.id]["lastmessages"][channel.id]=message
+		self.awaydata[user.id]["lastmessages"][channel.id]=message
 
 	@commands.command()
 	async def away(self, ctx, *, awaymessage):
