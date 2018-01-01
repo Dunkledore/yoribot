@@ -15,7 +15,7 @@ class Ratings:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def sparkles(self, ctx, user):
         """Rates users sparkliness. 157% accurate!"""
 

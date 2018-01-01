@@ -12,13 +12,27 @@ import asyncpg
 import psutil
 
 class Embed:
-    """Commands used to set up your server profile"""
+    """Commands used to send embeds"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
-    @commands.command(no_pm=True)
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_mod()
+    async def qembed(self, ctx, channel: discord.TextChannel, title, *, description):
+        """A quick way to send an embed to a channel."""
+
+        embed = discord.Embed(title=title, description=description)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        await channel.send(embed=embed)
+
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_mod()
     async def embed(self, ctx, channel: discord.TextChannel):
+        """A lengthy way to send a detailed embed to a channel."""
 
 
         def check(m):
@@ -30,6 +44,7 @@ class Embed:
         
         messages_to_delete = [ctx.message]
         
+        #Ttile
         bot_message = await ctx.send("Please type the embed title")
         messages_to_delete.append(bot_message)
         title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
@@ -41,7 +56,7 @@ class Embed:
             messages_to_delete.append(title_message)
             title = title_message.content
 
-
+        #Description
         bot_message = await ctx.send("Please type the embed description")
         messages_to_delete.append(bot_message)
         description_message = await self.bot.wait_for('message', timeout=30.0, check=check)
@@ -53,7 +68,7 @@ class Embed:
             messages_to_delete.append(description_message)
             description = description_message.content
 
-        
+        #Url
         bot_message = await ctx.send("Please type the embed url or \"none\" for no url")
         messages_to_delete.append(bot_message)
         url_message = await self.bot.wait_for('message', timeout=30.0, check=check)
@@ -66,7 +81,7 @@ class Embed:
 
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
 
-
+        #fields
         more_fields = True
         fields = []
         while(more_fields):
@@ -101,21 +116,24 @@ class Embed:
         for field in fields:
             embed.add_field(name=field[0], value=field[1])
 
+        #Add Footer
+        bot_message = await ctx.send("Please type the embed footer or \"none\" for no footer")
+        messages_to_delete.append(bot_message)
+        footer_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+        messages_to_delete.append(footer_message)
+        footer = footer_message.content
+        if footer not in ["None", "none", "\"none\"", "\"None\""]:
+            embed.set_footer(text=footer)
+
+
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+
         await channel.send(embed=embed)
 
+        # Add to delete messages after
         for message in messages_to_delete:
             await message.delete()
-                      
-
-
-
-
-
-     
-
-
-
-
+                        
 
 
 

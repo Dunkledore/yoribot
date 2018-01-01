@@ -11,6 +11,7 @@ class Music:
 
 	def __init__(self,bot):
 		self.bot = bot
+		self.counter={}
 
 	async def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)
@@ -85,35 +86,40 @@ class Music:
 			return _data.cache[str(server_id)]
 
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	async def play(self, ctx, *, query=None):
 		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query)
 
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def playnext(self, ctx, *, query=None):
 		"""Plays the song or playlist immediately after the track already playing"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True)
 
-	@commands.command(no_pm=True, aliases=['movehere'])
+	@commands.command(aliases=['movehere'])
+	@commands.guild_only()
 	async def front(self, ctx):
 		"""Brings the music player to the front of the chat"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).movehere(ctx.channel)
 
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def playnow(self, ctx, *, query=None):
 		"""Immediately plays the song - this will stop any song playing"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def pause(self, ctx):
 		"""Pauses the track currently playing"""
@@ -127,7 +133,8 @@ class Music:
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).resume()
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def skip(self, ctx, *, query=1):
 		"""Moves forward to the next song in the player queue."""
@@ -135,14 +142,16 @@ class Music:
 		await self.getMusicPlayer(str(ctx.guild.id)).skip(query=query)
 		await ctx.send("skipped")
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def shuffle(self, ctx):
 		"""Mxes the songs in the queue"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).shuffle()
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def stop(self, ctx):
 		"""Stops music playback."""
@@ -150,19 +159,34 @@ class Music:
 		await self.getMusicPlayer(str(ctx.guild.id)).stop()
 
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def destroy(self, ctx):
 		"""Ends the music session - will clear all items from queue."""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).destroy()
 
-	@commands.command(no_pm=True)
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_mod()
 	async def volume(self, ctx, *, query=None):
 		"""Increase or decrease the volume"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).setvolume(query)
+	
+	async def on_message(self, message):
+		if message.author == self.bot.user:
+			return
+		id=str(message.guild.id)
+		if id in _data.cache and _data.cache[id].state != 'destroyed' and message.channel==_data.cache[id].mchannel:
+					if id not in self.counter:
+						self.counter[id]=0
+					self.counter[id]+=1
+						
+					if self.counter[id]==11:
+						self.counter[id]=0
+						await self.getMusicPlayer(id).movehere(message.channel)
 
 def setup(bot):
 

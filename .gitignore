@@ -8,3 +8,4 @@
 .DS_Store
 cogs/admin.py
 cogs/admin.py
+.idea/yoribot.iml

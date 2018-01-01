@@ -20,7 +20,8 @@ class RoleManager:
                     return g, self.settings[str(message.guild.id)]['sars'][g][r], r
         return None
 
-    @commands.group(pass_context=True, invoke_without_command=True, no_pm=True)
+    @commands.group(invoke_without_command=True)
+    @commands.guild_only()
     async def iam(self, ctx, *, role):
         """Self-assign a role."""
         if str(ctx.message.guild.id) not in self.settings:
@@ -66,7 +67,8 @@ class RoleManager:
                 await message.channel.send(embed=em)
                 return
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def listroles(self, ctx):
         """Lists the self-assignable roles this server has."""
         if str(ctx.message.guild.id) not in self.settings:
@@ -139,14 +141,16 @@ class RoleManager:
             await ctx.send(embed=em)
 
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_mod()
     async def addroles(self, ctx, group, *, role_names: str):
         """Adds multiple addable roles at once, separated by <separator>."""
         for rolename in role_names.split(','):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     @checks.is_mod()
     async def removerole(self, ctx, role):
         """Takes a role off the list of self-assignable roles."""
@@ -171,7 +175,8 @@ class RoleManager:
             em.set_author(name=role, icon_url="http://bit.ly/2r2cpXh")
             await ctx.send(embed=em)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command()
+    @commands.guild_only()
     async def iamnot(self, ctx, role):
         """Removes a self-assignable role from you."""
         if str(ctx.message.guild.id) not in self.settings:
