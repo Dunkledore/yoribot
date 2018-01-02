@@ -459,7 +459,7 @@ class Blizzard:
         """Latest Heroes of the Storm patch notes"""
         await self.format_patch_notes(ctx, 'hots')
 
-    async def format_patch_notes(self, ctx, game: str=None):
+    async def format_patch_notes(self, ctx, message, game: str=None):
         url = ''.join([self.base_url,
                        self.abbr[game],
                        self.product_url,
