@@ -459,7 +459,7 @@ class Blizzard:
         """Latest Heroes of the Storm patch notes"""
         await self.format_patch_notes(ctx, 'hots')
 
-    async def format_patch_notes(self, ctx, message, game: str=None):
+    async def format_patch_notes(self, ctx, game: str=None):
         url = ''.join([self.base_url,
                        self.abbr[game],
                        self.product_url,
@@ -526,7 +526,7 @@ class Blizzard:
             if result[0] == "no":
                 await result[1].delete()
             else:
-                await message.edit(result[1], embed=self.expired_embed)
+                return
         elif self.settings['notes_format'] == 'full':
             await self.say_full_notes(note_list[0])
         else:
