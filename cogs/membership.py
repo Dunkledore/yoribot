@@ -94,7 +94,7 @@ class MemberAudit:
 			await self._log(ctx.guild.id, member, 'Note', reason, ctx.author.id, ctx.author.name)
 
 		embed = await self.log_as_embed(member.id, ctx.guild.id)
-		await ctx.send(embed=embed)
+		await ctx.send("I will add that to the log for you.")
 
 	async def _log(self, guild_id, member, action, reason=None, mod_id=None, mod_name=None):
 	
