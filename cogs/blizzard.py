@@ -526,7 +526,7 @@ class Blizzard:
             if result[0] == "no":
                 await result[1].delete()
             else:
-                await self.bot.edit_message(result[1], embed=self.expired_embed)
+                await message.edit(result[1], embed=self.expired_embed)
         elif self.settings['notes_format'] == 'full':
             await self.say_full_notes(note_list[0])
         else:
