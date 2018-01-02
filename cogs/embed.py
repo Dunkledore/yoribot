@@ -47,7 +47,7 @@ class Embed:
         #Ttile
         bot_message = await ctx.send("Please type the embed title")
         messages_to_delete.append(bot_message)
-        title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+        title_message = await self.bot.wait_for('message', timeout=120.0, check=check)
         messages_to_delete.append(title_message)
         title = title_message.content
         while len(title) > 256:
@@ -59,7 +59,7 @@ class Embed:
         #Description
         bot_message = await ctx.send("Please type the embed description")
         messages_to_delete.append(bot_message)
-        description_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+        description_message = await self.bot.wait_for('message', timeout=120.0, check=check)
         messages_to_delete.append(description_message)
         description = description_message.content
         while len(description) > 2048:
@@ -71,7 +71,7 @@ class Embed:
         #Url
         bot_message = await ctx.send("Please type the embed url or \"none\" for no url")
         messages_to_delete.append(bot_message)
-        url_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+        url_message = await self.bot.wait_for('message', timeout=120.0, check=check)
         messages_to_delete.append(url_message)
         url = url_message.content
         if url not in ["None", "none", "\"none\"", "\"None\""]:
@@ -87,13 +87,13 @@ class Embed:
         while(more_fields):
             bot_message = await ctx.send("Please type the field title or \"none\" to stop adding fields")
             messages_to_delete.append(bot_message)
-            field_title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+            field_title_message = await self.bot.wait_for('message', timeout=120.0, check=check)
             messages_to_delete.append(field_title_message)
             field_title = field_title_message.content
             while len(field_title) > 256:
                 bot_message = await ctx.send("Character limit of 256 please enter less now")
                 messages_to_delete.append(bot_message)
-                field_title_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+                field_title_message = await self.bot.wait_for('message', timeout=120.0, check=check)
                 messages_to_delete.append(field_title_message)
                 field_title = field_title_message.content
             if field_title in ["None", "none", "\"none\"", "\"None\""]:
@@ -101,13 +101,13 @@ class Embed:
             else:
                 bot_message = await ctx.send("Please type the field content")
                 messages_to_delete.append(bot_message)
-                field_content_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+                field_content_message = await self.bot.wait_for('message', timeout=120.0, check=check)
                 field_content = field_content_message.content
                 messages_to_delete.append(field_content_message)
                 while len(field_content) > 1024:
                     bot_message = await ctx.send("Character limit of 1024 please enter less now")
                     messages_to_delete.append(bot_message)
-                    field_content_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+                    field_content_message = await self.bot.wait_for('message', timeout=120.0, check=check)
                     messages_to_delete.append(field_content_message)
                     field_content = field_content_message.content
 
@@ -119,7 +119,7 @@ class Embed:
         #Add Footer
         bot_message = await ctx.send("Please type the embed footer or \"none\" for no footer")
         messages_to_delete.append(bot_message)
-        footer_message = await self.bot.wait_for('message', timeout=30.0, check=check)
+        footer_message = await self.bot.wait_for('message', timeout=120.0, check=check)
         messages_to_delete.append(footer_message)
         footer = footer_message.content
         if footer not in ["None", "none", "\"none\"", "\"None\""]:
