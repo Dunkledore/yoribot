@@ -30,6 +30,7 @@ initial_extensions = (
     
     'cogs.admin',
     'cogs.anime',
+    'cogs.away',
     'cogs.antilink',
     'cogs.audio',
     'cogs.blizzard',
