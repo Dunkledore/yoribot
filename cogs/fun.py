@@ -625,7 +625,7 @@ def check_files():
         raise RuntimeError(
             "Required data is missing. Please reinstall this cog.")
     settings = {"ALL_TABLES" : True, "BOT_EXEMPT" : False}
-    f = "data/noflippedtables/settings.json"
+    f = "data/fun/tablesettings.json"
     if not dataIO.is_valid_json(f):
         print("Creating settings.json...")
         dataIO.save_json(f, settings)
