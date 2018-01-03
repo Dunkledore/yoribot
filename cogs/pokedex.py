@@ -269,7 +269,7 @@ class Pokedex:
 
         return linked
 
-    def color_lookup(self, ctx, key):
+    def color_lookup(self, key):
         color_table = {"Normal": 0x999966, "Fire": 0xFF6600, "Fighting": 0xFF0000, "Ice": 0x99FFFF,
                        "Water": 0x3399FF, "Flying": 0x9999FF, "Grass": 0x33FF00, "Poison": 0x660099,
                        "Electric": 0xFFFF00, "Ground": 0xFFCC33, "Psychic": 0xFF3399,
