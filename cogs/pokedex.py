@@ -297,7 +297,7 @@ class Pokedex:
             print("The csv file could not be found in data/pokedex/")
             return None
 
-    def collect_pokemon(self, ctx, reader, name, link_name):
+    def collect_pokemon(self, reader, name, link_name):
         Pokemon = namedtuple('Pokemon', ['id', 'name', 'wiki', 'header', 'types', 'image', 'desc',
                                          'stats', 'abilities', 'weak', 'resist'])
         for row in reader:
@@ -311,7 +311,7 @@ class Pokedex:
                 return Pokemon(num, name, wiki, header, types, img, desc, stats, abilities,
                                weak, resist)
 
-    def collect_moves(self, ctx, reader, name):
+    def collect_moves(self, reader, name):
         Moves = namedtuple('Moves', ['pokemon', 'gen', 'color', 'moves', 'versions'])
         if name.split('-')[-1].isdigit():
             for row in reader:
