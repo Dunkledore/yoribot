@@ -566,23 +566,23 @@ class Fun:
         if hasattr(user, 'bot') and user.bot is True:
                     return
         if channel.id not in self.flippedTables:
-             self.flippedTables[channel.id] = {}
+             self.flippedTables[str(channel.id)] = {}
         #┬─┬ ┬┬ ┻┻ ┻━┻ ┬───┬ ┻━┻ will leave 3 tables left flipped
         #count flipped tables
         for m in re.finditer('┻━*┻|┬─*┬', message.content):
             t = m.group()
             if '┻' in t and not (message.author.id == self.bot.user.id and self.settings["BOT_EXEMPT"]):
-                if t in self.flippedTables[channel.id]:
+                if t in self.flippedTables[str(channel.id)]:
                     self.flippedTables[channel.id][t] += 1
                 else:
-                    self.flippedTables[channel.id][t] = 1
+                    self.flippedTables[str(channel.id)][t] = 1
                     if not self.settings["ALL_TABLES"]:
                         break
             else:
                 f = t.replace('┬','┻').replace('─','━')
-                if f in self.flippedTables[channel.id]:
-                    if self.flippedTables[channel.id][f] <= 0:
-                        del self.flippedTables[channel.id][f]
+                if f in self.flippedTables[str(channel.id)]:
+                    if self.flippedTables[str(channel.id)][f] <= 0:
+                        del self.flippedTables[str(channel.id)][f]
                     else:
                         self.flippedTables[channel.id][f] -= 1
         #wait random time. some tables may be unflipped by now.
@@ -591,15 +591,15 @@ class Fun:
 
         deleteTables = []
         #unflip tables in self.flippedTables[channel.id]
-        for t, n in self.flippedTables[channel.id].items():
+        for t, n in self.flippedTables[str(channel.id)].items():
             unflipped = t.replace('┻','┬').replace('━','─') + " ノ( ゜-゜ノ)" + "\n"
             for i in range(0,n):
                 tables += unflipped
                 #in case being processed in parallel
-                self.flippedTables[channel.id][t] -= 1
+                self.flippedTables[str(channel.id)][t] -= 1
             deleteTables.append(t)
         for t in deleteTables:
-            del self.flippedTables[channel.id][t]
+            del self.flippedTables[str(channel.id)][t]
         if tables != "":
             await ctx.send(tables)
 
