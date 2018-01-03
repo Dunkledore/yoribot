@@ -536,7 +536,8 @@ class Fun:
     async def tableset(self, ctx):
         """Got some nice settings for my UNflipped tables"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='tableset')
             msg = "```"
             for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
