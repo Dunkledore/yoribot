@@ -528,7 +528,7 @@ class Fun:
         folderPath = "data/fun/" + folder
         fileList = os.listdir(folderPath)
         gifPath = folderPath + "/" + fileList[randint(0, len(fileList) - 1)]
-        await self.bot.upload(gifPath)
+        await ctx.send(gifPath)
 
 
 def check_folders():
