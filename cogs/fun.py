@@ -339,7 +339,7 @@ class Fun:
                 ctx, user.mention + " CUDDLES HARD with " + sender.mention + " , and they like it! ", folder)
 
     @commands.command()
-    async def hugs(self, ctx, *, user: discord.Member):
+    async def hugg(self, ctx, *, user: discord.Member):
         """Hug people!"""
         sender = ctx.message.author
         folder = "hug"
