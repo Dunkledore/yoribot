@@ -85,7 +85,7 @@ class Fun:
         elif user.id == botid:
             user = ctx.message.author
             botname = self.bot.user.name
-            await ctx.send("-" + botname + " slaps " + ctx.user.mention +
+            await ctx.send("-" + botname + " slaps " + ctx, user.mention +
                                " multiple times with " +
                                (randchoice(self.items) + "-"))
         else:
@@ -291,9 +291,9 @@ class Fun:
         sender = ctx.message.author
         folder = "kiss"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You pervert! You cannot do that to yourself!")
+            await ctx.send(sender.mention + " You pervert! You cannot do that to yourself!")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was KISSED by " + ctx.sender.mention + "! :kiss:", folder)
+            await self.upload_random_gif(ctx, user.mention + " was KISSED by " + sender.mention + "! :kiss:", folder)
 
     @commands.command()
     async def bite(self, ctx, *, user: discord.Member):
@@ -301,9 +301,9 @@ class Fun:
         sender = ctx.message.author
         folder = "bite"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " As kinky as that is, I can't let you do that to yourself!")
+            await ctx.send(sender.mention + " As kinky as that is, I can't let you do that to yourself!")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was BITTEN by " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was BITTEN by " + sender.mention + "! ", folder)
 
     @commands.command()
     async def slap(self, ctx, *, user: discord.Member):
@@ -311,10 +311,10 @@ class Fun:
         sender = ctx.message.author
         folder = "slap"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You Masochist! You cannot do that to yourself!")
+            await ctx.send(sender.mention + " You Masochist! You cannot do that to yourself!")
         else:
             await self.upload_random_gif(
-                ctx.user.mention + " was SLAPPED by " + ctx.sender.mention + " and i think they liked it! ", folder)
+                ctx, user.mention + " was SLAPPED by " + sender.mention + " and i think they liked it! ", folder)
 
     @commands.command()
     async def taunt(self, ctx, *, user: discord.Member):
@@ -322,9 +322,9 @@ class Fun:
         sender = ctx.message.author
         folder = "taunt"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You must be really lonely? Do you need a friend? ")
+            await ctx.send(sender.mention + " You must be really lonely? Do you need a friend? ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was TAUNTED by " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was TAUNTED by " + sender.mention + "! ", folder)
 
     @commands.command()
     async def cuddle(self, ctx, *, user: discord.Member):
@@ -333,10 +333,10 @@ class Fun:
         folder = "cuddle"
         if ctx.message.author == user:
             await ctx.send(
-                ctx.sender.mention + " I am sorry that you are so lonely, but you cannot Cuddle with yourself, Thats masterbation! ")
+                sender.mention + " I am sorry that you are so lonely, but you cannot Cuddle with yourself, Thats masterbation! ")
         else:
             await self.upload_random_gif(
-                ctx.user.mention + " CUDDLES HARD with " + ctx.sender.mention + " , and they like it! ", folder)
+                ctx, user.mention + " CUDDLES HARD with " + sender.mention + " , and they like it! ", folder)
 
     @commands.command()
     async def hugs(self, ctx, *, user: discord.Member):
@@ -344,9 +344,9 @@ class Fun:
         sender = ctx.message.author
         folder = "hug"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " Sorry, you are not that flexible. You cannot Hug yourself!")
+            await ctx.send(sender.mention + " Sorry, you are not that flexible. You cannot Hug yourself!")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was given a BIG hug from " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was given a BIG hug from " + sender.mention + "! ", folder)
 
     @commands.command()
     async def feed(self, ctx, *, user: discord.Member):
@@ -354,9 +354,9 @@ class Fun:
         sender = ctx.message.author
         folder = "feeds"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " I'm so glad you know how to feed yourself! ")
+            await ctx.send(sender.mention + " I'm so glad you know how to feed yourself! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was FED by " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was FED by " + sender.mention + "! ", folder)
 
     @commands.command()
     async def spank(self, ctx, *, user: discord.Member):
@@ -365,10 +365,9 @@ class Fun:
         folder = "spank"
         if ctx.message.author == user:
             await ctx.send(
-                ctx.sender.mention + " I NEED AN ADULT!!! You cannot use me to spank yourself. Thats Nasty! ")
+                sender.mention + " I NEED AN ADULT!!! You cannot use me to spank yourself. Thats Nasty! ")
         else:
-            await self.upload_random_gif(
-                ctx.user.mention + " was SPANKED HARD by " + ctx.sender.mention + " , and they LOVED it! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was SPANKED HARD by " + sender.mention + " , and they LOVED it! ", folder)
 
     @commands.command()
     async def tease(self, ctx, *, user: discord.Member):
@@ -376,9 +375,9 @@ class Fun:
         sender = ctx.message.author
         folder = "tease"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You're a special person aren't you? You cannot tease yourself! ")
+            await ctx.send(sender.mention + " You're a special person aren't you? You cannot tease yourself! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was TEASED by " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was TEASED by " + sender.mention + "! ", folder)
 
     @commands.command()
     async def hi5(self, ctx, *, user: discord.Member):
@@ -386,9 +385,9 @@ class Fun:
         sender = ctx.message.author
         folder = "hi5"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " Nice try, You have to get out more! ")
+            await ctx.send(sender.mention + " Nice try, You have to get out more! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was HIGHFIVED by " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was HIGHFIVED by " + sender.mention + "! ", folder)
 
     @commands.command()
     async def shoot(self, ctx, *, user: discord.Member):
@@ -396,9 +395,9 @@ class Fun:
         sender = ctx.message.author
         folder = "shoot"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " Calm down! I am sure we can solve whatever problem you're having. ")
+            await ctx.send(sender.mention + " Calm down! I am sure we can solve whatever problem you're having. ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was SHOT by " + ctx.sender.mention + "! They survived! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was SHOT by " + sender.mention + "! They survived! ", folder)
 
     @commands.command()
     async def lick(self, ctx, *, user: discord.Member):
@@ -406,9 +405,9 @@ class Fun:
         sender = ctx.message.author
         folder = "lick"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " Well aren't you a kinky little thing? And very flexible! ")
+            await ctx.send(sender.mention + " Well aren't you a kinky little thing? And very flexible! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " was LICKED by " + ctx.sender.mention + "! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " was LICKED by " + sender.mention + "! ", folder)
 
     @commands.command()
     async def shake(self, ctx, *, user: discord.Member):
@@ -416,9 +415,9 @@ class Fun:
         sender = ctx.message.author
         folder = "handshake"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " No, Just No! Get a life! ")
+            await ctx.send(sender.mention + " No, Just No! Get a life! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " Shook " + ctx.sender.mention + "'s Hand! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " Shook " + sender.mention + "'s Hand! ", folder)
 
     @commands.command()
     async def twerk(self, ctx, *, user: discord.Member):
@@ -427,9 +426,9 @@ class Fun:
         folder = "twerk"
         if ctx.message.author == user:
             await ctx.send(
-                ctx.sender.mention + " Did you just try to twerk on yourself? We'll pretend that never happened! ")
+                sender.mention + " Did you just try to twerk on yourself? We'll pretend that never happened! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " TWERKED FOR " + ctx.sender.mention + "! and they LIKED it! ",
+            await self.upload_random_gif(ctx, user.mention + " TWERKED FOR " + sender.mention + "! and they LIKED it! ",
                                          folder)
 
     @commands.command()
@@ -438,9 +437,9 @@ class Fun:
         sender = ctx.message.author
         folder = "strip"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " No, Just No! Get a life! ")
+            await ctx.send(sender.mention + " No, Just No! Get a life! ")
         else:
-            await self.upload_random_gif(ctx.sender.mention + " strips for " + ctx.user.mention + " and they LIKE it! ", folder)
+            await self.upload_random_gif(sender.mention + " strips for " + ctx, user.mention + " and they LIKE it! ", folder)
 
     @commands.command()
     async def thirsty(self, ctx, *, user: discord.Member):
@@ -448,9 +447,9 @@ class Fun:
         sender = ctx.message.author
         folder = "thirsty"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " Really? Just really?? You need help! ")
+            await ctx.send(sender.mention + " Really? Just really?? You need help! ")
         else:
-            await self.upload_random_gif(ctx.sender.mention + " tells " + ctx.user.mention + " To calm your thirsty ass down! ",
+            await self.upload_random_gif(sender.mention + " tells " + ctx, user.mention + " To calm your thirsty ass down! ",
                                          folder)
 
     @commands.command()
@@ -459,9 +458,9 @@ class Fun:
         sender = ctx.message.author
         folder = "moist"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You are way to easy! ")
+            await ctx.send(sender.mention + " You are way to easy! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " has made " + ctx.sender.mention + " moist. OH LORD! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " has made " + sender.mention + " moist. OH LORD! ", folder)
 
     @commands.command()
     async def whip(self, ctx, *, user: discord.Member):
@@ -469,10 +468,10 @@ class Fun:
         sender = ctx.message.author
         folder = "whip"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " Well aren't you just a kinky thing! ")
+            await ctx.send(sender.mention + " Well aren't you just a kinky thing! ")
         else:
             await self.upload_random_gif(
-                ctx.sender.mention + " has whipped " + ctx.user.mention + " and i think they LIKED it! ", folder)
+                sender.mention + " has whipped " + ctx, user.mention + " and i think they LIKED it! ", folder)
 
     @commands.command()
     async def facepalm(self, ctx, *, user: discord.Member):
@@ -480,9 +479,9 @@ class Fun:
         sender = ctx.message.author
         folder = "facepalm"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You cannot do that to yourself! ")
+            await ctx.send(sender.mention + " You cannot do that to yourself! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " has made " + ctx.sender.mention + " FACEPALM! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " has made " + sender.mention + " FACEPALM! ", folder)
 
     @commands.command()
     async def ohno(self, ctx, *, user: discord.Member):
@@ -490,9 +489,9 @@ class Fun:
         sender = ctx.message.author
         folder = "ono"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " You cannot do that to yourself! ")
+            await ctx.send(sender.mention + " You cannot do that to yourself! ")
         else:
-            await self.upload_random_gif(ctx.sender.mention + " yells at " + ctx.user.mention + " Oh no they didn't! ", folder)
+            await self.upload_random_gif(sender.mention + " yells at " + ctx, user.mention + " Oh no they didn't! ", folder)
 
     @commands.command()
     async def hungry(self, ctx, *, user: discord.Member):
@@ -500,9 +499,9 @@ class Fun:
         sender = ctx.message.author
         folder = "hungry"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " THEN GO GET SOMETHING TO EAT! ")
+            await ctx.send(sender.mention + " THEN GO GET SOMETHING TO EAT! ")
         else:
-            await self.upload_random_gif(ctx.user.mention + " has made " + ctx.sender.mention + " HUNGRY! ", folder)
+            await self.upload_random_gif(ctx, user.mention + " has made " + sender.mention + " HUNGRY! ", folder)
 
     @commands.command()
     async def nuts(self, ctx, *, user: discord.Member):
@@ -510,9 +509,9 @@ class Fun:
         sender = ctx.message.author
         folder = "nuts"
         if ctx.message.author == user:
-            await ctx.send(ctx.sender.mention + " No, Just no! Get a life! ")
+            await ctx.send(sender.mention + " No, Just no! Get a life! ")
         else:
-            await self.upload_random_gif(ctx.sender.mention + " wants to kick " + ctx.user.mention + " in the NUTS! OUCH!! ",
+            await self.upload_random_gif(sender.mention + " wants to kick " + ctx, user.mention + " in the NUTS! OUCH!! ",
                                          folder)
 
     @commands.command()
@@ -520,7 +519,7 @@ class Fun:
         """Do you have the Fever?"""
         sender = ctx.message.author
         folder = "fever"
-        await self.upload_random_gif(ctx.sender.mention + "I see you have the fever.... The Bieber fever", folder)
+        await self.upload_random_gif(sender.mention + "I see you have the fever.... The Bieber fever", folder)
 
 
     async def upload_random_gif(self, ctx, msg, folder):
