@@ -565,7 +565,7 @@ class Fun:
         user = message.author
         if hasattr(user, 'bot') and user.bot is True:
                     return
-        if channel.id not in self.flippedTables:
+        if str(channel.id) not in self.flippedTables:
              self.flippedTables[str(channel.id)] = {}
         #┬─┬ ┬┬ ┻┻ ┻━┻ ┬───┬ ┻━┻ will leave 3 tables left flipped
         #count flipped tables
@@ -573,7 +573,7 @@ class Fun:
             t = m.group()
             if '┻' in t and not (message.author.id == self.bot.user.id and self.settings["BOT_EXEMPT"]):
                 if t in self.flippedTables[str(channel.id)]:
-                    self.flippedTables[channel.id][t] += 1
+                    self.flippedTables[str(channel.id)][t] += 1
                 else:
                     self.flippedTables[str(channel.id)][t] = 1
                     if not self.settings["ALL_TABLES"]:
@@ -584,7 +584,7 @@ class Fun:
                     if self.flippedTables[str(channel.id)][f] <= 0:
                         del self.flippedTables[str(channel.id)][f]
                     else:
-                        self.flippedTables[channel.id][f] -= 1
+                        self.flippedTables[str(channel.id)][f] -= 1
         #wait random time. some tables may be unflipped by now.
         await asyncio.sleep(randfloat(0,1.5))
         tables = ""
