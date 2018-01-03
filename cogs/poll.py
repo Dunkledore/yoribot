@@ -2,7 +2,7 @@ from discord.ext import commands
 import asyncio
 
 def to_emoji(c):
-    base = 0x0031
+    base = 0x1f1e6
     return chr(base + c)
 
 class Polls:
@@ -14,7 +14,7 @@ class Polls:
     @commands.command()
     @commands.guild_only()
     async def poll(self, ctx, *, question):
-        """Ask a question and later add choices for members to vote on.
+        """Interactively creates a poll with the following question.
 
         To vote, use reactions!
         """
