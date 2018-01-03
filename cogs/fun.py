@@ -540,9 +540,10 @@ class Fun:
         if ctx.invoked_subcommand is None:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='tableset')
+            msg = ""
             for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
-            await ctx.send("```"+msg+"```")
+            await ctx.send("```" + msg + "```")
 
     @tableset.command(name="flipall")
     async def flipall(self, ctx):
