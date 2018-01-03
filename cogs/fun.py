@@ -15,6 +15,7 @@ import time
 import asyncio
 import asyncpg
 import os
+from cleverbot import Cleverbot
 
 defaults = [
     "Dunkledore's Floppy Disk",
@@ -531,6 +532,31 @@ class Fun:
         fileList = os.listdir(folderPath)
         gifPath = folderPath + "/" + fileList[randint(0, len(fileList) - 1)]
         await ctx.send(file=discord.File(gifPath))
+        
+    @commands.command()
+    async def talk(self, ctx):
+        def check(m):
+            if m.author != ctx.message.author:
+                return False
+            if m.channel != ctx.message.channel:
+                return False
+            return True
+
+        cleverbot_client = Cleverbot(str(self.bot.user.name))
+        await ctx.send(":fire: type exit to quit")
+        while True:
+            question = await self.bot.wait_for('message', timeout = 60, check=check)
+            try:
+                if question.content == "exit":
+                    await ctx.send(":+1:")
+                    break
+                await self.bot.send_typing(ctx.message.channel)
+                answer = cleverbot_client.ask(question.content)
+                await asyncio.sleep(2)
+                await ctx.send(answer)
+            except AttributeError:
+                await ctx.send("Ok then, well talk later")
+                break
 
 
 def check_folders():
