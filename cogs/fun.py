@@ -199,11 +199,11 @@ class Fun:
         author = ctx.message.author
         if not str(author.id) in self.stopwatches:
             self.stopwatches[str(author.id)] = int(time.perf_counter())
-            await ctx.send(ctx, author.mention + " Stopwatch started!")
+            await ctx.send(author.mention + " Stopwatch started!")
         else:
             tmp = abs(self.stopwatches[str(author.id)] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
-            await ctx.send(ctx, author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
+            await ctx.send(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(str(author.id), None)
 
     @commands.command()
