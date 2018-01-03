@@ -561,8 +561,8 @@ class Fun:
 
     #so much fluff just for this OpieOP
     async def scrutinize_messages(self, message):
-        channel = message.channel
-        user = message.author
+        channel = ctx.message.channel
+        user = ctx.message.author
         if hasattr(user, 'bot') and user.bot is True:
                     return
         if str(channel.id) not in self.flippedTables:
