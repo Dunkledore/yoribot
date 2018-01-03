@@ -523,7 +523,7 @@ class Fun:
         await self.upload_random_gif(sender.mention + "I see you have the fever.... The Bieber fever", folder)
 
 
-    async def upload_random_gif(self, msg, folder):
+    async def upload_random_gif(self, ctx, msg, folder):
         if msg:
             await ctx.send(msg)
         folderPath = "data/fun/" + folder
