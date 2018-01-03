@@ -538,11 +538,6 @@ class Fun:
         if ctx.invoked_subcommand is None:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='tableset')
-            msg = "```"
-            for k, v in self.settings.items():
-                msg += str(k) + ": " + str(v) + "\n"
-            msg = "```"
-            await ctx.send(msg)
 
     @tableset.command(name="flipall")
     async def flipall(self, ctx):
@@ -552,7 +547,7 @@ class Fun:
             await ctx.send("All tables will now be unflipped.")
         else:
             await ctx.send("Now only one table unflipped per message.")
-        dataIO.save_json("data/noflippedtables/settings.json", self.settings)
+        dataIO.save_json("data/fun/settings.json", self.settings)
 
     @tableset.command(name="flipbot")
     async def flipbot(self,ctx):
@@ -562,7 +557,7 @@ class Fun:
             await ctx.send("Bot is now allowed to leave its own tables flipped")
         else:
             await ctx.send("Bot must now unflip tables that itself flips")
-        dataIO.save_json("data/noflippedtables/settings.json", self.settings)
+        dataIO.save_json("data/fun/settings.json", self.settings)
 
     #so much fluff just for this OpieOP
     async def scrutinize_messages(self, message):
