@@ -195,14 +195,14 @@ class Fun:
     async def stopwatch(self, ctx):
         """Starts/stops stopwatch"""
         author = ctx.message.author
-        if not author.id in self.stopwatches:
-            self.stopwatches[author.id] = int(time.perf_counter())
+        if not str(author.id) in self.stopwatches:
+            self.stopwatches[str(author.id)] = int(time.perf_counter())
             await ctx.send(author.mention + " Stopwatch started!")
         else:
-            tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
+            tmp = abs(self.stopwatches[str(author.id)] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
             await ctx.send(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
-            self.stopwatches.pop(author.id, None)
+            self.stopwatches.pop(str(author.id), None)
 
     @commands.command()
     @commands.guild_only()
@@ -571,7 +571,7 @@ class Fun:
         #count flipped tables
         for m in re.finditer('┻━*┻|┬─*┬', message.content):
             t = m.group()
-            if '┻' in t and not (message.author.id == self.bot.user.id and self.settings["BOT_EXEMPT"]):
+            if '┻' in t and not (str(message.author.id) == self.bot.user.id and self.settings["BOT_EXEMPT"]):
                 if t in self.flippedTables[str(channel.id)]:
                     self.flippedTables[str(channel.id)][t] += 1
                 else:
