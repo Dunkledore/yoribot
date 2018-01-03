@@ -57,6 +57,7 @@ class Fun:
         self.system = dataIO.load_json(self.feelings)
         self.settings = dataIO.load_json("data/fun/tablesettings.json")
         self.flippedTables = {}
+        self.stopwatches = {}
 
     def save_emotes(self):
         dataIO.save_json(self.feelings, self.system)
