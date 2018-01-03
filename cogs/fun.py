@@ -566,7 +566,7 @@ class Fun:
         dataIO.save_json("data/fun/settings.json", self.settings)
 
     #so much fluff just for this OpieOP
-    async def scrutinize_messages(self, message):
+    async def on_message(self, message):
         channel = ctx.message.channel
         user = ctx.message.author
         if hasattr(user, 'bot') and user.bot is True:
