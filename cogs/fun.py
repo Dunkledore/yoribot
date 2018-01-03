@@ -56,8 +56,6 @@ class Fun:
         self.toggle = False
         self.feelings = "data/fun/feelings.json"
         self.system = dataIO.load_json(self.feelings)
-        self.settings = dataIO.load_json("data/fun/tablesettings.json")
-        self.flippedTables = {}
         self.stopwatches = {}
 
     def save_emotes(self):
@@ -534,81 +532,6 @@ class Fun:
         gifPath = folderPath + "/" + fileList[randint(0, len(fileList) - 1)]
         await ctx.send(file=discord.File(gifPath))
 
-    @commands.group(pass_context=True)
-    async def tableset(self, ctx):
-        """Got some nice settings for my UNflipped tables"""
-        if ctx.invoked_subcommand is None:
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='tableset')
-            msg = ""
-            for k, v in self.settings.items():
-                msg += str(k) + ": " + str(v) + "\n"
-            await ctx.send("```" + msg + "```")
-
-    @tableset.command(name="flipall")
-    async def flipall(self, ctx):
-        """Enables/disables right all unflipped tables in a message"""
-        self.settings["ALL_TABLES"] = not self.settings["ALL_TABLES"]
-        if self.settings["ALL_TABLES"]:
-            await ctx.send("All tables will now be unflipped.")
-        else:
-            await ctx.send("Now only one table unflipped per message.")
-        dataIO.save_json("data/fun/settings.json", self.settings)
-
-    @tableset.command(name="flipbot")
-    async def flipbot(self,ctx):
-        """Enables/disables allowing bot to flip tables"""
-        self.settings["BOT_EXEMPT"] = not self.settings["BOT_EXEMPT"]
-        if self.settings["BOT_EXEMPT"]:
-            await ctx.send("Bot is now allowed to leave its own tables flipped")
-        else:
-            await ctx.send("Bot must now unflip tables that itself flips")
-        dataIO.save_json("data/fun/settings.json", self.settings)
-
-    #so much fluff just for this OpieOP
-    async def on_message(self, message):
-        channel = ctx.message.channel
-        user = ctx.message.author
-        if hasattr(user, 'bot') and user.bot is True:
-                    return
-        if str(channel.id) not in self.flippedTables:
-             self.flippedTables[str(channel.id)] = {}
-        #┬─┬ ┬┬ ┻┻ ┻━┻ ┬───┬ ┻━┻ will leave 3 tables left flipped
-        #count flipped tables
-        for m in re.finditer('┻━*┻|┬─*┬', message.content):
-            t = m.group()
-            if '┻' in t and not (str(message.author.id) == self.bot.user.id and self.settings["BOT_EXEMPT"]):
-                if t in self.flippedTables[str(channel.id)]:
-                    self.flippedTables[str(channel.id)][t] += 1
-                else:
-                    self.flippedTables[str(channel.id)][t] = 1
-                    if not self.settings["ALL_TABLES"]:
-                        break
-            else:
-                f = t.replace('┬','┻').replace('─','━')
-                if f in self.flippedTables[str(channel.id)]:
-                    if self.flippedTables[str(channel.id)][f] <= 0:
-                        del self.flippedTables[str(channel.id)][f]
-                    else:
-                        self.flippedTables[str(channel.id)][f] -= 1
-        #wait random time. some tables may be unflipped by now.
-        await asyncio.sleep(randfloat(0,1.5))
-        tables = ""
-
-        deleteTables = []
-        #unflip tables in self.flippedTables[channel.id]
-        for t, n in self.flippedTables[str(channel.id)].items():
-            unflipped = t.replace('┻','┬').replace('━','─') + " ノ( ゜-゜ノ)" + "\n"
-            for i in range(0,n):
-                tables += unflipped
-                #in case being processed in parallel
-                self.flippedTables[str(channel.id)][t] -= 1
-            deleteTables.append(t)
-        for t in deleteTables:
-            del self.flippedTables[str(channel.id)][t]
-        if tables != "":
-            await ctx.send(tables)
-
 
 def check_folders():
     if not os.path.exists("data/fun"):
@@ -626,11 +549,7 @@ def check_files():
     if not os.path.isfile("data/fun/feelings.json"):
         raise RuntimeError(
             "Required data is missing. Please reinstall this cog.")
-    settings = {"ALL_TABLES" : True, "BOT_EXEMPT" : False}
-    f = "data/fun/tablesettings.json"
-    if not dataIO.is_valid_json(f):
-        print("Creating settings.json...")
-        dataIO.save_json(f, settings)
+
 def setup(bot):
     check_folders()
     check_files()
