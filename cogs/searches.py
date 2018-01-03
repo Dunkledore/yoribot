@@ -132,7 +132,7 @@ class Searches:
 
                 last_scores = '\n'.join(str(int(x)) for x in result['tstats']['recentScores'])
 
-                embed = discord.Embed(colour=random_colour)
+                embed = discord.Embed(colour=random_colour, description= " ", url='http://play.typeracer.com/')
                 embed.set_author(name=result['name'])
                 embed.add_field(name='Country', value=':flag_{}:'.format(result['country']))
                 embed.add_field(name='Level', value=result['tstats']['level'])
@@ -142,8 +142,6 @@ class Searches:
                 embed.add_field(name='Best WPM', value=int(result['tstats']['bestGameWpm']))
                 embed.add_field(name='Recent scores', value=last_scores)
                 embed.set_footer(text='typeracer.com')
-                embed.url = 'http://play.typeracer.com/'
-
                 await ctx.send(embed=embed)
             else:
                 await ctx.send('`Unable to retieve stats for user {}`'.format(user))
