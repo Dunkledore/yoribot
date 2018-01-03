@@ -228,7 +228,7 @@ class Pokedex:
 
                 await ctx.send("```{}```".format(t))
 
-    def link_builder(self, ctx, name):
+    def link_builder(self, name):
         link = name.lower().replace(' ', '_')
         if link in exceptions:
             if 'nidoran' in link:
