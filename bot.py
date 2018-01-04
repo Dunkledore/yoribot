@@ -58,6 +58,7 @@ initial_extensions = (
     'cogs.rolemanager',
     'cogs.searches',
     'cogs.socialmedia',
+    'cogs.stars',
     'cogs.stats',
     'cogs.steam',
     'cogs.streamrole',
