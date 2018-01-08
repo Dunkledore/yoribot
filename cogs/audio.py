@@ -4,7 +4,8 @@ from discord.ext import commands
 from .utils import checks, formats
 
 from .utils import datatools
-#from .music import _data, _musicplayer
+from .music import _data
+from .music import _musicplayer
 
 
 class Music:
