@@ -354,14 +354,6 @@ class PornHub:
             # print(task)
         self.tasks.clear()
 
-    @commands.command(pass_context=False)
-    async def help(self):
-        await self.displayHelp()
-
-    @help.error
-    async def help_error(error, errMsg, context):
-        print(errMsg)
-
     @commands.command(pass_context=True)
     async def search(self, context, query: str = "help", page: int = 1, rating: int = 0):
         if query.lower() == "help":
@@ -403,10 +395,6 @@ class PornHub:
         # vids = self.getVids(partialUrl, actualPage, skip, rating, 5)
 
         await self.printVids(vids, context, query, page, rating)
-
-    @search.error
-    async def search_error(error, errMsg, context):
-        print(errMsg)
 
     @commands.command(pass_context=True)
     async def pornhubcategory(self, context, categoryName: str = "help", page: int = 1, rating: int = 0):
@@ -489,10 +477,6 @@ class PornHub:
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
         await self.printVids(vids, context, "Hottest Porn Videos", page, rating)
 
-    @hottest.error
-    async def hottest_error(error, errMsg, context):
-        print(errMsg)
-
     @commands.command(pass_context=True)
     async def mv(self, context, page: int = 1, rating: int = 0):
         await self.mostviewed_func(context, page, rating)
@@ -513,14 +497,6 @@ class PornHub:
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
         await self.printVids(vids, context, "This Week's Most Viewed Porn Videos", page, rating)
 
-    @mv.error
-    async def mv_error(error, errMsg, context):
-        print(errMsg)
-
-    @mostviewed.error
-    async def mostviewed_error(error, errMsg, context):
-        print(errMsg)
-
     @commands.command(pass_context=True)
     async def tr(self, context, page: int = 1, rating: int = 0):
         await self.toprated_func(context, page, rating)
@@ -540,14 +516,6 @@ class PornHub:
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
         await self.printVids(vids, context, "This Week's Top Rated Porn Videos", page, rating)
-
-    @tr.error
-    async def tr_error(error, errMsg, context):
-        print(errMsg)
-
-    @toprated.error
-    async def toprated_error(error, errMsg, context):
-        print(errMsg)
 
     @commands.command(pass_context=True)
     async def home(self, context):
@@ -643,10 +611,6 @@ class PornHub:
         vidEmbed.add_field(name="URL", value=vidUrl, inline=False)
 
         await ctx.send(embed=vidEmbed)
-
-    @home.error
-    async def home_error(error, errMsg, context):
-        print(errMsg)
 
 def setup(bot):
     n = PornHub(bot)
