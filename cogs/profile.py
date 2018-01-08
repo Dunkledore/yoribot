@@ -129,9 +129,6 @@ class Profile:
     @commands.guild_only()
     async def profileadd(self, ctx, name=None, *, value=None):
         """Use the command by itself for the bot to prompt you for the title and content or enter both after the command."""
-        
-        if ctx.command.guild_only():
-            return
 
         def check(m):
             if m.author != ctx.message.author:
