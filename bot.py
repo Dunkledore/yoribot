@@ -50,6 +50,7 @@ initial_extensions = (
     'cogs.nsfw',
     'cogs.oweather',
     'cogs.poll',
+    'cogs.pokedex',
     'cogs.profile',
     'cogs.race',
     'cogs.rate',
