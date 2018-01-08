@@ -342,7 +342,7 @@ class PornHub:
             await ctx.send(embed=vidEmbed)
 
     @commands.group(pass_context=True)
-    async def pornhub(self, context):
+    async def pornhub(self, ctx, context):
         if context.invoked_subcommand == None:
             await self.displayHelp()
         # print(context.invoked_subcommand)
