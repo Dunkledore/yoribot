@@ -108,24 +108,6 @@ class PornHub:
         self.bot = bot
         self.tasks = []
 
-    async def displayHelp(self, ctx):
-        helpEmbed = discord.Embed(title='__PornHub Command Help__', colour=discord.Colour(0xFF9900))
-        helpEmbed.add_field(name="Some Useful Tips",
-                            value="1. Arguments in < > are mandatory for the command to work\n"
-                                  "2. Arguments in [ ] are optional and usually have a default value\n"
-                                  "3. *<You must have a subscription to Pr0nBot Gold to view this Useful Tip!>*",
-                            inline=False)
-        helpEmbed.add_field(name=".pornhub help", value="Displays this message.", inline=False)
-        helpEmbed.add_field(name=".pornhub home", value='Lists some of the "Hottest" and "Most Viewed" videos from the front page of PornHub', inline=False)
-        helpEmbed.add_field(name=".pornhub search <query> [page] [minRating]", value="Allows you to search PornHub for videos. Simple as that!", inline=False)
-        helpEmbed.add_field(name=".pornhub category <categoryName> [page] [minRating]", value="Allows you to browse PornHub by category", inline=False)
-        helpEmbed.add_field(name=".pornhub category list", value="Sends you a comprehensive list of all available categories you can use with *.pornhub category*", inline=False)
-        helpEmbed.add_field(name=".pornhub hottest [page] [minRating]", value='Allows you to browse the "Hottest" videos on PornHub', inline=False)
-        helpEmbed.add_field(name=".pornhub mostviewed [page] [minRating]", value='Allows you to browse the "Most Viewed" videos on PornHub', inline=False)
-        helpEmbed.add_field(name=".pornhub toprated [page] [minRating]", value='Allows you to browse the "Top Rated" videos on PornHub', inline=False)
-
-        await ctx.send(embed=helpEmbed)
-
     # Gets videos using the Hub Traffic API
     def getVidsAPI(self, url, actualPage, skip, rating, stillNeed):
         fullUrl = url + '&page=' + str(actualPage)
@@ -341,21 +323,9 @@ class PornHub:
 
             await ctx.send(embed=vidEmbed)
 
-    @commands.group(pass_context=True)
-    async def pornhub(self, ctx, context):
-        if context.invoked_subcommand == None:
-            await self.displayHelp()
-        # print(context.invoked_subcommand)
-
-        # Clear out bot.wait_for_message Tasks
-        # Avoid multiple video returns
-        for task in self.tasks:
-            task.cancel()
-            # print(task)
-        self.tasks.clear()
 
     @commands.command(pass_context=True)
-    async def search(self, context, query: str = "help", page: int = 1, rating: int = 0):
+    async def pornhub(self, ctx, query: str = "help", page: int = 1, rating: int = 0):
         if query.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub search <query> [page] [minRating]*", colour=discord.Colour(0xFF9900))
             helpEmbed.set_author(name="PornHub Search Help")
