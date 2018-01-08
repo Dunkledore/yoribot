@@ -108,7 +108,7 @@ class PornHub:
         self.bot = bot
         self.tasks = []
 
-    async def displayHelp(self):
+    async def displayHelp(self, ctx):
         helpEmbed = discord.Embed(title='__PornHub Command Help__', colour=discord.Colour(0xFF9900))
         helpEmbed.add_field(name="Some Useful Tips",
                             value="1. Arguments in < > are mandatory for the command to work\n"
