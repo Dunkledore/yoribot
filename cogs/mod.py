@@ -212,27 +212,27 @@ class Mod:
 #                        await tchan.set_permissions(message.author, reason=f"Mute in all channels by {self.bot.user.name}", send_messages=False)
 #                    mod_channel = await self.get_mod_channel(message.guild)
 #                    await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
+#
+#    async def on_message(self, message):
+#        author = message.author
+#        if author.id in (self.bot.user.id, self.bot.owner_id):
+#            return
+#
+#        if message.guild is None:
+#            return
+#
+#        if not isinstance(author, discord.Member):
+#            return
+#
+#        await self.check_image_spam(message)
+#        # we're going to ignore members with roles
+#        if len(author.roles) > 1:
+#            return
 
-    async def on_message(self, message):
-        author = message.author
-        if author.id in (self.bot.user.id, self.bot.owner_id):
-            return
-
-        if message.guild is None:
-            return
-
-        if not isinstance(author, discord.Member):
-            return
-
-        await self.check_image_spam(message)
-        # we're going to ignore members with roles
-        if len(author.roles) > 1:
-            return
-
-        guild_id = message.guild.id
-        config = await self.get_guild_config(guild_id)
-        if config is None:
-            return
+#        guild_id = message.guild.id
+#        config = await self.get_guild_config(guild_id)
+#        if config is None:
+#            return
 
         # check for raid mode stuff
         await self.check_raid(config, message.guild, author, message.created_at)
