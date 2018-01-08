@@ -187,33 +187,31 @@ class Mod:
             log.info(f'[Raid Mode] Kicked {member} (ID: {member.id}) from server {member.guild} via strict mode.')
             self._recently_kicked[guild.id].add(member.id)
 
-    async def check_image_spam(self, message):
-
-        if message.guild not in self.media_count:
-            self.media_count[message.guild] = {}
-
-        if message.author not in self.media_count[message.guild]:
-            self.media_count[message.guild][message.author] = []
-
-        if message.attachments:
-            if not message.channel.is_nsfw():
-                for attachment in message.attachments:
-                    self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
-
-            if len(self.media_count[message.guild][message.author]) > 2:
-                if (self.media_count[message.guild][message.author][-1][3] - self.media_count[message.guild][message.author][-3][3]).total_seconds() < 10:
-                    for item in self.media_count[message.guild][message.author][-3:]:
-                        try:
-                            await item[0].delete()
-                        except Exception as e:
-                            await message.channel.send(e)
-                            pass
-                    for tchan in message.guild.text_channels:
-                        await tchan.set_permissions(message.author, reason=f"Mute in all channels by {self.bot.user.name}", send_messages=False)
-                    mod_channel = await self.get_mod_channel(message.guild)
-                    await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
-
-
+#    async def check_image_spam(self, message):
+#
+#       if message.guild not in self.media_count:
+#            self.media_count[message.guild] = {}
+#
+#        if message.author not in self.media_count[message.guild]:
+#            self.media_count[message.guild][message.author] = []
+#
+#        if message.attachments:
+#            if not message.channel.is_nsfw():
+#                for attachment in message.attachments:
+#                    self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
+#
+#            if len(self.media_count[message.guild][message.author]) > 2:
+#                if (self.media_count[message.guild][message.author][-1][3] - self.media_count[message.guild][message.author][-3][3]).total_seconds() < 10:
+#                    for item in self.media_count[message.guild][message.author][-3:]:
+#                        try:
+#                            await item[0].delete()
+#                        except Exception as e:
+#                            await message.channel.send(e)
+#                            pass
+#                    for tchan in message.guild.text_channels:
+#                        await tchan.set_permissions(message.author, reason=f"Mute in all channels by {self.bot.user.name}", send_messages=False)
+#                    mod_channel = await self.get_mod_channel(message.guild)
+#                    await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
 
     async def on_message(self, message):
         author = message.author
