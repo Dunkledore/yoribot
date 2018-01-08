@@ -476,10 +476,6 @@ class PornHub:
 
         await self.printVids(vids, context, botString, page, rating)
 
-    @category.error
-    async def category_error(error, errMsg, context):
-        print(errMsg)
-
     @commands.command(pass_context=True)
     async def hottest(self, context, page: int = 1, rating: int = 0):
         if rating < 0 or rating > 100: rating = 0
