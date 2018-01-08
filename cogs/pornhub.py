@@ -409,7 +409,7 @@ class PornHub:
         print(errMsg)
 
     @commands.command(pass_context=True)
-    async def category(self, context, categoryName: str = "help", page: int = 1, rating: int = 0):
+    async def pornhubcategory(self, context, categoryName: str = "help", page: int = 1, rating: int = 0):
         if categoryName.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub category <categoryName> [page] [minRating]*", colour=discord.Colour(0xFF9900))
             helpEmbed.set_author(name="PornHub Category Browse Help")
