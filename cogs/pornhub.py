@@ -354,7 +354,7 @@ class PornHub:
             # print(task)
         self.tasks.clear()
 
-    @pornhub.command(pass_context=False)
+    @commands.command(pass_context=False)
     async def help(self):
         await self.displayHelp()
 
@@ -362,7 +362,7 @@ class PornHub:
     async def help_error(error, errMsg, context):
         print(errMsg)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def search(self, context, query: str = "help", page: int = 1, rating: int = 0):
         if query.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub search <query> [page] [minRating]*", colour=discord.Colour(0xFF9900))
@@ -408,7 +408,7 @@ class PornHub:
     async def search_error(error, errMsg, context):
         print(errMsg)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def category(self, context, categoryName: str = "help", page: int = 1, rating: int = 0):
         if categoryName.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub category <categoryName> [page] [minRating]*", colour=discord.Colour(0xFF9900))
@@ -480,7 +480,7 @@ class PornHub:
     async def category_error(error, errMsg, context):
         print(errMsg)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def hottest(self, context, page: int = 1, rating: int = 0):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
@@ -497,11 +497,11 @@ class PornHub:
     async def hottest_error(error, errMsg, context):
         print(errMsg)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def mv(self, context, page: int = 1, rating: int = 0):
         await self.mostviewed_func(context, page, rating)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def mostviewed(self, context, page: int = 1, rating: int = 0):
         await self.mostviewed_func(context, page, rating)
 
@@ -525,11 +525,11 @@ class PornHub:
     async def mostviewed_error(error, errMsg, context):
         print(errMsg)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def tr(self, context, page: int = 1, rating: int = 0):
         await self.toprated_func(context, page, rating)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def toprated(self, context, page: int = 1, rating: int = 0):
         await self.toprated_func(context, page, rating)
 
@@ -553,7 +553,7 @@ class PornHub:
     async def toprated_error(error, errMsg, context):
         print(errMsg)
 
-    @pornhub.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def home(self, context):
         url = "https://www.pornhub.com/"
         r = requests.get(url)
