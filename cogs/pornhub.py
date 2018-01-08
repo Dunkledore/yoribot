@@ -652,6 +652,6 @@ class PornHub:
     async def home_error(error, errMsg, context):
         print(errMsg)
 
-
+def setup(bot):
     n = PornHub(bot)
     bot.add_cog(n)
