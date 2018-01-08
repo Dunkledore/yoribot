@@ -124,7 +124,7 @@ class PornHub:
         helpEmbed.add_field(name=".pornhub mostviewed [page] [minRating]", value='Allows you to browse the "Most Viewed" videos on PornHub', inline=False)
         helpEmbed.add_field(name=".pornhub toprated [page] [minRating]", value='Allows you to browse the "Top Rated" videos on PornHub', inline=False)
 
-        await self.bot.say(embed=helpEmbed)
+        await ctx.send(embed=helpEmbed)
 
     # Gets videos using the Hub Traffic API
     def getVidsAPI(self, url, actualPage, skip, rating, stillNeed):
@@ -134,7 +134,7 @@ class PornHub:
         r = requests.get(fullUrl)
         if r.status_code != 200:
             print('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
-            # await self.bot.say('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
+            # await ctx.send('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
             return []
 
         rJson = json.loads(r.text)
@@ -188,7 +188,7 @@ class PornHub:
         r = requests.get(fullUrl)
         if r.status_code != 200:
             print('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
-            # await self.bot.say('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
+            # await ctx.send('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
             return []
 
         soup = BeautifulSoup(r.text, "html.parser")
@@ -242,7 +242,7 @@ class PornHub:
         r = requests.get(fullUrl)
         if r.status_code != 200:
             print('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
-            # await self.bot.say('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
+            # await ctx.send('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
             return []
 
         rJson = json.loads(r.text)
@@ -294,7 +294,7 @@ class PornHub:
 
     async def printVids(self, vids, context, query, page, rating):
         if len(vids) <= 0:
-            await self.bot.say("No videos found :cry:")
+            await ctx.send("No videos found :cry:")
         else:
             resEmbed = discord.Embed(title='__Choose one by giving its number__', colour=discord.Colour(0xFF9900))
             resEmbed.set_footer(text=query + ' Results - Page ' + str(page))
@@ -304,7 +304,7 @@ class PornHub:
                 pornStats = '\t:clock2: ' + vids[i][2] + '\t:eyes: ' + vids[i][3] + '\t' + goodBad + ' ' + vids[i][4] + '%'
                 resEmbed.add_field(name=pornTitle, value=pornStats, inline=False)
 
-            await self.bot.say(embed=resEmbed)
+            await ctx.send(embed=resEmbed)
 
             def check(m):
                 return m.content in map(str, range(page * 5 - 4, page * 5 - 4 + len(vids)))
@@ -321,7 +321,7 @@ class PornHub:
 
             # Video data didn't come back for some reason?
             if not selectedVid:
-                await self.bot.say("Error getting your video :cry:")
+                await ctx.send("Error getting your video :cry:")
                 return
 
             goodBad = ':thumbsup:' if int(selectedVid[4]) >= 50 else ':thumbsdown:'
@@ -339,7 +339,7 @@ class PornHub:
             vidEmbed.add_field(name="Tags", value=tagString, inline=False)
             vidEmbed.add_field(name="URL", value=vidUrl, inline=False)
 
-            await self.bot.say(embed=vidEmbed)
+            await ctx.send(embed=vidEmbed)
 
     @commands.group(pass_context=True)
     async def pornhub(self, context):
@@ -375,7 +375,7 @@ class PornHub:
                                       "**page:** What page of results you want to go to (default=1)\n"
                                       "**minRating:** Must be an integer between 0 and 100. Videos with a rating lower than this number won't be displayed in results (default=0)",
                                 inline=False)
-            await self.bot.say(embed=helpEmbed)
+            await ctx.send(embed=helpEmbed)
             return
 
         if rating < 0 or rating > 100: rating = 0
@@ -421,7 +421,7 @@ class PornHub:
                                       "**page**: What page of results you want to go to (default=1)\n"
                                       "**minRating:** Must be an integer between 0 and 100. Videos with a rating lower than this number won't be displayed in results (default=0)",
                                 inline=False)
-            await self.bot.say(embed=helpEmbed)
+            await ctx.send(embed=helpEmbed)
             return
 
         if categoryName.lower() == "list":
@@ -441,7 +441,7 @@ class PornHub:
                 category = cat
 
         if not category:
-            await self.bot.say(
+            await ctx.send(
                 "Category " + categoryName + " not found. Do .pornhub category list for a list of all categories.")
             return
 
@@ -559,7 +559,7 @@ class PornHub:
         r = requests.get(url)
         if r.status_code != 200:
             print('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
-            await self.bot.say('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
+            await ctx.send('Error ' + str(r.status_code) + ': Cannot connect to PornHub.com :cry:')
             return
 
         soup = BeautifulSoup(r.text, "html.parser")
@@ -602,7 +602,7 @@ class PornHub:
             pornStats = '\t:clock2: ' + vids[i][2] + '\t:eyes: ' + vids[i][3] + '\t' + goodBad + ' ' + vids[i][4] + '%'
             hotEmbed.add_field(name=pornTitle, value=pornStats, inline=False)
 
-        await self.bot.say(embed=hotEmbed)
+        await ctx.send(embed=hotEmbed)
 
         mvEmbed = discord.Embed(title='__Most Viewed Videos__', colour=discord.Colour(0xFF9900))
         for i in range(6, 11):
@@ -611,7 +611,7 @@ class PornHub:
             pornStats = '\t:clock2: ' + vids[i][2] + '\t:eyes: ' + vids[i][3] + '\t' + goodBad + ' ' + vids[i][4] + '%'
             mvEmbed.add_field(name=pornTitle, value=pornStats, inline=False)
 
-        await self.bot.say(embed=mvEmbed)
+        await ctx.send(embed=mvEmbed)
 
         def check(m):
             return m.content in map(str, range(1, 12))
@@ -628,7 +628,7 @@ class PornHub:
 
         # Video data didn't come back for some reason?
         if not selectedVid:
-            await self.bot.say("Error getting your video :cry:")
+            await ctx.send("Error getting your video :cry:")
             return
 
         goodBad = ':thumbsup:' if int(selectedVid[4]) >= 50 else ':thumbsdown:'
@@ -646,12 +646,12 @@ class PornHub:
         vidEmbed.add_field(name="Tags", value=tagString, inline=False)
         vidEmbed.add_field(name="URL", value=vidUrl, inline=False)
 
-        await self.bot.say(embed=vidEmbed)
+        await ctx.send(embed=vidEmbed)
 
     @home.error
     async def home_error(error, errMsg, context):
         print(errMsg)
 
 
-def setup(bot):
-    bot.add_cog(PornHub(bot))
+    n = PornHub(bot)
+    bot.add_cog(n)
