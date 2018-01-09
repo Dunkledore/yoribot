@@ -22,9 +22,6 @@ class Hiddenroles:
             async with ctx.db.fetch(query) as results:
                 self.bot.get_channel(381089525880979467).send(str(results))
 
-
-
-
     @commands.group()
     @commands.guild_only()
     @checks.is_mod()
@@ -38,6 +35,11 @@ class Hiddenroles:
     @checks.is_admin()
     async def create_hiddenrole(self):
         pass
+
+    @hiddenrole.command(name="test")
+    @checks.is_developer()
+    async def testing(self, ctx):
+        await self._getdata(ctx)
 
 def setup(bot):
     bot.add_cog(Hiddenroles(bot))
