@@ -6,7 +6,7 @@ from .utils import db, checks
 
 
 def embedHR(colour="green", description="", footer=""):
-    colours = {"red": discord.Colour.red, "green": discord.Colour.green, "yellow": discord.Colour.gold}
+    colours = {"red": discord.Colour.red(), "green": discord.Colour.green(), "yellow": discord.Colour.gold()}
     em = discord.Embed(color=colours[colour], description=description)
     em.set_footer(text=footer)
     em.set_author(name="Hidden Role Helper", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
