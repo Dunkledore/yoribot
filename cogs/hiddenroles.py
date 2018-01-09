@@ -26,7 +26,7 @@ class Hiddenroles:
 
 
     @commands.group()
-    @checks.guild_only()
+    @commands.guild_only()
     @checks.is_mod()
     async def hiddenrole(self, ctx):
         prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
@@ -34,7 +34,7 @@ class Hiddenroles:
         await ctx.send(embed=em)
 
     @hiddenrole.command(name="create")
-    @checks.guild_only()
+    @commands.guild_only()
     @checks.is_admin()
     async def create_hiddenrole(self):
         pass
