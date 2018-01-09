@@ -12,7 +12,7 @@ def embedHR(colour, description, footer):
     return em
 
 class Hiddenroles:
-    def __int__(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self._db = {}
 
