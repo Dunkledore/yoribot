@@ -38,3 +38,6 @@ class Hiddenroles:
     @checks.is_admin()
     async def create_hiddenrole(self):
         pass
+
+def setup(bot):
+    bot.add_cog(Hiddenroles(bot))
