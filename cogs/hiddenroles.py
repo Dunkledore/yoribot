@@ -21,8 +21,8 @@ class Hiddenroles:
     async def _getdata(self, ctx, server=None):
         if server is None:
             query = "SELECT * FROM hiddenroles"
-            async with ctx.db.fetch(query) as results:
-                self.bot.get_channel(381089525880979467).send(str(results))
+            results = await ctx.db.fetch(query)
+            self.bot.get_channel(381089525880979467).send(str(results))
 
     @commands.group()
     @commands.guild_only()
