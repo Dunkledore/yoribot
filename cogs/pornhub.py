@@ -274,7 +274,7 @@ class PornHub:
 
         return vid
 
-    async def printVids(self, ctx, vids, ctx, query, page, rating):
+    async def printVids(self, ctx, vids, query, page, rating):
         if len(vids) <= 0:
             await ctx.send("No videos found :cry:")
         else:
