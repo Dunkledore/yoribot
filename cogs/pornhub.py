@@ -455,7 +455,7 @@ class PornHub:
     async def mostviewed(self, page: int,*, rating: int):
         await self.mostviewed_func(page, rating)
 
-    async def mostviewed_func(self, ctx, page, rating):
+    async def mostviewed_func(self, page, rating):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
