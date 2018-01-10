@@ -289,11 +289,14 @@ class PornHub:
             await ctx.send(embed=resEmbed)
 
             def check(m):
+            	if m.author != ctx.message.author:
+                	return False
+            	if m.channel != ctx.message.channel:
+            		return False
                 return m.content in map(str, range(page * 5 - 4, page * 5 - 4 + len(vids)))
 
             # Append it so it can be cancelled later if needed
-            self.tasks.append(asyncio.ensure_future(self.bot.wait_for_message(author=ctx.message.author, check=check,
-                                                                              channel=ctx.message.channel, timeout=20)))
+            self.tasks.append(asyncio.ensure_future(self.bot.wait_for('message', check=check,timeout=20)))
             resp = await self.tasks[len(self.tasks)-1]
             #resp = await self.bot.wait_for_message(author=ctx.message.author, check=check,
             #                                       channel=ctx.message.channel, timeout=20)
