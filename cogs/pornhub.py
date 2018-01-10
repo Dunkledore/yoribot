@@ -452,7 +452,7 @@ class PornHub:
         await self.mostviewed_func(page, rating)
 
     @commands.command()
-    async def mostviewed(self, ctx, page: int,*, rating: int):
+    async def mostviewed(self, page: int,*, rating: int):
         await self.mostviewed_func(page, rating)
 
     async def mostviewed_func(self, ctx, page, rating):
