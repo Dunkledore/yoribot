@@ -434,8 +434,8 @@ class PornHub:
 
         await self.printVids(vids, botString, page, rating)
 
-    @commands.command(pass_ctx=True)
-    async def hottest(self, ctx, page: int,*, rating: int):
+    @commands.command()
+    async def hottest(self, page: int,*, rating: int):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
@@ -448,7 +448,7 @@ class PornHub:
         await self.printVids(vids, "Hottest Porn Videos", page, rating)
 
     @commands.command()
-    async def mv(self, ctx, page: int,*, rating: int):
+    async def mv(self, page: int,*, rating: int):
         await self.mostviewed_func(page, rating)
 
     @commands.command()
@@ -468,14 +468,14 @@ class PornHub:
         await self.printVids(vids, "This Week's Most Viewed Porn Videos", page, rating)
 
     @commands.command()
-    async def tr(self, ctx, page: int,*, rating: int):
+    async def tr(self, page: int,*, rating: int):
         await self.toprated_func(page, rating)
 
     @commands.command(pass_ctx=True)
-    async def toprated(self, ctx, page: int = 1, rating: int = 0):
+    async def toprated(self, page: int = 1, rating: int = 0):
         await self.toprated_func(page, rating)
 
-    async def toprated_func(self, ctx, page, rating):
+    async def toprated_func(self, page, rating):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
