@@ -274,7 +274,7 @@ class PornHub:
 
         return vid
 
-    async def printVids(self, ctx, vids, query, page,*, rating):
+    async def printVids(ctx, self, vids, query, page, rating):
         if len(vids) <= 0:
             await ctx.send("No videos found :cry:")
         else:
@@ -325,7 +325,7 @@ class PornHub:
 
 
     @commands.command()
-    async def pornhub(self, ctx,  query, page: int,*, rating: int):
+    async def pornhub(self, ctx,  query, page: int, rating: int):
         if query.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub search <query> [page] [minRating]*", colour=discord.Colour(0xFF9900))
             helpEmbed.set_author(name="PornHub Search Help")
@@ -367,7 +367,7 @@ class PornHub:
         await self.printVids(vids, query, page, rating)
 
     @commands.command()
-    async def pornhubcategory(self, ctx, categoryName: str, page: int,*, rating: int):
+    async def pornhubcategory(self, ctx, categoryName: str, page: int, rating: int):
         if categoryName.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub category <categoryName> [page] [minRating]*", colour=discord.Colour(0xFF9900))
             helpEmbed.set_author(name="PornHub Category Browse Help")
@@ -435,7 +435,7 @@ class PornHub:
         await self.printVids(vids, botString, page, rating)
 
     @commands.command()
-    async def hottest(self, page: int,*, rating: int):
+    async def hottest(self, page: int, rating: int):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
@@ -448,11 +448,11 @@ class PornHub:
         await self.printVids(vids, "Hottest Porn Videos", page, rating)
 
     @commands.command()
-    async def mv(self, page: int,*, rating: int):
+    async def mv(self, page: int, rating: int):
         await self.mostviewed_func(page, rating)
 
     @commands.command()
-    async def mostviewed(self, page: int,*, rating: int):
+    async def mostviewed(self, page: int, rating: int):
         await self.mostviewed_func(page, rating)
 
     async def mostviewed_func(self, page, rating):
@@ -468,7 +468,7 @@ class PornHub:
         await self.printVids(vids, "This Week's Most Viewed Porn Videos", page, rating)
 
     @commands.command()
-    async def tr(self, page: int,*, rating: int):
+    async def tr(self, page: int, rating: int):
         await self.toprated_func(page, rating)
 
     @commands.command(pass_ctx=True)
