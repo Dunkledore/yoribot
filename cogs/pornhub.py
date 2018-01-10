@@ -475,7 +475,7 @@ class PornHub:
     async def toprated(self,ctx, page: int = 1, rating: int = 0):
         await self.toprated_func(ctx,page, rating)
 
-    async def toprated_func(self, ctx page, rating):
+    async def toprated_func(self, ctx, page, rating):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
