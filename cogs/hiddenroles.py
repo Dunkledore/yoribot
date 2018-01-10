@@ -24,7 +24,8 @@ class Hiddenroles:
             results = await ctx.db.fetch(query)
             await self.bot.get_channel(381089525880979467).send(str(results))
             for r in results:
-                self.permdata[r["guild_id"]] = r["role_permissions"]
+                self.permdata[r["guild_id"]] = r["permission_data"]
+        await self.bot.get_channel(381089525880979467).send(str(self.permdata))
 
 
     @commands.group(invoke_without_command=True)
@@ -52,6 +53,7 @@ class Hiddenroles:
         self.permdata[guildid][name] = {"deny": [], "allow": [], "members": [], "active": True}
         await ctx.db.execute(query, guildid, self.permdata[guildid])
         em = embedHR("green", "Hidden role created.")
+        await ctx.send(embed=em)
 
     @hiddenrole.command(name="test")
     @checks.is_developer()
