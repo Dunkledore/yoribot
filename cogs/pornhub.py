@@ -364,7 +364,7 @@ class PornHub:
         # partialUrl = baseUrl + parsedQuery
         # vids = self.getVids(partialUrl, actualPage, skip, rating, 5)
 
-        await self.printVids(vids, ctx, query, page, rating)
+        await self.printVids(vids, query, page, rating)
 
     @commands.command()
     async def pornhubcategory(self, ctx, categoryName: str = "help", page: int = 1, rating: int = 0):
@@ -432,7 +432,7 @@ class PornHub:
         elif category[0] == "Henry":
             botString += " (Good choice! :wink:)"
 
-        await self.printVids(vids, ctx, botString, page, rating)
+        await self.printVids(vids, botString, page, rating)
 
     @commands.command(pass_ctx=True)
     async def hottest(self, ctx, page: int = 1, rating: int = 0):
@@ -445,15 +445,15 @@ class PornHub:
         baseUrl = "https://www.pornhub.com/video?o=ht"
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
-        await self.printVids(vids, ctx, "Hottest Porn Videos", page, rating)
+        await self.printVids(vids, "Hottest Porn Videos", page, rating)
 
     @commands.command(pass_ctx=True)
     async def mv(self, ctx, page: int = 1, rating: int = 0):
-        await self.mostviewed_func(ctx, page, rating)
+        await self.mostviewed_func(page, rating)
 
     @commands.command(pass_ctx=True)
     async def mostviewed(self, ctx, page: int = 1, rating: int = 0):
-        await self.mostviewed_func(ctx, page, rating)
+        await self.mostviewed_func(page, rating)
 
     async def mostviewed_func(self, ctx, page, rating):
         if rating < 0 or rating > 100: rating = 0
@@ -465,15 +465,15 @@ class PornHub:
         baseUrl = "https://www.pornhub.com/video?o=mv"
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
-        await self.printVids(vids, ctx, "This Week's Most Viewed Porn Videos", page, rating)
+        await self.printVids(vids, "This Week's Most Viewed Porn Videos", page, rating)
 
     @commands.command(pass_ctx=True)
     async def tr(self, ctx, page: int = 1, rating: int = 0):
-        await self.toprated_func(ctx, page, rating)
+        await self.toprated_func(page, rating)
 
     @commands.command(pass_ctx=True)
     async def toprated(self, ctx, page: int = 1, rating: int = 0):
-        await self.toprated_func(ctx, page, rating)
+        await self.toprated_func(page, rating)
 
     async def toprated_func(self, ctx, page, rating):
         if rating < 0 or rating > 100: rating = 0
@@ -485,7 +485,7 @@ class PornHub:
         baseUrl = "https://www.pornhub.com/video?o=tr"
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
-        await self.printVids(vids, ctx, "This Week's Top Rated Porn Videos", page, rating)
+        await self.printVids(vids, "This Week's Top Rated Porn Videos", page, rating)
 
     @commands.command(pass_ctx=True)
     async def home(self, ctx):
