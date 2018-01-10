@@ -4,6 +4,7 @@ import requests
 import urllib
 import json
 import math
+from .utils import checks
 from bs4 import BeautifulSoup
 import asyncio
 
