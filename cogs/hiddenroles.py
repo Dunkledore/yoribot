@@ -16,15 +16,18 @@ def embedHR(colour="green", description="", footer=""):
 class Hiddenroles:
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self._db = {}
+        self.permdata = {}
 
     async def _getdata(self, ctx, server=None):
         if server is None:
             query = "SELECT * FROM hiddenroles"
             results = await ctx.db.fetch(query)
-            self.bot.get_channel(381089525880979467).send(str(results))
+            await self.bot.get_channel(381089525880979467).send(str(results))
+            for r in results:
+                self.permdata[r["guild_id"]] = r["role_permissions"]
 
-    @commands.group()
+
+    @commands.group(invoke_without_command=True)
     @commands.guild_only()
     @checks.is_mod()
     async def hiddenrole(self, ctx):
@@ -35,13 +38,26 @@ class Hiddenroles:
     @hiddenrole.command(name="create")
     @commands.guild_only()
     @checks.is_admin()
-    async def create_hiddenrole(self):
-        pass
+    async def create_hiddenrole(self, ctx, name):
+        guildid = str(ctx.guild.id)
+        if guildid in self.permdata and name in self.permdata[guildid]:
+            em = embedHR("red", "This hidden role already exists.")
+            await ctx.send(embed=em)
+            return
+        if guildid not in self.permdata:
+            self.permdata[guildid] = {}
+            query = "INSERT INTO hiddenroles (guild_id, permission_data) VALUES ($1, $2)"
+        else:
+            query = "UPDATE hiddenroles SET permission_data = $2 WHERE guild_id = $1"
+        self.permdata[guildid][name] = {"deny": [], "allow": [], "members": [], "active": True}
+        await ctx.db.execute(query, guildid, self.permdata[guildid])
+        em = embedHR("green", "Hidden role created.")
 
     @hiddenrole.command(name="test")
     @checks.is_developer()
     async def testing(self, ctx):
         await self._getdata(ctx)
+
 
 
 def setup(bot):
