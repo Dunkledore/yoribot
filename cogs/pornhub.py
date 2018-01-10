@@ -274,7 +274,7 @@ class PornHub:
 
         return vid
 
-    async def printVids(self, ctx, vids, context, query, page, rating):
+    async def printVids(self, ctx, vids, ctx, query, page, rating):
         if len(vids) <= 0:
             await ctx.send("No videos found :cry:")
         else:
@@ -292,11 +292,11 @@ class PornHub:
                 return m.content in map(str, range(page * 5 - 4, page * 5 - 4 + len(vids)))
 
             # Append it so it can be cancelled later if needed
-            self.tasks.append(asyncio.ensure_future(self.bot.wait_for_message(author=context.message.author, check=check,
-                                                                              channel=context.message.channel, timeout=20)))
+            self.tasks.append(asyncio.ensure_future(self.bot.wait_for_message(author=ctx.message.author, check=check,
+                                                                              channel=ctx.message.channel, timeout=20)))
             resp = await self.tasks[len(self.tasks)-1]
-            #resp = await self.bot.wait_for_message(author=context.message.author, check=check,
-            #                                       channel=context.message.channel, timeout=20)
+            #resp = await self.bot.wait_for_message(author=ctx.message.author, check=check,
+            #                                       channel=ctx.message.channel, timeout=20)
 
             selectedVidIndex = (int(resp.content) - 1) % 5
             selectedVid = self.getVideo(vids[selectedVidIndex][0])
@@ -324,8 +324,8 @@ class PornHub:
             await ctx.send(embed=vidEmbed)
 
 
-    @commands.command(pass_context=True)
-    async def pornhub(self, ctx, query: str = "help", page: int = 1, rating: int = 0):
+    @commands.command()
+    async def pornhub(self, ctx, *, query, page: int = 1, rating: int = 0):
         if query.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub search <query> [page] [minRating]*", colour=discord.Colour(0xFF9900))
             helpEmbed.set_author(name="PornHub Search Help")
@@ -364,10 +364,10 @@ class PornHub:
         # partialUrl = baseUrl + parsedQuery
         # vids = self.getVids(partialUrl, actualPage, skip, rating, 5)
 
-        await self.printVids(vids, context, query, page, rating)
+        await self.printVids(vids, ctx, query, page, rating)
 
-    @commands.command(pass_context=True)
-    async def pornhubcategory(self, context, categoryName: str = "help", page: int = 1, rating: int = 0):
+    @commands.command()
+    async def pornhubcategory(self, ctx, categoryName: str = "help", page: int = 1, rating: int = 0):
         if categoryName.lower() == "help":
             helpEmbed = discord.Embed(title="*.pornhub category <categoryName> [page] [minRating]*", colour=discord.Colour(0xFF9900))
             helpEmbed.set_author(name="PornHub Category Browse Help")
@@ -386,7 +386,7 @@ class PornHub:
             botString = "**Available Categories\n**"
             for cat in self.categories:
                 botString += cat[0] + "\n"
-            await self.bot.send_message(destination=context.message.author, content=botString)
+            await self.bot.send_message(destination=ctx.message.author, content=botString)
             return
 
         if rating < 0 or rating > 100: rating = 0
@@ -432,10 +432,10 @@ class PornHub:
         elif category[0] == "Henry":
             botString += " (Good choice! :wink:)"
 
-        await self.printVids(vids, context, botString, page, rating)
+        await self.printVids(vids, ctx, botString, page, rating)
 
-    @commands.command(pass_context=True)
-    async def hottest(self, context, page: int = 1, rating: int = 0):
+    @commands.command(pass_ctx=True)
+    async def hottest(self, ctx, page: int = 1, rating: int = 0):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
@@ -445,17 +445,17 @@ class PornHub:
         baseUrl = "https://www.pornhub.com/video?o=ht"
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
-        await self.printVids(vids, context, "Hottest Porn Videos", page, rating)
+        await self.printVids(vids, ctx, "Hottest Porn Videos", page, rating)
 
-    @commands.command(pass_context=True)
-    async def mv(self, context, page: int = 1, rating: int = 0):
-        await self.mostviewed_func(context, page, rating)
+    @commands.command(pass_ctx=True)
+    async def mv(self, ctx, page: int = 1, rating: int = 0):
+        await self.mostviewed_func(ctx, page, rating)
 
-    @commands.command(pass_context=True)
-    async def mostviewed(self, context, page: int = 1, rating: int = 0):
-        await self.mostviewed_func(context, page, rating)
+    @commands.command(pass_ctx=True)
+    async def mostviewed(self, ctx, page: int = 1, rating: int = 0):
+        await self.mostviewed_func(ctx, page, rating)
 
-    async def mostviewed_func(self, context, page, rating):
+    async def mostviewed_func(self, ctx, page, rating):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
@@ -465,17 +465,17 @@ class PornHub:
         baseUrl = "https://www.pornhub.com/video?o=mv"
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
-        await self.printVids(vids, context, "This Week's Most Viewed Porn Videos", page, rating)
+        await self.printVids(vids, ctx, "This Week's Most Viewed Porn Videos", page, rating)
 
-    @commands.command(pass_context=True)
-    async def tr(self, context, page: int = 1, rating: int = 0):
-        await self.toprated_func(context, page, rating)
+    @commands.command(pass_ctx=True)
+    async def tr(self, ctx, page: int = 1, rating: int = 0):
+        await self.toprated_func(ctx, page, rating)
 
-    @commands.command(pass_context=True)
-    async def toprated(self, context, page: int = 1, rating: int = 0):
-        await self.toprated_func(context, page, rating)
+    @commands.command(pass_ctx=True)
+    async def toprated(self, ctx, page: int = 1, rating: int = 0):
+        await self.toprated_func(ctx, page, rating)
 
-    async def toprated_func(self, context, page, rating):
+    async def toprated_func(self, ctx, page, rating):
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
         # Start at page 1 if rating is something other than 0
@@ -485,10 +485,10 @@ class PornHub:
         baseUrl = "https://www.pornhub.com/video?o=tr"
 
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
-        await self.printVids(vids, context, "This Week's Top Rated Porn Videos", page, rating)
+        await self.printVids(vids, ctx, "This Week's Top Rated Porn Videos", page, rating)
 
-    @commands.command(pass_context=True)
-    async def home(self, context):
+    @commands.command(pass_ctx=True)
+    async def home(self, ctx):
         url = "https://www.pornhub.com/"
         r = requests.get(url)
         if r.status_code != 200:
@@ -551,10 +551,10 @@ class PornHub:
             return m.content in map(str, range(1, 12))
 
         # Append it so it can be cancelled later if needed
-        self.tasks.append(asyncio.ensure_future(self.bot.wait_for_message(author=context.message.author, check=check,
-                                                                          channel=context.message.channel, timeout=20)))
+        self.tasks.append(asyncio.ensure_future(self.bot.wait_for_message(author=ctx.message.author, check=check,
+                                                                          channel=ctx.message.channel, timeout=20)))
         resp = await self.tasks[len(self.tasks) - 1]
-        # resp = await self.bot.wait_for_message(author=context.message.author, check=check,
+        # resp = await self.bot.wait_for_message(author=ctx.message.author, check=check,
         #
 
         selectedVidIndex = (int(resp.content) - 1)
