@@ -128,9 +128,6 @@ class Hiddenroles:
                                      "use `[p]hiddenrole deactivate` instead.", "Answer: `yes` or `no`"))
         try:
             reply = await self.bot.wait_for("message", check=lambda m:m.author==ctx.author and ctx.channel==m.channel,timeout=30)
-        except asyncio.TimeoutError:
-            await ctx.send(embed=embedHR("red", "Deletion aborted due to timeout."))
-        else:
             if reply is not None and reply.content.lower().strip() == "yes":
                 self.permdata[guildid][name]["active"] = False
                 await self._applydata(ctx, guild=guildid,role=name)
@@ -138,6 +135,8 @@ class Hiddenroles:
                 await self._updatedata(ctx, guildid)
             else:
                 await ctx.send(embed=embedHR("red", "Deletion aborted. The data is safe."))
+        except asyncio.TimeoutError:
+            await ctx.send(embed=embedHR("red", "Deletion aborted due to timeout."))
 
     @hiddenrole.command(name="activate", usage="<role name>")
     @commands.guild_only()
