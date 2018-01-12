@@ -408,10 +408,7 @@ class Nsfw:
 
             # Video data didn't come back for so
             await ctx.send("Error getting your video :cry:")
-                return
-            except asyncio.TimeoutError:
-                await ctx.send("Menu timed out - please use the command again to use the menu.")
-            return 
+            return
 
             goodBad = 'Rating:' if int(selectedVid[4]) >= 50 else 'Rating:'
             vidUrl = 'https://www.pornhub.com/view_video.php?viewkey=' + selectedVid[0]
