@@ -96,6 +96,9 @@ class Game:
 
 
 class Hangman:
+	"""
+	Start a game of hangman where members can guess letters or even the phrase - be careful though - you don't want to guess wrong too many times!
+	"""
 		def __init__(self, bot):
 				self.bot = bot
 				self.games = {}

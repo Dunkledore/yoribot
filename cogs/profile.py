@@ -19,6 +19,9 @@ class Profile:
     
     @commands.command()
     async def profilehelp(self, ctx):
+        """
+        Sends help information for profile.
+        """
         prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
         em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
         em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
