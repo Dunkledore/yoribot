@@ -369,7 +369,7 @@ class PornHub:
 
 	@commands.command()
 	@checks.is_nsfw()
-	async def pornhubcategory(self, ctx, categoryName: str, page: int, rating: int):
+	async def phcategory(self, ctx, categoryName: str, page: int, rating: int):
 		if categoryName.lower() == "help":
 			helpEmbed = discord.Embed(title="*.pornhub category <categoryName> [page] [minRating]*", colour=discord.Colour(0xFF9900))
 			helpEmbed.set_author(name="PornHub Category Browse Help")
@@ -438,7 +438,7 @@ class PornHub:
 
 	@commands.command()
 	@checks.is_nsfw()
-	async def hottest(self, ctx, page: int, rating: int):
+	async def phhottest(self, ctx, page: int, rating: int):
 		if rating < 0 or rating > 100: rating = 0
 		if page <= 0: page = 1
 		# Start at page 1 if rating is something other than 0
@@ -449,11 +449,6 @@ class PornHub:
 
 		vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
 		await self.printVids(ctx, vids, "Hottest Porn Videos", page, rating)
-
-	@commands.command()
-	@checks.is_nsfw()
-	async def mv(self,ctx, page: int, rating: int):
-		await self.mostviewed_func(ctx,page, rating)
 
 	@commands.command()
 	@checks.is_nsfw()
@@ -474,12 +469,7 @@ class PornHub:
 
 	@commands.command()
 	@checks.is_nsfw()
-	async def tr(self, ctx, page: int, rating: int):
-		await self.toprated_func(ctx, page, rating)
-
-	@commands.command()
-	@checks.is_nsfw()
-	async def toprated(self,ctx, page: int = 1, rating: int = 0):
+	async def phtoprated(self,ctx, page: int = 1, rating: int = 0):
 		await self.toprated_func(ctx,page, rating)
 
 	async def toprated_func(self, ctx, page, rating):
@@ -496,7 +486,7 @@ class PornHub:
 
 	@commands.command()
 	@checks.is_nsfw()
-	async def pornhubhome(self, ctx):
+	async def phhome(self, ctx):
 		url = "https://www.pornhub.com/"
 		r = requests.get(url)
 		if r.status_code != 200:
