@@ -304,7 +304,7 @@ class PornHub:
 			selectedVid = self.getVideo(vids[selectedVidIndex][0])
 
 			# Video data didn't come back for so
-				await ctx.send("Error getting your video :cry:")
+			await ctx.send("Error getting your video :cry:")
 				return
 			except asyncio.TimeoutError:
 				await ctx.send("Menu timed out - please use the command again to use the menu.")
