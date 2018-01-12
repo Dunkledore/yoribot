@@ -299,16 +299,16 @@ class PornHub:
 			# Append it so it can be cancelled later if needed
 			self.tasks.append(asyncio.ensure_future(self.bot.wait_for('message', check=check,timeout=20)))
 			resp = await self.tasks[len(self.tasks)-1]
-			#resp = await self.bot.wait_for_message(author=ctx.message.author, check=check,
-			#									   channel=ctx.message.channel, timeout=20)
 
 			selectedVidIndex = (int(resp.content) - 1) % 5
 			selectedVid = self.getVideo(vids[selectedVidIndex][0])
 
-			# Video data didn't come back for some reason?
-			if not selectedVid:
+			# Video data didn't come back for so
 				await ctx.send("Error getting your video :cry:")
 				return
+			except asyncio.TimeoutError:
+				await ctx.send("Menu timed out - please use the command again to use the menu.")
+			return 
 
 			goodBad = 'Rating:' if int(selectedVid[4]) >= 50 else 'Rating:'
 			vidUrl = 'https://www.pornhub.com/view_video.php?viewkey=' + selectedVid[0]
@@ -578,6 +578,7 @@ class PornHub:
 		vidEmbed.add_field(name="URL", value=vidUrl, inline=False)
 
 		await ctx.send(embed=vidEmbed)
+
 
 def setup(bot):
 	n = PornHub(bot)
