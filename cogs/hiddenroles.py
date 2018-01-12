@@ -201,7 +201,7 @@ class Hiddenroles:
             await self._updatedata(ctx, guildid)
             await ctx.send(embed=embedHR("green", f"{user.mention} now has the role {rolename}."))
             if self.permdata[rolename]["active"]:
-                self._applydata(ctx, guild=ctx.guild.id, user=user.id, role=rolename)
+                await self._applydata(ctx, guild=ctx.guild.id, user=user.id, role=rolename)
 
     @user.command(name="remove", usage="<role name> <user mention>")
     @commands.guild_only()
@@ -220,7 +220,60 @@ class Hiddenroles:
             await self._updatedata(ctx, guildid)
             await ctx.send(embed=embedHR("green", f"{user.mention} doesn't have the role {rolename} anymore."))
             if self.permdata[rolename]["active"]:
-                self._applydata(ctx, guild=ctx.guild.id, user=user.id, role=rolename)
+                await self._applydata(ctx, guild=ctx.guild.id, user=user.id, role=rolename)
+
+    @hiddenrole.group(name="perm", invoke_without_command=False)
+    @checks.is_admin()
+    async def perm(self, ctx):
+        pass
+
+    @perm.command(name="allow", usage="<role name> <channel mention>")
+    @commands.guild_only()
+    @checks.is_admin()
+    async def allow_role_in_channel(self, ctx, rolename, channel):
+        """Allows that role to see that channel. Only affects the \"Read Messages\" permission."""
+        guildid = ctx.guild.id
+        if guildid not in self.permdata:
+            await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
+            return
+        if rolename not in self.permdata[guildid]:
+            await ctx.send(embed=embedHR("red", "Couldn't find a role with this name."))
+            return
+        chanid = channel.id
+        rdata = self.permdata[guildid][rolename]
+        if chanid in rdata["allow"]:
+            await ctx.send(em=embedHR("yellow", "That role already has access to that channel."))
+        if chanid in rdata["deny"]:
+            rdata["deny"].remove(chanid)
+        rdata["allow"].append(chanid)
+        await self._updatedata(ctx, guildid)
+        if rdata["active"]:
+            await self._applydata(ctx, guild=guildid,role=rolename)
+        await ctx.send(em=embedHR("green",f"Members with the role \"{rolename}\" can now access to {channel.mention}."))
+
+    @perm.command(name="deny", usage="<role name> <channel mention>")
+    @commands.guild_only()
+    @checks.is_admin()
+    async def deny_role_in_channel(self, ctx, rolename, channel):
+        """Denies that role access to that channel. Only affects the \"Read Messages\" permission."""
+        guildid = ctx.guild.id
+        if guildid not in self.permdata:
+            await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
+            return
+        if rolename not in self.permdata[guildid]:
+            await ctx.send(embed=embedHR("red", "Couldn't find a role with this name."))
+            return
+        chanid = channel.id
+        rdata = self.permdata[guildid][rolename]
+        if chanid in rdata["deny"]:
+            await ctx.send(em=embedHR("yellow", "That role already has no access to that channel."))
+        if chanid in rdata["allow"]:
+            rdata["allow"].remove(chanid)
+        rdata["deny"].append(chanid)
+        await self._updatedata(ctx, guildid)
+        if rdata["active"]:
+            await self._applydata(ctx, guild=guildid,role=rolename)
+        await ctx.send(em=embedHR("green",f"Members of the role \"{rolename}\" now can't access {channel.mention}."))
 
     @hiddenrole.command(name="test")
     @checks.is_developer()
