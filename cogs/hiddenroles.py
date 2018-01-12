@@ -253,7 +253,7 @@ class Hiddenroles:
         if rolename not in self.permdata[guildid]:
             await ctx.send(embed=embedHR("red", "Couldn't find a role with this name."))
             return
-        chanid = ctx.channel_mentions[0].id
+        chanid = ctx.message.channel_mentions[0].id
         rdata = self.permdata[guildid][rolename]
         if chanid in rdata["allow"]:
             await ctx.send(em=embedHR("yellow", "That role already has access to that channel."))
@@ -279,7 +279,7 @@ class Hiddenroles:
         if rolename not in self.permdata[guildid]:
             await ctx.send(embed=embedHR("red", "Couldn't find a role with this name."))
             return
-        chanid = ctx.channel_mentions[0].id
+        chanid = ctx.message.channel_mentions[0].id
         rdata = self.permdata[guildid][rolename]
         if chanid in rdata["deny"]:
             await ctx.send(em=embedHR("yellow", "That role already has no access to that channel."))
