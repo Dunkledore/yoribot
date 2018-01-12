@@ -522,19 +522,6 @@ class Nsfw:
     @checks.is_nsfw()
     async def pornhub(self, ctx,  query, page: int, rating: int):
         """Search Pornhub for porn."""
-        if query.lower() == "help":
-            helpEmbed = discord.Embed(title="*.pornhub search <query> [page] [minRating]*", colour=discord.Colour(0xFF9900))
-            helpEmbed.set_author(name="PornHub Search Help")
-            helpEmbed.add_field(name="Description",
-                                value="Allows you to search PornHub for videos. Simple as that!",
-                                inline=False)
-            helpEmbed.add_field(name="Arguments",
-                                value="**query:** What you want to search for\n"
-                                      "**page:** What page of results you want to go to (default=1)\n"
-                                      "**minRating:** Must be an integer between 0 and 100. Videos with a rating lower than this number won't be displayed in results (default=0)",
-                                inline=False)
-            await ctx.send(embed=helpEmbed)
-            return
 
         if rating < 0 or rating > 100: rating = 0
         if page <= 0: page = 1
@@ -581,6 +568,73 @@ class Nsfw:
         vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
         await self.printVids(ctx, vids, "This Week's Top Rated Porn Videos", page, rating)
 
+    @commands.command()
+    @checks.is_nsfw()
+    async def phcategory(self, ctx, categoryName: str, page: int, rating: int):
+        if categoryName.lower() == "help":
+            helpEmbed = discord.Embed(title="*.pornhub category <categoryName> [page] [minRating]*", colour=discord.Colour(0xFF9900))
+            helpEmbed.set_author(name="PornHub Category Browse Help")
+            helpEmbed.add_field(name="Description",
+                                value="Allows you to browse PornHub by category",
+                                inline=False)
+            helpEmbed.add_field(name="Arguments",
+                                value="**categoryName:** Which category you would like to browse. Type *.pornhub category list* to get a list of all available categories\n"
+                                      "**page**: What page of results you want to go to (default=1)\n"
+                                      "**minRating:** Must be an integer between 0 and 100. Videos with a rating lower than this number won't be displayed in results (default=0)",
+                                inline=False)
+            await ctx.send(embed=helpEmbed)
+            return
+
+        if categoryName.lower() == "list":
+            botString = "**Available Categories\n**"
+            for cat in self.categories:
+                botString += cat[0] + "\n"
+            await self.bot.send_message(destination=ctx.message.author, content=botString)
+            return
+
+        if rating < 0 or rating > 100: rating = 0
+        if page <= 0: page = 1
+
+        category = []
+
+        for cat in self.categories:
+            if cat[0].lower() == categoryName.lower():
+                category = cat
+
+        if not category:
+            await ctx.send(
+                "Category " + categoryName + " not found. Do .pornhub category list for a list of all categories.")
+            return
+
+        # "Henry" is a custom category, don't call that on the API
+        if category[0] != "Henry":
+            # Start at page 1 if rating is something other than 0
+            actualPage = 1 if rating != 0 else math.ceil(page / 6)
+            skip = 5 * ((page - 1) % 6)
+            # print(query)
+            baseUrl = "http://www.pornhub.com/webmasters/search?thumbsize=medium&category="
+            parsedCategory = category[0].lower().replace(" ", "-")
+            partialUrl = baseUrl + parsedCategory
+            vids = self.getVidsAPI(partialUrl, actualPage, skip, rating, 5)
+        # Else scrape the HTML
+        else:
+            # Start at page 1 if rating is something other than 0
+            actualPage = 1 if rating != 0 else math.ceil(page / 4)
+            skip = 4 * ((page - 1) % 8)
+            # print(query)
+            baseUrl = "https://www.pornhub.com/" + category[1]
+            vids = self.getVids(baseUrl, actualPage, skip, rating, 4)
+
+
+        botString = category[0] + " Videos"
+        if category[0] == "SFW":
+            botString += " (Wtf why are you searching for SFW stuff on PornHub?)"
+        elif category[0] == "Panda Style":
+            botString += " (Careful, this is some kinky shit)"
+        elif category[0] == "Henry":
+            botString += " (Good choice! :wink:)"
+
+        await self.printVids(ctx, vids, botString, page, rating)
     @commands.command()
     @checks.is_nsfw()
     async def phhome(self, ctx):
