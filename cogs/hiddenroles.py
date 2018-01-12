@@ -85,37 +85,112 @@ class Hiddenroles:
                                 for chanid in newperms["allow"]:
                                     self.bot.get_channel(chanid).set_permissions(user, read_messages=True)
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, aliases=["hr"])
     @commands.guild_only()
     @checks.is_mod()
     async def hiddenrole(self, ctx):
+        """Command group for hidden role management."""
         prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
-        em = embedHR("yellow", "This command group is used for management of hidden roles.\n"+prefix)
+        em = embedHR("yellow", "This command group is used for management of hidden roles.\n" + prefix)
         await ctx.send(embed=em)
 
     @hiddenrole.command(name="create", usage="<role name>")
     @commands.guild_only()
     @checks.is_admin()
     async def create_hiddenrole(self, ctx, name):
+        """Creates a hidden role with the given name."""
         guildid = ctx.guild.id
         if guildid in self.permdata and name in self.permdata[guildid]:
-            em = embedHR("red", "This hidden role already exists.")
-            await ctx.send(embed=em)
+            await ctx.send(embed=embedHR("red", "This hidden role already exists."))
             return
         if guildid not in self.permdata:
             await self._updatedata(ctx, guildid)
         self.permdata[guildid][name] = {"deny": [], "allow": [], "members": [], "active": False}
         await self._updatedata(ctx, guildid)
-        em = embedHR("green", "Hidden role created.")
-        await ctx.send(embed=em)
+        await ctx.send(embed=embedHR("green", "Hidden role created."))
 
-    @hiddenrole.command(name="adduser", usage="<role name> <user mention>")
+    @hiddenrole.command(name="delete", usage="<role name>")
     @commands.guild_only()
-    @checks.is_mod()
-    async def add_user_to_role(self, ctx, rolename, user):
+    @checks.is_admin()
+    async def remove_hiddenrole(self, ctx, name):
+        """Deletes a hidden role and all associated permissions. If you want to keep the data for later, use deactivate instead."""
         guildid = ctx.guild.id
         if guildid not in self.permdata:
-            await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles setup."))
+            await ctx.send(embed=embedHR("red", "No hidden roles have been set up for this server."))
+            return
+        if name not in self.permdata[guildid]:
+            await ctx.send(embed=embedHR("red", "Couldn't find a hidden role with that name."))
+            return
+        await ctx.send(embed=embedHR("yellow",
+                                     f"Are you sure you want to delete the hidden role **{name}**?\n"
+                                     "If you want to keep the data but deactivate the permissions,"
+                                     "use `[p]hiddenrole deactivate` instead.", "Answer: `yes` or `no`"))
+        try:
+            reply = self.bot.wait_for("message", check=lambda m:m.author==ctx.author and ctx.channel==m.channel,timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(embed=embedHR("red", "Deletion aborted due to timeout."))
+        else:
+            if reply is not None and reply.content.lower().strip() == "yes":
+                self.permdata[guildid][name]["active"] = False
+                await self._applydata(ctx, guild=guildid,role=name)
+                self.permdata[guildid].pop(name)
+                await self._updatedata(ctx, guildid)
+            else:
+                await ctx.send(embed=embedHR("red", "Deletion aborted. The data is safe."))
+
+    @hiddenrole.command(name="activate", usage="<role name>")
+    @commands.guild_only()
+    @checks.is_admin()
+    async def activate_role(self, ctx, rolename):
+        """Activates the permissions for the specified hidden role."""
+        guildid = ctx.guild.id
+        if guildid not in self.permdata:
+            await ctx.send(embed=embedHR("red", "No hidden roles have been set up for this server."))
+            return
+        if rolename not in self.permdata[guildid]:
+            await ctx.send(embed=embedHR("red", "Couldn't find a hidden role with that name."))
+            return
+        if self.permdata[guildid][rolename]["active"]:
+            await ctx.send(embed=embedHR("yellow", "That role is already active."))
+            return
+        self.permdata[guildid][rolename]["active"] = True
+        await self._updatedata(ctx, guildid)
+        await self._applydata(ctx, guild=guildid, role=rolename)
+        await ctx.send(embed=embedHR("green", "That role has been activated."))
+
+    @hiddenrole.command(name="deactivate", usage="<role name>")
+    @commands.guild_only()
+    @checks.is_admin()
+    async def deactivate_role(self, ctx, rolename):
+        """Deactivates the permissions for the specified hidden role."""
+        guildid = ctx.guild.id
+        if guildid not in self.permdata:
+            await ctx.send(embed=embedHR("red", "No hidden roles have been set up for this server."))
+            return
+        if rolename not in self.permdata[guildid]:
+            await ctx.send(embed=embedHR("red", "Couldn't find a hidden role with that name."))
+            return
+        if not self.permdata[guildid][rolename]["active"]:
+            await ctx.send(embed=embedHR("yellow", "That role is not active."))
+            return
+        self.permdata[guildid][rolename]["active"] = False
+        await self._updatedata(ctx, guildid)
+        await self._applydata(ctx, guild=guildid, role=rolename)
+        await ctx.send(embed=embedHR("green", "That role has been deactivated."))
+
+    @hiddenrole.group(invoke_without_command=False)
+    @checks.is_mod()
+    async def user(self, ctx):
+        pass
+
+    @user.command(name="add", usage="<role name> <user mention>")
+    @commands.guild_only()
+    @checks.is_mod()
+    async def add_user_to_role(self, ctx, rolename, user: discord.User):
+        """Adds a user to the specified role."""
+        guildid = ctx.guild.id
+        if guildid not in self.permdata:
+            await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
             return
         if rolename not in self.permdata[guildid]:
             await ctx.send(embed=embedHR("red", "Couldn't find a role with this name."))
@@ -127,9 +202,29 @@ class Hiddenroles:
             if self.permdata[rolename]["active"]:
                 self._applydata(ctx, guild=ctx.guild.id, user=user.id, role=rolename)
 
+    @user.command(name="remove", usage="<role name> <user mention>")
+    @commands.guild_only()
+    @checks.is_mod()
+    async def remove_user_from_role(self, ctx, rolename, user: discord.User):
+        """Removes a user from the specified role."""
+        guildid = ctx.guild.id
+        if guildid not in self.permdata:
+            await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
+            return
+        if rolename not in self.permdata[guildid]:
+            await ctx.send(embed=embedHR("red", "Couldn't find a role with this name."))
+            return
+        if user.id in self.permdata[guildid][rolename]["members"]:
+            self.permdata[guildid][rolename]["members"].remove(user.id)
+            await self._updatedata(ctx, guildid)
+            await ctx.send(embed=embedHR("green", f"{user.mention} doesn't have the role {rolename} anymore."))
+            if self.permdata[rolename]["active"]:
+                self._applydata(ctx, guild=ctx.guild.id, user=user.id, role=rolename)
+
     @hiddenrole.command(name="test")
     @checks.is_developer()
     async def testing(self, ctx):
+        """Sends test data to the developers."""
         await self._getdata(ctx)
 
 
