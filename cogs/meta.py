@@ -420,8 +420,7 @@ class Meta:
         Generates a pie chart, representing the last 5000 messages in this channel.
         """
         channel = ctx.message.channel
-        e = discord.Embed(description="Loading...", colour=0x00ccff)
-        e.set_thumbnail(url="https://i.imgur.com/vSp4xRk.gif")
+        e = discord.Embed(description="Please wait one moment while I gather all the data...", colour=0x00ccff)
         em = await ctx.send(embed=e)
 
         history = []
