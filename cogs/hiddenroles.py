@@ -30,7 +30,7 @@ class Hiddenroles:
             results = await ctx.db.fetch(query)
             for r in results:
                 self.permdata[r["guild_id"]] = r["permission_data"]
-                if r["guild_id"] not in self.permdata or "__data_version__" not in self.permdata[r["guild_id"]] or\
+                if r["guild_id"] not in self.permdata or "__data_version__" not in self.permdata[r["guild_id"]] or \
                         self.permdata[r["guild_id"]]["__data_version__"] < self.DATA_VERSION:
                     await self._updatedata(ctx, r["guild_id"])
 
@@ -74,7 +74,8 @@ class Hiddenroles:
             if guild == -1 or guild_id == guild:
                 guilddata = self.permdata[guild_id]
                 for rolename in guilddata:
-                    if not rolename.startswith("__") and guilddata[rolename]["active"] and (role == "" or role == rolename):
+                    if not rolename.startswith("__") and guilddata[rolename]["active"] and (
+                            role == "" or role == rolename):
                         for userid in guilddata[rolename]["members"]:
                             if user == -1 or user == userid:
                                 user = ctx.guild.get_user(userid)
@@ -132,10 +133,12 @@ class Hiddenroles:
                                      "If you want to keep the data but deactivate the permissions,"
                                      "use `[p]hiddenrole deactivate` instead.", "Answer: `yes` or `no`"))
         try:
-            reply = await self.bot.wait_for("message", check=lambda m:m.author==ctx.author and ctx.channel==m.channel,timeout=30)
+            reply = await self.bot.wait_for("message",
+                                            check=lambda m: m.author == ctx.author and ctx.channel == m.channel,
+                                            timeout=30)
             if reply is not None and reply.content.lower().strip() == "yes":
                 self.permdata[guildid][name]["active"] = False
-                await self._applydata(ctx, guild=guildid,role=name)
+                await self._applydata(ctx, guild=guildid, role=name)
                 self.permdata[guildid].pop(name)
                 await self._updatedata(ctx, guildid)
             else:
@@ -262,8 +265,9 @@ class Hiddenroles:
         rdata["allow"].append(chanid)
         await self._updatedata(ctx, guildid)
         if rdata["active"]:
-            await self._applydata(ctx, guild=guildid,role=rolename)
-        await ctx.send(em=embedHR("green",f"Members with the role \"{rolename}\" can now access to {channel.mention}."))
+            await self._applydata(ctx, guild=guildid, role=rolename)
+        await ctx.send(em=embedHR("green", f"Members with the role \"{rolename}\" can now access "
+                                           f"{ctx.message.channel_mentions[0].mention}."))
 
     @perm.command(name="deny", usage="<role name> <channel mention>")
     @commands.guild_only()
@@ -288,8 +292,9 @@ class Hiddenroles:
         rdata["deny"].append(chanid)
         await self._updatedata(ctx, guildid)
         if rdata["active"]:
-            await self._applydata(ctx, guild=guildid,role=rolename)
-        await ctx.send(em=embedHR("green",f"Members of the role \"{rolename}\" now can't access {channel.mention}."))
+            await self._applydata(ctx, guild=guildid, role=rolename)
+        await ctx.send(em=embedHR("green", f"Members of the role \"{rolename}\" now can't access"
+                                           f" {ctx.message.channel_mentions[0].mention}."))
 
     @hiddenrole.command(name="test")
     @checks.is_developer()
@@ -297,7 +302,7 @@ class Hiddenroles:
         """Sends test data to the developers."""
         if not self.permdata:
             await self._getdata(ctx)
-        await self._senddebug("```json\n"+str(self.permdata)+"```")
+        await self._senddebug("```json\n" + str(self.permdata) + "```")
 
 
 def setup(bot):
