@@ -23,6 +23,8 @@ class Hiddenroles:
         await self.bot.get_channel(381089525880979467).send(message)
 
     async def _getdata(self, ctx, server=None):
+        if not self.permdata:
+            self.permdata = {}
         if server is None:
             query = "SELECT * FROM hiddenroles"
             results = await ctx.db.fetch(query)
