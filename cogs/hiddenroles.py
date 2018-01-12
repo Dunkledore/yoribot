@@ -16,7 +16,7 @@ def embedHR(colour="green", description="", footer=""):
 class Hiddenroles:
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.permdata = {}
+        self.permdata = None
         self.DATA_VERSION = 2
 
     async def _senddebug(self, message):
@@ -31,7 +31,6 @@ class Hiddenroles:
                 if r["guild_id"] not in self.permdata or "__data_version__" not in self.permdata[r["guild_id"]] or\
                         self.permdata[r["guild_id"]]["__data_version__"] < self.DATA_VERSION:
                     await self._updatedata(ctx, r["guild_id"])
-        await self._senddebug("```json\n"+str(self.permdata)+"```")
 
     async def _updatedata(self, ctx, guildid):
         if not guildid in self.permdata:
@@ -100,6 +99,8 @@ class Hiddenroles:
     @checks.is_admin()
     async def create_hiddenrole(self, ctx, name):
         """Creates a hidden role with the given name."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid in self.permdata and name in self.permdata[guildid]:
             await ctx.send(embed=embedHR("red", "This hidden role already exists."))
@@ -115,6 +116,8 @@ class Hiddenroles:
     @checks.is_admin()
     async def remove_hiddenrole(self, ctx, name):
         """Deletes a hidden role and all associated permissions. If you want to keep the data for later, use deactivate instead."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "No hidden roles have been set up for this server."))
@@ -143,6 +146,8 @@ class Hiddenroles:
     @checks.is_admin()
     async def activate_role(self, ctx, rolename):
         """Activates the permissions for the specified hidden role."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "No hidden roles have been set up for this server."))
@@ -163,6 +168,8 @@ class Hiddenroles:
     @checks.is_admin()
     async def deactivate_role(self, ctx, rolename):
         """Deactivates the permissions for the specified hidden role."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "No hidden roles have been set up for this server."))
@@ -188,6 +195,8 @@ class Hiddenroles:
     @checks.is_mod()
     async def add_user_to_role(self, ctx, rolename, user: discord.User):
         """Adds a user to the specified role."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
@@ -207,6 +216,8 @@ class Hiddenroles:
     @checks.is_mod()
     async def remove_user_from_role(self, ctx, rolename, user: discord.User):
         """Removes a user from the specified role."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
@@ -231,6 +242,8 @@ class Hiddenroles:
     @checks.is_admin()
     async def allow_role_in_channel(self, ctx, rolename, channel):
         """Allows that role to see that channel. Only affects the \"Read Messages\" permission."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
@@ -255,6 +268,8 @@ class Hiddenroles:
     @checks.is_admin()
     async def deny_role_in_channel(self, ctx, rolename, channel):
         """Denies that role access to that channel. Only affects the \"Read Messages\" permission."""
+        if not self.permdata:
+            await self._getdata(ctx)
         guildid = str(ctx.guild.id)
         if guildid not in self.permdata:
             await ctx.send(embed=embedHR("red", "This server doesn't have any hidden roles set up."))
@@ -278,7 +293,9 @@ class Hiddenroles:
     @checks.is_developer()
     async def testing(self, ctx):
         """Sends test data to the developers."""
-        await self._getdata(ctx)
+        if not self.permdata:
+            await self._getdata(ctx)
+        await self._senddebug("```json\n"+str(self.permdata)+"```")
 
 
 def setup(bot):
