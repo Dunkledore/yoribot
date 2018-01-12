@@ -127,7 +127,7 @@ class Hiddenroles:
                                      "If you want to keep the data but deactivate the permissions,"
                                      "use `[p]hiddenrole deactivate` instead.", "Answer: `yes` or `no`"))
         try:
-            reply = self.bot.wait_for("message", check=lambda m:m.author==ctx.author and ctx.channel==m.channel,timeout=30)
+            reply = await self.bot.wait_for("message", check=lambda m:m.author==ctx.author and ctx.channel==m.channel,timeout=30)
         except asyncio.TimeoutError:
             await ctx.send(embed=embedHR("red", "Deletion aborted due to timeout."))
         else:
