@@ -450,7 +450,7 @@ class Meta:
                                       if y == 'percent'], key=lambda x: x[1])
         others = 100 - sum(x[1] for x in top_ten)
         img = self.create_chart(top_ten, others)
-        await ctx.send(file=discord.File(img, filename=chatchart.jpg))
+        await ctx.send(file=discord.File(img, filename='chatchart.jpg'))
 
 def check_folders():
     if not os.path.exists("data/chatchart"):
