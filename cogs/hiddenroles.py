@@ -31,7 +31,7 @@ class Hiddenroles:
                 if r["guild_id"] not in self.permdata or "__data_version__" not in self.permdata[r["guild_id"]] or\
                         self.permdata[r["guild_id"]]["__data_version__"] < self.DATA_VERSION:
                     await self._updatedata(ctx, r["guild_id"])
-        await self._senddebug(str(self.permdata))
+        await self._senddebug("```json\n"+str(self.permdata)+"```")
 
     async def _updatedata(self, ctx, guildid):
         if not guildid in self.permdata:
@@ -50,7 +50,7 @@ class Hiddenroles:
         else:
             query = "INSERT INTO hiddenroles (guild_id, permission_data) VALUES ($1, $2)"
         await ctx.db.execute(query, guildid, guilddata)
-        await self._senddebug(f"Updated Data for guild {guildid}: {guilddata}")
+        await self._senddebug(f"Updated Data for guild {guildid}: ```json\n{guilddata}```")
 
     async def _getuserperms(self, guildid, userid, excluderole=""):
         guilddata = self.permdata[guildid]
