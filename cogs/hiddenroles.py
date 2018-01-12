@@ -73,7 +73,7 @@ class Hiddenroles:
             if guild == -1 or guild_id == guild:
                 guilddata = self.permdata[guild_id]
                 for rolename in guilddata:
-                    if guilddata[rolename]["active"] and (role == "" or role == rolename):
+                    if not rolename.startswith("__") and guilddata[rolename]["active"] and (role == "" or role == rolename):
                         for userid in guilddata[rolename]["members"]:
                             if user == -1 or user == userid:
                                 user = ctx.guild.get_user(userid)
