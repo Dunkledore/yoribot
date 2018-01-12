@@ -320,17 +320,17 @@ class Profile:
 
     @commands.command()
     @commands.guild_only()
-    async def profiledelete(self, ctx):
-        """Removes and embed field from the profile message"""
+    async def profilereset(self, ctx):
+        """Resets your profile"""
 
         query="DELETE FROM profile WHERE user_id = $1"
         await ctx.db.execute(query, ctx.author.id)
-        await ctx.send("Profile Deleted")
+        await ctx.send("Profile Reset")
 
     @commands.command()
     @commands.guild_only()
     async def profileremove(self, ctx, name=None):
-        """Removes and embed field from the profile message"""
+        """Removes an embed field from the profile message"""
 
         if name is None:
             await ctx.send('Please enter a field to remove')
