@@ -500,8 +500,9 @@ class Nsfw:
             selectedVid = self.getVideo(vids[selectedVidIndex][0])
 
             # Video data didn't come back for so
-            await ctx.send("Error getting your video :cry:")
-            return
+            if not selectedVid:
+                await ctx.send("Error getting your video :cry:")
+                return
 
             goodBad = 'Rating:' if int(selectedVid[4]) >= 50 else 'Rating:'
             vidUrl = 'https://www.pornhub.com/view_video.php?viewkey=' + selectedVid[0]
