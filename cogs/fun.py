@@ -441,7 +441,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " No, Just No! Get a life! ")
         else:
-            await self.upload_random_gif(ctx, sender.mention + " strips for " + ctx, user.mention + " and they LIKE it! ", folder)
+            await self.upload_random_gif(ctx, sender.mention + " strips for " + user.mention + " and they LIKE it! ", folder)
 
     @commands.command()
     async def thirsty(self, ctx, *, user: discord.Member):
@@ -451,7 +451,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " Really? Just really?? You need help! ")
         else:
-            await self.upload_random_gif(ctx, sender.mention + " tells " + ctx, user.mention + " To calm your thirsty ass down! ",
+            await self.upload_random_gif(ctx, sender.mention + " tells " + user.mention + " To calm your thirsty ass down! ",
                                          folder)
 
     @commands.command()
@@ -492,7 +492,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " You cannot do that to yourself! ")
         else:
-            await self.upload_random_gif(ctx, sender.mention + " yells at " + ctx, user.mention + " Oh no they didn't! ", folder)
+            await self.upload_random_gif(ctx, sender.mention + " yells at " + user.mention + " Oh no they didn't! ", folder)
 
     @commands.command()
     async def hungry(self, ctx, *, user: discord.Member):
@@ -512,7 +512,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " No, Just no! Get a life! ")
         else:
-            await self.upload_random_gif(ctx, sender.mention + " wants to kick " + ctx, user.mention + " in the NUTS! OUCH!! ",
+            await self.upload_random_gif(ctx, sender.mention + " wants to kick " + user.mention + " in the NUTS! OUCH!! ",
                                          folder)
 
     @commands.command()
