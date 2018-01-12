@@ -28,7 +28,8 @@ class Hiddenroles:
             results = await ctx.db.fetch(query)
             for r in results:
                 self.permdata[r["guild_id"]] = r["permission_data"]
-                if self.permdata[r["guild_id"]]["__data__version__"] < self.DATA_VERSION:
+                if ("__data_version__" not in self.permdata[r["guildid"]]) or\
+                        self.permdata[r["guild_id"]]["__data_version__"] < self.DATA_VERSION:
                     await self._updatedata(ctx, r["guild_id"])
         await self._senddebug(str(self.permdata))
 
