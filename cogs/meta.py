@@ -450,7 +450,7 @@ class Meta:
                                       if y == 'percent'], key=lambda x: x[1])
         others = 100 - sum(x[1] for x in top_ten)
         img = self.create_chart(top_ten, others)
-        await self.bot.delete_message(em)
+        await channel.purge(em)
         await ctx.send(file=discord.File(img))
 
 def check_folders():
