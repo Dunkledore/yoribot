@@ -425,7 +425,7 @@ class Meta:
         em = await ctx.send(embed=e)
 
         history = []
-        async for message in channel.history(limit=5000):
+        async for msg in channel.history(limit=5000):
             history.append(msg)
         msg_data = {'total count': 0, 'users': {}}
 
