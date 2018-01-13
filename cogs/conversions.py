@@ -29,6 +29,7 @@ class Conversion:
        	ureg = UnitRegistry()
 
        	first_value = first_quantity * ureg.parse_expression(first_unit)
+       	await ctx.send(first_value)
        	second_value = first_value.to(ureg.parse_expression(second_unit))
 
        	await ctx.send(second_value)
