@@ -19,7 +19,7 @@ class Conversion:
        	
        	#pass conversion string
        	stringarr = conversion_string.split()
-       	if stringarr[2] = 'to':
+       	if stringarr[2] == 'to':
        		del stringarr[2]
 
        	first_quantity = stringarr[0]
