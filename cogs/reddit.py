@@ -139,13 +139,13 @@ class Reddit:
                         return
                 else:
                     '''We have a set of cached posts to work with'''
-                    item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx]["data"]
+                    item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
                     if item["over_18"] and not ctx.message.channel.is_nsfw():
                         '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                         await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
                     else:
                         await self._printPost(ctx, item)
-                        self.next_item_idx += 1
+                        self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
             else:
                 self.current_mode[ctx.message.guild][ctx.message.author] = mode
                 self.current_subreddit[ctx.message.guild][ctx.message.author] = subreddit.lower()
@@ -155,13 +155,13 @@ class Reddit:
                     '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
                     return
                 
-                item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx]["data"]
+                item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
                 if item["over_18"] and not ctx.message.channel.is_nsfw():
                     '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                     await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
                 else:
                     await self._printPost(ctx, item)
-                    self.next_item_idx += 1
+                    self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
         else:
             ''' Reddit OAuth Client ID not set'''
             message = 'No API key set. Get one at https://www.reddit.com/prefs/apps'
