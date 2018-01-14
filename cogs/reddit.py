@@ -63,7 +63,7 @@ class Reddit:
                     return True
 
     async def _printPost(self, ctx, item):
-        embed = discord.Embed(colour=0xff5700, title = item["title"], url="https://www.reddit.com" + item["permalink"])
+        embed = discord.Embed(colour=0xff5700, title = item["title"], url="https://www.reddit.com" + item["permalink"], description=item["self_text"])
         if item["thumbnail"] == "self":
             embed.set_thumbnail(url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png")
         else:
