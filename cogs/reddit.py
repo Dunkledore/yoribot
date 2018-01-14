@@ -24,7 +24,7 @@ class Reddit:
         self._cache = {}
         self.token = False
         self.tokenExpires = False
-        self.modes = ["top", "rising", "new", "random", "controversial"]
+        self.modes = ["top", "rising", "new", "random", "controversial", "hot"]
 
     async def _ensureAuth(self, ctx):
         if not self.token or self.tokenExpires < datetime.utcnow():
@@ -123,12 +123,12 @@ class Reddit:
 
             if mode not in self.modes:
                 '''Oops someone entered a mode that doesn't exist'''
-                await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`")
+                await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
                 return
             if subreddit.lower() == "$$next_item":
                 if not self.current_subreddit[ctx.message.guild][ctx.message.author]:
                     '''No subreddit selected and someone used the command with no arguments'''
-                    await ctx.send("No subreddit currently selected use `{}reddit <subreddit> [mode='top,random,new,rising,controversial']` to set the current subreddit.".format(prefix))
+                    await ctx.send("No subreddit currently selected use `{}reddit <subreddit> [mode='top,random,new,rising,controversial,hot']` to set the current subreddit.".format(prefix))
                 elif self.next_item_idx[ctx.message.guild][ctx.message.author] == 5:
                     '''Get and Cache the next 5 items from reddit'''
                     url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + self.current_mode[ctx.message.guild][ctx.message.author] + ".json?limit=5&after=" + self._nextCursor[ctx.message.guild][ctx.message.author]
