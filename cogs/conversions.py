@@ -30,7 +30,8 @@ class Conversion:
 
        	first_value = first_quantity * ureg.parse_expression(first_unit)
        	ureg_second_unit = ureg.parse_expression(second_unit)
-       	second_value = first_value * ureg.parse_expression(second_unit)
+       	await ctx.send(repr(first_value))
+       	second_value = first_value.to(ureg.meter)
 
        	await ctx.send(second_value)
 
