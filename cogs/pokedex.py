@@ -36,7 +36,7 @@ class Pokedex:
         self.version = "2.4.02"
 
     @commands.group(pass_context=True)
-    async def pokemon(self, ctx):
+    async def pokehelp(self, ctx):
         """This is the list of Pokémon queries you can perform."""
         help_cmd = self.bot.get_command('help')
         await ctx.invoke(help_cmd, command='pokedex')
