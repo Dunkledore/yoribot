@@ -55,7 +55,7 @@ class Playlists:
 			self.playlist = yt_videos + self.playlist
 		else:
 			self.playlist = self.playlist + yt_videos
-		self.context.send(str(self.playlist))
+		await self.context.send(str(self.playlist))
 	
 	#def remove_from_playlist(self,userID,name)
 	
@@ -67,6 +67,7 @@ class Playlists:
 	@commands.command()		
 	async def playlist(self,ctx,command,playlist,*inputs):
 		self.context=ctx
+		await ctx.send("hi")
 		if command.lower() == 'add':
 			if not playlist_exists(ctx.message.author.id,playlist):
 				await self.create_playlist(ctx.message.author.id,playlist)
