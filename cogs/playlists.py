@@ -47,7 +47,7 @@ class Playlists:
 
 	def add_to_playlist(self,userID,name,front):
 		
-		await get_playlist(userID,name)
+		await self.get_playlist(userID,name)
 		if not check_query(query):
 			return
 		
@@ -70,14 +70,14 @@ class Playlists:
 		self.context=ctx
 		if command.lower() == 'add':
 			if not playlist_exists(ctx.message.author.id,playlist):
-				await create_playlist(ctx.message.author.id,playlist)
+				await self.create_playlist(ctx.message.author.id,playlist)
 			
 			front=False
 			if 'front' in inputs:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
-				add_to_playlist(ctx.message.author.id,playlist,front)
+				self.add_to_playlist(ctx.message.author.id,playlist,front)
 		
 		elif command.lower() == 'remove':
 		
