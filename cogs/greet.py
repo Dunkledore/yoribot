@@ -7,7 +7,7 @@ from .utils import checks
 
 class Greet:
 
-    """Sets up a channel where you can receive notifications of when people join, leave, are banned or unbanned."""
+    """Allows you to designate a non-mod/admin role that can add a specified member role to new people joining your server."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
