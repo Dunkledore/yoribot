@@ -32,7 +32,7 @@ class Conversion:
        	ureg_second_unit = ureg.parse_expression(second_unit)
        	second_value = first_value * ureg.parse_expression(second_unit)
 
-       	await ctx.send(second_value)
+       	await ctx.send(second_value.ito_reduced_units())
 
 
 
