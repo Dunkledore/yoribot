@@ -143,7 +143,7 @@ class Playlists:
 		
 		elif command.lower() == 'delete':
 			if not await self.playlist_exists(ctx.message.author.id,name):
-				ctx.send("doesn't exists")
+				await ctx.send("doesn't exists")
 				return
 			await delete_playlist(ctx.message.author.id,name)
 
