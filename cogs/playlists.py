@@ -76,7 +76,7 @@ class Playlists:
 	async def playlist(self,ctx,command,name,*inputs):
 		await ctx.send("hi")
 		self.context=ctx
-
+		inputs=list(inputs)
 		if command.lower() == 'add':
 			await ctx.send("command:add")
 			if not await playlist_exists(ctx.message.author.id,name):
