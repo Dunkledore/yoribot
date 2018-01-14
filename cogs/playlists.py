@@ -65,9 +65,9 @@ class Playlists:
 	
 			
 	@commands.command()
-	async def playlist(self,ctx,command,name,inputs):
+	async def playlist(self,ctx)#,command,name,inputs):
 		await ctx.send("hi")
-		self.context=ctx
+	'''	self.context=ctx
 
 		if command.lower() == 'add':
 			if not playlist_exists(ctx.message.author.id,name):
@@ -84,7 +84,7 @@ class Playlists:
 		
 		#elif command.lower() == 'delete':
 		
-		#elif command.lower() == 'rename':
+		#elif command.lower() == 'rename':'''
 	
 def setup(bot):
     bot.add_cog(Playlists(bot))	
