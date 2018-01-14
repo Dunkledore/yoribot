@@ -34,9 +34,9 @@ class Playlists:
 	
 	
 	async def create_playlist(self,userID,name):
-		query = "INSERT INTO playlists (userid,name,songs) VALUES ($1,$2,$3);"
-		placeholder=''
-		await self.context.db.execute(query, userID, name, placeholder)
+		query = "INSERT INTO playlists (userid,name,songs) VALUES ($1,$2);"
+		#placeholder=''
+		await self.context.db.execute(query, userID, name)
 	
 	async def get_playlist(self,userID,name):
 		self.list=[]
@@ -57,7 +57,7 @@ class Playlists:
 		else:
 			return False
 
-	async def add_to_playlist(self,userID,name,query,front):
+	async def add_to_playlist(self,userID,name,query,front=False):
 		#await self.get_playlist(userID,name)
 
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
