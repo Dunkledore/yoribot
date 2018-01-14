@@ -58,8 +58,8 @@ class Reddit:
                     await ctx.send("Huh... I couldn't find that subreddit.")
                     return False
                 else:
-                    self._nextCursor = resJson["after"]
-                    self._cache = resJson["children"]
+                    self._nextCursor = resJson["data"]["after"]
+                    self._cache = resJson["data"]["children"]
                     self.next_item_idx = 0
 
     async def _printPost(self, ctx, item):
