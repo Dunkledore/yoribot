@@ -42,13 +42,13 @@ class Playlists:
 		url=urlparse(query)
 		if url and url.scheme and url.netloc:
 			return True
-		else 
+		else:
 			return False
 
 	def add_to_playlist(self,userID,name,front):
 		
 		async get_playlist(userID,name)
-		if not check_query(query)
+		if not check_query(query):
 			return
 		
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
@@ -73,7 +73,7 @@ class Playlists:
 				await create_playlist(ctx.message.author.id,playlist)
 			
 			front=False
-			if 'front' in inputs
+			if 'front' in inputs:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
