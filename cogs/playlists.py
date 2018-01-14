@@ -89,10 +89,11 @@ class Playlists:
 		finallength=len(self.list)
 		counter=initiallength-finallength
 		if counter == 0:
-			#say no videos have been found
+			await self.context.send("No Such Video")
 		else:
-			#say how many videos were deleted
-		
+			message=str(counter)+" videos deleted"
+			await self.context.send(message)
+			
 		
 		await self.save_playlist(userID,name)
 		
