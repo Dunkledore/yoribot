@@ -33,7 +33,7 @@ class Reddit:
             body["grant_type"] = "https://oauth.reddit.com/grants/installed_client"
             body["device_id"] = self.settings["REDDIT_DEVICE_UUID"]
             creds = base64.b64encode(str.encode(self.settings["REDDIT_API_KEY"]+":", 'utf-8'))
-            response = requests.post(url, body, auth=HTTPBasicAuth(self.settings["REDDIT_API_KEY"], ""))
+            response = requests.post(url, body, auth=HTTPBasicAuth(self.settings["REDDIT_API_KEY"], ""), headers = { 'user-agent': 'Yoribot/reddit' })
             if response.status_code == 200:
                 self.token = json.loads(response.text)
                 self.tokenExpires = datetime.utcnow() + timedelta(seconds=self.token["expires_in"])
