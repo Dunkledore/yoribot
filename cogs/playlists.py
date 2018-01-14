@@ -79,8 +79,7 @@ class Playlists:
 		inputs=list(inputs)
 		if command.lower() == 'add':
 			await ctx.send("command:add")
-			check = await playlist_exists(ctx.message.author.id,name)
-			if not check:
+			if not await self.playlist_exists(ctx.message.author.id,name):
 				await self.create_playlist(ctx.message.author.id,name)
 			
 			front=False
