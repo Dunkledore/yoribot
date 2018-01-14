@@ -46,7 +46,7 @@ class Playlists:
 			return False
 
 	def add_to_playlist(self,userID,name,front):
-		#await self.get_playlist(userID,name)
+		await self.get_playlist(userID,name)
 		
 		if not check_query(query):
 			return
@@ -79,11 +79,11 @@ class Playlists:
 			for item in inputs:
 				self.add_to_playlist(ctx.message.author.id,playlist,front)
 		
-		elif command.lower() == 'remove':
+		#elif command.lower() == 'remove':
 		
-		elif command.lower() == 'delete':
+		#elif command.lower() == 'delete':
 		
-		elif command.lower() == 'rename':
+		#elif command.lower() == 'rename':
 		
 def setup(bot):
     bot.add_cog(Playlists(bot))	
