@@ -39,6 +39,7 @@ class Playlists:
 		await self.context.db.execute(query, userID, name, placeholder)
 	
 	async def get_playlist(self,userID,name):
+		self.list=[]
 		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		
@@ -57,7 +58,7 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front):
-		await self.get_playlist(userID,name)
+		#await self.get_playlist(userID,name)
 
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
