@@ -127,8 +127,12 @@ class Reddit:
                     return
                 else:
                     item = self._cache[self.next_item_idx]
-                    await self._printPost(ctx, item)
-                    self.next_item_idx += 1
+                    if item["over_18"] and not ctx.message.channel.is_nsfw():
+                        '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
+                        ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+                    else:
+                        await self._printPost(ctx, item)
+                        self.next_item_idx += 1
         else:
             ''' Reddit OAuth Client ID not set'''
             message = 'No API key set. Get one at https://www.reddit.com/prefs/apps'
