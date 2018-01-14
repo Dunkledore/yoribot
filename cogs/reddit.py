@@ -110,7 +110,7 @@ class Reddit:
                         return
                 else:
                     '''We have a set of cached posts to work with'''
-                    item = self._cache[self.next_item_idx]
+                    item = self._cache[self.next_item_idx]["data"]
                     if item["over_18"] and not ctx.message.channel.is_nsfw():
                         '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                         ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
@@ -126,7 +126,7 @@ class Reddit:
                     '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
                     return
                 else:
-                    item = self._cache[self.next_item_idx]
+                    item = self._cache[self.next_item_idx]["data"]
                     if item["over_18"] and not ctx.message.channel.is_nsfw():
                         '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                         ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
