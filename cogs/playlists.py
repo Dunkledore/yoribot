@@ -17,9 +17,8 @@ import asyncpg
 class Playlists:
 
 	def __init__(self,bot):
-	self.bot = bot
-	self.playlist=[]
-	self.context=None
+		self.playlist=[]
+		self.context=None
 	
 	def playlist_exists(self,userID,name):
 	
