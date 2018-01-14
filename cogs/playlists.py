@@ -145,7 +145,7 @@ class Playlists:
 			if not await self.playlist_exists(ctx.message.author.id,name):
 				await ctx.send("doesn't exists")
 				return
-			await delete_playlist(ctx.message.author.id,name)
+			await self.delete_playlist(ctx.message.author.id,name)
 
 	
 def setup(bot):
