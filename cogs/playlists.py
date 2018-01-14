@@ -65,19 +65,19 @@ class Playlists:
 	
 			
 	@commands.command()		
-	async def playlist(self,ctx,command,playlist,*inputs):
+	async def playlist(self,ctx,command,name,*inputs):
 		self.context=ctx
 		await ctx.send("hi")
 		if command.lower() == 'add':
-			if not playlist_exists(ctx.message.author.id,playlist):
-				await self.create_playlist(ctx.message.author.id,playlist)
+			if not playlist_exists(ctx.message.author.id,name):
+				await self.create_playlist(ctx.message.author.id,name)
 			
 			front=False
 			if 'front' in inputs:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
-				await self.add_to_playlist(ctx.message.author.id,playlist,front)
+				await self.add_to_playlist(ctx.message.author.id,name,front)
 		
 		#elif command.lower() == 'remove':
 		
