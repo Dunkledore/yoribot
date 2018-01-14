@@ -54,9 +54,7 @@ class Playlists:
 
 	async def add_to_playlist(self,userID,name,front):
 		await self.get_playlist(userID,name)
-		if not self.check_query(query):
-			return
-		
+
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
 			self.list = yt_videos + self.list
@@ -87,6 +85,9 @@ class Playlists:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
+				if not self.check_query(item):
+					continue
+		
 				await self.add_to_playlist(ctx.message.author.id,name,front)
 		
 		#elif command.lower() == 'remove':
