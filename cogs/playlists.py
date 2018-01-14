@@ -92,7 +92,7 @@ class Playlists:
 			for item in inputs:
 				if not self.check_query(item):
 					continue
-		
+				await ctx.send("---")
 				await self.add_to_playlist(ctx.message.author.id,name,item,front)
 		
 		#elif command.lower() == 'remove':
