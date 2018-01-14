@@ -75,6 +75,7 @@ class Reddit:
         embed.add_field(name = "Author", value = "u/{} ".format(author))
         if not item['is_self']:
             if 'post_hint' in item:
+                ctx.send("`I found a post_hint {}`".format(item["post_hint"]))
                 if 'post_hint' == 'image':
                     embed.set_image(url=item["url"])
                 else:
