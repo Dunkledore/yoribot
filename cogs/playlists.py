@@ -35,8 +35,7 @@ class Playlists:
 	
 	
 	async def create_playlist(self,userID,name):
-		query = "INSERT INTO playlists (userid,name,songs) VALUES ($1,$2);"
-		#placeholder=''
+		query = "INSERT INTO playlists (userid,name) VALUES ($1,$2);"
 		await self.context.db.execute(query, userID, name)
 	
 	async def get_playlist(self,userID,name):
