@@ -21,7 +21,7 @@ class Playlists:
 		self.context=None
 	
 	async def playlist_exists(self,userID,name):
-		query = "SELECT * FROM playlist WHERE userid = $1 AND name = $2;"
+		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		if result:
 			return True
@@ -35,7 +35,7 @@ class Playlists:
 		await self.context.db.execute(query, userID, name, placeholder)
 	
 	async def get_playlist(self,userID,name):
-		query = "SELECT * FROM playlist WHERE userid = $1 AND name = $2;"
+		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		
 		self.list=result[0]["songs"].split(",")
