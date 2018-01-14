@@ -20,7 +20,7 @@ class Playlists:
 		self.playlist=[]
 		self.context=None
 	
-	def playlist_exists(self,userID,name):
+	#def playlist_exists(self,userID,name):
 	
 	async def create_playlist(self,userID,name):
 		query = "INSERT INTO playlists (userid,name,songs) VALUES ($1,$2,$3);"
@@ -58,11 +58,11 @@ class Playlists:
 			self.playlist = self.playlist + yt_videos
 		self.context.send(str(self.playlist))
 	
-	def remove_from_playlist(self,userID,name)
+	#def remove_from_playlist(self,userID,name)
 	
-	async def send_help(self,ctx):
+	#async def send_help(self,ctx):
 	
-	def rename_playlist(self,name,userID,new_name):
+	#def rename_playlist(self,name,userID,new_name):
 	
 			
 	@commands.command()		
