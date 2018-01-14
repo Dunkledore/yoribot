@@ -13,6 +13,7 @@ import asyncio
 import traceback
 import asyncpg
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -43,12 +44,15 @@ class Playlists:
 		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		
-		self.list=result[0]["songs"].split(",")
+		self.list=convert_from_storage(result[0]["songs"])
 		
 	def save_playlist(self,userID,name):
-	
+		query = "UPDATE playlists SET Songs = $3 WHERE userid=$1 AND name = $2"
+		songs=convert_to_storage(self.list)
+		await self.context.db.execute(query, userID, name, songs)
 		
 		self.list=[]
+		
 	
 	def check_query(self,query):
 		url=urlparse(query)
@@ -58,20 +62,47 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front=False):
-		#await self.get_playlist(userID,name)
+		await self.get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
 			self.list = yt_videos + self.list
 		else:
 			self.list = self.list + yt_videos
 		
+		await self.save_playlist(userID,name)
 	
+	def convert_to_storage(self,input)
+		return json.dumps(input)
+		
+	
+	def convert_from_storage(self,input)
+		return json.loads(input)
+	
+	async def remove_from_playlist(self,userID,name,query)
+	
+		await self.get_playlist(userID,name)
+		yt_videos = api_youtube.parse_query(query, self.statuslog)
+		initiallength=len(self.list)
+		for video in yt_videos:
+			if video in self.list:
+				self.list=[value for value in self.list if value != video]
+		finallength=len(self.list)
+		counter=initiallength-finallength
+		if counter == 0:
+			#say no videos have been found
+		else:
+			#say how many videos were deleted
+		
+		
+		await self.save_playlist(userID,name)
+		
+	async def delete_playlist(self,userID)
+		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
+		await self.context.db.execute(query, userID, name)
+		#send message to say it's been deleted
 
-	#def remove_from_playlist(self,userID,name)
-	
 	#async def send_help(self,ctx):
 	
-	#def rename_playlist(self,name,userID,new_name):
 	
 			
 	@commands.command()
@@ -91,15 +122,24 @@ class Playlists:
 			for item in inputs:
 				if not self.check_query(item):
 					continue
-				await ctx.send("---")
 				await self.add_to_playlist(ctx.message.author.id,name,item,front)
 			await self.context.send(str(self.list))
 		
-		#elif command.lower() == 'remove':
+		elif command.lower() == 'remove':
+			if not await self.playlist_exists(ctx.message.author.id,name):
+				#say doesnt exists
+				return
+			for item in inputs:
+				if not self.check_query(item):
+					continue
+				await self.remove_from_playlist(ctx.message.author.id,name,item)
 		
-		#elif command.lower() == 'delete':
-		
-		#elif command.lower() == 'rename':
+		elif command.lower() == 'delete':
+			if not await self.playlist_exists(ctx.message.author.id,name):
+				#say doesnt exists
+				return
+			await delete_playlist(ctx.message.author.id,name)
+
 	
 def setup(bot):
     bot.add_cog(Playlists(bot))	
