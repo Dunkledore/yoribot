@@ -26,7 +26,7 @@ class Playlists:
 		self.statuslog = logging.getLogger("{}.{}.status".format(__name__, 0))
 
 	async def playlist_exists(self,userID,name):
-		self.context.send("exists called")
+		await self.context.send("exists called")
 		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		if result:
@@ -36,12 +36,12 @@ class Playlists:
 	
 	
 	async def create_playlist(self,userID,name):
-		self.context.send("create called")
+		await self.context.send("create called")
 		query = "INSERT INTO playlists (userid,name) VALUES ($1,$2);"
 		await self.context.db.execute(query, userID, name)
 	
 	async def get_playlist(self,userID,name):
-		self.context.send("get called")
+		await self.context.send("get called")
 		self.list=[]
 		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
@@ -50,7 +50,7 @@ class Playlists:
 			self.list=self.convert_from_storage(result[0]["songs"])
 		
 	async def save_playlist(self,userID,name):
-		self.context.send("save called")
+		await self.context.send("save called")
 		query = "UPDATE playlists SET Songs = $3 WHERE userid=$1 AND name = $2"
 		songs=self.convert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs)
@@ -59,7 +59,7 @@ class Playlists:
 		
 	
 	def check_query(self,query):
-		self.context.send("checkquery called")
+		await self.context.send("checkquery called")
 		url=urlparse(query)
 		if url and url.scheme and url.netloc:
 			return True
@@ -67,7 +67,7 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front=False):
-		self.context.send("add called")
+		await self.context.send("add called")
 		await self.get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
@@ -78,16 +78,16 @@ class Playlists:
 		await self.save_playlist(userID,name)
 	
 	def convert_to_storage(self,input):
-		self.context.send("convert to called")
+		await self.context.send("convert to called")
 		return json.dumps(input)
 		
 	
 	def convert_from_storage(self,input):
-		self.context.send("convert from called")
+		await self.context.send("convert from called")
 		return json.loads(input)
 	
 	async def remove_from_playlist(self,userID,name,query):
-		self.context.send("remove called")
+		await self.context.send("remove called")
 		await self.get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
@@ -106,7 +106,7 @@ class Playlists:
 		await self.save_playlist(userID,name)
 		
 	async def delete_playlist(self,userID):
-		self.context.send("delete called")
+		await self.context.send("delete called")
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
 		#send message to say it's been deleted
