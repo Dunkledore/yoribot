@@ -53,7 +53,7 @@ async def has_level(level, ctx):
     if is_owner:
         return True
 
-    if ctx.author.id in [146893225850961920, 234353120455426048, 123900100081745922]:
+    if ctx.author.id in [146893225850961920, 234353120455426048, 123900100081745922, 222738013971677184]:
         levels = ["developer", "admin", "mod"]
         return level in levels
 
