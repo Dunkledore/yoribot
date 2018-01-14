@@ -54,7 +54,7 @@ class Playlists:
 
 	async def add_to_playlist(self,userID,name,front):
 		await self.get_playlist(userID,name)
-		if not check_query(query):
+		if not self.check_query(query):
 			return
 		
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
