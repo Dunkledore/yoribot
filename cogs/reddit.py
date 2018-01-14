@@ -77,6 +77,8 @@ class Reddit:
             if 'post_hint' in item:
                 if item['post_hint'] == 'image':
                     embed.set_image(url=item["url"])
+                elif item['post_hint'] == 'link' and item['domain'] == 'imgur.com':
+                    embed.set_image(url=item["url"]+".png")
                 else:
                     embed.add_field(name="Link", value=item["url"])
         await ctx.send(embed=embed)
