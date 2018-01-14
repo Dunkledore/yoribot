@@ -74,7 +74,11 @@ class Reddit:
             author = author + ' `{}`'.format(item['author_flair_text'])
         embed.add_field(name = "Author", value = "u/{} ".format(author))
         if not item['is_self']:
-            embed.add_field(name="Link", value=item["url"])
+            if 'post_hint' in item:
+                if 'post_hint' == 'image':
+                    embed.set_image(url=item["url"])
+                else:
+                    embed.add_field(name="Link", value=item["url"])
         await ctx.send(embed=embed)
         return
 
