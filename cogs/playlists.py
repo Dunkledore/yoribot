@@ -113,7 +113,7 @@ class Playlists:
 	
 			
 	@commands.command()
-	async def playlist(self,ctx,command,name,*inputs):
+	async def playlist(self,ctx,command,name,*inputs=None):
 		await ctx.send("hi")
 		self.context=ctx
 		inputs=list(inputs)
