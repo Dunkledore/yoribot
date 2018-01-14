@@ -161,5 +161,6 @@ def check_file():
 
 
 def setup(bot):
-    n = Reddit(bot)
-    bot.add_cog(n)
+    check_folder()
+    check_file()
+    bot.add_cog(Reddit(bot))
