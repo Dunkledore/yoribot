@@ -113,7 +113,7 @@ class Reddit:
                     item = self._cache[self.next_item_idx]["data"]
                     if item["over_18"] and not ctx.message.channel.is_nsfw():
                         '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
-                        ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+                        await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
                     else:
                         await self._printPost(ctx, item)
                         self.next_item_idx += 1
@@ -129,7 +129,7 @@ class Reddit:
                     item = self._cache[self.next_item_idx]["data"]
                     if item["over_18"] and not ctx.message.channel.is_nsfw():
                         '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
-                        ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+                        await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
                     else:
                         await self._printPost(ctx, item)
                         self.next_item_idx += 1
