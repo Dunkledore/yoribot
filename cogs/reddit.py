@@ -14,17 +14,17 @@ import uuid
 
 class Reddit:
     def __init__(self, bot):
-      self.bot = bot
-      self.settings_file = 'data/reddit/reddit.json'
-      self.settings = dataIO.load_json(self.settings_file)
-      self.next_item_idx = 0
-      self.current_subreddit = ""
-      self.current_mode = ""
-      self._nextCursor = ""
-      self._cache = []
-      self.token = False
-      self.tokenExpires = False
-      self.modes = ["top", "rising", "new", "random", "controversial"]
+        self.bot = bot
+        self.settings_file = 'data/reddit/reddit.json'
+        self.settings = dataIO.load_json(self.settings_file)
+        self.next_item_idx = 0
+        self.current_subreddit = ""
+        self.current_mode = ""
+        self._nextCursor = ""
+        self._cache = []
+        self.token = False
+        self.tokenExpires = False
+        self.modes = ["top", "rising", "new", "random", "controversial"]
 
     async def _ensureAuth(self, ctx):
         if not self.token or self.tokenExpires < datetime.utcnow():
@@ -32,7 +32,6 @@ class Reddit:
             body = {}
             body["grant_type"] = "https://oauth.reddit.com/grants/installed_client"
             body["device_id"] = self.settings["REDDIT_DEVICE_UUID"]
-            creds = base64.b64encode(str.encode(self.settings["REDDIT_API_KEY"]+":", 'utf-8'))
             response = requests.post(url, body, auth=HTTPBasicAuth(self.settings["REDDIT_API_KEY"], ""), headers = { 'user-agent': 'Yoribot/reddit' })
             if response.status_code == 200:
                 self.token = json.loads(response.text)
@@ -73,9 +72,9 @@ class Reddit:
         if item['author_flair_text']:
             author = author + ' `{}`'.format(item['author_flair_text'])
         embed.add_field(name = "Author", value = "u/{} ".format(author))
-        if not item['is_self'] and item['post_hint'] == "link":
+        if not item['is_self']:
             embed.add_field(name="Link", value= item["url"])
-        embed.set_footer(text="https://www.reddit.com/" + item["permalink"])
+        embed.set_footer(text="https://www.reddit.com" + item["permalink"])
         await ctx.send(embed=embed)
         return
 
@@ -125,14 +124,14 @@ class Reddit:
                 if not t:
                     '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
                     return
+                
+                item = self._cache[self.next_item_idx]["data"]
+                if item["over_18"] and not ctx.message.channel.is_nsfw():
+                    '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
+                    await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
                 else:
-                    item = self._cache[self.next_item_idx]["data"]
-                    if item["over_18"] and not ctx.message.channel.is_nsfw():
-                        '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
-                        await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
-                    else:
-                        await self._printPost(ctx, item)
-                        self.next_item_idx += 1
+                    await self._printPost(ctx, item)
+                    self.next_item_idx += 1
         else:
             ''' Reddit OAuth Client ID not set'''
             message = 'No API key set. Get one at https://www.reddit.com/prefs/apps'
