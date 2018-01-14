@@ -71,14 +71,14 @@ class Playlists:
 		
 		await self.save_playlist(userID,name)
 	
-	def convert_to_storage(self,input)
+	def convert_to_storage(self,input):
 		return json.dumps(input)
 		
 	
-	def convert_from_storage(self,input)
+	def convert_from_storage(self,input):
 		return json.loads(input)
 	
-	async def remove_from_playlist(self,userID,name,query)
+	async def remove_from_playlist(self,userID,name,query):
 	
 		await self.get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
@@ -96,7 +96,7 @@ class Playlists:
 		
 		await self.save_playlist(userID,name)
 		
-	async def delete_playlist(self,userID)
+	async def delete_playlist(self,userID):
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
 		#send message to say it's been deleted
