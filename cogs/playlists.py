@@ -44,11 +44,11 @@ class Playlists:
 		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		
-		self.list=convert_from_storage(result[0]["songs"])
+		self.list=self.convert_from_storage(result[0]["songs"])
 		
-	def save_playlist(self,userID,name):
+	async def save_playlist(self,userID,name):
 		query = "UPDATE playlists SET Songs = $3 WHERE userid=$1 AND name = $2"
-		songs=convert_to_storage(self.list)
+		songs=self.convert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs)
 		
 		self.list=[]
