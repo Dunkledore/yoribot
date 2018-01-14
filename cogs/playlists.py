@@ -75,7 +75,7 @@ class Playlists:
 	@commands.command()
 	async def playlist(self,ctx,command,name,*inputs):
 		query = "CREATE TABLE playlists (Userid bigint, Name varchar(255), Songs text);"
-		await self.context.db.execute(query)
+		await ctx.db.execute(query)
 		await ctx.send("hi")
 		'''self.context=ctx
 		inputs=list(inputs)
