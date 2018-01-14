@@ -46,8 +46,8 @@ class Playlists:
 			return False
 
 	def add_to_playlist(self,userID,name,front):
-		
 		await self.get_playlist(userID,name)
+		
 		if not check_query(query):
 			return
 		
