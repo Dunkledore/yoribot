@@ -20,7 +20,14 @@ class Playlists:
 		self.list=[]
 		self.context=None
 	
-	#def playlist_exists(self,userID,name):
+	async def playlist_exists(self,userID,name):
+		query = "SELECT * FROM playlist WHERE userid = $1 AND name = $2;"
+		result = await self.context.db.fetch(query, userID, name)
+		if result:
+			return True
+		else:
+			return False
+	
 	
 	async def create_playlist(self,userID,name):
 		query = "INSERT INTO playlists (userid,name,songs) VALUES ($1,$2,$3);"
@@ -57,14 +64,7 @@ class Playlists:
 			self.list = self.list + yt_videos
 		await self.context.send(str(self.list))
 	
-	async def playlist_exists(self,userID,name):
-		query = "SELECT * FROM playlist WHERE userid = $1 AND name = $2;"
-		result = await self.context.db.fetch(query, userID, name)
-		if result:
-			return True
-		else:
-			return False
-	
+
 	#def remove_from_playlist(self,userID,name)
 	
 	#async def send_help(self,ctx):
