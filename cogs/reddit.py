@@ -17,11 +17,11 @@ class Reddit:
         self.bot = bot
         self.settings_file = 'data/reddit/reddit.json'
         self.settings = dataIO.load_json(self.settings_file)
-        self.next_item_idx = 0
-        self.current_subreddit = ""
-        self.current_mode = ""
-        self._nextCursor = ""
-        self._cache = []
+        self.next_item_idx = {}
+        self.current_subreddit = {}
+        self.current_mode = {}
+        self._nextCursor = {}
+        self._cache = {}
         self.token = False
         self.tokenExpires = False
         self.modes = ["top", "rising", "new", "random", "controversial"]
@@ -57,14 +57,14 @@ class Reddit:
                     await ctx.send("Huh... I couldn't find that subreddit.")
                     return False
                 else:
-                    self._nextCursor = resJson["data"]["after"]
-                    self._cache = resJson["data"]["children"]
-                    self.next_item_idx = 0
+                    self._nextCursor[ctx.message.guild][ctx.message.author] = resJson["data"]["after"]
+                    self._cache[ctx.message.guild][ctx.message.author] = resJson["data"]["children"]
+                    self.next_item_idx[ctx.message.guild][ctx.message.author] = 0
                     return True
 
     async def _printPost(self, ctx, item):
         embed = discord.Embed(colour=0xff5700, title = item["title"], url="https://www.reddit.com" + item["permalink"], description=item["selftext"])
-        if item["thumbnail"] == "self":
+        if item["thumbnail"] == "self" or item["thumbnail"] == "":
             embed.set_thumbnail(url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png")
         else:
             embed.set_thumbnail(url=item["thumbnail"])        
@@ -87,6 +87,30 @@ class Reddit:
     @commands.command(name="reddit")
     async def _reddit(self, ctx, subreddit: str = "$$next_item", mode = "top"):
         '''Gets posts from a provided subreddit on reddit.'''
+        if ctx.message.guild not in self.current_subreddit:
+            self.current_subreddit[ctx.message.guild] = {}
+        if ctx.message.author not in self.current_subreddit[ctx.message.guild]:
+            self.current_subreddit[ctx.message.guild][ctx.message.author] = False
+        
+        if ctx.message.guild not in self.current_mode:
+            self.current_mode[ctx.message.guild] = {}
+        if ctx.message.author not in self.current_mode[ctx.message.guild]:
+            self.current_mode[ctx.message.guild][ctx.message.author] = ""
+
+        if ctx.message.guild not in self._nextCursor:
+            self._nextCursor[ctx.message.guild] = {}
+        if ctx.message.author not in self._nextCursor[ctx.message.guild]:
+            self._nextCursor[ctx.message.guild][ctx.message.author] = ""
+        
+        if ctx.message.guild not in self._cache:
+            self._cache[ctx.message.guild] = {}
+        if ctx.message.author not in self._cache[ctx.message.guild]:
+            self._cache[ctx.message.guild][ctx.message.author] = []
+
+        if ctx.message.guild not in self.next_item_idx:
+            self.next_item_idx[ctx.message.guild] = {}
+        if ctx.message.author not in self.next_item_idx[ctx.message.guild]:
+            self.next_item_idx[ctx.message.guild][ctx.message.author] = 0
 
         if self.settings["REDDIT_API_KEY"]:
             '''Ensure we are authenticated with Reddit'''
@@ -101,21 +125,21 @@ class Reddit:
                 await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`")
                 return
             if subreddit.lower() == "$$next_item":
-                if not self.current_subreddit:
+                if not self.current_subreddit[ctx.message.guild][ctx.message.author]:
                     '''No subreddit selected and someone used the command with no arguments'''
                     await ctx.send("No subreddit currently selected use `{}reddit <subreddit> [mode='top,random,new,rising,controversial']` to set the current subreddit.".format(prefix))
-                elif self.next_item_idx == 5:
+                elif self.next_item_idx[ctx.message.guild][ctx.message.author] == 5:
                     '''Get and Cache the next 5 items from reddit'''
-                    url = baseUrl + self.current_subreddit + "/" + self.current_mode + ".json?limit=5&after=" + self._nextCursor
+                    url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + self.current_mode[ctx.message.guild][ctx.message.author] + ".json?limit=5&after=" + self._nextCursor[ctx.message.guild][ctx.message.author]
                     t = await self._getAndCachePosts(ctx, url)
                     if not t:
                         '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
-                        self.current_subreddit = ""
-                        self.current_mode = ""
+                        self.current_subreddit[ctx.message.guild][ctx.message.author] = ""
+                        self.current_mode[ctx.message.guild][ctx.message.author] = ""
                         return
                 else:
                     '''We have a set of cached posts to work with'''
-                    item = self._cache[self.next_item_idx]["data"]
+                    item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx]["data"]
                     if item["over_18"] and not ctx.message.channel.is_nsfw():
                         '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                         await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
@@ -123,15 +147,15 @@ class Reddit:
                         await self._printPost(ctx, item)
                         self.next_item_idx += 1
             else:
-                self.current_mode = mode
-                self.current_subreddit = subreddit.lower()
-                url = baseUrl + self.current_subreddit + "/" + mode + ".json?limit=5"
+                self.current_mode[ctx.message.guild][ctx.message.author] = mode
+                self.current_subreddit[ctx.message.guild][ctx.message.author] = subreddit.lower()
+                url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + mode + ".json?limit=5"
                 t = await self._getAndCachePosts(ctx, url)
                 if not t:
                     '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
                     return
                 
-                item = self._cache[self.next_item_idx]["data"]
+                item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx]["data"]
                 if item["over_18"] and not ctx.message.channel.is_nsfw():
                     '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                     await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
