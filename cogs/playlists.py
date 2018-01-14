@@ -79,7 +79,7 @@ class Playlists:
 		return json.loads(input)
 	
 	async def remove_from_playlist(self,userID,name,query):
-	
+		self.context.say("remove called")
 		await self.get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
