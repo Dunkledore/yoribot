@@ -64,8 +64,8 @@ class Playlists:
 	#def rename_playlist(self,name,userID,new_name):
 	
 			
-	@commands.command()		
-	async def playlist(self,ctx,command,name,inputs):
+	@commands.command()
+	async def playlist(self,ctx,command,name,*inputs):
 		self.context=ctx
 		await ctx.send("hi")
 		if command.lower() == 'add':
@@ -84,6 +84,10 @@ class Playlists:
 		#elif command.lower() == 'delete':
 		
 		#elif command.lower() == 'rename':
+	
+	@commands.command()
+	async def felixtest(self,ctx,arg):
+		await ctx.send("hi")
 		
 def setup(bot):
     bot.add_cog(Playlists(bot))	
