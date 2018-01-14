@@ -59,7 +59,6 @@ class Playlists:
 		
 	
 	def check_query(self,query):
-		await self.context.send("checkquery called")
 		url=urlparse(query)
 		if url and url.scheme and url.netloc:
 			return True
@@ -78,12 +77,10 @@ class Playlists:
 		await self.save_playlist(userID,name)
 	
 	def convert_to_storage(self,input):
-		await self.context.send("convert to called")
 		return json.dumps(input)
 		
 	
 	def convert_from_storage(self,input):
-		await self.context.send("convert from called")
 		return json.loads(input)
 	
 	async def remove_from_playlist(self,userID,name,query):
