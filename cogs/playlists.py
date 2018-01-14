@@ -17,7 +17,7 @@ import asyncpg
 class Playlists:
 
 	def __init__(self,bot):
-		self.playlist=[]
+		self.list=[]
 		self.context=None
 	
 	#def playlist_exists(self,userID,name):
@@ -31,12 +31,12 @@ class Playlists:
 		query = "SELECT * FROM playlist WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
 		
-		self.playlist=result[0]["songs"].split(",")
+		self.list=result[0]["songs"].split(",")
 		
 	def save_playlist(self,userID,name):
 	
 		
-		self.playlist=[]
+		self.list=[]
 	
 	def check_query(self,query):
 		url=urlparse(query)
@@ -52,10 +52,10 @@ class Playlists:
 		
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
-			self.playlist = yt_videos + self.playlist
+			self.list = yt_videos + self.list
 		else:
-			self.playlist = self.playlist + yt_videos
-		await self.context.send(str(self.playlist))
+			self.list = self.list + yt_videos
+		await self.context.send(str(self.list))
 	
 	#def remove_from_playlist(self,userID,name)
 	
@@ -65,9 +65,9 @@ class Playlists:
 	
 			
 	@commands.command()
-	async def playlist(self,ctx,arg):#,command,name,inputs):
+	async def playlist(self,ctx,command,name,*inputs):
 		await ctx.send(arg)
-	'''	self.context=ctx
+		self.context=ctx
 
 		if command.lower() == 'add':
 			if not playlist_exists(ctx.message.author.id,name):
@@ -84,7 +84,7 @@ class Playlists:
 		
 		#elif command.lower() == 'delete':
 		
-		#elif command.lower() == 'rename':'''
+		#elif command.lower() == 'rename':
 	
 def setup(bot):
     bot.add_cog(Playlists(bot))	
