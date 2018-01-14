@@ -102,7 +102,7 @@ class Playlists:
 		
 		await self.save_playlist(userID,name)
 		
-	async def delete_playlist(self,userID):
+	async def delete_playlist(self,userID,name):
 		await self.context.send("delete called")
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
@@ -113,7 +113,7 @@ class Playlists:
 	
 			
 	@commands.command()
-	async def playlist(self,ctx,command,name,*inputs=None):
+	async def playlist(self,ctx,command,name,*inputs):
 		await ctx.send("hi")
 		self.context=ctx
 		inputs=list(inputs)
