@@ -60,6 +60,7 @@ class Reddit:
                     self._nextCursor = resJson["data"]["after"]
                     self._cache = resJson["data"]["children"]
                     self.next_item_idx = 0
+                    return True
 
     async def _printPost(self, ctx, item):
         embed = discord.Embed(colour=0xff5700, title = item["title"])
