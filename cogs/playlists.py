@@ -45,8 +45,8 @@ class Playlists:
 		else:
 			return False
 
-	def add_to_playlist(self,userID,name,front):
-		await self.get_playlist(userID,name)	
+	async def add_to_playlist(self,userID,name,front):
+		await self.get_playlist(userID,name)
 		if not check_query(query):
 			return
 		
@@ -76,7 +76,7 @@ class Playlists:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
-				self.add_to_playlist(ctx.message.author.id,playlist,front)
+				await self.add_to_playlist(ctx.message.author.id,playlist,front)
 		
 		#elif command.lower() == 'remove':
 		
