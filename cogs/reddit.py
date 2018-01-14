@@ -40,7 +40,7 @@ class Reddit:
                 return True
             else:
                 print("Reddit Auth Failed {}: {}", response.status_code, response.text )
-                await ctx.send("Reddit Auth Failed {}: {} :cry:", response.status_code, response.text )
+                await ctx.send("Reddit Auth Failed {}: {} :cry:".format(response.status_code, response.text) )
                 return False
 
     async def _getAndCachePosts(self, ctx, url):
