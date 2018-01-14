@@ -47,7 +47,7 @@ class Playlists:
 
 	def add_to_playlist(self,userID,name,front):
 		
-		async get_playlist(userID,name)
+		await get_playlist(userID,name)
 		if not check_query(query):
 			return
 		
