@@ -66,7 +66,6 @@ class Playlists:
 			
 	@commands.command()
 	async def playlist(self,ctx,command,name,*inputs):
-		await ctx.send(arg)
 		self.context=ctx
 
 		if command.lower() == 'add':
