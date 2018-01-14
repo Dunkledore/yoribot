@@ -82,58 +82,59 @@ class Reddit:
     @commands.command(name="reddit")
     async def _reddit(self, ctx, subreddit: str = "$$next_item", mode = "top"):
         '''Gets posts from a provided subreddit on reddit.'''
-        if not self.settings["REDDIT_API_KEY"]:
+        if self.settings["REDDIT_API_KEY"]:
+                
+
+            '''Ensure we are authenticated with Reddit'''
+            r = await self._ensureAuth(ctx)
+            baseUrl = "https://www.reddit.com/r/"
+
+            '''Get the guild set prefix for the help message'''
+            prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
+
+            if mode not in self.modes:
+                '''Oops someone entered a mode that doesn't exist'''
+                await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`")
+                return
+            if subreddit.lower() == "$$next_item":
+                if not self.current_subreddit:
+                    '''No subreddit selected and someone used the command with no arguments'''
+                    await ctx.send("No subreddit currently selected use `{}reddit <subreddit> [mode='top,random,new,rising,controversial']` to set the current subreddit.".format(prefix))
+                elif self.next_item_idx == 5:
+                    '''Get and Cache the next 5 items from reddit'''
+                    url = baseUrl + self.current_subreddit + "/" + self.current_mode + ".json?limit=5&after=" + self._nextCursor
+                    t = await self._getAndCachePosts(ctx, url)
+                    if not t:
+                        '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
+                        self.current_subreddit = ""
+                        self.current_mode = ""
+                        return
+                else:
+                    '''We have a set of cached posts to work with'''
+                    item = self._cache[self.next_item_idx]
+                    if item["over_18"] and not ctx.message.channel.is_nsfw():
+                        '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
+                        ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+                    else:
+                        await self._printPost(ctx, item)
+                        self.next_item_idx += 1
+            else:
+                self.current_mode = mode
+                self.current_subreddit = subreddit.lower()
+                url = baseUrl + self.current_subreddit + "/" + mode + ".json?limit=5"
+                t = await self._getAndCachePosts(ctx, url)
+                if not t:
+                    '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
+                    return
+                else:
+                    item = self._cache[self.next_item_idx]
+                    await self._printPost(ctx, item)
+                    self.next_item_idx += 1
+        else:
             ''' Reddit OAuth Client ID not set'''
             message = 'No API key set. Get one at https://www.reddit.com/prefs/apps'
             await ctx.send('```{}```'.format(message))
             return
-
-        '''Ensure we are authenticated with Reddit'''
-        r = await self._ensureAuth(ctx)
-        baseUrl = "https://www.reddit.com/r/"
-
-        '''Get the guild set prefix for the help message'''
-        prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
-
-        if mode not in self.modes:
-            '''Oops someone entered a mode that doesn't exist'''
-            await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`")
-            return
-        if subreddit.lower() == "$$next_item":
-            if not self.current_subreddit:
-                '''No subreddit selected and someone used the command with no arguments'''
-                await ctx.send("No subreddit currently selected use `{}reddit <subreddit> [mode='top,random,new,rising,controversial']` to set the current subreddit.".format(prefix))
-            elif self.next_item_idx == 5:
-                '''Get and Cache the next 5 items from reddit'''
-                url = baseUrl + self.current_subreddit + "/" + self.current_mode + ".json?limit=5&after=" + self._nextCursor
-                t = await self._getAndCachePosts(ctx, url)
-                if not t:
-                    '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
-                    self.current_subreddit = ""
-                    self.current_mode = ""
-                    return
-            else:
-                '''We have a set of cached posts to work with'''
-                item = self._cache[self.next_item_idx]
-                if item["over_18"] and not ctx.message.channel.is_nsfw():
-                    '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
-                    ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
-                else:
-                    await self._printPost(ctx, item)
-                    self.next_item_idx += 1
-        else:
-            self.current_mode = mode
-            self.current_subreddit = subreddit.lower()
-            url = baseUrl + self.current_subreddit + "/" + mode + ".json?limit=5"
-            t = await self._getAndCachePosts(ctx, url)
-            if not t:
-                '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
-                return
-            else:
-                item = self._cache[self.next_item_idx]
-                await self._printPost(ctx, item)
-                self.next_item_idx += 1
-        
 
     @commands.command(name="redditkey")
     # @checks.is_owner()
