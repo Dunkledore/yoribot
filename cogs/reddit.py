@@ -73,8 +73,8 @@ class Reddit:
         if item['author_flair_text']:
             author = author + ' `{}`'.format(item['author_flair_text'])
         embed.add_field(name = "Author", value = "u/{} ".format(author))
-        embed.add_field(name= "Upvotes" value=item["ups"])
-        embed.add_field(name="Downvotes" value=item["downs"])
+        embed.add_field(name= "Upvotes", value=item["ups"])
+        embed.add_field(name="Downvotes", value=item["downs"])
         if not item['is_self']:
             if 'post_hint' in item:
                 if item['post_hint'] == 'image':
