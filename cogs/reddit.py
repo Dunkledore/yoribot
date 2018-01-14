@@ -73,7 +73,7 @@ class Reddit:
         if item['author_flair_text']:
             author = author + ' `{}`'.format(item['author_flair_text'])
         embed.add_field(name = "Author", value = "u/{} ".format(author))
-        embed.add_field(name= "Score", value=str(item["score"]) + "  ({}:thumbsup: {}:thumbsdown:)".format(item["ups"], item["downs"]))
+        embed.add_field(name= "Score", value=str(item["score"]) + "  ({}:arrow_up_small: {}:arrow_down_small:)".format(item["ups"], item["downs"]))
         if not item['is_self']:
             if 'post_hint' in item:
                 if item['post_hint'] == 'image':
