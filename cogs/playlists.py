@@ -57,6 +57,14 @@ class Playlists:
 			self.list = self.list + yt_videos
 		await self.context.send(str(self.list))
 	
+	async def playlist_exists(self,userID,name):
+		query = "SELECT * FROM playlist WHERE userid = $1 AND name = $2;"
+		result = await self.context.db.fetch(query, userID, name)
+		if result:
+			return True
+		else:
+			return False
+	
 	#def remove_from_playlist(self,userID,name)
 	
 	#async def send_help(self,ctx):
@@ -66,12 +74,12 @@ class Playlists:
 			
 	@commands.command()
 	async def playlist(self,ctx,command,name,*inputs):
-		ctx.send("hi")
+		await ctx.send("hi")
 		self.context=ctx
 
 		if command.lower() == 'add':
-			ctx.send("command:add")
-			if not playlist_exists(ctx.message.author.id,name):
+			await ctx.send("command:add")
+			if not await playlist_exists(ctx.message.author.id,name):
 				await self.create_playlist(ctx.message.author.id,name)
 			
 			front=False
