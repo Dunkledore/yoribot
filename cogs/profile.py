@@ -19,6 +19,9 @@ class Profile:
     
     @commands.command()
     async def profilehelp(self, ctx):
+        """
+        Sends help information for profile.
+        """
         prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
         em = discord.Embed(color=ctx.message.author.color, description="Need help setting up your profile? No worries, here are some pointers:")
         em.set_author(name="Profile Setup Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
@@ -320,17 +323,17 @@ class Profile:
 
     @commands.command()
     @commands.guild_only()
-    async def profiledelete(self, ctx):
-        """Removes and embed field from the profile message"""
+    async def profilereset(self, ctx):
+        """Resets your profile"""
 
         query="DELETE FROM profile WHERE user_id = $1"
         await ctx.db.execute(query, ctx.author.id)
-        await ctx.send("Profile Deleted")
+        await ctx.send("Profile Reset")
 
     @commands.command()
     @commands.guild_only()
     async def profileremove(self, ctx, name=None):
-        """Removes and embed field from the profile message"""
+        """Removes an embed field from the profile message"""
 
         if name is None:
             await ctx.send('Please enter a field to remove')

@@ -43,6 +43,9 @@ class RPSParser:
             raise
 
 class Fun:
+    """
+    Various fun and entertaining commands to keep things interesting!
+    """
 
     def __init__(self, bot):
         self.bot = bot
@@ -242,6 +245,9 @@ class Fun:
         await ctx.send(choice(self.lines))
     @commands.group(aliases=["kao"], invoke_without_command=True)
     async def kaomoji(self, ctx, *, category: str, n: int=None):
+        """
+        Send a japanese emoji (the text kind).
+        """
         str_category = category.lower()
         m = ctx.message
         amount = len(self.system.get(str_category, []))
@@ -441,7 +447,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " No, Just No! Get a life! ")
         else:
-            await self.upload_random_gif(sender.mention + " strips for " + ctx, user.mention + " and they LIKE it! ", folder)
+            await self.upload_random_gif(ctx, sender.mention + " strips for " + user.mention + " and they LIKE it! ", folder)
 
     @commands.command()
     async def thirsty(self, ctx, *, user: discord.Member):
@@ -451,7 +457,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " Really? Just really?? You need help! ")
         else:
-            await self.upload_random_gif(sender.mention + " tells " + ctx, user.mention + " To calm your thirsty ass down! ",
+            await self.upload_random_gif(ctx, sender.mention + " tells " + user.mention + " To calm your thirsty ass down! ",
                                          folder)
 
     @commands.command()
@@ -472,8 +478,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " Well aren't you just a kinky thing! ")
         else:
-            await self.upload_random_gif(
-                sender.mention + " has whipped " + ctx, user.mention + " and i think they LIKED it! ", folder)
+            await self.upload_random_gif(ctx, sender.mention + " has whipped " +  user.mention + " and i think they LIKED it! ", folder)
 
     @commands.command()
     async def facepalm(self, ctx, *, user: discord.Member):
@@ -493,7 +498,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " You cannot do that to yourself! ")
         else:
-            await self.upload_random_gif(sender.mention + " yells at " + ctx, user.mention + " Oh no they didn't! ", folder)
+            await self.upload_random_gif(ctx, sender.mention + " yells at " + user.mention + " Oh no they didn't! ", folder)
 
     @commands.command()
     async def hungry(self, ctx, *, user: discord.Member):
@@ -513,7 +518,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " No, Just no! Get a life! ")
         else:
-            await self.upload_random_gif(sender.mention + " wants to kick " + ctx, user.mention + " in the NUTS! OUCH!! ",
+            await self.upload_random_gif(ctx, sender.mention + " wants to kick " + user.mention + " in the NUTS! OUCH!! ",
                                          folder)
 
     @commands.command()
@@ -521,7 +526,7 @@ class Fun:
         """Do you have the Fever?"""
         sender = ctx.message.author
         folder = "fever"
-        await self.upload_random_gif(sender.mention + "I see you have the fever.... The Bieber fever", folder)
+        await self.upload_random_gif(ctx, sender.mention + "I see you have the fever.... The Bieber fever", folder)
 
 
     async def upload_random_gif(self, ctx, msg, folder):

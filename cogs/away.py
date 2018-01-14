@@ -6,6 +6,9 @@ import time
 
 
 class Away:
+	"""
+	Let people know when you are AFK and Yori will let you know what they tagged you with when you get back.
+	"""
 	
 	def __init__(self,bot):
 	
@@ -70,6 +73,9 @@ class Away:
 
 	@commands.command()
 	async def away(self, ctx, *, awaymessage):
+		"""
+		Set an away message so people know why you aren't responding when tagged.
+		"""
 		#await ctx.message.delete()
 		
 		user=ctx.message.author
@@ -87,6 +93,9 @@ class Away:
 	
 	@commands.command()
 	async def back(self, ctx):
+		"""
+		Removes your AFK message and sends you a summary of when you were tagged while you were out.
+		"""
 		#await ctx.message.delete()
 		
 		user=ctx.message.author
