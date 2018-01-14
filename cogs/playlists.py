@@ -12,6 +12,9 @@ import discord
 import asyncio
 import traceback
 import asyncpg
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Playlists:
@@ -19,7 +22,8 @@ class Playlists:
 	def __init__(self,bot):
 		self.list=[]
 		self.context=None
-	
+		self.statuslog = logging.getLogger("{}.{}.status".format(__name__, 0))
+
 	async def playlist_exists(self,userID,name):
 		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 		result = await self.context.db.fetch(query, userID, name)
@@ -55,7 +59,7 @@ class Playlists:
 	async def add_to_playlist(self,userID,name,query,front):
 		await self.get_playlist(userID,name)
 
-		yt_videos = api_youtube.parse_query(query)#, self.statuslog)
+		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
 			self.list = yt_videos + self.list
 		else:
