@@ -82,9 +82,8 @@ class Reddit:
     @commands.command(name="reddit")
     async def _reddit(self, ctx, subreddit: str = "$$next_item", mode = "top"):
         '''Gets posts from a provided subreddit on reddit.'''
-        if self.settings["REDDIT_API_KEY"]:
-                
 
+        if self.settings["REDDIT_API_KEY"]:
             '''Ensure we are authenticated with Reddit'''
             r = await self._ensureAuth(ctx)
             baseUrl = "https://www.reddit.com/r/"
@@ -140,9 +139,9 @@ class Reddit:
     # @checks.is_owner()
     async def _redditkey(self, ctx, key: str):
         """Insert API key into settings"""
-        settings = dataIO.load_json(self.settings_file)
-        settings['REDDIT_API_KEY'] = key
-        dataIO.save_json(self.settings_file, settings)
+        self.settings = dataIO.load_json(self.settings_file)
+        self.settings['REDDIT_API_KEY'] = key
+        dataIO.save_json(self.settings_file, self.settings)
         await ctx.send('Key saved! It might take a minute or ten before the key is active if you just registered it.')
 
 def check_folder():
