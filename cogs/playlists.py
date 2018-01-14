@@ -17,6 +17,7 @@ import asyncpg
 class Playlists:
 
 	def __init__(self,bot):
+	self.bot = bot
 	self.playlist=[]
 	self.context=None
 	
