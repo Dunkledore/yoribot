@@ -44,7 +44,7 @@ class Reddit:
                 return False
 
     async def _getAndCachePosts(self, ctx, url):
-        res = requests.get(url)
+        res = requests.get(url, headers = { 'User-agent': 'Yoribot/reddit', 'Authorization': 'Bearer {}'.format(self.token["access_token"]) })
         if res.status_code != 200:
             print("Error {}: Cannot connect to reddit.com :cry:".format(res.status_code))
             await ctx.send("Error {}: Cannot connect to reddit.com :cry:".format(res.status_code))
@@ -86,7 +86,7 @@ class Reddit:
         if self.settings["REDDIT_API_KEY"]:
             '''Ensure we are authenticated with Reddit'''
             r = await self._ensureAuth(ctx)
-            baseUrl = "https://www.reddit.com/r/"
+            baseUrl = "https://oauth.reddit.com/r/"
 
             '''Get the guild set prefix for the help message'''
             prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
