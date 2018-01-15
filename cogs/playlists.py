@@ -54,7 +54,7 @@ class Playlists:
 			for column in results:
 				playlist_list.append({"name":column["name"],"no_songs":column["no_songs"]})
 		else:
-			await self.send_error_message(ctx,"You currently have no playlists")
+			await self.send_error_message(self.context,"You currently have no playlists")
 			
 		return playlist_list	
 		
