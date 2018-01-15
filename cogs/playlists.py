@@ -155,8 +155,7 @@ class Playlists:
 	@commands.command()
 	async def playlistadd(self,ctx,playlistname,*urls):
 		self.context=ctx
-		await ctx.send(urls)
-		if not urls or not playlistname:
+		if urls==() or not playlistname:
 			self.send_help(ctx)
 			return
 		urls=list(urls)
@@ -172,7 +171,7 @@ class Playlists:
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname,*urls):
 		self.context=ctx
-		if not urls or not playlistname:
+		if urls==() or not playlistname:
 			self.send_help(ctx)
 			return
 		urls=list(urls)
