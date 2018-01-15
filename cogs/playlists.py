@@ -178,7 +178,7 @@ class Playlists:
 		urls=list(urls)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
-			await self.sendlist(ctx)
+			await self.send_list(ctx)
 			return
 		
 		deleted_videos=0
@@ -201,7 +201,7 @@ class Playlists:
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
-			await self.sendlist(ctx)
+			await self.send_list(ctx)
 			return
 		await self.delete_playlist(ctx.message.author.id,playlistname)
 		
