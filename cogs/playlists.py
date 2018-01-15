@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 class Playlists:
 
 	def __init__(self,bot):
+		self.bot = bot
 		self.list=[]
 		self.playlist_list=[]
 		self.context=None
@@ -129,12 +130,6 @@ class Playlists:
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Success!",value=message)
 		await self.context.channel.send(embed=embed)
-
-	async def send_help(self,ctx):
-		await ctx.send("sendhelp called")
-		help=discord.Embed(title="", colour=discord.Colour.blurple())
-		help.add_field(name="Invalid Syntax",value = "Use \"{}help playlist\" for a list of possible commands".format(ctx.prefix))
-		await ctx.channel.send(embed=help)
 		
 	async def send_list(self,ctx):
 		await ctx.send("sendlist called")
@@ -155,9 +150,9 @@ class Playlists:
 	@commands.command()
 	async def playlistadd(self,ctx,playlistname,*urls):
 		self.context=ctx
-		if urls==() or not playlistname:
-			await self.send_help(ctx)
-			return
+		if ctx.invoked_subcommand is None:
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='clear')
 		urls=list(urls)
 
 		for item in urls:
@@ -171,11 +166,8 @@ class Playlists:
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname,*urls):
 		self.context=ctx
-		if urls==() or not playlistname:
-			await self.send_help(ctx)
-			return
+
 		urls=list(urls)
-		
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
 			return
