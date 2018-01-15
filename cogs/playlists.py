@@ -156,14 +156,17 @@ class Playlists:
 	async def playlist(self,ctx,command,playlistname="",*inputs):
 		self.context=ctx
 		inputs=list(inputs)
-		if command.lower() == 'add':		
+		if command.lower() == 'add':
+			if not inputs:
+				self.send_help(ctx)
+				return
 			front=False
 			if 'front' in inputs:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
 				await ctx.send("item: {}".format(item))
-				if not self.check_query(item) or item==None:
+				if not self.check_query(item):
 
 					await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 					continue
