@@ -68,9 +68,6 @@ class Playlists:
 		songs=self.convert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs, len(self.list))
 		
-		embed=discord.Embed(title="Playlist \"{}\" Successfully Updated!".format(name), colour=discord.Colour.blurple())
-		embed.add_field(name="No. of Videos:",value=len(self.list))
-		await self.context.channel.send(embed=embed)
 		
 		self.list=[]
 		
@@ -168,7 +165,8 @@ class Playlists:
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
 			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
-
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="Success!",value="Added {} videos to the playlist \"{}\"".format(len(urls),playlistname))
 	
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname=None,*urls):
