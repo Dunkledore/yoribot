@@ -304,6 +304,28 @@ class Hiddenroles:
             await self._getdata(ctx)
         await self._senddebug("```json\n" + str(self.permdata) + "```")
 
+    @hiddenrole.command(name="agerestriction", usage="<on|off>")
+    @checks.is_admin()
+    async def activate_agerestrictions(self, ctx, onoff):
+        """(De)activates age restrictions in this server."""
+        if type.lower() not in ["on", "off"]:
+            await ctx.send(embed=embedHR("red", "Please use [p]hiddenrole agerestriction <`on` or `off`>."))
+            return
+        guildid = str(ctx.guild.id)
+        self.permdata[guildid]["_18+"]["active"] = onoff.lower() == "on"
+        self.permdata[guildid]["_<18"]["active"] = onoff.lower() == "on"
+        await self._applydata(ctx, guild=guildid,role="_18+")
+        await self._applydata(ctx,guild=guildid,role="_<18")
+        await ctx.send(em=embedHR("green", "Age restrictions are now "+("" if onoff.lower()=="on" else "in")+"active in this server."))
+
+    @commands.command(name="update")
+    @commands.guild_only()
+    @checks.is_mod()
+    async def updatedata(self, ctx):
+        """Updates role data for all users, including age."""
+        query = "SELECT (user_id, age) FROM Profile WHERE guild_id = $1"
+        results = await ctx.db.fetch(query, ctx.guild.id)
+        pass
 
 def setup(bot):
     bot.add_cog(Hiddenroles(bot))
