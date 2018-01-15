@@ -133,7 +133,7 @@ class Playlists:
 		
 	async def send_list(self,ctx):
 		await ctx.send("sendlist called")
-		embed=discord.Embed(title="Here are your Playlists", colour=discord.Colour.blurple())
+		embed=discord.Embed(title="Here are your Playlists:", colour=discord.Colour.blurple())
 		await self.get_playlist_list(ctx.message.author.id)
 		if not self.playlist_list:
 			return
@@ -177,7 +177,8 @@ class Playlists:
 			return
 		urls=list(urls)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
-			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
+			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
+			await self.sendlist(ctx)
 			return
 		for item in urls:
 			if not self.check_query(item):
@@ -192,7 +193,8 @@ class Playlists:
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
-			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
+			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
+			await self.sendlist(ctx)
 			return
 		await self.delete_playlist(ctx.message.author.id,playlistname)
 		
