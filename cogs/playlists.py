@@ -138,7 +138,7 @@ class Playlists:
 		if not self.playlist_list:
 			return
 		for i in self.playlist_list:
-			embed.add_field(name=i["name"],value="{} Songs".format(i["no_songs"]))
+			embed.add_field(name=i["name"],value="{} Videos".format(i["no_songs"]))
 		await ctx.channel.send(embed=embed)
 	
 	async def send_error_message(self,ctx,message):
@@ -168,6 +168,8 @@ class Playlists:
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
 			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="Success!",value="Added {} videos to the playlist \"{}\"".format(len(urls),playlistname))
 	
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname=None,*urls):
