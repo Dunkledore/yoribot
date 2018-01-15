@@ -91,6 +91,7 @@ class Playlists:
 			self.list = self.list + yt_videos
 		
 		await self.save_playlist(userID,name)
+		return len(yt_videos)
 	
 	def convert_to_storage(self,input):
 		return json.dumps(input)
@@ -109,14 +110,10 @@ class Playlists:
 				self.list=[value for value in self.list if value != video]
 		finallength=len(self.list)
 		counter=initiallength-finallength
-		if counter == 0:
-			await self.context.send("No Such Video")
-		else:
-			message=str(counter)+" videos deleted"
-			await self.context.send(message)
-			
 		
 		await self.save_playlist(userID,name)
+		return counter
+		
 		
 	async def delete_playlist(self,userID,name):
 		await self.context.send("delete called")
@@ -158,15 +155,16 @@ class Playlists:
 		if 'front' in urls:
 			front=True
 			urls = urls[:-1]
-
+			
+		added_videos=0
 		for item in urls:
-			await ctx.send("item: {}".format(item))
+
 			if not self.check_query(item):
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
-			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
+			added_videos+= await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="Success!",value="Added {} videos to the playlist \"{}\"".format(len(urls),playlistname))
+		embed.add_field(name="",value="Added {} videos to the playlist \"{}\"".format(added_videos,playlistname))
 		await ctx.send(embed=embed)
 	
 	@commands.command()	
@@ -182,11 +180,16 @@ class Playlists:
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.sendlist(ctx)
 			return
+		
+		deleted_videos=0
 		for item in urls:
 			if not self.check_query(item):
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
-			await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+			deleted_videos+=await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
+		await ctx.send(embed=embed)
 	
 	
 	@commands.command()
