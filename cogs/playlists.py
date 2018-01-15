@@ -110,7 +110,8 @@ class Playlists:
 		finallength=len(self.list)
 		counter=initiallength-finallength
 		await self.save_playlist(userID,name)
-		if len(self.list)==0:
+		if finallength==0:
+			await self.context.send("silently deleted")
 			await self.delete_playlist(userID,name,True)
 		return counter
 		
