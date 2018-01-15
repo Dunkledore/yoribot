@@ -51,7 +51,7 @@ class Playlists:
 		songs=self.convert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs, len(self.list))
 		
-		embed=discord.Embed(title="Playlist {} Successfully Updated!".format(name), colour=discord.Colour.blurple())
+		embed=discord.Embed(title="Playlist \"{}\" Successfully Updated!".format(name), colour=discord.Colour.blurple())
 		summary.add_field(name="No. of Videos:",value=len(self.list))
 		await ctx.channel.send(embed=embed)
 		
@@ -148,7 +148,12 @@ class Playlists:
 		
 		elif command.lower() == 'remove':
 			if not await self.playlist_exists(ctx.message.author.id,playlistname):
-				say doesnt exists
+				#Error message sending#
+				message="Playlist \"{}\" does not exist".format(playlistname)
+				embed=discord.Embed(title="", colour=discord.Colour.blurple())
+				summary.add_field(name="ERROR",value=message)
+				await ctx.channel.send(embed=embed)
+				#######################
 				return
 			for item in inputs:
 				if not self.check_query(item):
