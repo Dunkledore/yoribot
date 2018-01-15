@@ -328,6 +328,7 @@ class Blizzard:
 
     @commands.command()
     async def owpatch(self, ctx):
+        """Latest Overwatch patch notes"""
         await self.format_patch_notes(ctx, 'overwatch')
 
     @commands.command()

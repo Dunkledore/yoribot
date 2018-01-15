@@ -92,11 +92,11 @@ class SocialMedia:
 			await asyncio.sleep(61)
 
 
-	@commands.group()
+	@commands.commands()
 	@commands.guild_only()
 	@checks.is_guild_owner()
-	async def twitterset(self, ctx):
-		"""Admin twitter related commands"""
+	async def twittersettings(self, ctx):
+		"""Will show the current settings for Twitter."""
 
 		if ctx.invoked_subcommand is None:
 			
@@ -114,19 +114,20 @@ class SocialMedia:
 					  "Tweeter role ID:  {1}\n"
 					  "Twitter Feed Channel {2}\n"
 					  .format(tweeter_number or "0", tweeter_role or "0", str(self.bot.get_channel(feed_channel)) or "OFF"))
-			msg += "\n {}twittetset tweeter <role>".format(ctx.prefix)
-			msg += "\n {}twitterset tweetnumber <number>".format(ctx.prefix)
-			msg += "\n {}twitterset tweetcreds".format(ctx.prefix)
-			msg += "\n {}twitterset feedchannel <channel>".format(ctx.prefix)
+			msg += "\n {}tweetrole <role>".format(ctx.prefix)
+			msg += "\n {}tweetnumber <number>".format(ctx.prefix)
+			msg += "\n {}tweetcreds".format(ctx.prefix)
+			msg += "\n {}twitterfeed<channel>".format(ctx.prefix)
 			em = discord.Embed(color=ctx.message.author.color, description=msg)
 			em.set_author(name="Twitter Settings Help", icon_url="http://bit.ly/2qrhjLu")
 			await ctx.send(embed=em)
 			
 
-	@twitterset.command()
+	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def feedchannel(self, ctx, channel : discord.TextChannel):
+	async def twitterfeed(self, ctx, channel : discord.TextChannel):
+		"""Sets up the channel where new tweets will be sent."""
 
 
 		insertquery = "INSERT INTO social_config (guild_id, feed_channel) VALUES ($1, $2)"
@@ -138,7 +139,7 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
 		await ctx.send('Channel Set')
 	
-	@twitterset.command()
+	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def tweetnumber(self, ctx, number: int):
@@ -153,11 +154,11 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, number)
 		await ctx.send('Number set')
 
-	@twitterset.command()
+	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def tweeter(self, ctx, role: discord.Role):
-		"""Sets the mod role"""
+	async def tweetrole(self, ctx, role: discord.Role):
+		"""Sets a role that is able to send tweets."""
 
 		insertquery = "INSERT INTO social_config (guild_id, tweeter_role_id) VALUES ($1, $2)"
 		alterquery = "UPDATE social_config SET tweeter_role_id = $2 WHERE guild_id = $1"
@@ -168,10 +169,11 @@ class SocialMedia:
 			await ctx.db.execute(alterquery, ctx.guild.id, role.id)
 		await ctx.send('Role set')
 
-	@twitterset.command()
+	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def tweetcreds(self, ctx):
+		"""Set up your Twitter account with the bot using your credentials"""
 
 		author = ctx.author
 		def check(m):
@@ -211,6 +213,7 @@ class SocialMedia:
 	@commands.guild_only()
 	@checks.is_tweeter()
 	async def tweet(self, ctx, *, tweet):
+		"""Send a tweet using this command - will send as the account you set up using {}tweetcreds"""
 		if ctx.message.attachments:
 			if ctx.message.attachments[0].height:
 				filename = 'temp.jpg'
