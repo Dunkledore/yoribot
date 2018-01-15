@@ -161,7 +161,10 @@ class Playlists:
 		if 'front' in urls:
 			front=True
 			urls=[value for value in urls if value != 'front']
-			
+		
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="Working...",value=" ".format(deleted_videos,playlistname))
+		workmessage=await ctx.send(embed=embed)
 		added_videos=0
 		for item in urls:
 
@@ -169,6 +172,7 @@ class Playlists:
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
 			added_videos+= await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
+		await workmessage.delete()
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Done!",value="Added {} videos to the playlist \"{}\"".format(added_videos,playlistname))
 		await ctx.send(embed=embed)
@@ -187,7 +191,11 @@ class Playlists:
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
 			return
-		
+			
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="Working...",value=" ".format(deleted_videos,playlistname))
+		workmessage=await ctx.send(embed=embed)
+	
 		deleted_videos=0
 		for item in urls:
 			if not self.check_query(item):
@@ -195,6 +203,7 @@ class Playlists:
 				continue
 			if not self.silently_deleted:
 				deleted_videos+=await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+		await workmessage.delete()
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Done!",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
 		await ctx.send(embed=embed)
