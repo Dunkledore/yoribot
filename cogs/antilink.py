@@ -14,7 +14,7 @@ import asyncio
 
 
 class Antilink:
-    """Blocks Discord invite links from users who don't have the permission 'Manage Messages'"""
+    """Hate when people spam invite links to other Discord servers? This plugin allows you to prevent users from sharing links in chat and will notify the server owner when someone attempts to share a link.'"""
 
     __author__ = "Kowlin"
     __version__ = "AL-v1.1-LTS"
@@ -26,20 +26,12 @@ class Antilink:
         self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
         self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
 
-    @commands.group()
-    @commands.guild_only()
-    @checks.is_admin()
-    async def antilinkset(self, ctx):
-        """Manages the settings for antilink."""
-        serverid = ctx.message.guild.id
-        if str(serverid) not in self.json:
-            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
 
-    @antilinkset.command()
+    @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def ownerdm(self, ctx):
-        """Enable/disables antilink owner dm in the server"""
+    async def antilinkownerdm(self, ctx):
+        """Enable or disable notifications to the server owner via DM when a link is shared in the server."""
         serverid = ctx.message.guild.id
         if self.json[str(serverid)]['ownerdm'] is True:
             self.json[str(serverid)]['ownerdm'] = False
@@ -49,11 +41,11 @@ class Antilink:
             await ctx.send('Owner DM now enabled')
         dataIO.save_json(self.location, self.json)
 
-    @antilinkset.command()
+    @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def toggle(self, ctx):
-        """Enable/disables antilink in the server"""
+    async def toggleantilink(self, ctx):
+        """Enable or disable anti-link entirely (if disabled, members can share links to other Discord servers)."""
         serverid = ctx.message.guild.id
         if self.json[str(serverid)]['toggle'] is True:
             self.json[str(serverid)]['toggle'] = False
@@ -63,22 +55,23 @@ class Antilink:
             await ctx.send('Antilink is now enabled')
         dataIO.save_json(self.location, self.json)
 
-    @antilinkset.command()
+    @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def message(self, ctx, *, text):
-        """Set the message for when the user sends a illegal discord link"""
+    async def antilinkmessage(self, ctx, *, text):
+        """Customize the message sent to the person attempting to share a Discord link in your server."""
         serverid = ctx.message.guild.id
         self.json[str(serverid)]['message'] = text
         dataIO.save_json(self.location, self.json)
         await ctx.send('Message is set')
         if self.json[str(serverid)]['dm'] is False:
-            await ctx.send('Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinkset toggledm``')
+            await ctx.send('Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinktoggledm``')
 
-    @antilinkset.command()
+    @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def toggledm(self, ctx):
+    async def antilinktoggledm(self, ctx):
+        """ Enable or Disable the anti-link DM"""
         serverid = ctx.message.guild.id
         if self.json[str(serverid)]['dm'] is False:
             self.json[str(serverid)]['dm'] = True

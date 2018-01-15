@@ -28,7 +28,7 @@ class Trivia:
         settings = dataIO.load_json(self.file_path)
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
-    @commands.group()
+    @commands.command()
     @commands.guild_only()
     @checks.is_mod()
     async def triviaset(self, ctx):
@@ -49,8 +49,9 @@ class Trivia:
             em.set_author(name="Trivia Settings Help", icon_url="http://bit.ly/2qrhjLu")
             await ctx.send(embed=em)
 
-    @triviaset.command()
-    async def maxscore(self, ctx, score : int=-1):
+    @commands.command()
+    """Set the max score for trivia (the game will end once the score is met)"""
+    async def triviamaxscore(self, ctx, score : int=-1):
         guild = ctx.message.guild
         if score < 0:
             settings = self.settings[guild.id]
@@ -73,7 +74,8 @@ class Trivia:
             await ctx.send(embed=em)
 
     @triviaset.command()
-    async def timelimit(self, ctx, seconds : int=-1):
+    async def triviatimelimit(self, ctx, seconds : int=-1):
+        """Sets a time limit for each trivia question before the next one is asked"""
         guild = ctx.message.guild
         if seconds < 0:
             settings = self.settings[guild.id]
@@ -96,7 +98,8 @@ class Trivia:
             await ctx.send(embed=em)
 
     @triviaset.command()
-    async def botplays(self, ctx):
+    async def triviabotplays(self, ctx):
+        """Sets if the bot will play as part of the trivia game"""
         guild = ctx.message.guild
         if self.settings[guild.id]["BOT_PLAYS"]:
             self.settings[guild.id]["BOT_PLAYS"] = False
@@ -114,6 +117,7 @@ class Trivia:
 
     @triviaset.command()
     async def revealanswer(self, ctx):
+        """Toggles showing answers for unanswered trivia questions"""
         guild = ctx.message.guild
         if self.settings[guild.id]["REVEAL_ANSWER"]:
             self.settings[guild.id]["REVEAL_ANSWER"] = False
@@ -127,9 +131,10 @@ class Trivia:
             await ctx.send(embed=em)
         self.save_settings()
 
-    @commands.group(invoke_without_command=True)
+    @commands.command(invoke_without_command=True)
     @commands.guild_only()
     async def trivia(self, ctx, list_name: str):
+        """Start a game of trivia by typing this command along with the list of questions you want the bot to ask"""
         message = ctx.message
         guild = message.guild
         session = self.get_trivia_by_channel(message.channel)
@@ -158,18 +163,18 @@ class Trivia:
     @commands.command()
     @commands.guild_only()
     async def triviastop(self, ctx):
-        """Stops Trivia"""
+        """Stops the current trivia session"""
         session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game(ctx)
 
-    @trivia.group(name="stop")
-    async def _stop(self, ctx):
-        """Stops Trivia"""
+    @commands.command(name="stop")
+    async def stoptrivia(self, ctx):
+        """Stops the current trivia session"""
         session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game(ctx)
       
-    @trivia.group(name="list")
-    async def trivia_list(self, ctx):
+    @commands.command()
+    async def trivialist(self, ctx):
         message = ctx.message
         guild = message.guild
         lists = os.listdir("data/trivia/")
