@@ -150,7 +150,7 @@ class Playlists:
 	@commands.command()
 	async def playlistadd(self,ctx,playlistname,*urls):
 		self.context=ctx
-		if ctx.invoked_subcommand is None:
+		if ctx.command_failed:
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command='clear')
 		urls=list(urls)
