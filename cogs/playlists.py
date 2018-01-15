@@ -198,8 +198,6 @@ class Playlists:
 	async def listplaylists(self,ctx):
 		self.context=ctx
 		await self.send_list(ctx)
-		else:
-			await self.send_help(ctx)
 
 	
 def setup(bot):
