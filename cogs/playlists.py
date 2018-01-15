@@ -52,7 +52,7 @@ class Playlists:
 		playlist_list=[]
 		if results[0]["name"]:
 			for column in results:
-				playlist_list.append({name:column["name"],no_songs:column["no_songs"]})
+				playlist_list.append({"name":column["name"],"no_songs":column["no_songs"]})
 		return playlist_list	
 		
 	async def save_playlist(self,userID,name):
