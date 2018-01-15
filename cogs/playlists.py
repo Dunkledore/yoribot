@@ -167,6 +167,7 @@ class Playlists:
 			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Success!",value="Added {} videos to the playlist \"{}\"".format(len(urls),playlistname))
+		await ctx.send(embed=embed)
 	
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname=None,*urls):
@@ -186,6 +187,7 @@ class Playlists:
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
 			await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+	
 	
 	@commands.command()
 	async def deleteplaylist(self,ctx,playlistname=None):
