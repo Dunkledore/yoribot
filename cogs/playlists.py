@@ -164,7 +164,7 @@ class Playlists:
 				continue
 			added_videos+= await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="",value="Added {} videos to the playlist \"{}\"".format(added_videos,playlistname))
+		embed.add_field(name="Done!",value="Added {} videos to the playlist \"{}\"".format(added_videos,playlistname))
 		await ctx.send(embed=embed)
 	
 	@commands.command()	
@@ -188,7 +188,7 @@ class Playlists:
 				continue
 			deleted_videos+=await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
+		embed.add_field(name="Done!",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
 		await ctx.send(embed=embed)
 	
 	
