@@ -109,20 +109,21 @@ class Playlists:
 			self.list=[value for value in self.list if value[0] != video[0]]
 		finallength=len(self.list)
 		counter=initiallength-finallength
-		
 		await self.save_playlist(userID,name)
+
 		return counter
 		
 		
-	async def delete_playlist(self,userID,name):
+	async def delete_playlist(self,userID,name,silent=False):
 		await self.context.send("delete called")
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
 		
-		message="Playlist \"{}\" has been successfully deleted".format(name)
-		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="Success!",value=message)
-		await self.context.channel.send(embed=embed)
+		if not silent:
+			message="Playlist \"{}\" has been successfully deleted".format(name)
+			embed=discord.Embed(title="", colour=discord.Colour.blurple())
+			embed.add_field(name="Success!",value=message)
+			await self.context.channel.send(embed=embed)
 		
 	async def send_list(self,ctx):
 		await ctx.send("sendlist called")
@@ -191,6 +192,8 @@ class Playlists:
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Done!",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
 		await ctx.send(embed=embed)
+		if len(self.list)==0:
+			await self.delete_playlist(ctx.message.user.id,playlistname,True)
 	
 	
 	@commands.command()
