@@ -156,6 +156,10 @@ class Playlists:
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 			return
 		urls=list(urls)
+		front=False
+		if 'front' in urls:
+			front=True
+			urls = urls[:-1]
 
 		for item in urls:
 			await ctx.send("item: {}".format(item))
