@@ -170,7 +170,7 @@ class Playlists:
 		await self.context.send(str(self.list))
 	
 	@commands.command()	
-	async def playlistremove(self,ctx,playlistname,*urls)
+	async def playlistremove(self,ctx,playlistname,*urls):
 		self.context=ctx
 		if not urls or not playlistname:
 			self.send_help(ctx)
@@ -187,7 +187,7 @@ class Playlists:
 			await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
 	
 	@commands.command()
-	async def deleteplaylist(self,ctx,playlistname)
+	async def deleteplaylist(self,ctx,playlistname):
 		self.context=ctx
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
@@ -195,7 +195,7 @@ class Playlists:
 		await self.delete_playlist(ctx.message.author.id,playlistname)
 		
 	@commands.command()	
-	async def listplaylists(self,ctx)
+	async def listplaylists(self,ctx):
 		self.context=ctx
 		await self.send_list(ctx)
 		else:
