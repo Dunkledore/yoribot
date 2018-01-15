@@ -17,8 +17,10 @@ class Playlists:
 
 	def __init__(self,bot):
 		self.list=[]
+		self.playlist_list=[]
 		self.context=None
 		self.statuslog = logging.getLogger("{}.{}.status".format(__name__, 0))
+
 
 	async def playlist_exists(self,userID,name):
 		await self.context.send("exists called")
@@ -49,7 +51,7 @@ class Playlists:
 		await self.context.send("getlist called")
 		query = "SELECT * FROM playlists WHERE userid = $1"
 		results = await self.context.db.fetch(query, userID)
-		playlist_list=[]
+		self.playlist_list=[]
 		if results:
 			for column in results:
 				playlist_list.append({"name":column["name"],"no_songs":column["no_songs"]})
@@ -57,7 +59,7 @@ class Playlists:
 			await self.send_error_message(self.context,"You currently have no playlists")
 			return
 			
-		return playlist_list	
+		return 	
 		
 	async def save_playlist(self,userID,name):
 		await self.context.send("save called")
@@ -129,13 +131,16 @@ class Playlists:
 	async def send_help(self,ctx):
 		await ctx.send("sendhelp called")
 		help=discord.Embed(title="", colour=discord.Colour.blurple())
-		help.add_field(name="Invalid Syntax",value = "Use \"{}help playlist\" for list of possible commands".format(ctx.prefix))
+		help.add_field(name="Invalid Syntax",value = "Use \"{}help playlist\" for a list of possible commands".format(ctx.prefix))
 		await ctx.channel.send(embed=help)
 		
 	async def send_list(self,ctx):
 		await ctx.send("sendlist called")
 		embed=discord.Embed(title="Here are your Playlists", colour=discord.Colour.blurple())
-		for i in await self.get_playlist_list(ctx.message.author.id):
+		await self.get_playlist_list(ctx.message.author.id)
+		if not self.playlist_list:
+			return
+		for i in self.playlist_list:
 			embed.add_field(name=i["name"],value="{} Songs".format(i["no_songs"]))
 		await ctx.channel.send(embed=embed)
 	
