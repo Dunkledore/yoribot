@@ -117,7 +117,7 @@ class Playlists:
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
 		
-		message="Playlist {} has been successfully deleted".format(name)
+		message="Playlist \"{}\" has been successfully deleted".format(name)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Success!",value=message)
 		await self.context.channel.send(embed=embed)
@@ -136,7 +136,7 @@ class Playlists:
 		await ctx.channel.send(embed=embed)
 			
 	@commands.command()
-	async def playlist(self,ctx,command,playlistname,*inputs):
+	async def playlist(self,ctx,command,playlistname="",*inputs):
 		self.context=ctx
 		inputs=list(inputs)
 		if command.lower() == 'add':
