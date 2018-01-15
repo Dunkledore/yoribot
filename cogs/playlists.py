@@ -163,7 +163,7 @@ class Playlists:
 				inputs = inputs[:-1]
 			for item in inputs:
 				await ctx.send(item)
-				if not self.check_query(item) or item=None:
+				if not self.check_query(item) or item==None:
 
 					await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 					continue
