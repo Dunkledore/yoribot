@@ -157,7 +157,7 @@ class Playlists:
 		front=False
 		if 'front' in urls:
 			front=True
-			urls = urls[:-1]
+			urls=[value for value in urls if value != 'front']
 			
 		added_videos=0
 		for item in urls:
