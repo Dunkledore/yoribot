@@ -151,8 +151,8 @@ class Playlists:
 	async def playlistadd(self,ctx,playlistname,*urls):
 		self.context=ctx
 		if ctx.invoked_subcommand is None:
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='clear')
+			help_cmd = self.bot.get_command('help')
+			await ctx.invoke(help_cmd, command='clear')
 		urls=list(urls)
 
 		for item in urls:
