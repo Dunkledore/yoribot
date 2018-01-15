@@ -193,7 +193,7 @@ class Playlists:
 			return
 			
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="Working...",value=" "))
+		embed.add_field(name="Working...",value=" ")
 		workmessage=await ctx.send(embed=embed)
 	
 		deleted_videos=0
