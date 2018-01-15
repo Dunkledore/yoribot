@@ -108,8 +108,13 @@ class Playlists:
 		await self.context.db.execute(query, userID, name)
 		#send message to say it's been deleted
 
-	#async def send_help(self,ctx):
+	async def send_help(self,ctx):
+		#creates and returns the embed summary of what the user will have missed
+		help=discord.Embed(title="", colour=discord.Colour.blurple())
+		prefix=ctx.prefix
+		summary.add_field(name="Invalid Syntax", ("Use \""+prefix+"help playlist\" for list of possible commands") )
 	
+		return help
 	
 			
 	@commands.command()
@@ -134,7 +139,7 @@ class Playlists:
 		
 		elif command.lower() == 'remove':
 			if not await self.playlist_exists(ctx.message.author.id,name):
-				#say doesnt exists
+				say doesnt exists
 				return
 			for item in inputs:
 				if not self.check_query(item):
