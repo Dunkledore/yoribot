@@ -154,6 +154,7 @@ class Playlists:
 		if not playlistname or urls==():
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
+			return
 		urls=list(urls)
 
 		for item in urls:
@@ -164,9 +165,12 @@ class Playlists:
 			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
 	
 	@commands.command()	
-	async def playlistremove(self,ctx,playlistname,*urls):
+	async def playlistremove(self,ctx,playlistname=None,*urls):
 		self.context=ctx
-
+		if not playlistname or urls==():
+			help_cmd = self.bot.get_command('help')
+			await ctx.invoke(help_cmd, command=ctx.command.name)
+			return
 		urls=list(urls)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
@@ -178,8 +182,11 @@ class Playlists:
 			await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
 	
 	@commands.command()
-	async def deleteplaylist(self,ctx,playlistname):
+	async def deleteplaylist(self,ctx,playlistname=None):
 		self.context=ctx
+		if not playlistname:
+			help_cmd = self.bot.get_command('help')
+			await ctx.invoke(help_cmd, command=ctx.command.name)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
 			return
