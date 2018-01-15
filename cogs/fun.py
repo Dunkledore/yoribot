@@ -245,9 +245,7 @@ class Fun:
         await ctx.send(choice(self.lines))
     @commands.group(aliases=["kao"], invoke_without_command=True)
     async def kaomoji(self, ctx, *, category: str, n: int=None):
-        """
-        Send a japanese emoji (the text kind).
-        """
+        """Send a japanese emoji (the text kind)."""
         str_category = category.lower()
         m = ctx.message
         amount = len(self.system.get(str_category, []))

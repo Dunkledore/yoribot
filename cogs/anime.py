@@ -21,7 +21,7 @@ switcher = ['english', 'score', 'type', 'episodes', 'volumes', 'chapters', 'stat
 
 
 class AnimeList:
-    """Fetch info about an anime title"""
+    """Search for your favorite anime and manga titles on myanimelist.net"""
 
     def __init__(self, bot):
         self.bot = bot
@@ -37,14 +37,14 @@ class AnimeList:
     @commands.command()
     @commands.guild_only()
     async def anime(self, ctx, *, title):
-        """Shows MAL information on an anime"""
+        """Search for your favorite anime on myanimelist.net"""
         cmd = "anime"
         await self.search_command(ctx, cmd, title)
 
     @commands.command()
     @commands.guild_only()
     async def manga(self, ctx, *, title):
-        """Shows MAL information on a manga"""
+        """Search for your favorite manga on myanimelist.net"""
         cmd = "manga"
         await self.search_command(ctx, cmd, title)
 
