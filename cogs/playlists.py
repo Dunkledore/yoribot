@@ -148,7 +148,7 @@ class Playlists:
 		await ctx.channel.send(embed=embed)
 	
 	@commands.command()
-	async def playlistadd(self,ctx,playlistname,*urls):
+	async def playlistadd(self,ctx,playlistname=None,*urls):
 		await ctx.send("hi")
 		self.context=ctx
 		if not playlistname or urls==():
@@ -162,7 +162,6 @@ class Playlists:
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
 			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
-		await self.context.send(str(self.list))
 	
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname,*urls):
