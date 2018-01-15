@@ -153,46 +153,51 @@ class Playlists:
 		await ctx.channel.send(embed=embed)
 	
 	@commands.command()
-	async def playlist(self,ctx,command,playlistname="",*inputs):
+	async def playlistadd(self,ctx,playlistname,*urls):
 		self.context=ctx
-		inputs=list(inputs)
-		if command.lower() == 'add':
-			if not inputs or playlistname=="":
-				self.send_help(ctx)
-				return
-			front=False
-			if 'front' in inputs:
-				front=True
-				inputs = inputs[:-1]
-			for item in inputs:
-				await ctx.send("item: {}".format(item))
-				if not self.check_query(item):
+		await ctx.send(urls)
+		if not urls or not playlistname:
+			self.send_help(ctx)
+			return
+		urls=list(urls)
 
-					await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
-					continue
-				await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
-			await self.context.send(str(self.list))
+		for item in urls:
+			await ctx.send("item: {}".format(item))
+			if not self.check_query(item):
+				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
+				continue
+			await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
+		await self.context.send(str(self.list))
+	
+	@commands.command()	
+	async def playlistremove(self,ctx,playlistname,*urls)
+		self.context=ctx
+		if not urls or not playlistname:
+			self.send_help(ctx)
+			return
+		urls=list(urls)
 		
-		elif command.lower() == 'remove':
-			if not inputs or playlistname=="":
-				self.send_help(ctx)
-				return
-			if not await self.playlist_exists(ctx.message.author.id,playlistname):
-				await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
-				return
-			for item in inputs:
-				if not self.check_query(item):
-					await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
-					continue
-				await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+		if not await self.playlist_exists(ctx.message.author.id,playlistname):
+			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
+			return
+		for item in urls:
+			if not self.check_query(item):
+				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
+				continue
+			await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+	
+	@commands.command()
+	async def deleteplaylist(self,ctx,playlistname)
+		self.context=ctx
+		if not await self.playlist_exists(ctx.message.author.id,playlistname):
+			await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
+			return
+		await self.delete_playlist(ctx.message.author.id,playlistname)
 		
-		elif command.lower() == 'delete':
-			if not await self.playlist_exists(ctx.message.author.id,playlistname):
-				await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
-				return
-			await self.delete_playlist(ctx.message.author.id,playlistname)
-		elif command.lower() == 'list':
-			await self.send_list(ctx)
+	@commands.command()	
+	async def listplaylists(self,ctx)
+		self.context=ctx
+		await self.send_list(ctx)
 		else:
 			await self.send_help(ctx)
 
