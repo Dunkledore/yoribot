@@ -156,7 +156,7 @@ class Playlists:
 	async def playlistadd(self,ctx,playlistname,*urls):
 		self.context=ctx
 		if urls==() or not playlistname:
-			self.send_help(ctx)
+			await self.send_help(ctx)
 			return
 		urls=list(urls)
 
@@ -172,7 +172,7 @@ class Playlists:
 	async def playlistremove(self,ctx,playlistname,*urls):
 		self.context=ctx
 		if urls==() or not playlistname:
-			self.send_help(ctx)
+			await self.send_help(ctx)
 			return
 		urls=list(urls)
 		
