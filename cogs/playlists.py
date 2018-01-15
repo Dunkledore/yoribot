@@ -149,10 +149,11 @@ class Playlists:
 	
 	@commands.command()
 	async def playlistadd(self,ctx,playlistname,*urls):
+		await ctx.send("hi")
 		self.context=ctx
-		if ctx.command_failed:
+		if not playlistname or urls==():
 			help_cmd = self.bot.get_command('help')
-			await ctx.invoke(help_cmd, command='clear')
+			await ctx.invoke(help_cmd, command=ctx.command.name)
 		urls=list(urls)
 
 		for item in urls:
