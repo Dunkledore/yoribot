@@ -157,7 +157,7 @@ class Playlists:
 		self.context=ctx
 		inputs=list(inputs)
 		if command.lower() == 'add':
-			if not inputs or playlistname="":
+			if not inputs or playlistname=="":
 				self.send_help(ctx)
 				return
 			front=False
@@ -174,7 +174,7 @@ class Playlists:
 			await self.context.send(str(self.list))
 		
 		elif command.lower() == 'remove':
-			if not inputs or playlistname="":
+			if not inputs or playlistname=="":
 				self.send_help(ctx)
 				return
 			if not await self.playlist_exists(ctx.message.author.id,playlistname):
