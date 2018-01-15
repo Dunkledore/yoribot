@@ -50,7 +50,7 @@ class Playlists:
 		query = "SELECT * FROM playlists WHERE userid = $1"
 		results = await self.context.db.fetch(query, userID)
 		playlist_list=[]
-		if results[0]["name"]:
+		if results:
 			for column in results:
 				playlist_list.append({"name":column["name"],"no_songs":column["no_songs"]})
 		return playlist_list	
