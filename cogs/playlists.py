@@ -110,7 +110,8 @@ class Playlists:
 		finallength=len(self.list)
 		counter=initiallength-finallength
 		await self.save_playlist(userID,name)
-
+		if len(self.list)==0:
+			await self.delete_playlist(userID,name,True)
 		return counter
 		
 		
@@ -192,8 +193,7 @@ class Playlists:
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Done!",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
 		await ctx.send(embed=embed)
-		if len(self.list)==0:
-			await self.delete_playlist(ctx.message.user.id,playlistname,True)
+		
 	
 	
 	@commands.command()
