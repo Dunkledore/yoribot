@@ -44,6 +44,16 @@ class Playlists:
 		if result[0]["songs"]:
 			self.list=self.convert_from_storage(result[0]["songs"])
 		return self.list
+	
+	async def get_playlist_list(self,userID):
+		await self.context.send("getlist called")
+		query = "SELECT * FROM playlists WHERE userid = $1"
+		results = await self.context.db.fetch(query, userID)
+		playlist_list=[]
+		if results[0]["name"]:
+			for column in results:
+				playlist_list.append({name:column["name"],no_songs:column["no_songs"]})
+		return playlist_list	
 		
 	async def save_playlist(self,userID,name):
 		await self.context.send("save called")
@@ -52,7 +62,7 @@ class Playlists:
 		await self.context.db.execute(query, userID, name, songs, len(self.list))
 		
 		embed=discord.Embed(title="Playlist \"{}\" Successfully Updated!".format(name), colour=discord.Colour.blurple())
-		summary.add_field(name="No. of Videos:",value=len(self.list))
+		embed.add_field(name="No. of Videos:",value=len(self.list))
 		await ctx.channel.send(embed=embed)
 		
 		self.list=[]
@@ -109,17 +119,18 @@ class Playlists:
 		
 		message="Playlist {} has been successfully deleted".format(name)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		summary.add_field(name="Success!",value=message)
+		embed.add_field(name="Success!",value=message)
 		await self.context.channel.send(embed=embed)
 
 	async def send_help(self,ctx):
 		help=discord.Embed(title="", colour=discord.Colour.blurple())
-		summary.add_field(name="Invalid Syntax",value = "Use \"{}help playlist\" for list of possible commands".format(ctx.prefix))
+		help.add_field(name="Invalid Syntax",value = "Use \"{}help playlist\" for list of possible commands".format(ctx.prefix))
 		await ctx.channel.send(embed=help)
 		
 	async def send_list(self,ctx):
-		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		summary.add_field(name="ERROR",value=message)
+		embed=discord.Embed(title="Here are your Playlists", colour=discord.Colour.blurple())
+		for i in await self.get_playlist_list(ctx.message.author.id):
+			embed.add_field(name=i["name"],value="{} Songs".format(i["no_songs"]))
 		await ctx.channel.send(embed=embed)
 			
 	@commands.command()
@@ -139,7 +150,7 @@ class Playlists:
 					#Error message sending#
 					message="{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item)
 					embed=discord.Embed(title="", colour=discord.Colour.blurple())
-					summary.add_field(name="ERROR",value=message)
+					embed.add_field(name="ERROR",value=message)
 					await ctx.channel.send(embed=embed)
 					#######################
 					continue
@@ -151,7 +162,7 @@ class Playlists:
 				#Error message sending#
 				message="Playlist \"{}\" does not exist".format(playlistname)
 				embed=discord.Embed(title="", colour=discord.Colour.blurple())
-				summary.add_field(name="ERROR",value=message)
+				embed.add_field(name="ERROR",value=message)
 				await ctx.channel.send(embed=embed)
 				#######################
 				return
@@ -160,7 +171,7 @@ class Playlists:
 					#Error message sending#
 					message="{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item)
 					embed=discord.Embed(title="", colour=discord.Colour.blurple())
-					summary.add_field(name="ERROR",value=message)
+					embed.add_field(name="ERROR",value=message)
 					await ctx.channel.send(embed=embed)
 					#######################
 					continue
@@ -171,7 +182,7 @@ class Playlists:
 				#Error message sending#
 				message="Playlist \"{}\" does not exist".format(playlistname)
 				embed=discord.Embed(title="", colour=discord.Colour.blurple())
-				summary.add_field(name="ERROR",value=message)
+				embed.add_field(name="ERROR",value=message)
 				await ctx.channel.send(embed=embed)
 				#######################
 				return
