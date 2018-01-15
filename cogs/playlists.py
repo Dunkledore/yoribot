@@ -82,6 +82,8 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front=False):
+		if not await self.playlist_exists(userID,name):
+			await self.create_playlist(userID,name)
 		await self.context.send("add called")
 		await self.get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
@@ -154,17 +156,14 @@ class Playlists:
 	async def playlist(self,ctx,command,playlistname="",*inputs):
 		self.context=ctx
 		inputs=list(inputs)
-		if command.lower() == 'add':
-			if not await self.playlist_exists(ctx.message.author.id,playlistname):
-				await self.create_playlist(ctx.message.author.id,playlistname)
-			
+		if command.lower() == 'add':		
 			front=False
 			if 'front' in inputs:
 				front=True
 				inputs = inputs[:-1]
 			for item in inputs:
 				if not self.check_query(item):
-					await self.send_error_message(ctx,"{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item))
+					await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 					continue
 				await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
 			await self.context.send(str(self.list))
@@ -175,7 +174,7 @@ class Playlists:
 				return
 			for item in inputs:
 				if not self.check_query(item):
-					await self.send_error_message(ctx,"{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item))
+					await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 					continue
 				await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
 		
