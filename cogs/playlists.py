@@ -21,6 +21,7 @@ class Playlists:
 		self.playlist_list=[]
 		self.context=None
 		self.statuslog = logging.getLogger("{}.{}.status".format(__name__, 0))
+		self.silently_deleted=False
 
 
 	async def playlist_exists(self,userID,name):
@@ -121,7 +122,9 @@ class Playlists:
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
 		
-		if not silent:
+		if silent:
+			self.silently_deleted=True
+		else:
 			message="Playlist \"{}\" has been successfully deleted".format(name)
 			embed=discord.Embed(title="", colour=discord.Colour.blurple())
 			embed.add_field(name="Success!",value=message)
