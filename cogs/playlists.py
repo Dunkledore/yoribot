@@ -53,6 +53,9 @@ class Playlists:
 		if results:
 			for column in results:
 				playlist_list.append({"name":column["name"],"no_songs":column["no_songs"]})
+		else:
+			await self.send_error_message(ctx,"You currently have no playlists")
+			
 		return playlist_list	
 		
 	async def save_playlist(self,userID,name):
@@ -134,7 +137,13 @@ class Playlists:
 		for i in await self.get_playlist_list(ctx.message.author.id):
 			embed.add_field(name=i["name"],value="{} Songs".format(i["no_songs"]))
 		await ctx.channel.send(embed=embed)
-			
+	
+	async def send_error_message(self,ctx,message):
+		#Error message sending#
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="ERROR",value=message)
+		await ctx.channel.send(embed=embed)
+	
 	@commands.command()
 	async def playlist(self,ctx,command,playlistname="",*inputs):
 		self.context=ctx
@@ -149,44 +158,24 @@ class Playlists:
 				inputs = inputs[:-1]
 			for item in inputs:
 				if not self.check_query(item):
-					#Error message sending#
-					message="{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item)
-					embed=discord.Embed(title="", colour=discord.Colour.blurple())
-					embed.add_field(name="ERROR",value=message)
-					await ctx.channel.send(embed=embed)
-					#######################
+					await self.send_error_message(ctx,"{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item))
 					continue
 				await self.add_to_playlist(ctx.message.author.id,playlistname,item,front)
 			await self.context.send(str(self.list))
 		
 		elif command.lower() == 'remove':
 			if not await self.playlist_exists(ctx.message.author.id,playlistname):
-				#Error message sending#
-				message="Playlist \"{}\" does not exist".format(playlistname)
-				embed=discord.Embed(title="", colour=discord.Colour.blurple())
-				embed.add_field(name="ERROR",value=message)
-				await ctx.channel.send(embed=embed)
-				#######################
+				await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
 				return
 			for item in inputs:
 				if not self.check_query(item):
-					#Error message sending#
-					message="{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item)
-					embed=discord.Embed(title="", colour=discord.Colour.blurple())
-					embed.add_field(name="ERROR",value=message)
-					await ctx.channel.send(embed=embed)
-					#######################
+					await self.send_error_message(ctx,"{} is not a valid input. Valid inputs are Youtube video and Playlist URLs".format(item))
 					continue
 				await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
 		
 		elif command.lower() == 'delete':
 			if not await self.playlist_exists(ctx.message.author.id,playlistname):
-				#Error message sending#
-				message="Playlist \"{}\" does not exist".format(playlistname)
-				embed=discord.Embed(title="", colour=discord.Colour.blurple())
-				embed.add_field(name="ERROR",value=message)
-				await ctx.channel.send(embed=embed)
-				#######################
+				await self.send_error_message(ctx,"Playlist \"{}\" does not exist".format(playlistname))
 				return
 			await self.delete_playlist(ctx.message.author.id,playlistname)
 		elif command.lower() == 'list':
