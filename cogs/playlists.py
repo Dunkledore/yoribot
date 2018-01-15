@@ -106,8 +106,7 @@ class Playlists:
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
 		for video in yt_videos:
-			if video in self.list:
-				self.list=[value for value in self.list if value[0] != video[0]]
+			self.list=[value for value in self.list if value[0] != video[0]]
 		finallength=len(self.list)
 		counter=initiallength-finallength
 		
