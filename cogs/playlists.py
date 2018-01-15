@@ -193,7 +193,8 @@ class Playlists:
 			if not self.check_query(item):
 				await self.send_error_message(ctx,"\"{}\" is not a valid input. Valid inputs are Youtube video and playlist URLs".format(item))
 				continue
-			deleted_videos+=await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
+			if not self.silently_deleted:
+				deleted_videos+=await self.remove_from_playlist(ctx.message.author.id,playlistname,item)
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Done!",value="Deleted {} videos from the playlist \"{}\"".format(deleted_videos,playlistname))
 		await ctx.send(embed=embed)
