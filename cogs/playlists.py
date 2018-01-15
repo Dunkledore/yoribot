@@ -123,11 +123,13 @@ class Playlists:
 		await self.context.channel.send(embed=embed)
 
 	async def send_help(self,ctx):
+		await ctx.send("sendhelp called")
 		help=discord.Embed(title="", colour=discord.Colour.blurple())
 		help.add_field(name="Invalid Syntax",value = "Use \"{}help playlist\" for list of possible commands".format(ctx.prefix))
 		await ctx.channel.send(embed=help)
 		
 	async def send_list(self,ctx):
+		await ctx.send("sendlist called")
 		embed=discord.Embed(title="Here are your Playlists", colour=discord.Colour.blurple())
 		for i in await self.get_playlist_list(ctx.message.author.id):
 			embed.add_field(name=i["name"],value="{} Songs".format(i["no_songs"]))
