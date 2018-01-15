@@ -48,7 +48,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def welcomeadd(self, ctx, name=None, *, value=None):
-		"""Adds an embed field onto the welcome message"""
+		"""Adds a section with a title to your welcome message - for titles with more than one word use quotation marks."""
 		
 		if (name is None) or (value is None):
 			await ctx.send('Please enter both a field and a value')
@@ -74,7 +74,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def welcomeremove(self, ctx, name=None):
-		"""Removes and embed field from the welcome message"""
+		"""Removes a section from the welcome message - if the section title has more than one word use quotation marks around them."""
 
 		if name is None:
 			await ctx.send('Please enter a field to remove')
@@ -88,7 +88,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def setwelcomechannel(self, ctx, channel: discord.TextChannel):
-		"""Use in the channel you want to set as the welcome channel"""
+		"""Use in the channel you want to set as the welcome channel to designate it as the welcome channel."""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
@@ -103,7 +103,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def welcometext(self, ctx, *, text):
-		"""Set a non-embed welcome message"""
+		"""Set a non-embed welcome message - this can be combined with the embed so you can use mentions."""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, text_message) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET text_message = $2 WHERE guild_id = $1"
@@ -118,7 +118,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def nowelcome(self, ctx):
-		"""Call this to stop the welcome messages"""
+		"""Stop welcome messages entirely."""
 
 
 		query = "DELETE FROM welcome_config WHERE guild_id = $1"
@@ -132,6 +132,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def welcomewhisper(self, ctx):
+		"""Send the welcome message as a DM instead of in a channel."""
 		alterquery = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
 		insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True)"
 		try:

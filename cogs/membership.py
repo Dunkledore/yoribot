@@ -107,9 +107,7 @@ class MemberAudit:
 	@commands.guild_only()
 	@checks.is_mod()
 	async def modlog(self, ctx, member):
-		"""
-		Pulls up any previous log entries for that member.
-		"""
+		"""Pulls up any previous log entries for that member."""
 		converter = commands.MemberConverter()
 		converted = None
 		try:
