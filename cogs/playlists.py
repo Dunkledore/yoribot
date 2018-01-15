@@ -152,6 +152,7 @@ class Playlists:
 		await ctx.send("hi")
 		self.context=ctx
 		if not playlistname or urls==():
+			ctx.send("Invalid Syntax")
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 			return
@@ -172,6 +173,7 @@ class Playlists:
 	async def playlistremove(self,ctx,playlistname=None,*urls):
 		self.context=ctx
 		if not playlistname or urls==():
+			ctx.send("Invalid Syntax")
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 			return
@@ -190,6 +192,7 @@ class Playlists:
 	async def deleteplaylist(self,ctx,playlistname=None):
 		self.context=ctx
 		if not playlistname:
+			ctx.send("Invalid Syntax")
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
