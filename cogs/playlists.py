@@ -151,6 +151,7 @@ class Playlists:
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 			return
 		urls=list(urls)
+		playlistname=playlistname.lower()
 		front=False
 		if 'front' in urls:
 			front=True
@@ -176,6 +177,7 @@ class Playlists:
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 			return
 		urls=list(urls)
+		playlistname=playlistname.lower()
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
@@ -199,6 +201,7 @@ class Playlists:
 			ctx.send("Invalid Syntax")
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
+		playlistname=playlistname.lower()
 		if not await self.playlist_exists(ctx.message.author.id,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
