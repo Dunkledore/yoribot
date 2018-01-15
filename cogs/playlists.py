@@ -163,7 +163,7 @@ class Playlists:
 			urls=[value for value in urls if value != 'front']
 		
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="Working...",value=" ".format(deleted_videos,playlistname))
+		embed.add_field(name="Working...",value=" ")
 		workmessage=await ctx.send(embed=embed)
 		added_videos=0
 		for item in urls:
@@ -193,7 +193,7 @@ class Playlists:
 			return
 			
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
-		embed.add_field(name="Working...",value=" ".format(deleted_videos,playlistname))
+		embed.add_field(name="Working...",value=" "))
 		workmessage=await ctx.send(embed=embed)
 	
 		deleted_videos=0
