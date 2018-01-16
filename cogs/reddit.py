@@ -164,6 +164,7 @@ class Reddit:
                     return
                 
                 item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
+                await ctx.send("```" + json.dumps(item) + "```")
                 if item["over_18"] and not ctx.message.channel.is_nsfw():
                     '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                     await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
