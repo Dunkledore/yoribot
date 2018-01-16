@@ -71,7 +71,7 @@ class Reddit:
             strI = ""
             if(items[i]["over18"]):
                 strI = i + ' ' = items[i]["display_name_prefixed"] + " `NSFW` " + items[i]["title"]
-                resEmbed.add_field(name=strI value="https://www.reddit.com"+items["url"])
+                resEmbed.add_field(name=strI, value="https://www.reddit.com"+items["url"])
         
         await ctx.send(embed=resEmbed)
 
