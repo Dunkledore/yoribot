@@ -79,7 +79,7 @@ class Reddit:
                     return False
                 if m.channel != ctx.message.channel:
                     return False
-                return m.content in map(str, range(1, 5))
+                return m.content in map(str, range(1, 6))
         
         self.tasks.append(asyncio.ensure_future(self.bot.wait_for('message', check=check,timeout=20)))
         resp = await self.tasks[len(self.tasks)-1]
