@@ -96,10 +96,7 @@ class Reddit:
         if not t:
             return
         item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
-        strResult = json.dumps(item)
-        if(len(strResult) > 2000):
-            fp = io.BytesIO(strResult.encode("utf-8"))
-            await ctx.send("debug", file= discord.File(fp, "debug.json"))
+
         if "subscribers" in item:
             await self._disambiguate(ctx, self._cache[ctx.message.guild][ctx.message.author])
         elif item["over_18"] and not ctx.message.channel.is_nsfw():
@@ -213,10 +210,6 @@ class Reddit:
                     return
                 
                 item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
-                strResult = json.dumps(item)
-                if(len(strResult) > 2000):
-                    fp = io.BytesIO(strResult.encode("utf-8"))
-                    await ctx.send("debug", file= discord.File(fp, "debug.json"))
                 if "subscribers" in item:
                     await self._disambiguate(ctx, self._cache[ctx.message.guild][ctx.message.author])
                 elif item["over_18"] and not ctx.message.channel.is_nsfw():
