@@ -68,7 +68,7 @@ class Reddit:
         resEmbed = discord.Embed(title="**Choose One by giving it's number**", colour=0xff5700)
         resEmbed.set_footer(text="Subreddit Search Results");
         for i in range(len(items[0:5])):
-            strI = str(i+1) + ". " + items[i]["data"]["display_name_prefixed"] + " `NSFW` " if items[i]["data"]["whitelist_status"] == "promo_adult_nsfw" else " " + items[i]["data"]["title"]
+            strI = str(i + 1 * 5 -4)  + ". " + items[i]["data"]["display_name_prefixed"] + " `NSFW` " if items[i]["data"]["whitelist_status"] == "promo_adult_nsfw" else " " + items[i]["data"]["title"]
             resEmbed.add_field(name=strI, value="https://www.reddit.com"+items[i]["data"]["url"])
         
         await ctx.send(embed=resEmbed)
