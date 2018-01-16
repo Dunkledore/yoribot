@@ -67,7 +67,7 @@ class Reddit:
     async def _disambiguate(self, ctx, items):
         resEmbed = discord.Embed(title="**Choose One by giving it's number**", colour=0xff5700)
         resEmbed.set_footer(text="Subreddit Search Results");
-        for i in range(len(items)):
+        for i in range(len(items[0:5])):
             strI = str(i+1) + ". " + items[i]["data"]["display_name_prefixed"] + " `NSFW` " if items[i]["data"]["whitelist_status"] == "promo_adult_nsfw" else " " + items[i]["data"]["title"]
             resEmbed.add_field(name=strI, value="https://www.reddit.com"+items[i]["data"]["url"])
         
@@ -78,7 +78,7 @@ class Reddit:
                     return False
                 if m.channel != ctx.message.channel:
                     return False
-                return m.content in map(str, range(page * 5 - 4, page * 5 - 4 + len(vids)))
+                return m.content in map(str, range(1, 5))
         
         self.tasks.append(asyncio.ensure_future(self.bot.wait_for('message', check=check,timeout=20)))
         resp = await self.tasks[len(self.tasks)-1]
