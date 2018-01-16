@@ -69,7 +69,7 @@ class Reddit:
         resEmbed.set_footer(text="Subreddit Search Results");
         for i in range(len(items)):
             strI = str(i+1) + ". " + items[i]["data"]["display_name_prefixed"] + " `NSFW` " if items[i]["data"]["whitelist_status"] == "promo_adult_nsfw" else " " + items[i]["data"]["title"]
-            resEmbed.add_field(name=strI, value="https://www.reddit.com"+items["url"])
+            resEmbed.add_field(name=strI, value="https://www.reddit.com"+items[i]["data"]["url"])
         
         await ctx.send(embed=resEmbed)
 
