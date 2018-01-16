@@ -66,9 +66,9 @@ class Reddit:
     
     async def _disambiguate(self, ctx, items):
         resEmbed = discord.Embed(title="**Choose One by giving it's number**", colour=0xff5700)
-        resEmbed.set_footer(text="Subreddit Search Results");
+        resEmbed.set_footer(text="Subreddit Search Results")
         for i in range(len(items)):
-            strI = str(i+1) + ". " + items[i]["display_name_prefixed"] + " `NSFW` " if items[i]["whitelist_stats"] == "promo_adult_nsfw" else " " + items[i]["title"]
+            strI = str(i+1) + ". " + items[i]["display_name_prefixed"] + " `NSFW` " if items[i]["whitelist_status"] == "promo_adult_nsfw" else " " + items[i]["title"]
             resEmbed.add_field(name=strI, value="https://www.reddit.com"+items["url"])
         
         await ctx.send(embed=resEmbed)
