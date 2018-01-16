@@ -68,10 +68,8 @@ class Reddit:
         resEmbed = discord.Embed(title="**Choose One by giving it's number**", colour=0xff5700)
         resEmbed.set_footer(text="Subreddit Search Results");
         for i in range(len(items)):
-            strI = ""
-            if(items[i]["over18"]):
-                strI = i + ' ' = items[i]["display_name_prefixed"] + " `NSFW` " + items[i]["title"]
-                resEmbed.add_field(name=strI, value="https://www.reddit.com"+items["url"])
+            strI = str(i+1) + ". " + items[i]["display_name_prefixed"] + " `NSFW` " if items["over18"] else " " + items[i]["title"]
+            resEmbed.add_field(name=strI, value="https://www.reddit.com"+items["url"])
         
         await ctx.send(embed=resEmbed)
 
@@ -94,7 +92,7 @@ class Reddit:
 
         self.current_subreddit[ctx.message.guild][ctx.message.author] = selectedItem["display_name_prefixed"][2:].lower()
         url = "https://oauth.reddit.com/r/" + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + mode + ".json?limit=5"
-        await t = self._getAndCachePosts(ctx, url)
+        t = await self._getAndCachePosts(ctx, url)
         if not t:
             return
         item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
