@@ -91,7 +91,7 @@ class Reddit:
             return
 
         self.current_subreddit[ctx.message.guild][ctx.message.author] = selectedItem["data"]["display_name_prefixed"][2:].lower()
-        url = "https://oauth.reddit.com/r/" + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + mode + ".json?limit=5"
+        url = "https://oauth.reddit.com/r/" + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + self.current_mode[ctx.message.guild][ctx.message.author] + ".json?limit=5"
         t = await self._getAndCachePosts(ctx, url)
         if not t:
             return
