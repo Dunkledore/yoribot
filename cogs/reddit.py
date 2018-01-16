@@ -25,6 +25,7 @@ class Reddit:
         self._cache = {}
         self.token = False
         self.tokenExpires = False
+        self.tasks = []
         self.modes = ["top", "rising", "new", "random", "controversial", "hot"]
 
     async def _ensureAuth(self, ctx):
@@ -62,6 +63,55 @@ class Reddit:
                     self._cache[ctx.message.guild][ctx.message.author] = resJson["data"]["children"]
                     self.next_item_idx[ctx.message.guild][ctx.message.author] = 0
                     return True
+    
+    async def _disambiguate(self, ctx, items):
+        resEmbed = discord.Embed(title="**Choose One by giving it's number**", colour=0xff5700)
+        resEmbed.set_footer(text="Subreddit Search Results");
+        for i in range(len(items)):
+            strI = ""
+            if(items[i]["over18"]):
+                strI = i + ' ' = items[i]["display_name_prefixed"] + " `NSFW` " + items[i]["title"]
+                resEmbed.add_field(name=strI value="https://www.reddit.com"+items["url"])
+        
+        await ctx.send(embed=resEmbed)
+
+        def check(m):
+                if m.author != ctx.message.author:
+                    return False
+                if m.channel != ctx.message.channel:
+                    return False
+                return m.content in map(str, range(page * 5 - 4, page * 5 - 4 + len(vids)))
+        
+        self.tasks.append(asyncio.ensure_future(self.bot.wait_for('message', check=check,timeout=20)))
+        resp = await self.tasks[len(self.tasks)-1]
+
+        selectedIndex = (int(resp.content)-1)
+        selectedItem = items[selectedIndex]
+
+        if not selectedItem:
+            await ctx.send("couldn't get your subreddit for some reason")
+            return
+
+        self.current_subreddit[ctx.message.guild][ctx.message.author] = selectedItem["display_name_prefixed"][2:].lower()
+        url = "https://oauth.reddit.com/r/" + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + mode + ".json?limit=5"
+        await t = self._getAndCachePosts(ctx, url)
+        if not t:
+            return
+        item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
+        strResult = json.dumps(item)
+        if(len(strResult) > 2000):
+            fp = io.BytesIO(strResult.encode("utf-8"))
+            await ctx.send("debug", file= discord.File(fp, "debug.json"))
+        if "subscribers" in item:
+            await self._disambiguate(ctx, self._cache[ctx.message.guild][ctx.message.author])
+        elif item["over_18"] and not ctx.message.channel.is_nsfw():
+            '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
+            await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+        else:
+            await self._printPost(ctx, item)
+            self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
+
+
 
     async def _printPost(self, ctx, item):
         embed = discord.Embed(colour=0xff5700, title = item["title"], url="https://www.reddit.com" + item["permalink"], description=item["selftext"])
@@ -169,7 +219,9 @@ class Reddit:
                 if(len(strResult) > 2000):
                     fp = io.BytesIO(strResult.encode("utf-8"))
                     await ctx.send("debug", file= discord.File(fp, "debug.json"))
-                if item["over_18"] and not ctx.message.channel.is_nsfw():
+                if "subscribers" in item:
+                    await self._disambiguate(ctx, self._cache[ctx.message.guild][ctx.message.author])
+                elif item["over_18"] and not ctx.message.channel.is_nsfw():
                     '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
                     await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
                 else:
