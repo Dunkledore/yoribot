@@ -18,8 +18,8 @@ class Rank:
 		
 
 	async def settings(self):
-		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
-		self.message_data = await ctx.db.fetch("SELECT * FROM message_data")
+		self.ranks = await ctx.db.fetch("SELECT * FROM rank") or []
+		self.message_data = await ctx.db.fetch("SELECT * FROM message_data") or []
 
 	
 	@commands.command()
@@ -37,7 +37,7 @@ class Rank:
 				member["xp"] += 1
 				self.check_level(ctx.author, xp, ctx.guild.id)
 				return
-		self.settings.append({"user_id" : ctx.author.id, "guild_id", ctx.guild.id, "xp" : 1})
+		self.settings.append({"user_id" : ctx.author.id, "guild_id" : ctx.guild.id, "xp" : 1})
 
 	@commands.commadn()
 	@commands.guild_only()
