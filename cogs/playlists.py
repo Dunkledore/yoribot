@@ -19,7 +19,16 @@ def convert_to_storage(input):
 def convert_from_storage(input):
 	return json.loads(input)
 	
-async def playlist_exists(ctx,userID,name):
+async def playlist_exists(ctx,name):
+	"""
+	The playlist_exists function:
+	
+	Checks wether or not a playlist exists with that name for the user in question
+
+	Args:
+		ctx(class): discord context class
+		name(string): the name of the playlist to be returned
+	"""
 	userID=ctx.message.author.id
 	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 	result = await ctx.db.fetch(query, userID, name)
@@ -30,11 +39,13 @@ async def playlist_exists(ctx,userID,name):
 
 async def get_playlist(ctx,name):
 	"""
-	The get_playlist function
+	The get_playlist function:
 
 	Args:
-		userID(int): the ID of the user whos playlist is to be returned
+		ctx(class): discord context class
 		name(string): the name of the playlist to be returned
+	Returns:
+		list(list): playlist in the youtube API format [[url,name],[url,name],...]
 	"""
 	userID=ctx.message.author.id
 	list=[]
@@ -216,7 +227,7 @@ class Playlists:
 		
 	
 	
-	@commands.command()
+	@commands.command(aliases=['playlistdelete'])
 	async def deleteplaylist(self,ctx,playlistname=None):
 		self.context=ctx
 		if not playlistname:
@@ -230,7 +241,7 @@ class Playlists:
 			return
 		await self.delete_playlist(ctx.message.author.id,playlistname)
 		
-	@commands.command()	
+	@commands.command(aliases=['playlistlist','playlistslist','listplaylist'])	
 	async def listplaylists(self,ctx):
 		self.context=ctx
 		await self.send_list(ctx)
