@@ -587,19 +587,20 @@ class MusicPlayer:
 			try:
 				player = await YTDLSource.from_url(song, loop=self.bot.loop)
 				self.streamer = player
+				self.state = "ready"
+
+				self.streamer.volume = self.volume / 100
+				self.vclient.play(player, after=vafter_inside)
+
+				self.statuslog.info("Playing")
+				self.nowplayinglog.info(songname)
+
+				await self.embed.sent_embed.clear_reactions()
+				await self.add_reactions(False)
 			except:
 				self.state="ready"
 				self.skip()
-			self.state = "ready"
 
-			self.streamer.volume = self.volume / 100
-			self.vclient.play(player, after=vafter_inside)
-
-			self.statuslog.info("Playing")
-			self.nowplayinglog.info(songname)
-
-			await self.embed.sent_embed.clear_reactions()
-			await self.add_reactions(False)
 		else:
 			self.statuslog.info("Finished queue")
 			self.state = "ready"
