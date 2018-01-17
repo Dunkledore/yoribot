@@ -39,7 +39,7 @@ class Rank:
 				return
 		self.settings.append({"user_id" : ctx.author.id, "guild_id" : ctx.guild.id, "xp" : 1})
 
-	@commands.commadn()
+	@commands.command()
 	@commands.guild_only()
 	async def xp(self, ctx):
 		for member in self.message_data:
