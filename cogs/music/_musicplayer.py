@@ -131,9 +131,6 @@ class MusicPlayer:
 			# Queue the song
 			if playlistinfo:
 				self.enqueue(query, now, playlistinfo)
-				f=file.open("wtfisgoingon","w")
-				f.write("queued from playlist")
-				f.close()
 			else:
 				self.enqueue(query, now)
 
