@@ -113,7 +113,7 @@ class MusicPlayer:
 			# Mark as 'ready' if everything is ok
 			self.state = 'ready' if self.mready and self.vready else 'off'
 
-	async def play(self, author, text_channel, query, now=False, stop_current=False):
+	async def play(self, author, text_channel, query, now=False, stop_current=False, playlistinfo=None):
 		"""
 		The play command
 
@@ -128,7 +128,10 @@ class MusicPlayer:
 
 		if self.state == 'ready':
 			# Queue the song
-			self.enqueue(query, now)
+			if playlistinfo:
+				self.enqueue(query, now, playlistinfo)
+			else:
+				self.enqueue(query, now)
 
 			if stop_current:
 				if self.vclient:
@@ -514,23 +517,32 @@ class MusicPlayer:
 			except Exception as e:
 				logger.exception(e)
 
-	def enqueue(self, query, front=False):
+	def enqueue(self, query, front=False, playlistinfo=None):
 		"""Queues songs based on either a YouTube search or a link
 
 		Args:
 			query (str): Either a search term or a link
 			front (bool): Whether to enqueue at the front or the end
+			playlist (list): playlist to add to the queue
 		"""
 
 		if self.state != 'ready':
 			logger.error("Attempt to queue song from wrong state ('{}'), must be 'ready'.".format(self.state))
 			return
+		if playlistinfo:
+			self.logger.debug("Enqueueing from playlist")
 
-		self.logger.debug("Enqueueing from query")
+			self.statuslog.info("Queueing {}'s Playlist: \"{}\"".format(playlistinfo["author"],playlistinfo["name"]))
 
-		self.statuslog.info("Queueing {}".format(query))
+			yt_videos = playlistinfo["list"]
+			
+		else:
+			self.logger.debug("Enqueueing from query")
 
-		yt_videos = api_youtube.parse_query(query, self.statuslog)
+			self.statuslog.info("Queueing {}".format(query))
+
+			yt_videos = api_youtube.parse_query(query, self.statuslog)
+			
 		if front:
 			self.queue = yt_videos + self.queue
 		else:

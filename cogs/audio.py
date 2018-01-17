@@ -6,7 +6,7 @@ from .utils import checks, formats
 from .utils import datatools
 from .music import _data
 from .music import _musicplayer
-
+from . import playlists
 
 class Music:
 
@@ -91,7 +91,12 @@ class Music:
 	@commands.guild_only()
 	async def play(self, ctx, *, query=None):
 		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
+			
 		await ctx.message.delete()
+		if await playlists.playlist_exists(ctx,ctx.message.author.id,query)
+			playlistinfo={"name":query, "author":ctx.message.author, "list":playlists.get_playlist(ctx.nessage.author.id,name)}
+			await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, playlistinfo)
+			return
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query)
 
 
