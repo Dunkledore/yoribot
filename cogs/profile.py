@@ -28,7 +28,7 @@ class Rank:
 
 		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
-		self.settings = await ctx.db.fetch(SELECT * FROM rank)
+		self.settings = await ctx.db.fetch("SELECT * FROM rank")
 
 	async def on_message(self, ctx):
 
