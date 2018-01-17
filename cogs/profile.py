@@ -11,6 +11,44 @@ import traceback
 import asyncpg
 import psutil
 
+class Rank:
+
+	def __init__(self, bot : commands.Bot):
+		self.bot = bot
+		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
+		self.message_data = await ctx.db.fetch("SELECT * FROM message_data")
+
+
+	@commands.command()
+	@commands.guild_only()
+	async def addrank(self, ctx, rank_role : discord.Role, xp_required : int):
+
+		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
+		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
+		self.settings = await ctx.db.fetch(SELECT * FROM rank)
+
+	async def on_message(self, ctx):
+
+		for member in self.message_data:
+			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
+				member["xp"] += 1
+				self.check_level(ctx.author, xp, ctx.guild.id)
+				return
+		self.settings.append({"user_id" : ctx.author.id, "guild_id", ctx.guild.id, "xp" : 1})
+
+	@commands.commadn()
+	@commands.guild_only()
+	async def xp(self, ctx):
+		for member in self.message_data:
+			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
+				await ctx.send(member["user_id"])
+				return
+		await ctx.send("0")
+
+
+
+
+
 class Profile:
     """Commands used to set up your server profile"""
 
