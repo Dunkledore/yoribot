@@ -589,7 +589,7 @@ class MusicPlayer:
 			
 			try:
 				player = await YTDLSource.from_url(song, loop=self.bot.loop)
-			else:
+			except:
 				player = await YTDLSource.from_url(self.deletedvideo, loop=self.bot.loop)
 				songname="This video has been Deleted"
 			self.streamer = player
