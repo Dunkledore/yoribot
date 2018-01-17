@@ -395,6 +395,7 @@ class Profile:
 
 def setup(bot):
     bot.add_cog(Profile(bot))
+    bot.add_cog(Rank(bot))
 
 
 
