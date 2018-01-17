@@ -35,8 +35,6 @@ async def get_playlist(userID,name):
 		userID(int): the ID of the user whos playlist is to be returned
 		name(string): the name of the playlist to be returned
 	"""
-	
-	await self.context.send("get called")
 	list=[]
 	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 	result = await self.context.db.fetch(query, userID, name)
