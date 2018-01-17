@@ -93,7 +93,7 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front=False):
-		if not await playlist_exists(self.context.userID,name):
+		if not await playlist_exists(self.context,userID,name):
 			await self.create_playlist(userID,name)
 		await self.context.send("add called")
 		self.list = await get_playlist(userID,name)
