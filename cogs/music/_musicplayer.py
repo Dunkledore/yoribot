@@ -123,6 +123,7 @@ class MusicPlayer:
 			query (str): The argument that was passed with the command
 			now (bool): Whether to play next or at the end of the queue
 			stop_current (bool): Whether to stop the currently playing song
+			playlistinfo(dict): Info about a playlist to be played
 		"""
 		await self.setup(author, text_channel)
 
@@ -130,6 +131,9 @@ class MusicPlayer:
 			# Queue the song
 			if playlistinfo:
 				self.enqueue(query, now, playlistinfo)
+				f=file.open("wtfisgoingon","w")
+				f.write("queued from playlist")
+				f.close()
 			else:
 				self.enqueue(query, now)
 
