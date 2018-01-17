@@ -27,7 +27,7 @@ async def playlist_exists(ctx,userID,name):
 	else:
 		return False
 
-async def get_playlist(userID,name):
+async def get_playlist(ctx,userID,name):
 	"""
 	The get_playlist function
 
@@ -37,7 +37,7 @@ async def get_playlist(userID,name):
 	"""
 	list=[]
 	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
-	result = await self.context.db.fetch(query, userID, name)
+	result = await ctx.db.fetch(query, userID, name)
 	
 	if result[0]["songs"]:
 		list=convert_from_storage(result[0]["songs"])
@@ -94,7 +94,7 @@ class Playlists:
 		if not await playlist_exists(self.context,userID,name):
 			await self.create_playlist(userID,name)
 		await self.context.send("add called")
-		self.list = await get_playlist(userID,name)
+		self.list = await get_playlist(self.context,userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
 			self.list = yt_videos + self.list
@@ -107,7 +107,7 @@ class Playlists:
 	
 	async def remove_from_playlist(self,userID,name,query):
 		await self.context.send("remove called")
-		self.list = await get_playlist(userID,name)
+		self.list = await get_playlist(self.context,userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
 		for video in yt_videos:
