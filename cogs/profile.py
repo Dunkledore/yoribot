@@ -15,10 +15,13 @@ class Rank:
 
 	def __init__(self, bot : commands.Bot):
 		self.bot = bot
+		
+
+	async def settings(self):
 		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
 		self.message_data = await ctx.db.fetch("SELECT * FROM message_data")
 
-
+	
 	@commands.command()
 	@commands.guild_only()
 	async def addrank(self, ctx, rank_role : discord.Role, xp_required : int):
@@ -395,7 +398,9 @@ class Profile:
 
 def setup(bot):
     bot.add_cog(Profile(bot))
-    bot.add_cog(Rank(bot))
+    rank = Rank(bot)
+    bot.add_cog(rank)
+    bot.loop.create_task(rank.settings())
 
 
 
