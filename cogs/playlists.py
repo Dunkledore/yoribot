@@ -41,7 +41,6 @@ async def get_playlist(ctx,userID,name):
 	
 	if result[0]["songs"]:
 		list=convert_from_storage(result[0]["songs"])
-		await ctx.send(type(list))
 	return list
 
 class Playlists:
