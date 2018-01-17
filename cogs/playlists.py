@@ -76,7 +76,7 @@ class Playlists:
 	async def save_playlist(self,userID,name):
 		await self.context.send("save called")
 		query = "UPDATE playlists SET Songs = $3, No_Songs = $4 WHERE userid=$1 AND name = $2"
-		songs=sconvert_to_storage(self.list)
+		songs=convert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs, len(self.list))
 		
 		
