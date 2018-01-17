@@ -12,14 +12,14 @@ import json
 
 logger = logging.getLogger(__name__)
 
-def convert_to_storage(self,input):
+def convert_to_storage(input):
 	return json.dumps(input)
 		
 	
-def convert_from_storage(self,input):
+def convert_from_storage(input):
 	return json.loads(input)
 	
-async def playlist_exists(self,ctx,userID,name):
+async def playlist_exists(ctx,userID,name):
 	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 	result = await ctx.db.fetch(query, userID, name)
 	if result:
@@ -27,7 +27,7 @@ async def playlist_exists(self,ctx,userID,name):
 	else:
 		return False
 
-async def get_playlist(self,userID,name):
+async def get_playlist(userID,name):
 	"""
 	The get_playlist function
 
