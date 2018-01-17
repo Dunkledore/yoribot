@@ -588,7 +588,6 @@ class MusicPlayer:
 				player = await YTDLSource.from_url(song, loop=self.bot.loop)
 				self.streamer = player
 				self.state = "ready"
-
 				self.streamer.volume = self.volume / 100
 				self.vclient.play(player, after=vafter_inside)
 
