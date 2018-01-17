@@ -20,6 +20,7 @@ def convert_from_storage(input):
 	return json.loads(input)
 	
 async def playlist_exists(ctx,userID,name):
+	userID=ctx.message.author.id
 	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 	result = await ctx.db.fetch(query, userID, name)
 	if result:
@@ -27,7 +28,7 @@ async def playlist_exists(ctx,userID,name):
 	else:
 		return False
 
-async def get_playlist(ctx,userID,name):
+async def get_playlist(ctx,name):
 	"""
 	The get_playlist function
 
@@ -35,6 +36,7 @@ async def get_playlist(ctx,userID,name):
 		userID(int): the ID of the user whos playlist is to be returned
 		name(string): the name of the playlist to be returned
 	"""
+	userID=ctx.message.author.id
 	list=[]
 	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
 	result = await ctx.db.fetch(query, userID, name)
@@ -91,10 +93,10 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front=False):
-		if not await playlist_exists(self.context,userID,name):
+		if not await playlist_exists(self.context,name):
 			await self.create_playlist(userID,name)
 		await self.context.send("add called")
-		self.list = await get_playlist(self.context,userID,name)
+		self.list = await get_playlist(self.context,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
 			self.list = yt_videos + self.list
@@ -107,7 +109,7 @@ class Playlists:
 	
 	async def remove_from_playlist(self,userID,name,query):
 		await self.context.send("remove called")
-		self.list = await get_playlist(self.context,userID,name)
+		self.list = await get_playlist(self.context,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
 		for video in yt_videos:
@@ -191,7 +193,7 @@ class Playlists:
 			return
 		urls=list(urls)
 		playlistname=playlistname.lower()
-		if not await playlist_exists(ctx,ctx.message.author.id,playlistname):
+		if not await playlist_exists(ctx,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
 			return
@@ -222,7 +224,7 @@ class Playlists:
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 		playlistname=playlistname.lower()
-		if not await playlist_exists(ctx,ctx.message.author.id,playlistname):
+		if not await playlist_exists(ctx,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
 			return

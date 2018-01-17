@@ -93,8 +93,8 @@ class Music:
 		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
 			
 		await ctx.message.delete()
-		if await playlists.playlist_exists(ctx,ctx.message.author.id,query):
-			list= await playlists.get_playlist(ctx,ctx.message.author.id,query)
+		if await playlists.playlist_exists(ctx,query):
+			list= await playlists.get_playlist(ctx,query)
 			playlistinfo={"name":query, "author":ctx.message.author, "list":list}
 			await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query,False,False, playlistinfo)
 		else:
