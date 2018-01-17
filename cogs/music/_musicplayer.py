@@ -62,6 +62,9 @@ class MusicPlayer:
 		Args:
 			server_id (str): The Discord ID of the server to lock on to
 		"""
+		
+		#placeholder video for deleted videos
+		self.deletedvideo="https://www.youtube.com/watch?v=WzPqWzgIzPU"
 
 		# Player variables
 		self.server_id = server_id
@@ -584,7 +587,11 @@ class MusicPlayer:
 
 			self.queue.pop(0)
 			
-			player = await YTDLSource.from_url(song, loop=self.bot.loop)
+			try:
+				player = await YTDLSource.from_url(song, loop=self.bot.loop)
+			else:
+				player = await YTDLSource.from_url(self.deletedvideo, loop=self.bot.loop)
+				songname="This video has been Deleted"
 			self.streamer = player
 			self.state = "ready"
 
