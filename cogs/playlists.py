@@ -165,6 +165,8 @@ class Playlists:
 	
 	@commands.command()
 	async def playlistadd(self,ctx,playlistname=None,*urls):
+		"""Used to add items to a playlist. Valid items are Youtube Video or Playlist URLs.
+		If the playlist does not yet exist it will be created for you."""
 		await ctx.send("hi")
 		self.context=ctx
 		if not playlistname or urls==():
@@ -196,6 +198,7 @@ class Playlists:
 	
 	@commands.command()	
 	async def playlistremove(self,ctx,playlistname=None,*urls):
+		"""Used to remove all of said items from a playlist. Valid items are Youtube Video or Playlist URLs."""
 		self.context=ctx
 		if not playlistname or urls==():
 			ctx.send("Invalid Syntax")
@@ -229,6 +232,7 @@ class Playlists:
 	
 	@commands.command(aliases=['playlistdelete'])
 	async def deleteplaylist(self,ctx,playlistname=None):
+		"""Used to delete a playlist"""
 		self.context=ctx
 		if not playlistname:
 			ctx.send("Invalid Syntax")
@@ -243,6 +247,7 @@ class Playlists:
 		
 	@commands.command(aliases=['playlistlist','playlistslist','listplaylist'])	
 	async def listplaylists(self,ctx):
+		"""Lists all of your playlists"""
 		self.context=ctx
 		await self.send_list(ctx)
 
