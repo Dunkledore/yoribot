@@ -12,6 +12,38 @@ import json
 
 logger = logging.getLogger(__name__)
 
+def convert_to_storage(self,input):
+	return json.dumps(input)
+		
+	
+def convert_from_storage(self,input):
+	return json.loads(input)
+	
+async def playlist_exists(self,ctx,userID,name):
+	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
+	result = await ctx.db.fetch(query, userID, name)
+	if result:
+		return True
+	else:
+		return False
+
+async def get_playlist(self,userID,name):
+	"""
+	The get_playlist function
+
+	Args:
+		userID(int): the ID of the user whos playlist is to be returned
+		name(string): the name of the playlist to be returned
+	"""
+	
+	await self.context.send("get called")
+	list=[]
+	query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
+	result = await self.context.db.fetch(query, userID, name)
+	
+	if result[0]["songs"]:
+		list=convert_from_storage(result[0]["songs"])
+	return list
 
 class Playlists:
 
@@ -22,32 +54,12 @@ class Playlists:
 		self.context=None
 		self.statuslog = logging.getLogger("{}.{}.status".format(__name__, 0))
 		self.silently_deleted=False
-
-
-	async def playlist_exists(self,userID,name):
-		await self.context.send("exists called")
-		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
-		result = await self.context.db.fetch(query, userID, name)
-		if result:
-			return True
-		else:
-			return False
-	
-	
+		
 	async def create_playlist(self,userID,name):
 		await self.context.send("create called")
 		query = "INSERT INTO playlists (userid,name) VALUES ($1,$2);"
 		await self.context.db.execute(query, userID, name)
 	
-	async def get_playlist(self,userID,name):
-		await self.context.send("get called")
-		self.list=[]
-		query = "SELECT * FROM playlists WHERE userid = $1 AND name = $2;"
-		result = await self.context.db.fetch(query, userID, name)
-		
-		if result[0]["songs"]:
-			self.list=self.convert_from_storage(result[0]["songs"])
-		return self.list
 	
 	async def get_playlist_list(self,userID):
 		await self.context.send("getlist called")
@@ -66,7 +78,7 @@ class Playlists:
 	async def save_playlist(self,userID,name):
 		await self.context.send("save called")
 		query = "UPDATE playlists SET Songs = $3, No_Songs = $4 WHERE userid=$1 AND name = $2"
-		songs=self.convert_to_storage(self.list)
+		songs=sconvert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs, len(self.list))
 		
 		
@@ -81,10 +93,10 @@ class Playlists:
 			return False
 
 	async def add_to_playlist(self,userID,name,query,front=False):
-		if not await self.playlist_exists(userID,name):
+		if not await playlist_exists(self.context.userID,name):
 			await self.create_playlist(userID,name)
 		await self.context.send("add called")
-		await self.get_playlist(userID,name)
+		self.list = await get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
 			self.list = yt_videos + self.list
@@ -94,16 +106,10 @@ class Playlists:
 		await self.save_playlist(userID,name)
 		return len(yt_videos)
 	
-	def convert_to_storage(self,input):
-		return json.dumps(input)
-		
-	
-	def convert_from_storage(self,input):
-		return json.loads(input)
 	
 	async def remove_from_playlist(self,userID,name,query):
 		await self.context.send("remove called")
-		await self.get_playlist(userID,name)
+		self.list = await get_playlist(userID,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
 		for video in yt_videos:
@@ -187,7 +193,7 @@ class Playlists:
 			return
 		urls=list(urls)
 		playlistname=playlistname.lower()
-		if not await self.playlist_exists(ctx.message.author.id,playlistname):
+		if not await playlist_exists(ctx,ctx.message.author.id,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
 			return
@@ -218,7 +224,7 @@ class Playlists:
 			help_cmd = self.bot.get_command('help')
 			await ctx.invoke(help_cmd, command=ctx.command.name)
 		playlistname=playlistname.lower()
-		if not await self.playlist_exists(ctx.message.author.id,playlistname):
+		if not await playlist_exists(ctx,ctx.message.author.id,playlistname):
 			await ctx.send("Playlist \"{}\" does not exist".format(playlistname))
 			await self.send_list(ctx)
 			return
