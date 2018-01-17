@@ -94,6 +94,7 @@ class Music:
 			
 		await ctx.message.delete()
 		if await playlists.playlist_exists(ctx,ctx.message.author.id,query):
+			ctx.send("trying to play from playlist")
 			playlistinfo={"name":query, "author":ctx.message.author, "list":playlists.get_playlist(ctx.message.author.id,query)}
 			await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, playlistinfo)
 			return
