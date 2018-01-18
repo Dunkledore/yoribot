@@ -16,6 +16,8 @@ class Rank:
 	def __init__(self, bot : commands.Bot):
 		self.bot = bot
 		self.loaded_settings = False
+		self.message_data = None
+		self.ranks = None
 		
 
 	async def load_settings(self):
