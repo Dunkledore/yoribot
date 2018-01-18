@@ -21,8 +21,12 @@ class Rank:
 		
 
 	async def load_settings(self):
-		self.ranks = await ctx.db.fetch("SELECT * FROM rank") or []
-		self.message_data = await ctx.db.fetch("SELECT * FROM message_data") or []
+		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
+		if not self.ranks:
+			self.ranks = []
+		self.message_data = await ctx.db.fetch("SELECT * FROM message_data")
+		if not self.message_data:
+			self.message_data = []
 		self.load_settings = True
 
 	
