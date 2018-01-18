@@ -415,7 +415,7 @@ class Meta:
         return image_object
 
     @commands.command(pass_context=True)
-    async def chanchart(self, ctx, channel = None : discord.TextChannel):
+    async def chanchart(self, ctx, channel : discord.TextChannel = None):
         """
         Generates a pie chart, representing the last 5000 messages in this channel.
         """
