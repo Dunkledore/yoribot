@@ -66,7 +66,7 @@ class Reddit:
     
     async def _disambiguate(self, ctx, items):
         resEmbed = discord.Embed(title="**Choose One by giving it's number**", colour=0xff5700)
-        resEmbed.set_footer(text="Subreddit Search Results");
+        resEmbed.set_footer(text="Subreddit Search Results")
         for i in range(len(items[0:5])):
             badge = " `NSFW` " if items[i]["data"]["over18"] else " "
             strI = str(i + 1 * 5 -4)  + ". " + items[i]["data"]["display_name_prefixed"] + badge + items[i]["data"]["title"]
@@ -75,11 +75,11 @@ class Reddit:
         await ctx.send(embed=resEmbed)
 
         def check(m):
-                if m.author != ctx.message.author:
-                    return False
-                if m.channel != ctx.message.channel:
-                    return False
-                return m.content in map(str, range(1, 6))
+            if m.author != ctx.message.author:
+                return False
+            if m.channel != ctx.message.channel:
+                return False
+            return m.content in map(str, range(1, 6))
         
         self.tasks.append(asyncio.ensure_future(self.bot.wait_for('message', check=check,timeout=20)))
         resp = await self.tasks[len(self.tasks)-1]
@@ -115,11 +115,12 @@ class Reddit:
             embed.set_thumbnail(url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png")
         else:
             embed.set_thumbnail(url=item["thumbnail"])        
-        embed.set_author(name="{}".format(item["subreddit_name_prefixed"]), icon_url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png")
+        
         author = item['author']
         if item['author_flair_text']:
             author = author + ' `{}`'.format(item['author_flair_text'])
-        embed.add_field(name = "Author", value = "u/{} ".format(author))
+        embed.set_author(name="**{}** • u/{}".format(item["subreddit_name_prefixed"], author), icon_url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png")
+
         embed.add_field(name= "Score", value=str(item["score"]) + "  ({}:arrow_up_small: {}:arrow_down_small:)".format(item["ups"], item["downs"]))
         if not item['is_self']:
             if 'post_hint' in item:
@@ -129,6 +130,7 @@ class Reddit:
                     embed.set_image(url=item["url"]+".png")
                 else:
                     embed.add_field(name="Link", value=item["url"])
+        embed.set_footer(text=datetime.utcfromtimestamp(item["created_utc"]).isoformat())
         await ctx.send(embed=embed)
         return
 
