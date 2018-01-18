@@ -414,12 +414,13 @@ class Meta:
         image_object.seek(0)
         return image_object
 
-    @commands.command(pass_context=True)
-    async def chanchart(self, ctx):
+@commands.command(pass_context=True)
+    async def chanchart(self, ctx, channel = None : discord.TextChannel):
         """
         Generates a pie chart, representing the last 5000 messages in this channel.
         """
-        channel = ctx.message.channel
+        if not channel:
+            channel = ctx.message.channel
         e = discord.Embed(description="Please wait one moment while I gather all the data...", colour=0x00ccff)
         em = await ctx.send(embed=e)
 
