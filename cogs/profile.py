@@ -34,14 +34,14 @@ class Rank:
 	@commands.guild_only()
 	async def addrank(self, ctx, rank_role : discord.Role, xp_required : int):
 		if not self.loaded_settings:
-			self.load_settings()
+			await self.load_settings()
 		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
 		self.settings = await ctx.db.fetch("SELECT * FROM rank")
 
 	async def on_message(self, ctx):
 		if not self.loaded_settings:
-			self.load_settings()
+			await self.load_settings()
 		for member in self.message_data:
 			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
 				member["xp"] += 1
@@ -53,7 +53,7 @@ class Rank:
 	@commands.guild_only()
 	async def xp(self, ctx):
 		if not self.loaded_settings:
-			self.load_settings()
+			await self.load_settings()
 
 		for member in self.message_data:
 			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
