@@ -119,7 +119,7 @@ class Reddit:
         author = item['author']
         if item['author_flair_text']:
             author = author + ' `{}`'.format(item['author_flair_text'])
-        embed.set_author(name="**{}** • u/{}".format(item["subreddit_name_prefixed"], author), icon_url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png")
+        embed.set_author(name="{} • u/{}".format(item["subreddit_name_prefixed"], author), icon_url="https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png")
 
         embed.add_field(name= "Score", value=str(item["score"]) + "  ({}:arrow_up_small: {}:arrow_down_small:)".format(item["ups"], item["downs"]))
         if not item['is_self']:
@@ -130,7 +130,7 @@ class Reddit:
                     embed.set_image(url=item["url"]+".png")
                 else:
                     embed.add_field(name="Link", value=item["url"])
-        embed.set_footer(text=datetime.utcfromtimestamp(item["created_utc"]).isoformat())
+        embed.set_footer(text=datetime.utcfromtimestamp(item["created_utc"]).strftime("%A,  %d. %B %Y %I:%M%p"))
         await ctx.send(embed=embed)
         return
 
