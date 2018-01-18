@@ -47,7 +47,7 @@ class Rank:
 				member["xp"] += 1
 				self.check_level(ctx.author, xp, ctx.guild.id)
 				return
-		self.settings.append({"user_id" : ctx.author.id, "guild_id" : ctx.guild.id, "xp" : 1})
+		self.message_data.append({"user_id" : ctx.author.id, "guild_id" : ctx.guild.id, "xp" : 1})
 
 	@commands.command()
 	@commands.guild_only()
