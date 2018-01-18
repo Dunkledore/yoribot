@@ -15,23 +15,27 @@ class Rank:
 
 	def __init__(self, bot : commands.Bot):
 		self.bot = bot
+		self.loaded_settings = False
 		
 
-	async def settings(self):
+	async def load_settings(self):
 		self.ranks = await ctx.db.fetch("SELECT * FROM rank") or []
 		self.message_data = await ctx.db.fetch("SELECT * FROM message_data") or []
+		self.load_settings = True
 
 	
 	@commands.command()
 	@commands.guild_only()
 	async def addrank(self, ctx, rank_role : discord.Role, xp_required : int):
-
+		if not self.loaded_settings:
+			self.load_settings()
 		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
 		self.settings = await ctx.db.fetch("SELECT * FROM rank")
 
 	async def on_message(self, ctx):
-
+		if not self.loaded_settings:
+			self.load_settings()
 		for member in self.message_data:
 			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
 				member["xp"] += 1
@@ -42,6 +46,9 @@ class Rank:
 	@commands.command()
 	@commands.guild_only()
 	async def xp(self, ctx):
+		if not self.loaded_settings:
+			self.load_settings()
+
 		for member in self.message_data:
 			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
 				await ctx.send(member["user_id"])
@@ -400,7 +407,6 @@ def setup(bot):
     bot.add_cog(Profile(bot))
     rank = Rank(bot)
     bot.add_cog(rank)
-    bot.loop.create_task(rank.settings())
 
 
 
