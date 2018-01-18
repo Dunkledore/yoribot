@@ -130,7 +130,7 @@ class Reddit:
                     embed.set_image(url=item["url"]+".png")
                 else:
                     embed.add_field(name="Link", value=item["url"])
-        embed.set_footer(text=datetime.utcfromtimestamp(item["created_utc"]).strftime("%A,  %d. %B %Y %I:%M%p"))
+        embed.set_footer(text=datetime.utcfromtimestamp(item["created_utc"]).strftime("%A,  %d. %B %Y %I:%M%p %Z"))
         await ctx.send(embed=embed)
         return
 
