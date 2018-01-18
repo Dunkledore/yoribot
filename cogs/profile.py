@@ -27,7 +27,7 @@ class Rank:
 		self.message_data = await ctx.db.fetch("SELECT * FROM message_data")
 		if not self.message_data:
 			self.message_data = []
-		self.load_settings = True
+		self.loaded_settings = True
 
 	
 	@commands.command()
