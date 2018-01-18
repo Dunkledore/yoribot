@@ -57,7 +57,7 @@ class Rank:
 
 		for member in self.message_data:
 			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
-				await ctx.send(member["user_id"])
+				await ctx.send(member["xp"])
 				return
 		await ctx.send("0")
 
