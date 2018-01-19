@@ -171,6 +171,39 @@ class Welcome:
 				await ch.send(config["text_message"].format(member))
 			await ch.send(embed=embed)
 
+	@commands.command(hidden=True) #for lgbt youth
+	@commands.guild_only()
+	@checks.is_admin()
+	async def welcomeleavetoggle(self, ctx):
+		alterquery = "UPDATE welcome_config SET leave = NOT leave WHERE guild_id = $1 RETURNING leave"
+		insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True)"
+		try:
+			await ctx.db.execute(insertquery, ctx.guild.id)
+			await ctx.send("Whisper set to True")
+		except asyncpg.UniqueViolationError:
+			leave = await ctx.db.fetchval(alterquery, ctx.guild.id)
+			await ctx.send("Whisper set to " + str(leave))
+
+	async def on_member_leave(self, member): #for lgbt youth
+
+		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
+		con = self.bot.pool
+		config = await con.fetchrow(query, member.guild.id)
+		if config is None:
+			return
+		ch = self.bot.get_channel(config["channel_id"])
+		if not config["leave"]:
+			return
+		query = "SELECT * FROM welcome WHERE guild_id = $1;"
+		welcome = await con.fetch(query, member.guild.id)
+		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
+		embed.set_author(name=member.name + 'left', icon_url=member.guild.icon_url)
+		embed.set_thumbnail(url=member.avatar_url)
+		
+		if ch and :
+			await ch.send(embed=embed)
+
+
 
 		
 		
