@@ -166,7 +166,7 @@ class Music:
 	@commands.guild_only()
 	@checks.is_mod()
 	async def shuffle(self, ctx):
-		"""Mxes the songs in the queue"""
+		"""Mixes the songs in the queue"""
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).shuffle()
 
