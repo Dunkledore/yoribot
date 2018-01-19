@@ -16,19 +16,25 @@ class Rank:
 	def __init__(self, bot : commands.Bot):
 		self.bot = bot
 		self.loaded_settings = False
-		self.message_data = None
+		self.message_data = dataIO.load_json("data/rank/message_data.json")
 		self.ranks = None
-		
 
+	def save_message_data(self):
+        dataIO.save_json("data/rank/message_data.json", self.message_data)
+
+    def check_level(self, member, guild):
+    	xp = self.message_data[str(member.id)][str(guild.id)]
+    	for rank in self.ranks:
+    		if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
+    			role = discord.utils.get(guild.roles, id=rank["role_id"])
+    			await member.add_roles(role)
+	
 	async def load_settings(self):
 		self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
 		if not self.ranks:
 			self.ranks = []
-		self.message_data = await self.bot.pool.fetch("SELECT * FROM message_data")
 		if not self.message_data:
-			self.message_data = []
-		self.loaded_settings = True
-
+			self.message_data = {}
 	
 	@commands.command()
 	@commands.guild_only()
@@ -37,17 +43,26 @@ class Rank:
 			await self.load_settings()
 		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
-		self.settings = await ctx.db.fetch("SELECT * FROM rank")
+		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
 
 	async def on_message(self, ctx):
+		member = ctx.author
+		guild = ctx.guild
+
 		if not self.loaded_settings:
 			await self.load_settings()
-		for member in self.message_data:
-			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
-				member["xp"] += 1
-				self.check_level(ctx.author, xp, ctx.guild.id)
-				return
-		self.message_data.append({"user_id" : ctx.author.id, "guild_id" : ctx.guild.id, "xp" : 1})
+
+		if str(member.id) in self.message_data:
+			if guild.id in self.message_data[str(member.id)]:
+				self.message_data[str(member.id)][str(member.id)] += 1
+			else:
+				self.message_data[str(member.id)][str(guild.id)] = 1
+			self.message_data[str(member.id)]["global"] += 1
+		else:
+			self.message_data[str(member.id)] = {str(guild.id) : 1, "global" : 1}
+
+		self.check_level(member, guild)
+
 
 	@commands.command()
 	@commands.guild_only()
