@@ -194,10 +194,9 @@ class Welcome:
 		ch = self.bot.get_channel(config["channel_id"])
 		if not config["leave"]:
 			return
-		query = "SELECT * FROM welcome WHERE guild_id = $1;"
-		welcome = await con.fetch(query, member.guild.id)
+
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
-		embed.set_author(name=member.name + 'left', icon_url=member.guild.icon_url)
+		embed.set_author(name=member.name + ' left', icon_url=member.guild.icon_url)
 		embed.set_thumbnail(url=member.avatar_url)
 		
 		if ch:
