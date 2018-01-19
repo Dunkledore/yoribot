@@ -200,7 +200,7 @@ class Welcome:
 		embed.set_author(name=member.name + 'left', icon_url=member.guild.icon_url)
 		embed.set_thumbnail(url=member.avatar_url)
 		
-		if ch and :
+		if ch:
 			await ch.send(embed=embed)
 
 
