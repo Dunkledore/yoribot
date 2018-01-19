@@ -176,13 +176,13 @@ class Welcome:
 	@checks.is_admin()
 	async def welcomeleavetoggle(self, ctx):
 		alterquery = "UPDATE welcome_config SET leave = NOT leave WHERE guild_id = $1 RETURNING leave"
-		insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True)"
+		insertquery = "INSERT INTO welcome_config (guild_id, leave) VALUES ($1,True)"
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id)
-			await ctx.send("Whisper set to True")
+			await ctx.send("Leave set to True")
 		except asyncpg.UniqueViolationError:
 			leave = await ctx.db.fetchval(alterquery, ctx.guild.id)
-			await ctx.send("Whisper set to " + str(leave))
+			await ctx.send("Leave set to " + str(leave))
 
 	async def on_member_leave(self, member): #for lgbt youth
 
