@@ -96,7 +96,7 @@ class Music:
 	@commands.guild_only()
 	async def play(self, ctx, *, query=None):
 		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
-		if not ctx.author.voice.channel
+		if not ctx.author.voice.channel:
 			await self.errorembed(ctx)
 			return
 		await ctx.message.delete()
@@ -113,7 +113,7 @@ class Music:
 	@checks.is_mod()
 	async def playnext(self, ctx, *, query=None):
 		"""Plays the song or playlist immediately after the track already playing"""
-		if not ctx.author.voice.channel
+		if not ctx.author.voice.channel:
 			await self.errorembed(ctx)
 			return
 		await ctx.message.delete()
