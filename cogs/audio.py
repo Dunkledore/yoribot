@@ -132,7 +132,7 @@ class Music:
 	@checks.is_mod()
 	async def playnow(self, ctx, *, query=None):
 		"""Immediately plays the song - this will stop any song playing"""
-		if not ctx.author.voice.channel
+		if not ctx.author.voice.channel:
 			await self.errorembed(ctx)
 			return
 		await ctx.message.delete()
