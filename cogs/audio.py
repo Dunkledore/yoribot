@@ -85,13 +85,20 @@ class Music:
 			return _data.cache[str(server_id)]
 		else:
 			return _data.cache[str(server_id)]
-
+	
+	def errorembed(self,ctx):
+		embed=discord.Embed(title="", colour=discord.Colour.blurple())
+		embed.add_field(name="Error",value="You must be in a voice channel to use the music player")
+		await ctx.channel.send(embed=embed)
+		
 
 	@commands.command()
 	@commands.guild_only()
 	async def play(self, ctx, *, query=None):
 		"""Play a song using its name or YouTube link or a playlist using its YouTube link."""
-			
+		if not ctx.author.voice.channel
+			await self.errorembed(ctx)
+			return
 		await ctx.message.delete()
 		if await playlists.playlist_exists(ctx,query):
 			list= await playlists.get_playlist(ctx,query)
@@ -106,6 +113,9 @@ class Music:
 	@checks.is_mod()
 	async def playnext(self, ctx, *, query=None):
 		"""Plays the song or playlist immediately after the track already playing"""
+		if not ctx.author.voice.channel
+			await self.errorembed(ctx)
+			return
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True)
 
@@ -122,6 +132,9 @@ class Music:
 	@checks.is_mod()
 	async def playnow(self, ctx, *, query=None):
 		"""Immediately plays the song - this will stop any song playing"""
+		if not ctx.author.voice.channel
+			await self.errorembed(ctx)
+			return
 		await ctx.message.delete()
 		await self.getMusicPlayer(str(ctx.guild.id)).play(ctx.author, ctx.channel, query, now=True, stop_current=True)
 
