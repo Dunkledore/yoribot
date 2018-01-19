@@ -86,10 +86,10 @@ class Music:
 		else:
 			return _data.cache[str(server_id)]
 	
-	def errorembed(self,ctx):
+	async def errorembed(self,ctx):
 		embed=discord.Embed(title="", colour=discord.Colour.blurple())
 		embed.add_field(name="Error",value="You must be in a voice channel to use the music player")
-		await ctx.channel.send(embed=embed)
+		await ctx.send(embed=embed)
 		
 
 	@commands.command()
