@@ -1,6 +1,6 @@
 from .utils import db, checks, formats, cache
 from .utils.paginator import Pages
-
+from .utils.dataIO import dataIO
 from discord.ext import commands
 import json
 import re
@@ -75,10 +75,6 @@ class Rank:
 				await ctx.send(member["xp"])
 				return
 		await ctx.send("0")
-
-
-
-
 
 class Profile:
     """Commands used to set up your server profile"""
