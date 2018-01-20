@@ -23,18 +23,13 @@ class Rank:
 	def save_message_data(self):
 		dataIO.save_json("data/rank/message_data.json", self.message_data)
 
-	async def check_level(self, member, guild, ctx):
+	async def check_level(self, member, guild, message):
 		xp = self.message_data[str(member.id)][str(guild.id)]
 		for rank in self.ranks:
 			if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
 				role = discord.utils.get(guild.roles, id=rank["role_id"])
 				await member.add_roles(role)
-				await ctx.send("Congratualtions {} you now have the rank of {}".format(member.name, role.name))
-
-    @commands.command()
-    async def test(self, ctx):
-        await ctx.send("Congratualtions {} you now have the rank of {}".format(member.name, role.name))
-
+				await message.channel.send("Congratualtions {} you now have the rank of {}".format(member.name, role.name))
 	
 	async def load_settings(self):
 		self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
