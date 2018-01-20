@@ -26,6 +26,7 @@ class Convert:
         self.settings = dataIO.load_json("data/countrycode/settings.json")
         self.utc = pytz.utc
 
+
     @commands.command()
     async def moneyconvert(self, ctx, amount: float, base: str, to: str):
         """Currency converter
@@ -155,7 +156,116 @@ class Convert:
         else:
             await ctx.send(
                 "Sorry I don't know your country! Did you use the correct ISO countrycode? \nExample: `-localtime GB`\n`-localtime US-CA`")
+    @commands.command(pass_context=True, no_pm=True)
+    async def addcountry(self, ctx, country: str):
+        """Example: [p]addcountry GB"""
+        server = ctx.message.server
+        user = ctx.message.author
 
+        re1 = '((?:[a-z][a-z]+))'  # Word 1
+        re2 = '.*?'  # Non-greedy match on filler
+        re3 = '((?:[a-z][a-z]+))'  # Word 2
+        rg = re.compile(re1 + re2 + re3, re.IGNORECASE | re.DOTALL)
+
+        m = rg.search(country)
+        if(country.upper() == 'NA'):
+            country = 'US'
+        subregionobj = None
+        try:
+            if m:
+                word1 = m.group(1)
+                countryobj = pycountry.countries.get(alpha_2=word1.upper())
+                subregionobj = pycountry.subdivisions.get(code=country.upper())
+            else:
+                countryobj = pycountry.countries.get(alpha_2=country.upper())
+        except:
+            countryobj= None
+
+        if countryobj is not None:
+            #try:
+            if subregionobj is not None:
+                try:
+                    if user.id not in self.subregions[subregionobj.code]:
+                        self.subregions[subregionobj.code][user.id] = {}
+                        await ctx.send(
+                            "Greetings from " + countryobj.name + ": " + subregionobj.name + " :flag_" + countryobj.alpha_2.lower() + ": by " + user.mention)
+                        dataIO.save_json("data/countrycode/subregions.json", self.subregions)
+                    else:
+                        await ctx.send("You already set your countryorigin to that country!")
+                except KeyError:
+                    self.subregions[subregionobj.code] = {}
+                    self.subregions[subregionobj.code][user.id] = {}
+                    await ctx.send(
+                            "Greetings from " + countryobj.name + ": " + subregionobj.name + " :flag_" + countryobj.alpha_2.lower() + ": by " + user.mention)
+                    dataIO.save_json("data/countrycode/subregions.json", self.subregions)
+            else:
+                try:
+                    if user.id not in self.countries[countryobj.name]:
+                        self.countries[countryobj.name][user.id] = {}
+                        await ctx.send(
+                            "Greetings from " + countryobj.name + " :flag_" + countryobj.alpha_2.lower() + ": by " + user.mention)
+                        dataIO.save_json("data/countrycode/countries.json", self.countries)
+                    else:
+                        await ctx.send("You already set your countryorigin to that country!")
+                except KeyError:
+                    self.countries[countryobj.name] = {}
+                    self.countries[countryobj.name][user.id] = {}
+                    await ctx.send(
+                            "Greetings from " + countryobj.name + " :flag_" + countryobj.alpha_2.lower() + ": by " + user.mention)
+                    dataIO.save_json("data/countrycode/countries.json", self.countries)
+            #except AttributeError:
+                #await ctx.send("w00ps, something went wrong! :( Please try again.")
+        else:
+            await ctx.send(
+                "Sorry I don't know your country! Did you use the correct ISO countrycode? \nExample: `-country GB` or `-country US-CA for california`")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def removecountry(self, ctx, country: str):
+
+        server = ctx.message.server
+        user = ctx.message.author
+
+        re1 = '((?:[a-z][a-z]+))'  # Word 1
+        re2 = '.*?'  # Non-greedy match on filler
+        re3 = '((?:[a-z][a-z]+))'  # Word 2
+        rg = re.compile(re1 + re2 + re3, re.IGNORECASE | re.DOTALL)
+
+        m = rg.search(country)
+        subregionobj = None
+        try:
+            if m:
+                word1 = m.group(1)
+                countryobj = pycountry.countries.get(alpha_2=word1.upper())
+                subregionobj = pycountry.subdivisions.get(code=country.upper())
+            else:
+                countryobj = pycountry.countries.get(alpha_2=country.upper())
+        except:
+            countryobj= None
+        if countryobj is not None:
+            if subregionobj is not None:
+                try:
+                    if user.id in self.subregions[subregionobj.code]:
+                        del(self.subregions[subregionobj.code][user.id])
+                        await ctx.send(
+                            "The boys and girls from " + countryobj.name + ": " + subregionobj.name + " will miss you " + user.mention + "! :(")
+                        dataIO.save_json("data/countrycode/subregions.json", self.subregions)
+                    else:
+                        await ctx.send("You already removed that country as your countryorigin!")
+                except KeyError:
+                    await ctx.send("You already removed that country as your countryorigin!")
+            else:
+                try:
+                    if user.id in self.countries[countryobj.name]:
+                        del(self.countries[countryobj.name][user.id])
+                        await ctx.send(
+                            "The boys and girls from " + countryobj.name + " will miss you " + user.mention + "! :(")
+                        dataIO.save_json("data/countrycode/countries.json", self.countries)
+                    else:
+                        await ctx.send("You already removed that country as your countryorigin!")
+                except:
+                    await ctx.send("You already removed that country as your countryorigin!")
+        else:
+            await ctx.send("Sorry I don't know your country! Did you use the correct ISO countrycode?")
 
 def check_folders():
     folders = ("data", "data/countrycode/")
