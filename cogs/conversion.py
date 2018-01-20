@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime, timedelta
 from cogs.utils import checks
+from .utils import checks
 import re
 import os
 from .utils.dataIO import dataIO
@@ -110,7 +111,7 @@ If timezone2 is omitted, it will only respond to *now* requests."""
         await ctx.invoke(help_cmd, command='alias')
     
     @alias.command(name="add", pass_context=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _add_alias(self, ctx, alias_name, timezone):
         """Add a new timezone alias"""
         if " " not in alias_name and " " not in timezone:
@@ -136,7 +137,7 @@ If timezone2 is omitted, it will only respond to *now* requests."""
         await ctx.send(message)
     
     @alias.command(name="remove", pass_context=True, aliases=["del", "delete"])
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _remove_alias(self, ctx, alias_name):
         """Delete a timezone alias"""
         alias_name = alias_name.lower()
