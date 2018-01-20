@@ -10,6 +10,7 @@ import pycountry
 import pytz
 from pytz import country_timezones
 import googlemaps as googlemaps
+from .utils import checks
 
 
 #MUST LOAD THESE PYTHON PACKAGES OR THIS WILL NOT WORK pytz, pycountry, googlemaps
@@ -68,7 +69,7 @@ class Convert:
             "Its currently " + time.strftime(fmt) + " in " + geocode_result[0]['formatted_address'] + "!")
             
     @commands.group(pass_context=True, no_pm=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @checks.is_admin()
     async def timezone_settings(self, ctx):
         """Manages settings for the timezone cog."""
         if ctx.invoked_subcommand is None:
