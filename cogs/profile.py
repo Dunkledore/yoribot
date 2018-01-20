@@ -20,14 +20,14 @@ class Rank:
 		self.ranks = None
 
 	def save_message_data(self):
-        dataIO.save_json("data/rank/message_data.json", self.message_data)
+		dataIO.save_json("data/rank/message_data.json", self.message_data)
 
-    def check_level(self, member, guild):
-    	xp = self.message_data[str(member.id)][str(guild.id)]
-    	for rank in self.ranks:
-    		if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
-    			role = discord.utils.get(guild.roles, id=rank["role_id"])
-    			await member.add_roles(role)
+	def check_level(self, member, guild):
+		xp = self.message_data[str(member.id)][str(guild.id)]
+		for rank in self.ranks:
+			if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
+				role = discord.utils.get(guild.roles, id=rank["role_id"])
+				await member.add_roles(role)
 	
 	async def load_settings(self):
 		self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
@@ -100,7 +100,6 @@ class Profile:
                     '\nThe bot will then prompt you for a section title and content. P.S. You have 5 mins to do this.\n', inline=False)
         em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
         await ctx.send(embed=em)
-
     
     def get_bot_uptime(self, *, brief=False):
         now = datetime.datetime.utcnow()
