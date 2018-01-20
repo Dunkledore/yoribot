@@ -72,7 +72,7 @@ initial_extensions = (
 
 def _prefix_callable(bot, msg):
     user_id = bot.user.id
-    base = [f'<@!{user_id}> ', f'<@{user_id}> ']
+    base = ['|']
     if msg.guild is None:
         base.append('*')
     else:
