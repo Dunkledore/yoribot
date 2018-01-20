@@ -150,9 +150,9 @@ class Convert:
             countryobj = None
         if countryobj is not None:
             if subregionobj is not None:
-                await self.timecheck(subregionobj.code)
+                await self.timecheck(ctx, subregionobj.code)
             else:
-                await self.timecheck(countryobj.alpha_2)
+                await self.timecheck(ctx, countryobj.alpha_2)
         else:
             await ctx.send(
                 "Sorry I don't know your country! Did you use the correct ISO countrycode? \nExample: `-localtime GB`\n`-localtime US-CA`")
