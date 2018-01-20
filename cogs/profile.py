@@ -36,6 +36,7 @@ class Rank:
 			self.ranks = []
 		if not self.message_data:
 			self.message_data = {}
+		self.loaded_settings = True
 	
 	@commands.command()
 	@commands.guild_only()
@@ -55,7 +56,7 @@ class Rank:
 
 		if str(member.id) in self.message_data:
 			if str(guild.id) in self.message_data[str(member.id)]:
-				self.message_data[str(member.id)][str(member.id)] += 1
+				self.message_data[str(member.id)][str(guild.id)] += 1
 			else:
 				self.message_data[str(member.id)][str(guild.id)] = 1
 			self.message_data[str(member.id)]["global"] += 1
