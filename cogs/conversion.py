@@ -159,7 +159,7 @@ class Convert:
     @commands.command(pass_context=True, no_pm=True)
     async def addcountry(self, ctx, country: str):
         """Example: [p]addcountry GB"""
-        server = ctx.message.server
+        guild = ctx.message.guild
         user = ctx.message.author
 
         re1 = '((?:[a-z][a-z]+))'  # Word 1
@@ -222,7 +222,7 @@ class Convert:
     @commands.command(pass_context=True, no_pm=True)
     async def removecountry(self, ctx, country: str):
 
-        server = ctx.message.server
+        guild = ctx.message.guild
         user = ctx.message.author
 
         re1 = '((?:[a-z][a-z]+))'  # Word 1
