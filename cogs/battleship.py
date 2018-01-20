@@ -66,7 +66,7 @@ class Battleship:
                 bomb = await self.bot.wait_for_message(author=ctx.message.author, timeout=30)
                 if (bomb == None) or (bomb.content.upper() == "STOP"):
                     await ctx.send("K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
-                    try:
+                    #try:
                         #await self.bot.delete_message(bomb)
                     except:
                         pass
@@ -100,7 +100,7 @@ class Battleship:
                     else:
                         board = board.replace(bomb.content.upper(), "XX")
                     await ctx.send(boardMsg, "```fix\n" + board + "```")
-                    try:
+                    #try:
                         #await self.bot.delete_message(bomb)
                     except:
                         pass
@@ -111,7 +111,7 @@ class Battleship:
                 bomb = await self.bot.wait_for_message(author=ctx.message.author, timeout=30)
                 if (bomb == None) or (bomb.content.upper() == "STOP"):
                     await ctx.send("K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
-                    try:
+                    #try:
                         #await self.bot.delete_message(bomb)
                     except:
                         pass
@@ -146,7 +146,7 @@ class Battleship:
                     else:
                         board = board.replace(bomb.content.upper(), "XX")
                     await ctx.send(boardMsg, "```fix\n" + board + "```")
-                    try:
+                    #try:
                         #await self.bot.delete_message(bomb)
                     except:
                         pass
