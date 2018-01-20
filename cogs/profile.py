@@ -421,22 +421,22 @@ class Profile:
 
 
 def check_folders():
-    if not os.path.exists("data/rank"):
-        print("Creating data/rank folder...")
-        os.makedirs("data/rank")
+	if not os.path.exists("data/rank"):
+		print("Creating data/rank folder...")
+		os.makedirs("data/rank")
 
 
 def check_files():
-    if not os.path.exists("data/rank/message_data.json"):
-        print("Creating data/rank/message_data.json file...")
-        dataIO.save_json("data/rank/message_data.json", {})
+	if not os.path.exists("data/rank/message_data.json"):
+		print("Creating data/rank/message_data.json file...")
+		dataIO.save_json("data/rank/message_data.json", {})
 
 def setup(bot):
 	check_folders()
 	check_files()
-    bot.add_cog(Profile(bot))
-    rank = Rank(bot)
-    bot.add_cog(rank)
+	bot.add_cog(Profile(bot))
+	rank = Rank(bot)
+	bot.add_cog(rank)
 
 
 
