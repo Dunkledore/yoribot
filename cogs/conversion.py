@@ -106,8 +106,8 @@ If timezone2 is omitted, it will only respond to *now* requests."""
     @_time_converter.group(name="alias", pass_context=True, invoke_without_command=True)
     async def alias(self, ctx):
         """Manage the timezone aliases"""
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='alias')
+        help_cmd = self.bot.get_command('help')
+        await ctx.invoke(help_cmd, command='alias')
     
     @alias.command(name="add", pass_context=True)
     @checks.mod_or_permissions(manage_roles=True)
