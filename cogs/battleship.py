@@ -33,7 +33,7 @@ class Battleship:
                 position = random.choice(self.positions)
             botsea.append(position)
         await asyncio.sleep(1) # so it looks a bit legit like it's actually doing something.
-        await ctx.send(status, "Generating your sea...")
+        await ctx.send("Generating your sea...")
         usersea = []
         for i in range(10):
             position = random.choice(self.positions)
