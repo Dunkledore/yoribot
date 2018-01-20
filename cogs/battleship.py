@@ -33,7 +33,7 @@ class Battleship:
                 position = random.choice(self.positions)
             botsea.append(position)
         await asyncio.sleep(1) # so it looks a bit legit like it's actually doing something.
-        await self.bot.edit_message(status, "Generating your sea...")
+        await ctx.send(status, "Generating your sea...")
         usersea = []
         for i in range(10):
             position = random.choice(self.positions)
@@ -55,17 +55,17 @@ class Battleship:
                 if bomb in usersea:
                     usersea.remove(bomb)
                     if len(usersea) > 0:
-                        await self.bot.edit_message(status, "I've hit one of your ships! I hit {}, you have **{}** left ({} ships). Your turn.".format(bomb, "**, **".join(usersea), len(usersea)))
+                        await ctx.send(status, "I've hit one of your ships! I hit {}, you have **{}** left ({} ships). Your turn.".format(bomb, "**, **".join(usersea), len(usersea)))
                         await asyncio.sleep(1.5)
                     else:
-                        await self.bot.edit_message(status, "I've hit your last ship! I hit {}, so I win. I had **{}** left ({} ships)".format(bomb, "**, **".join(botsea), len(botsea)))
+                        await ctx.send(status, "I've hit your last ship! I hit {}, so I win. I had **{}** left ({} ships)".format(bomb, "**, **".join(botsea), len(botsea)))
                         break
                 else:
                     await asyncio.sleep(1.5)
-                    await self.bot.edit_message(status, "I missed, your turn.")
+                    await ctx.send(status, "I missed, your turn.")
                 bomb = await self.bot.wait_for_message(author=ctx.message.author, timeout=30)
                 if (bomb == None) or (bomb.content.upper() == "STOP"):
-                    await self.bot.edit_message(status, "K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
+                    await ctx.send(status, "K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
                     try:
                         await self.bot.delete_message(bomb)
                     except:
@@ -78,28 +78,28 @@ class Battleship:
                     " So when it's your turn you'll just have to say A1, B5, G9, it goes all the way up to J10."
                     " And just so I have to code less, it's now the bot's turn.".format(random.choice(self.positions)))
                 elif bomb.content.upper() not in board:
-                    await self.bot.edit_message(status, "You already picked that one, my turn now.")
+                    await ctx.send(status, "You already picked that one, my turn now.")
                     await asyncio.sleep(1.5)
                 elif bomb.content.upper() in botsea:
                     botsea.remove(bomb.content.upper())
                     if len(botsea) > 0:
-                        await self.bot.edit_message(status, "You've hit one of my ships! I have {} ships left.".format(len(botsea)))
+                        await ctx.send(status, "You've hit one of my ships! I have {} ships left.".format(len(botsea)))
                         if not bomb.content.upper().endswith("10"):
                             board = board.replace(bomb.content.upper() + " ", "XX ")
                         else:
                             board = board.replace(bomb.content.upper(), "XX")
-                        await self.bot.edit_message(boardMsg, "```fix\n" + board + "```")
+                        await ctx.send(boardMsg, "```fix\n" + board + "```")
                         await asyncio.sleep(1.5)
                     else:
-                        await self.bot.edit_message(status, "You've hit my last ship! You win!")
+                        await ctx.send(status, "You've hit my last ship! You win!")
                         break
                 else:
-                    await self.bot.edit_message(status, "You missed, my turn.")
+                    await ctx.send(status, "You missed, my turn.")
                     if not bomb.content.upper().endswith("10"):
                         board = board.replace(bomb.content.upper() + " ", "XX ")
                     else:
                         board = board.replace(bomb.content.upper(), "XX")
-                    await self.bot.edit_message(boardMsg, "```fix\n" + board + "```")
+                    await ctx.send(boardMsg, "```fix\n" + board + "```")
                     try:
                         await self.bot.delete_message(bomb)
                     except:
@@ -110,7 +110,7 @@ class Battleship:
             while True:
                 bomb = await self.bot.wait_for_message(author=ctx.message.author, timeout=30)
                 if (bomb == None) or (bomb.content.upper() == "STOP"):
-                    await self.bot.edit_message(status, "K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
+                    await ctx.send(status, "K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
                     try:
                         await self.bot.delete_message(bomb)
                     except:
@@ -124,12 +124,12 @@ class Battleship:
                     " So when it's your turn you'll just have to say A1, B5, G9, it goes all the way up to J10."
                     " And just so I have to code less, it's now the bot's turn.".format(example))
                 elif bomb.content.upper() not in board:
-                    await self.bot.edit_message(status, "You already picked that one, my turn now.")
+                    await ctx.send(status, "You already picked that one, my turn now.")
                     await asyncio.sleep(1.5)
                 elif bomb.content.upper() in botsea:
                     botsea.remove(bomb.content.upper())
                     if len(botsea) > 0:
-                        await self.bot.edit_message(status, "You've hit one of my ships! I have {} ships left.".format(len(botsea)))
+                        await ctx.send(status, "You've hit one of my ships! I have {} ships left.".format(len(botsea)))
                         board = board.replace(bomb.content.upper(), "XX")
                         if not bomb.content.upper().endswith("10"):
                             board = board.replace(bomb.content.upper() + " ", "XX ")
@@ -137,15 +137,15 @@ class Battleship:
                             board = board.replace(bomb.content.upper(), "XX")
                         await asyncio.sleep(1.5)
                     else:
-                        await self.bot.edit_message(status, "You've hit my last ship! You win!")
+                        await ctx.send(status, "You've hit my last ship! You win!")
                         break
                 else:
-                    await self.bot.edit_message(status, "You missed, my turn.")
+                    await ctx.send(status, "You missed, my turn.")
                     if not bomb.content.upper().endswith("10"):
                         board = board.replace(bomb.content.upper() + " ", "XX ")
                     else:
                         board = board.replace(bomb.content.upper(), "XX")
-                    await self.bot.edit_message(boardMsg, "```fix\n" + board + "```")
+                    await ctx.send(boardMsg, "```fix\n" + board + "```")
                     try:
                         await self.bot.delete_message(bomb)
                     except:
@@ -155,14 +155,14 @@ class Battleship:
                 if bomb in usersea:
                     usersea.remove(bomb)
                     if len(usersea) > 0:
-                        await self.bot.edit_message(status, "I've hit one of your ships! I hit {}, you have **{}** left ({} ships). Your turn.".format(bomb, "**, **".join(usersea), len(usersea)))
+                        await ctx.send(status, "I've hit one of your ships! I hit {}, you have **{}** left ({} ships). Your turn.".format(bomb, "**, **".join(usersea), len(usersea)))
                         await asyncio.sleep(1.5)
                     else:
-                        await self.bot.edit_message(status, "I've hit your last ship! I hit {}, so I win. I had **{}** left ({} ships)".format(bomb, "**, **".join(botsea), len(botsea)))
+                        await ctx.send(status, "I've hit your last ship! I hit {}, so I win. I had **{}** left ({} ships)".format(bomb, "**, **".join(botsea), len(botsea)))
                         break
                 else:
                     await asyncio.sleep(1.5)
-                    await self.bot.edit_message(status, "I missed, your turn.")
+                    await ctx.send(status, "I missed, your turn.")
             
 def setup(bot):
     bot.add_cog(Battleship(bot))
