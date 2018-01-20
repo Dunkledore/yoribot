@@ -23,12 +23,13 @@ class Rank:
 	def save_message_data(self):
 		dataIO.save_json("data/rank/message_data.json", self.message_data)
 
-	async def check_level(self, member, guild):
+	async def check_level(self, member, guild, ctx):
 		xp = self.message_data[str(member.id)][str(guild.id)]
 		for rank in self.ranks:
 			if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
 				role = discord.utils.get(guild.roles, id=rank["role_id"])
 				await member.add_roles(role)
+				await ctx.send("Congratualtion {} you now have the rank of {}".format(member.name, role.name))
 	
 	async def load_settings(self):
 		self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
@@ -46,6 +47,7 @@ class Rank:
 		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
 		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
+		await ctx.send("Rank added")
 
 	async def on_message(self, ctx):
 		member = ctx.author
@@ -63,7 +65,8 @@ class Rank:
 		else:
 			self.message_data[str(member.id)] = {str(guild.id) : 1, "global" : 1}
 
-		await self.check_level(member, guild)
+		await self.check_level(member, guild, ctx)
+
 
 
 	@commands.command()
