@@ -44,7 +44,7 @@ class Battleship:
             usersea.append(position)
         await asyncio.sleep(1) # again, just so it looks legit like it's actually doing something.
         await ctx.send("Your ships are located at: **{}**.\nStarting battle now. You can always say 'stop' to stop or 'help' for help.".format("**, **".join(usersea)))
-        #await self.bot.delete_message(status)
+        await message.delete(status)
         board = "A1 A2 A3 A4 A5 A6 A7 A8 A9 A10\nB1 B2 B3 B4 B5 B6 B7 B8 B9 B10\nC1 C2 C3 C4 C5 C6 C7 C8 C9 C10\nD1 D2 D3 D4 D5 D6 D7 D8 D9 D10\nE1 E2 E3 E4 E5 E6 E7 E8 E9 E10\nF1 F2 F3 F4 F5 F6 F7 F8 F9 F10\nG1 G2 G3 G4 G5 G6 G7 G8 G9 G10\nH1 H2 H3 H4 H5 H6 H7 H8 H9 H10\nI1 I2 I3 I4 I5 I6 I7 I8 I9 I10\nJ1 J2 J3 J4 J5 J6 J7 J8 J9 J10"
         boardMsg = await ctx.send("```fix\n" + board + "```")
         first = random.choice([False, True])
@@ -66,8 +66,8 @@ class Battleship:
                 bomb = await self.bot.wait_for_message(author=ctx.message.author, timeout=30)
                 if (bomb == None) or (bomb.content.upper() == "STOP"):
                     await ctx.send("K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
-                    #try:
-                        #await self.bot.delete_message(bomb)
+                    try:
+                        await message.delete(bomb)
                     except:
                         pass
                     break
@@ -100,8 +100,8 @@ class Battleship:
                     else:
                         board = board.replace(bomb.content.upper(), "XX")
                     await ctx.send(boardMsg, "```fix\n" + board + "```")
-                    #try:
-                        #await self.bot.delete_message(bomb)
+                    try:
+                        await message.delete(bomb)
                     except:
                         pass
                     await asyncio.sleep(1.5)
@@ -111,8 +111,8 @@ class Battleship:
                 bomb = await self.bot.wait_for_message(author=ctx.message.author, timeout=30)
                 if (bomb == None) or (bomb.content.upper() == "STOP"):
                     await ctx.send("K then, I'll stop. I had **{}** left ({} ships).".format("**, **".join(botsea), len(botsea)))
-                    #try:
-                        #await self.bot.delete_message(bomb)
+                    try:
+                        await message.delete(bomb)
                     except:
                         pass
                     break
@@ -146,8 +146,8 @@ class Battleship:
                     else:
                         board = board.replace(bomb.content.upper(), "XX")
                     await ctx.send(boardMsg, "```fix\n" + board + "```")
-                    #try:
-                        #await self.bot.delete_message(bomb)
+                    try:
+                        await message.delete(bomb)
                     except:
                         pass
                     await asyncio.sleep(1.5)
