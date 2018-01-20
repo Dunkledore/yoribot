@@ -71,11 +71,10 @@ class Rank:
 		if not self.loaded_settings:
 			await self.load_settings()
 
-		for member in self.message_data:
-			if member["user_id"] == ctx.author.id and member["guild_id"] == ctx.guild.id:
-				await ctx.send(member["xp"])
-				return
-		await ctx.send("0")
+		if str(ctx.author.id) in self.message_data:
+			await ctx.send(self.message_data[str(ctx.author.id)][str(ctx.guild.id)])
+		else:
+			await ctx.send("0")
 
 class Profile:
     """Commands used to set up your server profile"""
