@@ -54,7 +54,7 @@ class Rank:
 			await self.load_settings()
 
 		if str(member.id) in self.message_data:
-			if guild.id in self.message_data[str(member.id)]:
+			if str(guild.id) in self.message_data[str(member.id)]:
 				self.message_data[str(member.id)][str(member.id)] += 1
 			else:
 				self.message_data[str(member.id)][str(guild.id)] = 1
