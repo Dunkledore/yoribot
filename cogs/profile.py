@@ -22,7 +22,7 @@ class Rank:
 	def save_message_data(self):
 		dataIO.save_json("data/rank/message_data.json", self.message_data)
 
-	def check_level(self, member, guild):
+	async def check_level(self, member, guild):
 		xp = self.message_data[str(member.id)][str(guild.id)]
 		for rank in self.ranks:
 			if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
@@ -61,7 +61,7 @@ class Rank:
 		else:
 			self.message_data[str(member.id)] = {str(guild.id) : 1, "global" : 1}
 
-		self.check_level(member, guild)
+		await self.check_level(member, guild)
 
 
 	@commands.command()
