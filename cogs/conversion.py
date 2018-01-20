@@ -27,9 +27,8 @@ class Convert:
                 converted_amount = amount * rate
                 pre_conv = '{0:.2f}'.format(amount)
                 post_conv = '{0:.2f}'.format(converted_amount)
-                await ctx.send('`{} {} = {} {}`'.format(base.upper(), pre_conv, to.upper(), post_conv))
                 em = discord.Embed(color=ctx.message.author.color, description=" ")
-                em.set_author(name="Currency Conversion", icon_url="http://bit.ly/2mUTD2i")
+                em.set_author(name="Currency Conversion", icon_url="http://bit.ly/2BfWPuR")
                 em.add_field(name='{}'.format(base.upper()), value='{}'.format(pre_conv))
                 em.add_field(name='{}'.format(to.upper()), value='{}'.format(post_conv))
                 em.set_footer(text= "Currency exchange rates based on http://fixer.io")
