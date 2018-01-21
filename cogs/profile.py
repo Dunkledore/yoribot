@@ -85,7 +85,7 @@ class Rank:
 		table.add_rows(humanranks)
 		render = table.render()
 		text += render
-        text += "```"
+		text += "```"
 		em = discord.Embed(color=ctx.message.author.color, description=text)
 		em.set_author(name="Ranks", icon_url="http://bit.ly/2rnwE4T")
 		await ctx.send(embed=em)
