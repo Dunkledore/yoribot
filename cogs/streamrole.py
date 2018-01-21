@@ -558,8 +558,13 @@ class StreamRole:
         except Exception as e:
             print("Error during convertion of twitch usernames to IDs: "
                   "{}".format(e))
-
+        handler = logging.FileHandler(filename='test.log', encoding='utf-8', mode='w')
+        handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        logger = logging.getLogger()
+        logger.addHandler(handler)
         while self == self.bot.get_cog("StreamRole"):
+            logger.log("i'm in")
+            
             save = False
 
             streams = ((self.twitch_streams, self.twitch_online),
