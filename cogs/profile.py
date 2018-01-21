@@ -75,13 +75,13 @@ class Rank:
 		headers = ["Role", "XP Required"]
 		table = TabularData()
 		table.set_columns(headers)
-        humanranks = []
-        for rank in ranks:
-            role = discord.utils.get(guild.roles, id=rank["role_id"])
-            if role:
-                humansranks.append([role.mention, rank["xp_required"]])
-            else:
-                humansranks.append(["@deleted_role"],["xp_required"])
+		humanranks = []
+		for rank in ranks:
+			role = discord.utils.get(guild.roles, id=rank["role_id"])
+			if role:
+				humansranks.append([role.mention, rank["xp_required"]])
+			else:
+				humansranks.append(["@deleted_role"],["xp_required"])
 		table.add_rows(humansranks)
 		render = table.render()
 		text += render
