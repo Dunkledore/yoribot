@@ -607,7 +607,7 @@ class StreamRole:
                             can_speak = channel.permissions_for(channel.guild.me).send_messages
                             message = mention + " {} is live!".format(stream["NAME"])
                             if channel and can_speak:
-                                m = await self.bot.send_message(channel, message, embed=embed)
+                                m = await channel.send(message, embed=embed)
                                 messages_sent.append(m)
                         self.messages_cache[key] = messages_sent
 
