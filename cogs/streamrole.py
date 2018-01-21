@@ -331,7 +331,7 @@ class StreamRole:
             await ctx.invoke(help_cmd, command='streamset')
 
     @streamset.command()
-    @checks.is_owner()
+    @checks.is_developer()
     async def twitchtoken(self, ctx, token : str):
         """Sets the Client-ID for Twitch
 
