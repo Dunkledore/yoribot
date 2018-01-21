@@ -648,7 +648,9 @@ def check_folders():
     if not os.path.exists("data/streamrole"):
         print("Creating data/streamrole folder...")
         os.makedirs("data/streamrole")
-
+    if not os.path.exists("data/streamrole"):
+        print("Creating data/streamrole directory...")
+        os.makedirs("data/streamrole")
 
 def check_files():
     stream_files = (
@@ -666,20 +668,10 @@ def check_files():
     if not dataIO.is_valid_json(f):
         print("Creating empty streamsettings.json...")
         dataIO.save_json(f, {})
-
-
-def check_folders():
-    if not os.path.exists("data/streamrole"):
-        print("Creating data/streamrole directory...")
-        os.makedirs("data/streamrole")
-
-
-def check_files():
-    f = "data/streamrole/settings.json"
+    g = "data/streamrole/settings.json"
     if not dataIO.is_valid_json(f):
         print("Creating data/streamrole/settings.json...")
-        dataIO.save_json(f, {})
-
+        dataIO.save_json(g, {})
 
 def setup(bot: commands.Bot):
     check_folders()
