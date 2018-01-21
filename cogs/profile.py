@@ -60,6 +60,7 @@ class Rank:
 
 		if choice.content in ["yes","Yes"]:
 			for member in self.message_data:
+                await ctx.send(member)
 				if str(ctx.guild.id) in member:
 					member[str(ctx.guild.id)] = 0
 		else:
