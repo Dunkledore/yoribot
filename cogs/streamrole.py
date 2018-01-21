@@ -603,7 +603,7 @@ class StreamRole:
                             channel = self.bot.get_channel(channel_id)
                             if channel is None:
                                 continue
-                            mention = self.streamsettings.get(channel.str(guild.id), {}).get("MENTION", "")
+                            mention = self.streamsettings.get(str(channel.guild.id), {}).get("MENTION", "")
                             can_speak = channel.permissions_for(channel.guild.me).send_messages
                             message = mention + " {} is live!".format(stream["NAME"])
                             if channel and can_speak:
