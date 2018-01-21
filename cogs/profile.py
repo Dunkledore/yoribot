@@ -126,6 +126,7 @@ class Rank:
 		table = TabularData()
 		table.set_columns(headers)
 		humanranks = []
+        ranks.sort(key=lambda rank: rank[1])
 		for rank in ranks:
 			role = discord.utils.get(ctx.guild.roles, id=rank["role_id"])
 			if role:
