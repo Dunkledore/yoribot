@@ -62,7 +62,7 @@ class Rank:
 			for key, value in self.message_data.items():
 				if str(ctx.guild.id) in value:
 					value[str(ctx.guild.id)] = 0
-            await ctx.send("XP Reset")
+			await ctx.send("XP Reset")
 		else:
 			await ctx.send("XP not reset")
 
