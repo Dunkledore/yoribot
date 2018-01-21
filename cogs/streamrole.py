@@ -65,8 +65,8 @@ class StreamRole:
         """Sets StreamRole settings."""
 
         guild = ctx.message.guild
-        if str(guild.id) not in self.settings:
-            self.settings[str(guild.id)] = deepcopy(default_settings)
+        if str(str(guild.id)) not in self.settings:
+            self.settings[str(str(guild.id))] = deepcopy(default_settings)
             dataIO.save_json(self.settings_path, self.settings)
 
 
@@ -79,15 +79,15 @@ class StreamRole:
         await ctx.message.channel.trigger_typing()
 
         guild = ctx.message.guild
-        if (not self.settings[str(guild.id)]["enabled"] and
-                self.settings[str(guild.id)]["role"] is None):
+        if (not self.settings[str(str(guild.id))]["enabled"] and
+                self.settings[str(str(guild.id))]["role"] is None):
             await ctx.send(cf.warning(
                 "You need to set the role before turning on StreamRole."
                 " Use `{}streamroleset role`".format(ctx.prefix)))
             return
 
-        self.settings[str(guild.id)]["enabled"] = not self.settings[str(guild.id)]["enabled"]
-        if self.settings[str(guild.id)]["enabled"]:
+        self.settings[str(str(guild.id))]["enabled"] = not self.settings[str(str(guild.id))]["enabled"]
+        if self.settings[str(str(guild.id))]["enabled"]:
             await ctx.send(
                 cf.info("StreamRole is now enabled."))
         else:
@@ -106,7 +106,7 @@ class StreamRole:
         await ctx.message.channel.trigger_typing()
 
         guild = ctx.message.guild
-        self.settings[str(guild.id)]["role"] = str(role.id)
+        self.settings[str(str(guild.id))]["role"] = str(role.id)
         dataIO.save_json(self.settings_path, self.settings)
 
         await ctx.send(
@@ -116,11 +116,11 @@ class StreamRole:
 
     async def stream_listener(self, before: discord.Member,
                               after: discord.Member):
-        if str(before.guild.id) not in self.settings:
-            self.settings[str(before.guild.id)] = deepcopy(default_settings)
+        if str(before.str(guild.id)) not in self.settings:
+            self.settings[str(before.str(guild.id))] = deepcopy(default_settings)
             dataIO.save_json(self.settings_path, self.settings)
 
-        guild_settings = self.settings[str(before.guild.id)]
+        guild_settings = self.settings[str(before.str(guild.id))]
         if guild_settings["enabled"] and guild_settings["role"] is not None:
             streamer_role = find(lambda m: (str(m.id)) == guild_settings["role"],
                                  before.guild.roles)
@@ -350,11 +350,11 @@ class StreamRole:
         mention_type = mention_type.lower()
 
         if mention_type in ("everyone", "here"):
-            self.streamsettings[guild.id]["MENTION"] = "@" + mention_type
+            self.streamsettings[str(str(guild.id))]["MENTION"] = "@" + mention_type
             await ctx.send("When a stream is online @\u200b{} will be "
                                "mentioned.".format(mention_type))
         elif mention_type == "none":
-            self.streamsettings[guild.id]["MENTION"] = ""
+            self.streamsettings[str(guild.id)]["MENTION"] = ""
             await ctx.send("Mentions disabled.")
         else:
             help_cmd = self.bot.get_command('help')
@@ -367,7 +367,7 @@ class StreamRole:
     async def autodelete(self, ctx):
         """Toggles automatic notification deletion for streams that go offline"""
         guild = ctx.message.guild
-        settings = self.streamsettings[guild.id]
+        settings = self.streamsettings[str(guild.id)]
         current = settings.get("AUTODELETE", True)
         settings["AUTODELETE"] = not current
         if settings["AUTODELETE"]:
@@ -590,7 +590,7 @@ class StreamRole:
                             channel = self.bot.get_channel(channel_id)
                             if channel is None:
                                 continue
-                            mention = self.streamsettings.get(channel.guild.id, {}).get("MENTION", "")
+                            mention = self.streamsettings.get(channel.str(guild.id), {}).get("MENTION", "")
                             can_speak = channel.permissions_for(channel.guild.me).send_messages
                             message = mention + " {} is live!".format(stream["NAME"])
                             if channel and can_speak:
@@ -610,7 +610,7 @@ class StreamRole:
     async def delete_old_notifications(self, key):
         for message in self.messages_cache[key]:
             guild = message.guild
-            settings = self.streamsettings.get(guild.id, {})
+            settings = self.streamsettings.get(str(guild.id), {})
             is_enabled = settings.get("AUTODELETE", True)
             try:
                 if is_enabled:
