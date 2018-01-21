@@ -336,6 +336,9 @@ class StreamRole:
         """Sets the Client-ID for Twitch
 
         https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
+        if ctx.invoked_subcommand is None:
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='twitchtoken')
         self.streamsettings["TWITCH_TOKEN"] = token
         dataIO.save_json("data/streamrole/streamsettings.json", self.streamsettings)
         await ctx.send('Twitch Client-ID set.')
