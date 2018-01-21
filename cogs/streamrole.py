@@ -196,7 +196,8 @@ class StreamRole:
     async def streamalert(self, ctx):
         """Adds/removes stream alerts from the current channel"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='streamalert')
 
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
@@ -326,7 +327,8 @@ class StreamRole:
     async def streamset(self, ctx):
         """Stream settings"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='streamset')
 
     @streamset.command()
     @checks.is_owner()
@@ -355,7 +357,8 @@ class StreamRole:
             self.streamsettings[guild.id]["MENTION"] = ""
             await ctx.send("Mentions disabled.")
         else:
-            await self.bot.send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='mention')
 
         dataIO.save_json("data/streamrole/streamsettings.json", self.streamsettings)
 
