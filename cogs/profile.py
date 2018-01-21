@@ -79,10 +79,10 @@ class Rank:
 		for rank in ranks:
 			role = discord.utils.get(ctx.guild.roles, id=rank["role_id"])
 			if role:
-				humansranks.append([role.mention, rank["xp_required"]])
+				humanranks.append([role.mention, rank["xp_required"]])
 			else:
-				humansranks.append(["@deleted_role"],["xp_required"])
-		table.add_rows(humansranks)
+				humanranks.append(["@deleted_role"],["xp_required"])
+		table.add_rows(humanranks)
 		render = table.render()
 		text += render
 		em = discord.Embed(color=ctx.message.author.color, description=text)
