@@ -101,14 +101,14 @@ class Rank:
 			await self.load_settings()
 		query = "DELETE FROM rank WHERE guild_id = $1 and role_id = $2"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id)
-        self.ranks = await ctx.db.fetch("SELECT * FROM rank")
-        await ctx.send("Rank removed")
+		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
+		await ctx.send("Rank removed")
 
-    async def on_guild_role_delete(self, role):
-        for rank in self.ranks:
-            if rank["role_id"] == role.id:
-                query = "DELETE from rank WHERE role_id = $1"
-                await self.bot.pool.execute(query, role.id)
+	async def on_guild_role_delete(self, role):
+		for rank in self.ranks:
+			if rank["role_id"] == role.id:
+				query = "DELETE from rank WHERE role_id = $1"
+				await self.bot.pool.execute(query, role.id)
 
 
 	@commands.command()
