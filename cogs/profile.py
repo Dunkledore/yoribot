@@ -42,6 +42,31 @@ class Rank:
 	
 	@commands.command()
 	@commands.guild_only()
+	@check.is_admin()
+	async def resetxp(self, ctx):
+		await ctx.send("This will reset the xp for everyone in this server. Are you sure you want to do this? (yes/no)")
+
+		def check(m):
+			try:
+				if m.author != ctx.message.author:
+					return False
+				if m.channel != ctx.message.channel:
+					return False
+				return True
+			except:
+				return False
+
+		choice = await self.bot.wait_for('message', check=check, timeout=30.0)
+
+		if choice in ["yes","Yes"]:
+			for member in self.message_data:
+				if str(ctx.guild.id) in member:
+					member[str(ctx.guild.id)] = 0
+		else:
+			await ctx.send("XP not reset")
+
+	@commands.command()
+	@commands.guild_only()
 	@checks.is_admin()
 	async def addrank(self, ctx, rank_role : discord.Role, xp_required : int):
 		"""Will add the given rank to the rank system at the given xp_required"""
