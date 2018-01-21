@@ -126,13 +126,13 @@ class Rank:
 		table = TabularData()
 		table.set_columns(headers)
 		humanranks = []
-		ranks.sort(key=lambda rank: rank[1])
 		for rank in ranks:
 			role = discord.utils.get(ctx.guild.roles, id=rank["role_id"])
 			if role:
 				humanranks.append([role.name, rank["xp_required"]])
 			else:
 				humanranks.append(["@deleted_role"],["xp_required"]) #This can stay incase a deleted rank manages to weave its way in here. Maybe bot is offline when a ranks is removed
+		humanranks.sort(key=lambda x: x[1])
 		table.add_rows(humanranks)
 		render = table.render()
 		text += render
