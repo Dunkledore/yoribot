@@ -54,7 +54,7 @@ class Rank:
 
 	@commands.command()
 	@commands.guild_only()
-	@commands.is_admin()
+	@checks.is_admin()
 	async def removerank(self, ctx, rank_role: discord.Role):
 		"""Will remove the given rank from the rank system"""
 		if not self.load_settings:
