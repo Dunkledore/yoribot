@@ -191,10 +191,6 @@ class StreamRole:
         else:
             await ctx.send(embed=embed)
 
-    @commands.command(pass_context=True)
-    async def teststreams(self, ctx):
-        await ctx.send(str(self.bot.get_cog("StreamRole")))
-
     @commands.group(pass_context=True, no_pm=True)
     @checks.is_mod()
     async def streamalert(self, ctx):
@@ -563,7 +559,7 @@ class StreamRole:
             print("Error during convertion of twitch usernames to IDs: "
                   "{}".format(e))
 
-        while self == self.bot.get_cog("Streams"):
+        while self == self.bot.get_cog("StreamRole"):
             save = False
 
             streams = ((self.twitch_streams, self.twitch_online),
