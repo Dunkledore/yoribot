@@ -193,7 +193,7 @@ class StreamRole:
 
     @commands.command(pass_context=True)
     async def teststreams(self, ctx):
-        await ctx.send(str(self.bot.get_cog("Streams")))
+        await ctx.send(str(self.bot.get_cog("StreamRole")))
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.is_mod()
