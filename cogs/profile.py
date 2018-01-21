@@ -72,7 +72,7 @@ class Rank:
 		query = "SELECT * FROM rank WHERE guild_id = $1"
 		ranks = await ctx.db.fetch(query, ctx.guild.id)
 		text = "**The following are available for you to earn**:\n\n"
-		headers = list(["Role", "XP Required"])
+		headers = ["Role", "XP Required"]
 		table = TabularData()
 		table.set_columns(headers)
 		humanranks = []
