@@ -563,7 +563,7 @@ class StreamRole:
         logger = logging.getLogger()
         logger.addHandler(handler)
         while self == self.bot.get_cog("StreamRole"):
-            logger.log("i'm in")
+            logger.info("i'm in")
             
             save = False
 
