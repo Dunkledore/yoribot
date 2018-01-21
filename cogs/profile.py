@@ -59,7 +59,7 @@ class Rank:
 		choice = await self.bot.wait_for('message', check=check, timeout=30.0)
 
 		if choice.content in ["yes","Yes"]:
-			for member in self.message_data:
+			for member in self.message_data.items():
 				await ctx.send(member)
 				if str(ctx.guild.id) in member:
 					member[str(ctx.guild.id)] = 0
