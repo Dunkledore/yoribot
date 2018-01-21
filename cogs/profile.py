@@ -109,6 +109,7 @@ class Rank:
 			if rank["role_id"] == role.id:
 				query = "DELETE from rank WHERE role_id = $1"
 				await self.bot.pool.execute(query, role.id)
+                self.ranks = await ctx.db.fetch("SELECT * FROM rank")
 
 
 	@commands.command()
@@ -130,7 +131,7 @@ class Rank:
 			if role:
 				humanranks.append([role.name, rank["xp_required"]])
 			else:
-				humanranks.append(["@deleted_role"],["xp_required"])
+				humanranks.append(["@deleted_role"],["xp_required"]) #This can stay incase a deleted rank manages to weave its way in here. Maybe bot is offline when a ranks is removed
 		table.add_rows(humanranks)
 		render = table.render()
 		text += render
