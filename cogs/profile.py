@@ -24,7 +24,21 @@ class Rank:
 	def save_message_data(self):
 		dataIO.save_json("data/rank/message_data.json", self.message_data)
 
-	async def check_level(self, member, guild, message):
+	async def saveloop(self):
+        while True:
+            try:
+                await self.bot.wait_until_ready()
+                self.save_message_data()
+                await asyncio.sleep(30)
+            except Excepion as e:
+                query =  "SELECT * FROM webhook"
+                results = await self.bot.pool.fetch(query)
+                wh_id = results[0]["wh_id"]
+                wh_token = results[0]["wh_token"]
+                hook = discord.Webhook.partial(id=int(wh_id), token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
+                await hook.send("Error saving Message data")
+
+    async def check_level(self, member, guild, message):
 		xp = self.message_data[str(member.id)][str(guild.id)]
 		for rank in self.ranks:
 			if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
@@ -520,6 +534,7 @@ def setup(bot):
 	bot.add_cog(Profile(bot))
 	rank = Rank(bot)
 	bot.add_cog(rank)
+    bot.loop.create_task(rank.saveloop())
 
 
 
