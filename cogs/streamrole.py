@@ -191,7 +191,7 @@ class StreamRole:
             await ctx.send(embed=embed)
 
     @commands.group(pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_guild=True)
+    @checks.is_mod()
     async def streamalert(self, ctx):
         """Adds/removes stream alerts from the current channel"""
         if ctx.invoked_subcommand is None:
