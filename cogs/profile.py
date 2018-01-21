@@ -59,10 +59,10 @@ class Rank:
 		choice = await self.bot.wait_for('message', check=check, timeout=30.0)
 
 		if choice.content in ["yes","Yes"]:
-			for member in self.message_data.items():
-				await ctx.send(member)
-				if str(ctx.guild.id) in member:
-					member[str(ctx.guild.id)] = 0
+			for key, value in self.message_data.items():
+				if str(ctx.guild.id) in value:
+					value[str(ctx.guild.id)] = 0
+            await ctx.send("XP Reset")
 		else:
 			await ctx.send("XP not reset")
 
