@@ -71,7 +71,7 @@ class Rank:
 
 		query = "SELECT * FROM rank WHERE guild_id = $1"
 		ranks = await ctx.db.fetch(query, ctx.guild.id)
-		text = "**The following are available for you to earn**:\n\n"
+		text = "**The following are available for you to earn**:\n\n```"
 		headers = ["Role", "XP Required"]
 		table = TabularData()
 		table.set_columns(headers)
@@ -85,6 +85,7 @@ class Rank:
 		table.add_rows(humanranks)
 		render = table.render()
 		text += render
+        text += "```"
 		em = discord.Embed(color=ctx.message.author.color, description=text)
 		em.set_author(name="Ranks", icon_url="http://bit.ly/2rnwE4T")
 		await ctx.send(embed=em)
