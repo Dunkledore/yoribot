@@ -410,6 +410,7 @@ class StreamRole:
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
         await session.close()
+        logger.info("twitch api returned status {}".format(str(r.status)))
         if r.status == 200:
             if data["stream"] is None:
                 raise OfflineStream()
