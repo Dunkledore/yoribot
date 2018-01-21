@@ -82,7 +82,7 @@ class Rank:
 				humanranks.append([role.mention, rank["xp_required"]])
 			else:
 				humanranks.append(["@deleted_role"],["xp_required"])
-        await ctx.send(str(humanranks))
+		await ctx.send(str(humanranks))
 		table.add_rows(humanranks)
 		render = table.render()
 		text += render
