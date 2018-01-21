@@ -70,7 +70,7 @@ class Rank:
 			await self.load_settings()
 
 		query = "SELECT * FROM rank WHERE guild_id = $1"
-		ranks = await ctx.db.fetchall(query, ctx.guild.id)
+		ranks = await ctx.db.fetch(query, ctx.guild.id)
 		text = "**The following are available for you to self-assign**:\n\n"
 		headers = ["Role", "XP Required"]
 		table = TabularData()
