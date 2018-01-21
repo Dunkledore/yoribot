@@ -332,7 +332,7 @@ class StreamRole:
 
     @streamset.command()
     @checks.is_owner()
-    async def twitchtoken(self, token : str):
+    async def twitchtoken(self, ctx, token : str):
         """Sets the Client-ID for Twitch
 
         https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
