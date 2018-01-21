@@ -83,8 +83,8 @@ class Rank:
 			else:
 				humanranks.append(["@deleted_role"],["xp_required"])
 		
-        for rank in humanranks:
-            table.add_row(rank)
+		for rank in humanranks:
+			table.add_row(rank)
 		render = table.render()
 		text += render
 		em = discord.Embed(color=ctx.message.author.color, description=text)
