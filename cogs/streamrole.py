@@ -398,8 +398,6 @@ class StreamRole:
         raise APIError()
 
     async def twitch_online(self, stream):
-        logger = logging.getLogger()
-        logger.info("attempting api call with clientId {}".format(self.streamsettings.get("TWITCH_TOKEN", "")))
         session = aiohttp.ClientSession()
         url = "https://api.twitch.tv/kraken/streams/" + stream
         header = {
@@ -410,9 +408,9 @@ class StreamRole:
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
         await session.close()
-        logger.info("twitch api returned status {} on {}".format(str(r.status), str(stream)))
+
         if r.status == 200:
-            logger.info(str(data["stream"]))
+
             if data["stream"] is None:
                 raise OfflineStream()
             return self.twitch_embed(data)
@@ -562,13 +560,8 @@ class StreamRole:
         except Exception as e:
             print("Error during convertion of twitch usernames to IDs: "
                   "{}".format(e))
-        handler = logging.FileHandler(filename='test.log', encoding='utf-8', mode='w')
-        handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-        logger = logging.getLogger()
-        logger.addHandler(handler)
+
         while self == self.bot.get_cog("StreamRole"):
-            logger.info("i'm in")
-            
             save = False
 
             streams = ((self.twitch_streams, self.twitch_online),
