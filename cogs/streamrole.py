@@ -398,7 +398,7 @@ class StreamRole:
         raise APIError()
 
     async def twitch_online(self, stream):
-        logger = loggin.getLogger()
+        logger = logging.getLogger()
         logger.info("attempting api call with clientId {}".format(self.streamsettings.get("TWITCH_TOKEN", "")))
         session = aiohttp.ClientSession()
         url = "https://api.twitch.tv/kraken/streams/" + stream
