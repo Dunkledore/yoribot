@@ -42,7 +42,7 @@ class Rank:
 	
 	@commands.command()
 	@commands.guild_only()
-	@check.is_admin()
+	@checks.is_admin()
 	async def resetxp(self, ctx):
 		await ctx.send("This will reset the xp for everyone in this server. Are you sure you want to do this? (yes/no)")
 
