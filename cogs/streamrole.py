@@ -339,7 +339,7 @@ class StreamRole:
         await ctx.send('Twitch Client-ID set.')
 
     @streamset.command(pass_context=True, no_pm=True)
-    @checks.admin()
+    @checks.is_admin()
     async def mention(self, ctx, *, mention_type : str):
         """Sets mentions for stream alerts
 
@@ -360,7 +360,7 @@ class StreamRole:
         dataIO.save_json("data/streamrole/streamsettings.json", self.streamsettings)
 
     @streamset.command(pass_context=True, no_pm=True)
-    @checks.admin()
+    @checks.is_admin()
     async def autodelete(self, ctx):
         """Toggles automatic notification deletion for streams that go offline"""
         guild = ctx.message.guild
