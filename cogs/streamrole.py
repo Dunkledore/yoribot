@@ -191,6 +191,10 @@ class StreamRole:
         else:
             await ctx.send(embed=embed)
 
+    @commands.command(pass_context=True)
+    async def teststreams(self, ctx):
+        await ctx.send(str(self.bot.get_cog("Streams")))
+
     @commands.group(pass_context=True, no_pm=True)
     @checks.is_mod()
     async def streamalert(self, ctx):
@@ -198,7 +202,7 @@ class StreamRole:
         if ctx.invoked_subcommand is None:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='streamalert')
-
+    
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
         """Adds/removes twitch alerts from the current channel"""
@@ -339,6 +343,7 @@ class StreamRole:
         if not token or len(token) < 30:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='streamset twitchtoken')
+            return
         self.streamsettings["TWITCH_TOKEN"] = token
         dataIO.save_json("data/streamrole/streamsettings.json", self.streamsettings)
         await ctx.send('Twitch Client-ID set.')
