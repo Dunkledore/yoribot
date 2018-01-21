@@ -5,7 +5,8 @@ import discord
 from discord.ext import commands
 from discord.utils import find
 from .utils.dataIO import dataIO
-from .utils import checks, chat_formatting as cf
+from .utils import checks
+from .utils import chat_formatting as cf
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import escape_mass_mentions
