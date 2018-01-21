@@ -2,6 +2,7 @@ from .utils import db, checks, formats, cache
 from .utils.paginator import Pages
 from .utils.dataIO import dataIO
 from discord.ext import commands
+from .utils.formats import TabularData, Plural
 import json
 import re
 import datetime
@@ -41,13 +42,46 @@ class Rank:
 	
 	@commands.command()
 	@commands.guild_only()
+    @checks.is_admin()
 	async def addrank(self, ctx, rank_role : discord.Role, xp_required : int):
+        """Will add the given rank to the rank system at the given xp_required"""
 		if not self.loaded_settings:
 			await self.load_settings()
 		query = "INSERT INTO rank (guild_id, role_id, xp_required) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, ctx.guild.id, rank_role.id, xp_required)
 		self.ranks = await ctx.db.fetch("SELECT * FROM rank")
 		await ctx.send("Rank added")
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.is_admin()
+    async def removerank(self, ctx, rank_role: discord.Role):
+        """Will remove the given rank from the rank system"""
+        if not self.load_settings:
+            await self.load_settings()
+        query = "DELETE FROM rank WHERE guild_id = $1 and role_id = $2"
+        await ctx.db.execute(query, ctx.guild.id, rank_role.id)
+
+    @commands.command()
+    @commands.guild_only()
+    async def listranks(self, ctx):
+        """Will remove the given rank from the rank system"""
+        if not self.load_settings:
+            await self.load_settings()
+
+        query = "SELECT * FROM rank WHERE guild_id = $1"
+        ranks = await ctx.db.fetchall(query, ctx.guild.id)
+        text = "**The following are available for you to self-assign**:\n\n"
+        headers = ["Role", "XP Required"]
+        table = TabularData()
+        table.set_columns(headers)
+        table.add_rows(list(rank.values()) for rank in ranks)
+        render = table.render()
+        text += render
+        em = discord.Embed(color=ctx.message.author.color, description=text)
+        em.set_author(name="Ranks", icon_url="http://bit.ly/2rnwE4T")
+        await ctx.send(embed=em)
+
 
 	async def on_message(self, ctx):
 		member = ctx.author
