@@ -410,7 +410,7 @@ class StreamRole:
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
         await session.close()
-        logger.info("twitch api returned status {} on {}".format(str(r.status, stream)))
+        logger.info("twitch api returned status {} on {}".format(str(r.status), str(stream)))
         if r.status == 200:
             logger.info(str(data["stream"]))
             if data["stream"] is None:
