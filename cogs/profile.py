@@ -89,7 +89,7 @@ class Rank:
 		text += render
 		em = discord.Embed(color=ctx.message.author.color, description=text)
 		em.set_author(name="Ranks", icon_url="http://bit.ly/2rnwE4T")
-        await ctx.send(text)
+		await ctx.send(text)
 		await ctx.send(embed=em)
 
 
