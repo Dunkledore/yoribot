@@ -109,7 +109,7 @@ class Rank:
 			if rank["role_id"] == role.id:
 				query = "DELETE from rank WHERE role_id = $1"
 				await self.bot.pool.execute(query, role.id)
-                self.ranks = await ctx.db.fetch("SELECT * FROM rank")
+				self.ranks = await ctx.db.fetch("SELECT * FROM rank")
 
 
 	@commands.command()
