@@ -71,7 +71,7 @@ class Rank:
 
 		query = "SELECT * FROM rank WHERE guild_id = $1"
 		ranks = await ctx.db.fetch(query, ctx.guild.id)
-		text = "**The following are available for you to self-assign**:\n\n"
+		text = "**The following are available for you to earn**:\n\n"
 		headers = ["Role", "XP Required"]
 		table = TabularData()
 		table.set_columns(headers)
@@ -82,6 +82,7 @@ class Rank:
 				humanranks.append([role.mention, rank["xp_required"]])
 			else:
 				humanranks.append(["@deleted_role"],["xp_required"])
+        await ctx.send(str(humanranks))
 		table.add_rows(humanranks)
 		render = table.render()
 		text += render
