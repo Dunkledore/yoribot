@@ -56,7 +56,7 @@ class StreamRole:
         self.hitbox_streams = dataIO.load_json("data/streamrole/hitbox.json")
         self.beam_streams = dataIO.load_json("data/streamrole/beam.json")
         streamsettings = dataIO.load_json("data/streamrole/streamsettings.json")
-        self.streamsettings = defaultdict(dict, settings)
+        self.streamsettings = defaultdict(dict, streamsettings)
         self.messages_cache = defaultdict(list)
 
     @commands.group(pass_context=True, no_pm=True, name="streamroleset")
