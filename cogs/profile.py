@@ -115,13 +115,17 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def top(self, ctx):
-        guild_data = []
-        for member in self.message_data:
-            await ctx.send(member)
-            if str(ctx.guild.id) in member:
-                guid_data.append(member)
-        await ctx.send(guid_data)
-        sorted_list = sorted(guild_data, key=lambda member: member[str(ctx.guild.id)])
+        guild_data = {}
+        for id, data in self.message_data.items():
+            if str(ctx.guild.id) in data:
+                guid_data[id] = data
+        guild_data_list = []
+        
+        for id, data in guid_data.items():
+            guild_data_list.append([id, data])
+
+        ordered_guild_data_list = sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])
+        await ctx.send(ordered_guild_data_list)
 
         entries = {}
         for member in sorted_list:
