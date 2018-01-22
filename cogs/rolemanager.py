@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
+from .utils.paginator import FieldPages
 import os
 from .utils import checks
-
+import math
 
 class RoleManager:
     """Manages self-assignable roles."""
@@ -84,15 +85,21 @@ class RoleManager:
             await ctx.send(embed=em)
             return
         else:
-            text = "**The following are available for you to self-assign**:\n\n"
+            title = "**The following are available for you to self-assign**:\n\n"
             firstrole = ""
+            entries = []
             for g in sorted(self.settings[str(ctx.message.guild.id)]['sars'].keys()):
                 text += "**" + g + "**:\n"
+                roles_text = ""
                 for r in sorted(self.settings[str(ctx.message.guild.id)]['sars'][g].keys()):
-                    text += r + "**,** "
+                    roles_text += r + "**,** "
                     if firstrole == "":
                         firstrole = r
-                text = (text[:-6] if text[-2] == "*" else text) + "\n\n"
+                    roles_text = (roles_text[:-6] if roles_text[-2] == "*" else roles_text) + "\n\n"
+                entries.append({text : roles_text})
+
+            paginator = FieldPages(ctx, entries=entries)
+            await paginator.paginate()
             em = discord.Embed(color=ctx.message.author.color, description=text)
             em.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
             text = ""
