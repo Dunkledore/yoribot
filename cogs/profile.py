@@ -241,11 +241,10 @@ class Rank:
 class Profile:
     """Commands used to set up your server profile"""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot, rank):
         self.bot = bot
         self.loaded_settings = False
-        self.message_data = dataIO.load_json("data/rank/message_data.json")
-        self.ranks = None
+        self.rank = rank
 
     async def load_settings(self):
         self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
@@ -348,7 +347,17 @@ class Profile:
         if not self.loaded_settings:
             await self.load_settings()
 
-        embed.add_field(name='XP', value= self.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "0")
+        xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
+        embed.add_field(name='XP', value =xp)
+        guild_ranks = [rank for rank in self.ranks.rank if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
+        if guild_ranks:
+            sorted_guild_ranks = sorted(guild_ranks, key=lambda x: x["xp_required"])
+            embed.add_field(name='Rank', value=discord.utils.get(ctx.guild.roles, id=sorted_guild_ranks[0]["role_id"]
+
+
+
+
+
         embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
         embed.add_field(name='Region', value= profile[0]['region'] or "Not Provided")
         embed.add_field(name='Gender', value= profile[0]['gender'] or "Not Provided")
@@ -608,10 +617,10 @@ def check_files():
 def setup(bot):
     check_folders()
     check_files()
-    bot.add_cog(Profile(bot))
     rank = Rank(bot)
     bot.add_cog(rank)
     bot.loop.create_task(rank.saveloop())
+    bot.add_cog(Profile(bot, rank))
 
 
 
