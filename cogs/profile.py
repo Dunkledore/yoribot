@@ -3,6 +3,7 @@ from .utils.paginator import Pages
 from .utils.dataIO import dataIO
 from discord.ext import commands
 from .utils.formats import TabularData, Plural
+from .utils.paginator import Pages
 import json
 import re
 import datetime
@@ -111,6 +112,23 @@ class Rank:
 				await self.bot.pool.execute(query, role.id)
 				self.ranks = await ctx.db.fetch("SELECT * FROM rank")
 
+	@commands.command()
+	@commands.guild_only()
+	async def top(self, ctx):
+		guild_data = []
+		for member in self.message_data:
+			if str(ctx.guild.id) in member:
+				guid_data.append(member)
+
+		sorted_list = sorted(guild_data, key=lambda member: member[str(ctx.guild.id)])
+
+		entries = {}
+		for member in sorted_list:
+			member_id = list(member)[0]
+			entries[self.bot.get_user(int(member_id)).name] = "Guild_XP: " + member[member_id][str(ctx.guild.id)] + "\n" + 
+															  "Global: " + member[member_id]["Global"]
+		await ctx.send(entries)
+		
 
 	@commands.command()
 	@commands.guild_only()
@@ -143,6 +161,9 @@ class Rank:
 
 
 	async def on_message(self, ctx):
+		if ctx.author.bot:
+			return
+
 		member = ctx.author
 		guild = ctx.guild
 
