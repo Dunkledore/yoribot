@@ -195,7 +195,7 @@ class EmbedMaker:
         em = await self.get_embed(name.lower(), str(guild.id))
         if em is None:
             return await ctx.send("I couldn't find an embed by that name.")
-        await self.bot.send_message(ctx.message.channel, embed=em)
+        await ctx.send(embed=em)
 
     @savedembed.command(name="fetchglobal", pass_context=True, no_pm=True)
     async def fetch_global(self, ctx, name: str):
@@ -204,7 +204,7 @@ class EmbedMaker:
         em = await self.get_embed(name.lower())
         if em is None:
             return await ctx.send("I couldn't find an embed by that name.")
-        await self.bot.send_message(ctx.message.channel, embed=em)
+        await ctx.send(embed=em)
 
     @checks.is_admin()
     @savedembed.command(name="dm", pass_context=True, no_pm=True)
@@ -217,7 +217,7 @@ class EmbedMaker:
             return await ctx.send("I couldn't find an embed by that name.")
         who = await self.bot.get_user_info(user_id)
         if who is not None:
-            await self.bot.send_message(who, embed=em)
+            await ctx.who.send(embed=em)
 
     @checks.is_owner()
     @savedembed.command(name="dmglobal", pass_context=True, no_pm=True)
@@ -229,9 +229,9 @@ class EmbedMaker:
             return await ctx.send("I couldn't find an embed by that name.")
         who = await self.bot.get_user_info(user_id)
         if who is not None:
-            await self.bot.send_message(who, embed=em)
+            await ctx.who.send(embed=em)
 
-    async def contact_for_embed(self, name: str, author, guild=None):
+    async def contact_for_embed(self, ctx, name: str, author, guild=None):
         if guild is not None:
             self.settings[str(guild.id)]['usercache'].append(str(author.id))
         else:
