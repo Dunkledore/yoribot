@@ -128,8 +128,10 @@ class Rank:
 
         entries = {}
         for member in ordered_guild_data_list:
+            await ctx.send(member[0])
+            user = self.bot.get_user(int(member[0]))
             text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
-            entries[self.bot.get_user(int(member[0])).name] = text
+            entries[user.name] = text
         await ctx.send(entries)
         
 
