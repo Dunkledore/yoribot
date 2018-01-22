@@ -118,7 +118,7 @@ class Rank:
         guild_data = {}
         for id, data in self.message_data.items():
             if str(ctx.guild.id) in data:
-                guid_data[id] = data
+                guild_data[id] = data
         guild_data_list = []
         
         for id, data in guid_data.items():
