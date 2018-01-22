@@ -144,7 +144,7 @@ class Rank:
     @commands.guild_only()
     async def topglobal(self, ctx):
         data_list = []
-        for id, data in self.message.data.items():
+        for id, data in self.message_data.items():
             data_list.append([id,data])
 
         ordered_data_list = list(reversed(sroted(data_list, key = lambda x: x[1]["global"])))
