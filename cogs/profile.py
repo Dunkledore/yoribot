@@ -124,13 +124,13 @@ class Rank:
         for id, data in guild_data.items():
             guild_data_list.append([id, data])
 
-        ordered_guild_data_list = sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])
+        ordered_guild_data_list = reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))]))
+
         await ctx.send(ordered_guild_data_list)
 
         entries = {}
-        for member in sorted_list:
-            member_id = list(member)[0]
-            entries[self.bot.get_user(int(member_id)).name] = "Guild_XP: " + member[member_id][str(ctx.guild.id)] + "\n" + "Global: " + member[member_id]["Global"]
+        for member in ordered_guild_data_list:
+            entries[self.bot.get_user(int(member[0])).name] = "Guild_XP: " + member[member[1][str(ctx.guild.id)] + "\n" + "Global: " + member[member[1]]["Global"]
         await ctx.send(entries)
         
 
