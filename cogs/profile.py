@@ -140,7 +140,7 @@ class Rank:
         paginator.embed.title = "Guild Ranking for " + ctx.guild.name
         await paginator.paginate()
 
-    @coammnds.command()
+    @commands.command()
     @commands.guild_only()
     async def topglobal():
         data_list = []
