@@ -132,14 +132,36 @@ class Rank:
             user = self.bot.get_user(int(member[0]))
             if not user:
                 continue
-            text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
-            entries[str(counter) + ". "+ user.name] = text
+            text = "Guild XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
+            entries[str(counter) + ". " + user.name] = text
             counter += 1
 
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         paginator.embed.title = "Guild Ranking for " + ctx.guild.name
         await paginator.paginate()
-        
+
+    @coammnds.command()
+    @commands.guild_only()
+    async def topglobal():
+        data_list = []
+        for id, data in self.message.data.items():
+            data_list.append([id,data])
+
+        ordered_data_list = list(reversed(sroted(data_list, key = lambda x: x[1]["global"])))
+
+        entries = {}
+        counter = 1
+        for member in ordered_data_list:
+            user = self.bot.get_user(int(member[0]))
+            if not user:
+                continue
+            text = "Global: " + str(member[1]["global"])
+            entries[str(counter + ". " + user.name)] = text
+
+        paginator = FieldPages(ctx, entries(list(entries.items)), per_page=5)
+        paginator.embed.title = "Global Rankings"
+        await paginator.paginate()
+
 
     @commands.command()
     @commands.guild_only()
