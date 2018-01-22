@@ -136,6 +136,7 @@ class Rank:
         await ctx.send(entries)
 
         pagintor = FieldPages(ctx, entries=entries)
+        await paginator.paginate()
         
 
     @commands.command()
