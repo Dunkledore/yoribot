@@ -87,7 +87,7 @@ class RoleManager:
         else:
             title = "**The following are available for you to self-assign**:\n\n"
             firstrole = ""
-            entries = []
+            entries = {}
             for g in sorted(self.settings[str(ctx.message.guild.id)]['sars'].keys()):
                 text = "**" + g + "**:\n"
                 roles_text = ""
@@ -96,9 +96,9 @@ class RoleManager:
                     if firstrole == "":
                         firstrole = r
                     roles_text = (roles_text[:-6] if roles_text[-2] == "*" else roles_text) + "\n\n"
-                entries.append({text : roles_text})
-
-            paginator = FieldPages(ctx, entries=entries)
+                entries[text] = roles_text
+                
+            paginator = FieldPages(ctx, entries=list(entries.items()))
             await paginator.paginate()
             #em = discord.Embed(color=ctx.message.author.color, description=text)
             em.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
