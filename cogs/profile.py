@@ -124,7 +124,7 @@ class Rank:
         for id, data in guild_data.items():
             guild_data_list.append([id, data])
 
-        ordered_guild_data_list = reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))]))
+        ordered_guild_data_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])))
 
         await ctx.send(ordered_guild_data_list)
 
