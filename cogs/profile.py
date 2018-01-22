@@ -192,7 +192,15 @@ class Profile:
 		self.loaded_settings = False
 		self.message_data = dataIO.load_json("data/rank/message_data.json")
 		self.ranks = None
-	
+
+	async def load_settings(self):
+		self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
+		if not self.ranks:
+			self.ranks = []
+		if not self.message_data:
+			self.message_data = {}
+		self.loaded_settings = True
+
 	@commands.command()
 	async def profilehelp(self, ctx):
 		"""Sends help information on how to use the profile features."""
