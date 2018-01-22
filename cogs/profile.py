@@ -280,7 +280,8 @@ class Profile:
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
 			return
-
+		if not self.loaded_settings:
+			await self.load_settings()
 
 		embed.add_field(name='XP', value= self.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "0")
 		embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
