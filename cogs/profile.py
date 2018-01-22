@@ -7,6 +7,7 @@ from .utils.paginator import FieldPages
 import json
 import re
 import datetime
+import asyncio
 import discord
 import asyncio
 import traceback
@@ -338,6 +339,7 @@ class Profile:
 
         if not self.rank.loaded_settings:
             self.rank.load_settings()
+            asyncio.sleep(3)
 
         xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
         embed.add_field(name='XP', value =xp)
