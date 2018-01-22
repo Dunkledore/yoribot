@@ -156,7 +156,7 @@ class Rank:
             if not user:
                 continue
             text = "Global: " + str(member[1]["global"])
-            entries[str(counter + ". " + user.name)] = text
+            entries[str(counter) + ". " + user.name] = text
 
         paginator = FieldPages(ctx, entries(list(entries.items)), per_page=5)
         paginator.embed.title = "Global Rankings"
