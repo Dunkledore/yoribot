@@ -337,6 +337,9 @@ class Profile:
             await ctx.send("This person has not made a profile yet")
             return
 
+        if not self.rank.loaded_settings:
+            await self.rank.load_settings()
+
         xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
         embed.add_field(name='XP', value =xp)
         guild_ranks = [rank for rank in self.rank.ranks if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
@@ -344,7 +347,7 @@ class Profile:
             sorted_guild_ranks = list(reversed(sorted(guild_ranks, key=lambda x: x["xp_required"])))
             role = discord.utils.get(ctx.guild.roles, id=sorted_guild_ranks[0]["role_id"])
             if role:
-                embed.add_field(name='Rank', value=role.name)
+                embed.add_field(name='Rank', value=role.mention)
 
 
         embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
