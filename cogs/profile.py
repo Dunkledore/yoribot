@@ -147,7 +147,7 @@ class Rank:
         for id, data in self.message_data.items():
             data_list.append([id,data])
 
-        ordered_data_list = list(reversed(sroted(data_list, key = lambda x: x[1]["global"])))
+        ordered_data_list = list(reversed(sorted(data_list, key = lambda x: x[1]["global"])))
 
         entries = {}
         counter = 1
