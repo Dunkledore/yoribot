@@ -135,7 +135,7 @@ class Rank:
             entries[user.name] = text
         await ctx.send(entries)
 
-        paginator = FieldPages(ctx, entries=list(entries.items()))
+        paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         await paginator.paginate()
         
 
