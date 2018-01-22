@@ -116,10 +116,11 @@ class Rank:
 	@commands.guild_only()
 	async def top(self, ctx):
 		guild_data = []
+        await ctx.send(message_data)
 		for member in self.message_data:
 			if str(ctx.guild.id) in member:
 				guid_data.append(member)
-
+        await ctx.send(guid_data)
 		sorted_list = sorted(guild_data, key=lambda member: member[str(ctx.guild.id)])
 
 		entries = {}
