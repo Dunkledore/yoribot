@@ -282,7 +282,7 @@ class Profile:
 			return
 
 
-
+		embed.add_field(name='XP', value= self.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "0")
 		embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
 		embed.add_field(name='Region', value= profile[0]['region'] or "Not Provided")
 		embed.add_field(name='Gender', value= profile[0]['gender'] or "Not Provided")
