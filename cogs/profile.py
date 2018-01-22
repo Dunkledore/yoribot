@@ -3,7 +3,7 @@ from .utils.paginator import Pages
 from .utils.dataIO import dataIO
 from discord.ext import commands
 from .utils.formats import TabularData, Plural
-from .utils.paginator import Pages
+from .utils.paginator import FieldPages
 import json
 import re
 import datetime
@@ -128,13 +128,14 @@ class Rank:
 
         entries = {}
         for member in ordered_guild_data_list:
-            await ctx.send(member[0])
             user = self.bot.get_user(int(member[0]))
             if not user:
                 continue
             text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
             entries[user.name] = text
         await ctx.send(entries)
+
+        pagintor = FieldPages(ctx, entries)
         
 
     @commands.command()
