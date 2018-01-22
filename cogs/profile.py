@@ -189,6 +189,9 @@ class Profile:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
+		self.loaded_settings = False
+		self.message_data = dataIO.load_json("data/rank/message_data.json")
+		self.ranks = None
 	
 	@commands.command()
 	async def profilehelp(self, ctx):
