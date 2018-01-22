@@ -95,7 +95,7 @@ class RoleManager:
                     roles_text += r + "**,** "
                     if firstrole == "":
                         firstrole = r
-                    roles_text = (roles_text[:-6] if roles_text[-2] == "*" else roles_text) + "\n\n"
+                    roles_text = (roles_text[:-6] if roles_text[-2] == "*" else roles_text)
                 entries[text] = roles_text
 
             paginator = FieldPages(ctx, entries=list(entries.items()))
