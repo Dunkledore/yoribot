@@ -143,6 +143,7 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def topglobal():
+        await ctx.send("called")
         data_list = []
         for id, data in self.message.data.items():
             data_list.append([id,data])
