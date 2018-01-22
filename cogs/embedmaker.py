@@ -238,7 +238,7 @@ class EmbedMaker:
             self.settings["global"]["usercache"].append(str(author.id))
         self.save_settings()
 
-        dm = await self.bot.send_message(author,
+        dm = await ctx.author.send(
                                          "Please respond to this message "
                                          "with the title of your embed. If "
                                          "you do not want a title, wait 30s")
@@ -251,10 +251,10 @@ class EmbedMaker:
         title = await self.bot.wait_for('message', check=check, timeout=30)
 
         if title is None:
-            await self.bot.send_message(author,
+            await ctx.author.send(
                                         "Okay, this one won't have a title.")
 
-        dm = await self.bot.send_message(author,
+        dm = await ctx.author.send(
                                          "Please respond to this message "
                                          "with the content of your embed")
         def check(m):
@@ -272,12 +272,12 @@ class EmbedMaker:
             else:
                 self.settings['global']['usercache'].remove(str(author.id))
             self.save_settings()
-            return await self.bot.send_message(author,
+            return await ctx.author.send(
                                                "I can't wait forever, "
                                                "try again when ready")
         else:
             await self.save_embed(name, title, message, guild)
-            await self.bot.send_message(author, "Your embed was created")
+            await ctx.author.send( "Your embed was created")
 
     async def get_embed(self, name: str, guild_id=None):
 
