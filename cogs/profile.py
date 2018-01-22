@@ -243,16 +243,7 @@ class Profile:
 
     def __init__(self, bot: commands.Bot, rank):
         self.bot = bot
-        self.loaded_settings = False
         self.rank = rank
-
-    async def load_settings(self):
-        self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
-        if not self.ranks:
-            self.ranks = []
-        if not self.message_data:
-            self.message_data = {}
-        self.loaded_settings = True
 
     @commands.command()
     async def profilehelp(self, ctx):
@@ -344,8 +335,6 @@ class Profile:
         if not profile:
             await ctx.send("This person has not made a profile yet")
             return
-        if not self.loaded_settings:
-            await self.load_settings()
 
         xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
         embed.add_field(name='XP', value =xp)
