@@ -126,12 +126,9 @@ class Rank:
 
         ordered_guild_data_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])))
 
-        await ctx.send(ordered_guild_data_list)
-
         entries = {}
         for member in ordered_guild_data_list:
-            await ctx.send(member)
-            text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["Global"])
+            text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
             entries[self.bot.get_user(int(member[0])).name] = text
         await ctx.send(entries)
         
