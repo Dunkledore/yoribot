@@ -111,8 +111,8 @@ class Stats:
         """Tells you information about the bot itself."""
 
         embed = discord.Embed()
-        embed.title = 'About Me'
-        embed.url = 'https://discord.gg/VB93Wj7'
+        embed.title = 'About Yori Bot'
+        embed.url = 'http://yoribot.com'
         embed.colour = discord.Colour.blurple()
 
 
@@ -144,6 +144,7 @@ class Stats:
         embed.add_field(name='Guilds', value=len(self.bot.guilds))
         embed.add_field(name='Commands Run', value=sum(self.bot.command_stats.values()))
         embed.add_field(name='Uptime', value=self.get_bot_uptime(brief=True))
+        embed.add_field(name='Website', value='http://yoribot.com')
         embed.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
         await ctx.send(embed=embed)
 
