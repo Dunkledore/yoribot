@@ -135,7 +135,6 @@ class Rank:
             text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
             entries[str(counter) + ". "+ user.name] = text
             counter += 1
-        await ctx.send(entries)
 
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         paginator.embed.title = "Guild Ranking for " + ctx.guild.name
