@@ -116,8 +116,8 @@ class Rank:
     @commands.guild_only()
     async def top(self, ctx):
         guild_data = []
-        await ctx.send(self.message_data)
         for member in self.message_data:
+            await ctx.send(member)
             if str(ctx.guild.id) in member:
                 guid_data.append(member)
         await ctx.send(guid_data)
