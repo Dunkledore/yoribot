@@ -98,7 +98,7 @@ class RoleManager:
                 roles_text = (roles_text[:-6] if roles_text[-2] == "*" else roles_text)
                 entries[text] = roles_text
 
-            paginator = FieldPages(ctx, entries=list(entries.items()))
+            paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
             paginator.embed.title = title
             paginator.embed.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
 
