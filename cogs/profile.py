@@ -338,7 +338,7 @@ class Profile:
 
         xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
         embed.add_field(name='XP', value =xp)
-        guild_ranks = [rank for rank in self.ranks.rank if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
+        guild_ranks = [rank for rank in self.rank.ranks if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
         if guild_ranks:
             sorted_guild_ranks = sorted(guild_ranks, key=lambda x: x["xp_required"])
             role = discord.utils.get(ctx.guild.roles, id=sorted_guild_ranks[0]["role_id"])
