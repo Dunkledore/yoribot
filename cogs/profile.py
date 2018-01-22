@@ -127,12 +127,14 @@ class Rank:
         ordered_guild_data_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])))
 
         entries = {}
+        counter = 1
         for member in ordered_guild_data_list:
             user = self.bot.get_user(int(member[0]))
             if not user:
                 continue
             text = "Guild_XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
-            entries[user.name] = text
+            entries[str(counter) + ". "+ user.name] = text
+            counter += 1
         await ctx.send(entries)
 
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
