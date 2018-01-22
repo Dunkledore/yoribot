@@ -337,6 +337,7 @@ class Profile:
             return
 
         if not self.rank.loaded_settings:
+            await ctx.send("loading settings")
             self.rank.load_settings()
 
         xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
