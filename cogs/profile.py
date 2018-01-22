@@ -352,10 +352,9 @@ class Profile:
         guild_ranks = [rank for rank in self.ranks.rank if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
         if guild_ranks:
             sorted_guild_ranks = sorted(guild_ranks, key=lambda x: x["xp_required"])
-            embed.add_field(name='Rank', value=discord.utils.get(ctx.guild.roles, id=sorted_guild_ranks[0]["role_id"]
-
-
-
+            role = discord.utils.get(ctx.guild.roles, id=sorted_guild_ranks[0]["role_id"])
+            if role:
+                embed.add_field(name='Rank', value=role.name)
 
 
         embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
