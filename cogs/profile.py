@@ -210,7 +210,18 @@ class Profile:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
-	
+		self.loaded_settings = False
+		self.message_data = dataIO.load_json("data/rank/message_data.json")
+		self.ranks = None
+
+	async def load_settings(self):
+		self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
+		if not self.ranks:
+			self.ranks = []
+		if not self.message_data:
+			self.message_data = {}
+		self.loaded_settings = True
+
 	@commands.command()
 	async def profilehelp(self, ctx):
 		"""Sends help information on how to use the profile features."""
@@ -301,9 +312,10 @@ class Profile:
 		if not profile:
 			await ctx.send("This person has not made a profile yet")
 			return
+		if not self.loaded_settings:
+			await self.load_settings()
 
-
-
+		embed.add_field(name='XP', value= self.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "0")
 		embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
 		embed.add_field(name='Region', value= profile[0]['region'] or "Not Provided")
 		embed.add_field(name='Gender', value= profile[0]['gender'] or "Not Provided")
