@@ -1137,11 +1137,13 @@ class Mod:
 
         if reaction.emoji != '✅':
             await ctx.send("Invites not cleared")
+            await message.clear_reactions()
             return
 
         for invite in invites:
             await invite.delete()
         await ctx.send("Invites cleared")
+        await message.clear_reactions()
 
 def setup(bot):
     bot.add_cog(Mod(bot))
