@@ -1,10 +1,9 @@
 import discord
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
-from .utils.paginator import FieldPages
 import os
 from .utils import checks
-import math
+
 
 class RoleManager:
     """Manages self-assignable roles."""
@@ -85,31 +84,25 @@ class RoleManager:
             await ctx.send(embed=em)
             return
         else:
-            title = "**The following are available for you to self-assign**:\n\n"
+            text = "**The following are available for you to self-assign**:\n\n"
             firstrole = ""
-            entries = {}
             for g in sorted(self.settings[str(ctx.message.guild.id)]['sars'].keys()):
-                text = "**" + g + "**:\n"
-                roles_text = ""
+                text += "**" + g + "**:\n"
                 for r in sorted(self.settings[str(ctx.message.guild.id)]['sars'][g].keys()):
-                    roles_text += r + "**,** "
+                    text += r + "**,** "
                     if firstrole == "":
                         firstrole = r
-                roles_text = (roles_text[:-6] if roles_text[-2] == "*" else roles_text)
-                entries[text] = roles_text
-
-            paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
-            paginator.embed.title = title
-            paginator.embed.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
-
-            
-            paginator.embed.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
+                text = (text[:-6] if text[-2] == "*" else text) + "\n\n"
+            em = discord.Embed(color=ctx.message.author.color, description=text)
+            em.set_author(name="Self-Assignable Roles", icon_url="http://bit.ly/2rnwE4T")
+            text = ""
             if len(self.bot.get_guild_prefixes(ctx.message.guild))<3:
                 text = "To add roles use [p]<rolename>, for example [p]"+ firstrole
             else:
                 text = "To add roles use " + str(self.bot.get_guild_prefixes(ctx.message.guild)[2])+ "<rolename>, for example " + str(self.bot.get_guild_prefixes(ctx.message.guild)[2]) + firstrole
-            paginator.embed.set_footer(text=text)
-            await paginator.paginate()
+            em.set_footer(text=text)
+            await ctx.send(embed=em)
+            return
 
     async def addrole(self, ctx, name, group: str, *, role: str):
         """Adds a role to the list of self-assignable roles, if the name contains spaces put it in quotes (").
