@@ -1132,7 +1132,7 @@ class Mod:
             await message.clear_reactions()
 
         if reaction.emoji != '✅':
-            return:
+            return
 
         for invite in invites:
             await invite.delete()
