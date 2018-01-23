@@ -70,13 +70,11 @@ class Playlists:
 		self.silently_deleted=False
 		
 	async def create_playlist(self,userID,name):
-		await self.context.send("create called")
 		query = "INSERT INTO playlists (userid,name) VALUES ($1,$2);"
 		await self.context.db.execute(query, userID, name)
 	
 	
 	async def get_playlist_list(self,userID):
-		await self.context.send("getlist called")
 		query = "SELECT * FROM playlists WHERE userid = $1"
 		results = await self.context.db.fetch(query, userID)
 		self.playlist_list=[]
@@ -90,7 +88,6 @@ class Playlists:
 		return 	
 		
 	async def save_playlist(self,userID,name):
-		await self.context.send("save called")
 		query = "UPDATE playlists SET Songs = $3, No_Songs = $4 WHERE userid=$1 AND name = $2"
 		songs=convert_to_storage(self.list)
 		await self.context.db.execute(query, userID, name, songs, len(self.list))
@@ -109,7 +106,6 @@ class Playlists:
 	async def add_to_playlist(self,userID,name,query,front=False):
 		if not await playlist_exists(self.context,name):
 			await self.create_playlist(userID,name)
-		await self.context.send("add called")
 		self.list = await get_playlist(self.context,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		if front:
@@ -122,7 +118,6 @@ class Playlists:
 	
 	
 	async def remove_from_playlist(self,userID,name,query):
-		await self.context.send("remove called")
 		self.list = await get_playlist(self.context,name)
 		yt_videos = api_youtube.parse_query(query, self.statuslog)
 		initiallength=len(self.list)
@@ -132,13 +127,11 @@ class Playlists:
 		counter=initiallength-finallength
 		await self.save_playlist(userID,name)
 		if finallength==0:
-			await self.context.send("silently deleted")
 			await self.delete_playlist(userID,name,True)
 		return counter
 		
 		
 	async def delete_playlist(self,userID,name,silent=False):
-		await self.context.send("delete called")
 		query = "DELETE FROM playlists WHERE userid=$1 AND name=$2;"
 		await self.context.db.execute(query, userID, name)
 		
@@ -151,7 +144,6 @@ class Playlists:
 			await self.context.channel.send(embed=embed)
 		
 	async def send_list(self,ctx):
-		await ctx.send("sendlist called")
 		embed=discord.Embed(title="Here are your Playlists:", colour=discord.Colour.blurple())
 		await self.get_playlist_list(ctx.message.author.id)
 		if not self.playlist_list:
@@ -170,7 +162,6 @@ class Playlists:
 	async def playlistadd(self,ctx,playlistname=None,*urls):
 		"""Used to add items to a playlist. Valid items are Youtube Video or Playlist URLs.
 		If the playlist does not yet exist it will be created for you."""
-		await ctx.send("hi")
 		self.context=ctx
 		if not playlistname or urls==():
 			ctx.send("Invalid Syntax")
