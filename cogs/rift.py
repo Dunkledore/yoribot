@@ -262,7 +262,7 @@ class Rift:
                     return
                 self.mutedUsers[rift][str(user.id)] = True
                 for chan in orift[rift]:
-                    chan.send("{} has been muted in this rift".format(user.display_name))
+                    await chan.send("{} has been muted in this rift".format(user.display_name))
             else:
                 await ctx.send("riftmute can only be used in an open rift.");
         
@@ -285,7 +285,7 @@ class Rift:
                 if str(user.id) in self.mutedUsers[rift]:
                     del self.mutedUsers[rift][str(user.id)]
                     for chan in orift[rift]:
-                        chan.send("{} is no longer muted in this rift.".format(user.display_name))
+                        await chan.send("{} is no longer muted in this rift.".format(user.display_name))
                 else:
                     await ctx.send("{} is not muted in this rift.".format(user.display_name))
             
