@@ -245,7 +245,8 @@ class Rift:
 
     @commands.command()
     @commands.guild_only()
-    @checks.is_mod()
+    #@checks.is_mod()
+    @checks.is_developer()
     async def riftmute(self, ctx, user: discord.Member):
         if not user:
             help_cmd = self.bot.get_command("help")
@@ -267,7 +268,8 @@ class Rift:
         
     @commands.command()
     @commands.guild_only()
-    @checks.is_mod()
+    #@checks.is_mod()
+    @checks.is_developer()
     async def riftunmute(self, ctx, user: discord.Member):
         if not user:
             help_cmd = self.bot.get_command("help")
