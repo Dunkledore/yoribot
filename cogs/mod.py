@@ -1096,6 +1096,51 @@ class Mod:
 
         args.search = max(0, min(2000, args.search)) # clamp from 0-2000
         await self.do_removal(ctx, args.search, predicate, before=args.before, after=args.after)
+    
+    @commands.command()
+    @checks.is_mod()
+    async def clearinvites(self, event, uses=1):
+        invites = [
+            i for i in event.guild.get_invites()
+            if i.uses <= uses and i.created_at < (datetime.utcnow() - timedelta(hours=1))
+        ]
+
+        if not invites:
+            return event.msg.reply('I didn\'t find any invites matching your criteria')
+
+        msg = event.msg.reply(
+            'Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
+                len(invites),
+                len({i.inviter.id for i in invites}),
+                sum(i.uses for i in invites)
+            ))
+
+        msg.chain(False).\
+            add_reaction(GREEN_TICK_EMOJI).\
+            add_reaction(RED_TICK_EMOJI)
+
+        try:
+            mra_event = self.wait_for_event(
+                'MessageReactionAdd',
+                message_id=msg.id,
+                conditional=lambda e: (
+                    e.emoji.id in (GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI_ID) and
+                    e.user_id == event.author.id
+                )).get(timeout=10)
+        except gevent.Timeout:
+            msg.reply('Not executing invite prune')
+            msg.delete()
+            return
+
+        msg.delete()
+
+        if mra_event.emoji.id == GREEN_TICK_EMOJI_ID:
+            msg = msg.reply('Pruning invites...')
+            for invite in invites:
+                invite.delete()
+            msg.edit('Ok, invite prune completed')
+        else:
+            msg = msg.reply('Not pruning invites')
 
 def setup(bot):
     bot.add_cog(Mod(bot))
