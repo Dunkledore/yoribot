@@ -31,6 +31,13 @@ class Rift:
         await self.bot.wait_until_ready()
         allchannels = self.bot.get_all_channels()
         settings = dataIO.load_json("data/rift/settings.json")
+        if "mutedUsers" in settings.keys() and isinstance(settings["mutedUsers"], dict):
+            for m in settings["mutedUsers"].keys():
+                ms = {}
+                for mr in settings["mutedUsers"][m]:
+                    ms[mr] = True
+                self.mutedUsers[m] = ms
+
         if "embeds" in settings.keys() and isinstance(settings["embeds"],dict):
             for e in settings["embeds"].keys():
                 ch = self.bot.get_channel(int(e))
@@ -264,7 +271,8 @@ class Rift:
                 for chan in orift[rift]:
                     await chan.send("{} has been muted in this rift".format(user.display_name))
             else:
-                await ctx.send("riftmute can only be used in an open rift.");
+                await ctx.send("riftmute can only be used in an open rift.")
+        self.save_settings()
         
     @commands.command()
     @commands.guild_only()
@@ -288,7 +296,7 @@ class Rift:
                         await chan.send("{} is no longer muted in this rift.".format(user.display_name))
                 else:
                     await ctx.send("{} is not muted in this rift.".format(user.display_name))
-            
+        self.save_settings()
 
     @commands.command()
     @commands.guild_only()
@@ -354,7 +362,7 @@ class Rift:
 
 
     def save_settings(self):
-        settings = {"open_rifts":{},"embeds":{}}
+        settings = {"open_rifts":{},"embeds":{}, "mutedUsers":{}}
         for r in self.open_rifts.keys():
             settings["open_rifts"][r] = []
             for c in self.open_rifts[r]:
@@ -362,6 +370,11 @@ class Rift:
 
         for c in self.embeds.keys():
             settings["embeds"][c.id] = self.embeds[c]
+
+        for m in self.mutedUsers.keys():
+            settings["mutedUsers"][m] = {}
+            for r in self.mutedUsers[m]:
+                settings["mutedUsers"][m][r] = self.mutedUsers[m][r]
 
         dataIO.save_json("data/rift/settings.json",settings)
 
