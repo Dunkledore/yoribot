@@ -7,7 +7,7 @@ import re
 import json
 import discord
 import enum
-import datetime
+from datetime import datetime
 import asyncio
 import argparse, shlex
 import logging
