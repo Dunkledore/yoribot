@@ -5,6 +5,7 @@ from cogs.utils.chat_formatting import escape, pagify
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 import os
+import re
 
 OpenRift = namedtuple("Rift", ['name','channels'])
 
@@ -14,6 +15,10 @@ def formatembed(m):
     author_name = m.author.nick+" ("+m.author.name+")" if m.author.nick else m.author.name
     em.set_author(name=author_name,icon_url=avatar)
     footer = "- sent from #"+m.channel.name+" in "+m.guild.name
+    if len(m.attachments) > 0 and < 2:
+        for attachment in m.attachments:
+            if re.match("([-\w]+\.(?:jp[e]?g|gif|png))", attachment.filename) is not None:
+                em.set_image(url=attachment.proxy_url)
     em.set_footer(text=footer)
     return em
 
