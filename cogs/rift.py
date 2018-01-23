@@ -257,12 +257,11 @@ class Rift:
 
     @commands.command()
     @commands.guild_only()
-    #@checks.is_mod()
-    @checks.is_developer()
-    async def riftmute(self, ctx, user):
+    @checks.is_mod()
+    async def riftmute(self, ctx, user=None):
         if not user:
             help_cmd = self.bot.get_command("help")
-            await ctx.invoke(help_cmd, command="riftunmute")
+            await ctx.invoke(help_cmd, command="riftmute")
             return
         converter = commands.UserConverter()
         converted = None
@@ -290,9 +289,8 @@ class Rift:
 
     @commands.command()
     @commands.guild_only()
-    #@checks.is_mod()
-    @checks.is_developer()
-    async def riftunmute(self, ctx, user):
+    @checks.is_mod()
+    async def riftunmute(self, ctx, user=None):
         if not user:
             help_cmd = self.bot.get_command("help")
             await ctx.invoke(help_cmd, command="riftunmute")
@@ -359,7 +357,6 @@ class Rift:
         for rift in orift:
             if msg.channel in orift[rift]:
                 if str(msg.author.id) in self.mutedUsers[rift]:
-                    msg.delete()
                     return
                 for chan in orift[rift]:
                     if chan != msg.channel:
