@@ -1105,7 +1105,8 @@ class Mod:
         invites = [i for i in all_invites if i.uses <= uses and i.created_at < (datetime.utcnow() - timedelta(hours=1))]
 
         if not invites:
-            return ctx.send('I didn\'t find any invites matching your criteria')
+            await ctx.send('I didn\'t find any invites matching your criteria')
+            return
 
         message = await ctx.send('Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
                 len(invites),
@@ -1136,11 +1137,13 @@ class Mod:
 
         if reaction.emoji != '✅':
             await ctx.send("Invites not cleared")
+            await message.clear_reactions()
             return
 
         for invite in invites:
             await invite.delete()
         await ctx.send("Invites cleared")
+        await message.clear_reactions()
 
 def setup(bot):
     bot.add_cog(Mod(bot))
