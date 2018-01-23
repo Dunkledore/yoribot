@@ -57,6 +57,9 @@ async def get_playlist(ctx,name):
 	return list
 
 class Playlists:
+	"""
+	Commands for creating and editing playlists that can be played using the music player
+	"""
 
 	def __init__(self,bot):
 		self.bot = bot
