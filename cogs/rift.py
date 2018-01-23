@@ -360,7 +360,7 @@ class Rift:
         orift = {k:v for k,v in self.open_rifts.items() if v}
         for rift in orift:
             if rift not in self.mutedUsers:
-                self.mutedUsers[rift] = {}s
+                self.mutedUsers[rift] = {}
             if msg.channel in orift[rift]:
                 if str(msg.author.id) in self.mutedUsers[rift]:
                     return
