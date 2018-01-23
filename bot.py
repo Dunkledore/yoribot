@@ -75,10 +75,9 @@ def _prefix_callable(bot, msg):
     user_id = bot.user.id
     base = [f'<@!{user_id}> ', f'<@{user_id}> ']
     if msg.guild is None:
-        base.append('!')
-        base.append('?')
+        base.append('*')
     else:
-        base.extend(bot.prefixes.get(msg.guild.id, ['?', '!']))
+        base.extend(bot.prefixes.get(msg.guild.id, ['*']))
     return base
 
 class YoriBot(commands.AutoShardedBot):
@@ -120,7 +119,7 @@ class YoriBot(commands.AutoShardedBot):
         return local_inject(self, proxy_msg)
 
     def get_raw_guild_prefixes(self, guild_id):
-        return self.prefixes.get(guild_id, ['?', '!'])
+        return self.prefixes.get(guild_id, ['*'])
 
     async def set_guild_prefixes(self, guild, prefixes):
         if len(prefixes) == 0:
