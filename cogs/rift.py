@@ -259,7 +259,7 @@ class Rift:
                 if str(user.id) in self.mutedUsers[rift]:
                     await ctx.send("User already muted in this rift.")
                     return
-                self.mutedUsers[rift][str(user.id)] = true
+                self.mutedUsers[rift][str(user.id)] = True
                 for chan in orift[rift]:
                     chan.send("{} has been muted in this rift".format(user.display_name))
             else:
