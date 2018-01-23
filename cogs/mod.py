@@ -1115,7 +1115,7 @@ class Mod:
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
-        def check(self, reaction, user):
+        def check(reaction, user):
             if user is None or user.id != ctx.author.id:
                 return False
 
