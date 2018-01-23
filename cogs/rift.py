@@ -257,8 +257,8 @@ class Rift:
 
     @commands.command()
     @commands.guild_only()
-    #@checks.is_mod()
-    @checks.is_developer()
+    @checks.is_mod()
+    #@checks.is_developer()
     async def riftmute(self, ctx, user=None):
         '''Prevent a user's messages from being sent through the rift'''
         if not user:
@@ -291,8 +291,8 @@ class Rift:
 
     @commands.command()
     @commands.guild_only()
-    #@checks.is_mod()
-    @checks.is_developer()
+    @checks.is_mod()
+    #@checks.is_developer()
     async def riftunmute(self, ctx, user=None):
         '''Allow a user's messages to be sent through the rift again'''
         if not user:
