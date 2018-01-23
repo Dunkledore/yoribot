@@ -3,7 +3,7 @@ from discord.ext import commands
 from collections import namedtuple
 from cogs.utils.chat_formatting import escape, pagify
 from cogs.utils.dataIO import dataIO
-from .utils import checks
+from cogs.utils import checks
 import os
 
 OpenRift = namedtuple("Rift", ['name','channels'])
@@ -25,6 +25,7 @@ class Rift:
         self.open_rifts = {}
         self.embeds = {}
         self.ready = False
+        self.mutedUsers = {}
 
     async def load_settings(self):
         await self.bot.wait_until_ready()
@@ -241,6 +242,51 @@ class Rift:
             s = s[:-2]
             await ctx.send(s)
         await self.update_descriptions()
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_mod()
+    async def riftmute(self, ctx, user: discord.Member):
+        if not user:
+            help_cmd = self.bot.get_command("help")
+            await ctx.invoke(help_cmd, command="riftunmute")
+            return
+        orift = {k:v for k,v in self.open_rifts.items() if v}
+        for rift in orift:
+            if rift not in self.mutedUsers:
+                self.mutedUsers[rift] = {}
+            if ctx.message.channel in orift[rift]:
+                if str(user.id) in self.mutedUsers[rift]:
+                    await ctx.send("User already muted in this rift.")
+                    return
+                self.mutedUsers[rift][str(user.id)] = true
+                for chan in orift[rift]:
+                    chan.send("{} has been muted in this rift".format(user.display_name))
+            else:
+                await ctx.send("riftmute can only be used in an open rift.");
+        
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_mod()
+    async def riftunmute(self, ctx, user: discord.Member):
+        if not user:
+            help_cmd = self.bot.get_command("help")
+            await ctx.invoke(help_cmd, command="riftunmute")
+            return
+        orift = {k:v for k,v in self.open_rifts.items() if v}
+        for rift in orift:
+            if rift not in self.mutedUsers:
+                self.mutedUsers[rift] = {}
+                await ctx.send("{} is not muted in this rift.".format(user.display_name))
+                return
+            if ctx.message.channel in orift[rift]:
+                if str(user.id) in self.mutedUsers[rift]:
+                    del self.mutedUsers[rift][str(user.id)]
+                    for chan in orift[rift]:
+                        chan.send("{} is no longer muted in this rift.".format(user.display_name))
+                else:
+                    await ctx.send("{} is not muted in this rift.".format(user.display_name))
+            
 
     @commands.command()
     @commands.guild_only()
