@@ -51,6 +51,7 @@ initial_extensions = (
     'cogs.oweather',
     'cogs.poll',
     'cogs.pokedex',
+    'cogs.profile',
     'cogs.race',
     'cogs.rate',
     'cogs.reminder',
