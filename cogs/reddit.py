@@ -167,9 +167,6 @@ class Reddit:
             r = await self._ensureAuth(ctx)
             baseUrl = "https://oauth.reddit.com/r/"
 
-            '''Get the guild set prefix for the help message'''
-            prefix = self.bot.get_guild_prefixes(ctx.message.guild)[2]
-
             if mode not in self.modes:
                 '''Oops someone entered a mode that doesn't exist'''
                 await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
@@ -177,7 +174,8 @@ class Reddit:
             if subreddit.lower() == "$$next_item":
                 if not self.current_subreddit[ctx.message.guild][ctx.message.author]:
                     '''No subreddit selected and someone used the command with no arguments'''
-                    await ctx.send("No subreddit currently selected use `{}reddit <subreddit> [mode='top,random,new,rising,controversial,hot']` to set the current subreddit.".format(prefix))
+                    help_cmd = self.bot.get_command("help")
+                    await ctx.invoke(help_cmd, command="reddit")
                 elif self.next_item_idx[ctx.message.guild][ctx.message.author] == 5:
                     '''Get and Cache the next 5 items from reddit'''
                     url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + self.current_mode[ctx.message.guild][ctx.message.author] + ".json?limit=5&after=" + self._nextCursor[ctx.message.guild][ctx.message.author]
