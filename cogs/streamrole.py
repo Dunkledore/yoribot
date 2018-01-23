@@ -4,12 +4,12 @@ import os.path
 import discord
 from discord.ext import commands
 from discord.utils import find
-from .utils.dataIO import dataIO
-from .utils import checks
-from .utils import chat_formatting as cf
+from cogs.utils.dataIO import dataIO
+from cogs.utils import checks
+from cogs.utils import chat_formatting as cf
 from discord.ext import commands
-from .utils.dataIO import dataIO
-from .utils.chat_formatting import escape_mass_mentions
+from cogs.utils.dataIO import dataIO
+from cogs.utils.chat_formatting import escape_mass_mentions
 from collections import defaultdict
 from string import ascii_letters
 from random import choice
@@ -475,7 +475,7 @@ class StreamRole:
         status = channel["status"]
         if not status:
             status = "Untitled broadcast"
-        embed = discord.Embed(title=status, url=url)
+        embed = discord.Embed(title=status, url=url, color=0x6441A4)
         embed.set_author(name=channel["display_name"])
         embed.add_field(name="Followers", value=channel["followers"])
         embed.add_field(name="Total views", value=channel["views"])
@@ -484,7 +484,6 @@ class StreamRole:
             embed.set_image(url=data["stream"]["preview"]["medium"] + self.rnd_attr())
         if channel["game"]:
             embed.set_footer(text="Playing: " + channel["game"])
-        embed.color = 0x6441A4
         return embed
 
     def hitbox_embed(self, data):
@@ -492,7 +491,7 @@ class StreamRole:
         livestream = data["livestream"][0]
         channel = livestream["channel"]
         url = channel["channel_link"]
-        embed = discord.Embed(title=livestream["media_status"], url=url)
+        embed = discord.Embed(title=livestream["media_status"], url=url, color=0x98CB00)
         embed.set_author(name=livestream["media_name"])
         embed.add_field(name="Followers", value=channel["followers"])
         #embed.add_field(name="Views", value=channel["views"])
@@ -500,7 +499,6 @@ class StreamRole:
         if livestream["media_thumbnail"]:
             embed.set_image(url=base_url + livestream["media_thumbnail"] + self.rnd_attr())
         embed.set_footer(text="Playing: " + livestream["category_name"])
-        embed.color = 0x98CB00
         return embed
 
     def beam_embed(self, data):
@@ -508,7 +506,7 @@ class StreamRole:
                           "avatars/default.jpg")
         user = data["user"]
         url = "https://beam.pro/" + data["token"]
-        embed = discord.Embed(title=data["name"], url=url)
+        embed = discord.Embed(title=data["name"], url=url, color=0x4C90F3)
         embed.set_author(name=user["username"])
         embed.add_field(name="Followers", value=data["numFollowers"])
         embed.add_field(name="Total views", value=data["viewersTotal"])
@@ -518,7 +516,6 @@ class StreamRole:
             embed.set_thumbnail(url=default_avatar)
         if data["thumbnail"]:
             embed.set_image(url=data["thumbnail"]["url"] + self.rnd_attr())
-        embed.color = 0x4C90F3
         if data["type"] is not None:
             embed.set_footer(text="Playing: " + data["type"]["name"])
         return embed
