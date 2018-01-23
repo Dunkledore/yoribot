@@ -60,6 +60,7 @@ class Rank:
     @commands.guild_only()
     @checks.is_admin()
     async def resetxp(self, ctx):
+        """Reset the XP of all members in the server. BE CAREFUL"""
         await ctx.send("This will reset the xp for everyone in this server. Are you sure you want to do this? (yes/no)")
 
         def check(m):
@@ -116,6 +117,7 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def top(self, ctx):
+        """Shows a list of the most active members in the server."""
         guild_data = {}
         for id, data in self.message_data.items():
             if str(ctx.guild.id) in data:
@@ -144,6 +146,7 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def topglobal(self, ctx):
+        """Shows a list of the most active members using Yori"""
         data_list = []
         for id, data in self.message_data.items():
             data_list.append([id,data])
@@ -220,6 +223,7 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def xp(self, ctx):
+        """Checks your XP in the current server- how are you doing?"""
         if not self.loaded_settings:
             await self.load_settings()
 
@@ -231,6 +235,7 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def globalxp(self, ctx):
+        """Checks your XP in all YoriBot Servers"""
         if not self.loaded_settings:
             await self.load_settings()
 
