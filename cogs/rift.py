@@ -260,6 +260,7 @@ class Rift:
     #@checks.is_mod()
     @checks.is_developer()
     async def riftmute(self, ctx, user=None):
+        '''Prevent a user's messages from being sent through the rift'''
         if not user:
             help_cmd = self.bot.get_command("help")
             await ctx.invoke(help_cmd, command="riftmute")
@@ -293,6 +294,7 @@ class Rift:
     #@checks.is_mod()
     @checks.is_developer()
     async def riftunmute(self, ctx, user=None):
+        '''Allow a user's messages to be sent through the rift again'''
         if not user:
             help_cmd = self.bot.get_command("help")
             await ctx.invoke(help_cmd, command="riftunmute")
