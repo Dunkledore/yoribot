@@ -46,7 +46,7 @@ class Rank:
             if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
                 role = discord.utils.get(guild.roles, id=rank["role_id"])
                 await member.add_roles(role)
-                await message.channel.send("Congratualtions {} you now have the rank of {}".format(member.name, role.name))
+                await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
     
     async def load_settings(self):
         self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
