@@ -1106,6 +1106,7 @@ class Mod:
 
         if not invites:
             await ctx.send('I didn\'t find any invites matching your criteria')
+            return
 
         message = await ctx.send('Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
                 len(invites),
