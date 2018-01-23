@@ -194,13 +194,16 @@ class Reddit:
                         self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
                 else:
                     '''We have a set of cached posts to work with'''
-                    item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
-                    if item["over_18"] and not ctx.message.channel.is_nsfw():
-                        '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
-                        await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+                    if len(self._cache[ctx.message.guild][ctx.message.author]) > self.next_item_idx[ctx.message.guild][ctx.message.author]:
+                        item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
+                        if item["over_18"] and not ctx.message.channel.is_nsfw():
+                            '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
+                            await ctx.send("Umm... I can't send reddit posts that have been marked as NSFW to an SFW channel.")
+                        else:
+                            await self._printPost(ctx, item)
+                            self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
                     else:
-                        await self._printPost(ctx, item)
-                        self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
+                        await ctx.send("No other posts found")
             else:
                 self.current_mode[ctx.message.guild][ctx.message.author] = mode
                 self.current_subreddit[ctx.message.guild][ctx.message.author] = subreddit.lower()
