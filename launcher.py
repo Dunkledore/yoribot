@@ -7,7 +7,7 @@ import discord
 import importlib
 import contextlib
 
-from bot import RoboDanny, initial_extensions
+from bot import YoriBot, initial_extensions
 from cogs.utils.db import Table
 
 from pathlib import Path
