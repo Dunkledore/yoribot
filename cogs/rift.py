@@ -292,7 +292,7 @@ class Rift:
     @commands.guild_only()
     #@checks.is_mod()
     @checks.is_developer()
-    async def riftunmute(self, ctx, user: discord.Member):
+    async def riftunmute(self, ctx, user):
         if not user:
             help_cmd = self.bot.get_command("help")
             await ctx.invoke(help_cmd, command="riftunmute")
