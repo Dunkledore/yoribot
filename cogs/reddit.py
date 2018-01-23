@@ -226,7 +226,7 @@ class Reddit:
             return
 
     @commands.command(name="redditkey")
-    # @checks.is_owner()
+    @checks.is_owner()
     async def _redditkey(self, ctx, key: str):
         """Insert API key into settings"""
         self.settings = dataIO.load_json(self.settings_file)
