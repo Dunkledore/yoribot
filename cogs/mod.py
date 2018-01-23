@@ -1126,10 +1126,12 @@ class Mod:
                 return False
             return True
 
+        reaction = None
         try:
             reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=120.0)
         except:
             await message.clear_reactions()
+            return
 
         if reaction.emoji != '✅':
             return
