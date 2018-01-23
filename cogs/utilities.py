@@ -58,20 +58,8 @@ class Meta:
             await ctx.send(e)
 
     @commands.command(hidden=True)
-    async def hello(self, ctx):
-        """Displays my intro message."""
-        em = discord.Embed(color=ctx.message.author.color, description="Yori is a premium Discord bot based on the rapptz robodanny code and heavily customized with influences also from Red-DiscordBot.")
-        em.set_author(name="About Yori Bot", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-        em.set_image(url='https://i.gyazo.com/c7722437eb4f75a992b1871bae091230.gif')
-        em.set_footer(text= "Use the help command or visit http://yoribot.com for more information.")
-        await ctx.send(embed=em)
-
-    @commands.command(hidden=True)
     async def charinfo(self, ctx, *, characters: str, hidden=True):
-        """Shows you information about a number of characters.
-
-        Only up to 25 characters at a time.
-        """
+        """Shows you information about a number of characters."""
 
         if len(characters) > 25:
             return await ctx.send(f'Too many characters ({len(characters)}/25)')
@@ -86,11 +74,7 @@ class Meta:
     @commands.group(name='prefix', invoke_without_command=True)
     @checks.is_admin()
     async def prefix(self, ctx):
-        """Manages the server's custom prefixes.
-
-        If called without a subcommand, this will list the currently set
-        prefixes.
-        """
+        """Manages the server's custom prefixes. To see the prefixes set for this server use this without any subcommands. """
 
         prefixes = self.bot.get_guild_prefixes(ctx.guild)
 
@@ -107,19 +91,7 @@ class Meta:
     @prefix.command(name='add', ignore_extra=False)
     @checks.is_mod()
     async def prefix_add(self, ctx, prefix: Prefix):
-        """Appends a prefix to the list of custom prefixes.
-
-        Previously set prefixes are not overridden.
-
-        To have a word prefix, you should quote it and end it with
-        a space, e.g. "hello " to set the prefix to "hello ". This
-        is because Discord removes spaces when sending messages so
-        the spaces are not preserved.
-
-        Multi-word prefixes must be quoted also.
-
-        You must have Manage Server permission to use this command.
-        """
+        """Allows you to set a custom prefix for your server."""
 
         current_prefixes = self.bot.get_raw_guild_prefixes(ctx.guild.id)
         current_prefixes.append(prefix)
@@ -138,13 +110,7 @@ class Meta:
     @prefix.command(name='remove', aliases=['delete'], ignore_extra=False)
     @checks.is_mod()
     async def prefix_remove(self, ctx, prefix: Prefix):
-        """Removes a prefix from the list of custom prefixes.
-
-        This is the inverse of the 'prefix add' command. You can
-        use this to remove prefixes from the default set as well.
-
-        You must have Manage Server permission to use this command.
-        """
+        """Removes a prefix from the list of custom prefixes."""
 
         current_prefixes = self.bot.get_raw_guild_prefixes(ctx.guild.id)
 
@@ -163,46 +129,10 @@ class Meta:
     @prefix.command(name='clear')
     @checks.is_mod()
     async def prefix_clear(self, ctx):
-        """Removes all custom prefixes.
-
-        After this, the bot will listen to only mention prefixes.
-
-        You must have Manage Server permission to use this command.
-        """
+        """Removes all custom prefixes."""
 
         await self.bot.set_guild_prefixes(ctx.guild, [])
         await ctx.send(f'\N{OK HAND SIGN}')
-
-    @commands.command(hidden=True)
-    @checks.is_developer()
-    async def source(self, ctx, *, command: str = None):
-        """Displays my full source code or for a specific command.
-
-        To display the source code of a subcommand you can separate it by
-        periods, e.g. tag.create for the create subcommand of the tag command
-        or by spaces.
-        """
-        source_url = 'https://github.com/Rapptz/RoboDanny'
-        if command is None:
-            return await ctx.send(source_url)
-
-        obj = self.bot.get_command(command.replace('.', ' '))
-        if obj is None:
-            return await ctx.send('Could not find command.')
-
-        # since we found the command we're looking for, presumably anyway, let's
-        # try to access the code itself
-        src = obj.callback.__code__
-        lines, firstlineno = inspect.getsourcelines(src)
-        if not obj.callback.__module__.startswith('discord'):
-            # not a built-in command
-            location = os.path.relpath(src.co_filename).replace('\\', '/')
-        else:
-            location = obj.callback.__module__.replace('.', '/') + '.py'
-            source_url = 'https://github.com/Rapptz/discord.py'
-
-        final_url = f'<{source_url}/blob/rewrite/{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}>'
-        await ctx.send(final_url)
 
     @commands.command(name='quit', hidden=True)
     @checks.is_developer()
@@ -210,14 +140,10 @@ class Meta:
         """Quits the bot."""
         await self.bot.logout()
 
-    @commands.group(invoke_without_command=True, hidden=True)
+    @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def info(self, ctx, *, member: discord.Member = None):
-        """Shows info about a member.
-
-        This cannot be used in private messages. If you don't specify
-        a member then the info returned will be yours.
-        """
+        """Shows info about a member."""
 
         if member is None:
             member = ctx.author
@@ -328,13 +254,7 @@ class Meta:
     @commands.command()
     @commands.guild_only()
     async def permissions(self, ctx, member: discord.Member = None, channel: discord.TextChannel = None):
-        """Shows a member's permissions in a specific channel.
-
-        If no channel is given then it uses the current one.
-
-        You cannot use this in private messages. If no member is given then
-        the info returned will be yours.
-        """
+        """Shows a member's permissions in a specific channel."""
         channel = channel or ctx.channel
         if member is None:
             member = ctx.author
@@ -345,16 +265,7 @@ class Meta:
     @commands.guild_only()
     @checks.is_admin()
     async def botpermissions(self, ctx, *, channel: discord.TextChannel = None):
-        """Shows the bot's permissions in a specific channel.
-
-        If no channel is given then it uses the current one.
-
-        This is a good way of checking if the bot has the permissions needed
-        to execute the commands it wants to execute.
-
-        To execute this command you must have Manage Roles permission.
-        You cannot use this in private messages.
-        """
+        """Shows the bot's permissions in a specific channel."""
         channel = channel or ctx.channel
         member = ctx.guild.me
         await self.say_permissions(ctx, member, channel)
@@ -382,16 +293,6 @@ class Meta:
     async def echo(self, ctx, *, content):
         await ctx.send(content)
 
-    @commands.command(hidden=True)
-    @checks.is_mod()
-    async def cud(self, ctx):
-        """pls no spam"""
-
-        for i in range(3):
-            await ctx.send(3 - i)
-            await asyncio.sleep(1)
-
-        await ctx.send('go')
     def create_chart(self, top, others):
         plt.clf()
         sizes = [x[1] for x in top]
@@ -416,9 +317,7 @@ class Meta:
 
     @commands.command(pass_context=True)
     async def chanchart(self, ctx, channel : discord.TextChannel = None):
-        """
-        Generates a pie chart, representing the last 5000 messages in this channel.
-        """
+        """Generates a pie chart showing who the most active users were in the last 5000 messages of the given channel."""
         if not channel:
             channel = ctx.message.channel
         e = discord.Embed(description="Please wait one moment while I gather all the data...", colour=0x00ccff)

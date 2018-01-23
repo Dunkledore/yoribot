@@ -534,7 +534,16 @@ class Fun:
         fileList = os.listdir(folderPath)
         gifPath = folderPath + "/" + fileList[randint(0, len(fileList) - 1)]
         await ctx.send(file=discord.File(gifPath))
-        
+
+    @commands.command()
+    async def countdown(self, ctx):
+        """Count down... 3,2,1, go!"""
+
+        for i in range(3):
+            await ctx.send(3 - i)
+            await asyncio.sleep(1)
+
+        await ctx.send('go')      
 
 def check_folders():
     if not os.path.exists("data/fun"):

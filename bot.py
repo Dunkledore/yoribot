@@ -79,7 +79,7 @@ def _prefix_callable(bot, msg):
         base.extend(bot.prefixes.get(msg.guild.id, ['?', '!']))
     return base
 
-class RoboDanny(commands.AutoShardedBot):
+class YoriBot(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(command_prefix=_prefix_callable, description=description,
                          pm_help=None, help_attrs=dict(hidden=True))
