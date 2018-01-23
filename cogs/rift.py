@@ -17,7 +17,7 @@ def formatembed(m):
     footer = "- sent from #"+m.channel.name+" in "+m.guild.name
     if len(m.attachments) == 1:
         for attachment in m.attachments:
-            if re.match("([-\w]+\.(?:jp[e]?g|gif|png))", attachment.filename) is not None:
+            if re.match("([-\w]+\.(?:jp[e]?g|gif|png))", attachment.filename.lower()) is not None:
                 em.set_image(url=attachment.proxy_url)
     em.set_footer(text=footer)
     return em
