@@ -56,7 +56,7 @@ def run_bot():
         log.exception('Could not set up PostgreSQL. Exiting.')
         return
 
-    bot = RoboDanny()
+    bot = YoriBot()
     bot.pool = pool
     bot.run()
 
