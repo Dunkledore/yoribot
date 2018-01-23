@@ -31,7 +31,7 @@ class Rank:
             try:
                 await self.bot.wait_until_ready()
                 self.save_message_data()
-                await asyncio.sleep(30)
+                await asyncio.sleep(3600)
             except Excepion as e:
                 query =  "SELECT * FROM webhook"
                 results = await self.bot.pool.fetch(query)
