@@ -1099,48 +1099,43 @@ class Mod:
     
     @commands.command()
     @checks.is_mod()
-    async def clearinvites(self, event, uses=1):
-        invites = [
-            i for i in event.guild.get_invites()
-            if i.uses <= uses and i.created_at < (datetime.utcnow() - timedelta(hours=1))
-        ]
+    async def clearinvites(self, ctx, uses=1):
+        all_invites = await ctx.guild.invites()
+
+        invites = [i for i in all_invites if i.uses <= uses and i.created_at < (datetime.utcnow() - timedelta(hours=1))]
 
         if not invites:
             return event.msg.reply('I didn\'t find any invites matching your criteria')
 
-        msg = event.msg.reply(
-            'Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
+        message = await ctx.send('Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
                 len(invites),
                 len({i.inviter.id for i in invites}),
-                sum(i.uses for i in invites)
-            ))
+                sum(i.uses for i in invites)))   
 
-        msg.chain(False).\
-            add_reaction(GREEN_TICK_EMOJI).\
-            add_reaction(RED_TICK_EMOJI)
+        await message.add_reaction('✅')
+        await message.add_reaction('❌')
+
+        def check(self, reaction, user):
+            if user is None or user.id != ctx.author.id:
+                return False
+
+            if reaction.message.id != message.id:
+                return False
+
+            if reaction.emoji not in ['❌','✅']:
+                return False
+            return True
 
         try:
-            mra_event = self.wait_for_event(
-                'MessageReactionAdd',
-                message_id=msg.id,
-                conditional=lambda e: (
-                    e.emoji.id in (GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI_ID) and
-                    e.user_id == event.author.id
-                )).get(timeout=10)
-        except gevent.Timeout:
-            msg.reply('Not executing invite prune')
-            msg.delete()
-            return
+            reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=120.0)
+        except:
+            await message.clear_reactions()
 
-        msg.delete()
+        if reaction.emoji != '✅':
+            return:
 
-        if mra_event.emoji.id == GREEN_TICK_EMOJI_ID:
-            msg = msg.reply('Pruning invites...')
-            for invite in invites:
-                invite.delete()
-            msg.edit('Ok, invite prune completed')
-        else:
-            msg = msg.reply('Not pruning invites')
+        for invite in invites:
+            await invite.delete()
 
 def setup(bot):
     bot.add_cog(Mod(bot))
