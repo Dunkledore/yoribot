@@ -15,7 +15,7 @@ def formatembed(m):
     author_name = m.author.nick+" ("+m.author.name+")" if m.author.nick else m.author.name
     em.set_author(name=author_name,icon_url=avatar)
     footer = "- sent from #"+m.channel.name+" in "+m.guild.name
-    if len(m.attachments) > 0 and len(m.attachments) < 2:
+    if len(m.attachments) == 1:
         for attachment in m.attachments:
             if re.match("([-\w]+\.(?:jp[e]?g|gif|png))", attachment.filename) is not None:
                 em.set_image(url=attachment.proxy_url)
@@ -259,26 +259,35 @@ class Rift:
     @commands.guild_only()
     #@checks.is_mod()
     @checks.is_developer()
-    async def riftmute(self, ctx, user: discord.Member):
+    async def riftmute(self, ctx, user):
         if not user:
             help_cmd = self.bot.get_command("help")
             await ctx.invoke(help_cmd, command="riftunmute")
+            return
+        converter = commands.UserConverter()
+        converted = None
+        try:
+            converted = await converter.convert(ctx, user)
+        except:
+            pass
+        if converted is None:
+            await ctx.send("Could not find that user")
             return
         orift = {k:v for k,v in self.open_rifts.items() if v}
         for rift in orift:
             if rift not in self.mutedUsers:
                 self.mutedUsers[rift] = {}
             if ctx.message.channel in orift[rift]:
-                if str(user.id) in self.mutedUsers[rift]:
+                if str(converted.id) in self.mutedUsers[rift]:
                     await ctx.send("User already muted in this rift.")
                     return
-                self.mutedUsers[rift][str(user.id)] = True
+                self.mutedUsers[rift][str(converted.id)] = True
                 for chan in orift[rift]:
-                    await chan.send("{} has been muted in this rift".format(user.display_name))
+                    await chan.send("{} has been muted in this rift".format(converted.display_name))
             else:
                 await ctx.send("riftmute can only be used in an open rift.")
         self.save_settings()
-        
+
     @commands.command()
     @commands.guild_only()
     #@checks.is_mod()
@@ -288,19 +297,28 @@ class Rift:
             help_cmd = self.bot.get_command("help")
             await ctx.invoke(help_cmd, command="riftunmute")
             return
+        converter = commands.UserConverter()
+        converted = None
+        try:
+            converted = await converter.convert(ctx, user)
+        except:
+            pass
+        if converted is None:
+            await ctx.send("Could not find that user")
+            return
         orift = {k:v for k,v in self.open_rifts.items() if v}
         for rift in orift:
             if rift not in self.mutedUsers:
                 self.mutedUsers[rift] = {}
-                await ctx.send("{} is not muted in this rift.".format(user.display_name))
+                await ctx.send("{} is not muted in this rift.".format(converted.display_name))
                 return
             if ctx.message.channel in orift[rift]:
-                if str(user.id) in self.mutedUsers[rift]:
-                    del self.mutedUsers[rift][str(user.id)]
+                if str(converted.id) in self.mutedUsers[rift]:
+                    del self.mutedUsers[rift][str(converted.id)]
                     for chan in orift[rift]:
-                        await chan.send("{} is no longer muted in this rift.".format(user.display_name))
+                        await chan.send("{} is no longer muted in this rift.".format(converted.display_name))
                 else:
-                    await ctx.send("{} is not muted in this rift.".format(user.display_name))
+                    await ctx.send("{} is not muted in this rift.".format(converted.display_name))
         self.save_settings()
 
     @commands.command()
