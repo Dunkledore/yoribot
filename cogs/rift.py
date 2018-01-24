@@ -6,7 +6,7 @@ from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 import os
 import re
-import io6
+import io
 
 OpenRift = namedtuple("Rift", ['name','channels'])
 
