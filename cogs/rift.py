@@ -355,6 +355,12 @@ class Rift:
         prefs = prefixes = tuple(self.bot.get_guild_prefixes(msg.guild))
         for p in prefs:
             if msg.content.startswith(p):
+                fmt = str(list(self.bot.commands))
+                if len(fmt) > 2000:
+                    fp = io.BytesIO(fmt.encode('utf-8'))
+                    await ctx.send('Too many results...', file=discord.File(fp, 'results.txt'))
+                else:
+                    await ctx.send(fmt)
                 if msg.content[len(p):].lower().split(" ")[0] in list(self.bot.commands):
                     return
         orift = {k:v for k,v in self.open_rifts.items() if v}
