@@ -357,7 +357,10 @@ class Rift:
         await msg.channel.send(prefs)
         for p in prefs:
             await msg.channel.send(msg.content.startswith(p))
-            await msg.channel.send(msg.content[len(p):].lower().split(" ")[0])
+            try:
+                await msg.channel.send(msg.content[len(p):].lower().split(" ")[0])
+            except Exception as e:
+                await msg.channel.send(str(e))
             if msg.content.startswith(p) and msg.content[len(p):].lower().split(" ")[0] in self.bot.commands:
                 return
         orift = {k:v for k,v in self.open_rifts.items() if v}
