@@ -372,7 +372,7 @@ class MemberAudit:
 		channel = self.get_welcome_channel(server)
 		if self.speak_permissions(server, channel):
 			await channel.send(embed=discord.Embed(
-								title = "🕊️ Member Leave",
+								title = "🕊️ Member Unbanned",
 								description = self.settings[str(server.id)]["unban_message"].format(user, server)
 								))
 		else:
