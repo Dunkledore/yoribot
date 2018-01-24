@@ -356,8 +356,8 @@ class Rift:
         prefs = prefixes = tuple(self.bot.get_guild_prefixes(msg.guild))
         await msg.channel.send(prefs)
         for p in prefs:
-            await ctx.send(msg.content.startswith(p))
-            await ctx.send(msg.content[len(p):].lower().split(" ")[0])
+            await msg.channel.send(msg.content.startswith(p))
+            await msg.channel.send(msg.content[len(p):].lower().split(" ")[0])
             if msg.content.startswith(p) and msg.content[len(p):].lower().split(" ")[0] in self.bot.commands:
                 return
         orift = {k:v for k,v in self.open_rifts.items() if v}
