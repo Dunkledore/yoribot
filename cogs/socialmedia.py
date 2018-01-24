@@ -92,7 +92,7 @@ class SocialMedia:
 			await asyncio.sleep(61)
 
 
-	@commands.commands()
+	@commands.command()
 	@commands.guild_only()
 	@checks.is_guild_owner()
 	async def twittersettings(self, ctx):

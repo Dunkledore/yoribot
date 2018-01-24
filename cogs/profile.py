@@ -14,6 +14,7 @@ import traceback
 import asyncpg
 import psutil
 import os
+from .utils.cooldown import Cooldown
 
 class Rank:
 
@@ -22,6 +23,7 @@ class Rank:
         self.loaded_settings = False
         self.message_data = dataIO.load_json("data/rank/message_data.json")
         self.ranks = None
+        self.cooldowns = {}
 
     def save_message_data(self):
         dataIO.save_json("data/rank/message_data.json", self.message_data)
@@ -206,6 +208,14 @@ class Rank:
 
         if not self.loaded_settings:
             await self.load_settings()
+
+        if ctx.author not in self.cooldowns:
+            cooldown = Cooldown(2,10)
+            self.cooldowns[ctx.author] = cooldown
+        else:
+            self.cooldowns[ctx.author].check_time()
+            if not self.cooldowns[ctx.author].is_allowed():
+                return
 
         if str(member.id) in self.message_data:
             if str(guild.id) in self.message_data[str(member.id)]:
