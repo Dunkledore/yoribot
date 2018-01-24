@@ -6,7 +6,7 @@ from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 import os
 import re
-import io
+import io6
 
 OpenRift = namedtuple("Rift", ['name','channels'])
 
@@ -359,9 +359,9 @@ class Rift:
                 fmt = str(list(self.bot.commands))
                 if len(fmt) > 2000:
                     fp = io.BytesIO(fmt.encode('utf-8'))
-                    await ctx.send('Too many results...', file=discord.File(fp, 'results.txt'))
+                    await msg.channel.send('Too many results...', file=discord.File(fp, 'results.txt'))
                 else:
-                    await ctx.send(fmt)
+                    await msg.channel.send(fmt)
                 if msg.content[len(p):].lower().split(" ")[0] in list(self.bot.commands):
                     return
         orift = {k:v for k,v in self.open_rifts.items() if v}
