@@ -290,9 +290,15 @@ class Rift:
             self.save_settings()
             await ctx.send("{} has been muted in all rifts connected to this channel".format(converted.display_name))
         else:
-            self.mutedUsers[rift][str(converted.id)] = True
-            self.save_settings()
-            await ctx.send("{} has been muted in the {} rift.".format(converted.display_name, rift))
+            if rift in self.open_rifts:
+                if ctx.message.channel not in self.open_rifts[rift]:
+                    await ctx.send("riftunmute must be used in the channel connected to the {} rift.".format(rift))
+                else:
+                    self.mutedUsers[rift][str(converted.id)] = True
+                    self.save_settings()
+                    await ctx.send("{} has been muted in the {} rift.".format(converted.display_name, rift))
+            else:
+                await ctx.send("{} rift not found.".format(rift))
 
     @commands.command()
     @commands.guild_only()
@@ -330,9 +336,15 @@ class Rift:
             self.save_settings()
             await ctx.send("{} has been unmuted in all rifts connected to this channel".format(converted.display_name))
         else:
-            del self.mutedUsers[rift][str(converted.id)]
-            self.save_settings()
-            await ctx.send("{} has been unmuted in the {} rift.".format(converted.display_name, rift))
+            if rift in self.open_rifts:
+                if ctx.message.channel not in self.open_rifts[rift]:
+                    await ctx.send("riftunmute must be used in the channel connected to the {} rift.".format(rift))
+                else:
+                    del self.mutedUsers[rift][str(converted.id)]
+                    self.save_settings()
+                    await ctx.send("{} has been unmuted in the {} rift.".format(converted.display_name, rift))
+            else:
+                await ctx.send("{} rift not found.".format(rift))
 
     @commands.command()
     @commands.guild_only()
