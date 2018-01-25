@@ -206,6 +206,8 @@ class Rank:
         member = ctx.author
         guild = ctx.guild
 
+        error = guild.this_will_error
+
         if not self.loaded_settings:
             await self.load_settings()
 
