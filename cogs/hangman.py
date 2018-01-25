@@ -49,51 +49,51 @@ class Game:
 				self.guessed_letters = []
 				self.fails = 0
 
-		def guess_letter(self, letter):
-				# No matter what, add this to guessed letters so we only have to do one check if a letter was already guessed
-				self.guessed_letters.append(letter)
-				if letter.lower() in self.word.lower():
-						# Replace every occurence of the guessed letter, with the correct letter
-						# Use the one in the word instead of letter, due to capitalization
-						self.blanks = "".join(
-								word_letter if letter.lower() == word_letter.lower() else self.blanks[i] for i, word_letter in
-								enumerate(self.word))
-						return True
-				else:
-						self.fails += 1
-						self.failed_letters.append(letter)
-						return False
+	def guess_letter(self, letter):
+			# No matter what, add this to guessed letters so we only have to do one check if a letter was already guessed
+			self.guessed_letters.append(letter)
+			if letter.lower() in self.word.lower():
+					# Replace every occurence of the guessed letter, with the correct letter
+					# Use the one in the word instead of letter, due to capitalization
+					self.blanks = "".join(
+							word_letter if letter.lower() == word_letter.lower() else self.blanks[i] for i, word_letter in
+							enumerate(self.word))
+					return True
+			else:
+					self.fails += 1
+					self.failed_letters.append(letter)
+					return False
 
-		def guess_word(self, word):
-				if word.lower() == self.word.lower():
-						self.blanks = self.word
-						return True
-				else:
-						self.fails += 1
-						return False
+	def guess_word(self, word):
+			if word.lower() == self.word.lower():
+					self.blanks = self.word
+					return True
+			else:
+					self.fails += 1
+					return False
 
-		def win(self):
-				return self.word == self.blanks
+	def win(self):
+			return self.word == self.blanks
 
-		def failed(self):
-				return self.fails == 7
+	def failed(self):
+			return self.fails == 7
 
-		def __str__(self):
-				# Here's our fancy formatting for the hangman picture
-				# Each position in the hangman picture is either a space, or part of the man, based on how many fails there are
-				man = "     ——\n"
-				man += "    |  |\n"
-				man += "    {}  |\n".format("o" if self.fails > 0 else " ")
-				man += "   {}{}{} |\n".format("/" if self.fails > 1 else " ", "|" if self.fails > 2 else " ",
-																			"\\" if self.fails > 3 else " ")
-				man += "    {}  |\n".format("|" if self.fails > 4 else " ")
-				man += "   {} {} |\n".format("/" if self.fails > 5 else " ", "\\" if self.fails > 6 else " ")
-				man += "       |\n"
-				man += "    ———————\n"
-				fmt = "```\n{}```".format(man)
-				# Then just add the guesses and the blanks to the string
-				fmt += "```\nGuesses: {}\nWord: {}```".format(", ".join(self.failed_letters), " ".join(self.blanks))
-				return fmt
+	def __str__(self):
+			# Here's our fancy formatting for the hangman picture
+			# Each position in the hangman picture is either a space, or part of the man, based on how many fails there are
+			man = "     ——\n"
+			man += "    |  |\n"
+			man += "    {}  |\n".format("o" if self.fails > 0 else " ")
+			man += "   {}{}{} |\n".format("/" if self.fails > 1 else " ", "|" if self.fails > 2 else " ",
+																		"\\" if self.fails > 3 else " ")
+			man += "    {}  |\n".format("|" if self.fails > 4 else " ")
+			man += "   {} {} |\n".format("/" if self.fails > 5 else " ", "\\" if self.fails > 6 else " ")
+			man += "       |\n"
+			man += "    ———————\n"
+			fmt = "```\n{}```".format(man)
+			# Then just add the guesses and the blanks to the string
+			fmt += "```\nGuesses: {}\nWord: {}```".format(", ".join(self.failed_letters), " ".join(self.blanks))
+			return fmt
 
 
 class Hangman:
