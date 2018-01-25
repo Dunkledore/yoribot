@@ -210,7 +210,7 @@ class Rank:
             await self.load_settings()
 
         if ctx.author not in self.cooldowns:
-            cooldown = Cooldown(2,10)
+            cooldown = Cooldown(3,60)
             self.cooldowns[ctx.author] = cooldown
         else:
             cooldown = self.cooldowns[ctx.author]
