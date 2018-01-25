@@ -214,7 +214,7 @@ class Rank:
             self.cooldowns[ctx.author] = cooldown
         else:
             cooldown = self.cooldowns[ctx.author]
-            cooldown.check_time()
+            cooldown.check_reset()
             if not cooldown.is_allowed():
                 return
             cooldown.increment()
