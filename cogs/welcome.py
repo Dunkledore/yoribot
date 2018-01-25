@@ -103,7 +103,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def welcometext(self, ctx, *, text):
-		"""Set a non-embed welcome message - this can be combined with the embed so you can use mentions."""
+		"""Set a non-embed welcome message - this can be combined with the embed so you can use mentions. Use {0.mention} to mention the user joining and {0.name} to simply say their name] """
 
 		insertquery = "INSERT INTO welcome_config (guild_id, text_message) VALUES ($1, $2)"
 		alterquery = "UPDATE welcome_config SET text_message = $2 WHERE guild_id = $1"
