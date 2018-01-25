@@ -22,7 +22,7 @@ class Cooldown:
     		self.reset_current_amount()
     		self.last_check = datetime.utcnow()
 
-    def incremenet(self):
+    def increment(self):
     	self.current_amount += 1
 
 
