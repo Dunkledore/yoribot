@@ -17,9 +17,12 @@ class Cooldown:
     def reset_current_amount(self):
     	self.current_amount = 0
 
-    def check_time(self):
+    def check_reset(self):
     	if self.last_check + timedelta(seconds=self.per_seconds) < datetime.utcnow():
     		self.reset_current_amount()
     		self.last_check = datetime.utcnow()
+
+    def incremenet(self):
+    	self.current_amount += 1
 
 
