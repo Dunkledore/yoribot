@@ -40,7 +40,8 @@ phrases = ["Eat My Hat", "Par For the Course", "Raining Cats and Dogs", "Roll Wi
 
 
 class Game:
-		def __init__(self, word):
+	
+	def __init__(self, word):
 				self.word = word
 				# This converts everything but spaces to a blank
 				self.blanks = "".join(letter if not re.search("[a-zA-Z0-9]", letter) else "_" for letter in word)
@@ -99,93 +100,93 @@ class Hangman:
 	"""
 	Start a game of hangman where members can guess letters or even the phrase - be careful though - you don't want to guess wrong too many times!
 	"""
-		def __init__(self, bot):
-				self.bot = bot
-				self.games = {}
+	def __init__(self, bot):
+			self.bot = bot
+			self.games = {}
 
-		def start(self, word, ctx):
-				# Create a new game, then save it as the guild's game
-				game = Game(word)
-				self.games[ctx.message.guild.id] = game
-				return game
+	def start(self, word, ctx):
+			# Create a new game, then save it as the guild's game
+			game = Game(word)
+			self.games[ctx.message.guild.id] = game
+			return game
 
-		@commands.group(invoke_without_command=True)
-		@commands.guild_only()
-		async def guess(self, ctx, *, guess):
-				"""Makes a guess towards the guild's currently running hangman game
+	@commands.group(invoke_without_command=True)
+	@commands.guild_only()
+	async def guess(self, ctx, *, guess):
+			"""Makes a guess towards the guild's currently running hangman game
 
-				EXAMPLE: !hangman e (or) !hangman The Phrase!
-				RESULT: Hopefully a win!"""
-				game = self.games.get(ctx.message.guild.id)
-				if not game:
-						await ctx.send("There are currently no hangman games running!")
-						return
+			EXAMPLE: !hangman e (or) !hangman The Phrase!
+			RESULT: Hopefully a win!"""
+			game = self.games.get(ctx.message.guild.id)
+			if not game:
+					await ctx.send("There are currently no hangman games running!")
+					return
 
-				# Check if we are guessing a letter or a phrase. Only one letter can be guessed at a time
-				# So if anything more than one was provided, we're guessing at the phrase
-				# We're creating a fmt variable, so that we can  add a message for if a guess was correct or not
-				# And also add a message for a loss/win
-				if len(guess) == 1:
-						if guess in game.guessed_letters:
-								await ctx.send("That letter has already been guessed!")
-								# Return here as we don't want to count this as a failure
-								return
-						if game.guess_letter(guess):
-								fmt = "That's correct!"
-						else:
-								fmt = "Sorry, that letter is not in the phrase..."
-				else:
-						if game.guess_word(guess):
-								fmt = "That's correct!"
-						else:
-								fmt = "Sorry that's not the correct phrase..."
+			# Check if we are guessing a letter or a phrase. Only one letter can be guessed at a time
+			# So if anything more than one was provided, we're guessing at the phrase
+			# We're creating a fmt variable, so that we can  add a message for if a guess was correct or not
+			# And also add a message for a loss/win
+			if len(guess) == 1:
+					if guess in game.guessed_letters:
+							await ctx.send("That letter has already been guessed!")
+							# Return here as we don't want to count this as a failure
+							return
+					if game.guess_letter(guess):
+							fmt = "That's correct!"
+					else:
+							fmt = "Sorry, that letter is not in the phrase..."
+			else:
+					if game.guess_word(guess):
+							fmt = "That's correct!"
+					else:
+							fmt = "Sorry that's not the correct phrase..."
 
-				if game.win():
-						fmt += " You guys got it! The word was `{}`".format(game.word)
-						del self.games[ctx.message.guild.id]
-				elif game.failed():
-						fmt += " Sorry, you guys failed...the word was `{}`".format(game.word)
-						del self.games[ctx.message.guild.id]
-				else:
-						fmt += str(game)
+			if game.win():
+					fmt += " You guys got it! The word was `{}`".format(game.word)
+					del self.games[ctx.message.guild.id]
+			elif game.failed():
+					fmt += " Sorry, you guys failed...the word was `{}`".format(game.word)
+					del self.games[ctx.message.guild.id]
+			else:
+					fmt += str(game)
 
-				await ctx.send(fmt)
+			await ctx.send(fmt)
 
-		@commands.command()
-		@commands.guild_only()
-		async def starthangman(self, ctx):
-				"""This is used to create a new hangman game
-				A predefined phrase will be randomly chosen as the phrase to use
+	@commands.command()
+	@commands.guild_only()
+	async def starthangman(self, ctx):
+			"""This is used to create a new hangman game
+			A predefined phrase will be randomly chosen as the phrase to use
 
-				EXAMPLE: !hangman start
-				RESULT: This is pretty obvious .-."""
+			EXAMPLE: !hangman start
+			RESULT: This is pretty obvious .-."""
 
-				# Only have one hangman game per guild, since anyone
-				# In a guild (except the creator) can guess towards the current game
-				if self.games.get(ctx.message.guild.id) is not None:
-						await ctx.send("Sorry but only one Hangman game can be running per guild!")
-						return
+			# Only have one hangman game per guild, since anyone
+			# In a guild (except the creator) can guess towards the current game
+			if self.games.get(ctx.message.guild.id) is not None:
+					await ctx.send("Sorry but only one Hangman game can be running per guild!")
+					return
 
-				game = self.start(random.SystemRandom().choice(phrases), ctx)
-				# Let them know the game has started, then print the current game so that the blanks are shown
-				await ctx.send(
-						"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game)))
+			game = self.start(random.SystemRandom().choice(phrases), ctx)
+			# Let them know the game has started, then print the current game so that the blanks are shown
+			await ctx.send(
+					"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game)))
 
-		@commands.command()
-		@commands.guild_only()
-		async def stophangman(self, ctx):
-				"""Force stops a game of hangman
-				This should realistically only be used in a situation like one player leaves
-				Hopefully a moderator will not abuse it, but there's not much we can do to avoid that
+	@commands.command()
+	@commands.guild_only()
+	async def stophangman(self, ctx):
+			"""Force stops a game of hangman
+			This should realistically only be used in a situation like one player leaves
+			Hopefully a moderator will not abuse it, but there's not much we can do to avoid that
 
-				EXAMPLE: !hangman stop
-				RESULT: No more men being hung"""
-				if self.games.get(ctx.message.guild.id) is None:
-						await ctx.send("There are no Hangman games running on this guild!")
-						return
+			EXAMPLE: !hangman stop
+			RESULT: No more men being hung"""
+			if self.games.get(ctx.message.guild.id) is None:
+					await ctx.send("There are no Hangman games running on this guild!")
+					return
 
-				del self.games[ctx.message.guild.id]
-				await ctx.send("I have just stopped the game of Hangman, a new should be able to be started now!")
+			del self.games[ctx.message.guild.id]
+			await ctx.send("I have just stopped the game of Hangman, a new should be able to be started now!")
 
 
 def setup(bot):

@@ -35,21 +35,6 @@ class Pokedex:
         self.bot = bot
         self.version = "2.4.02"
 
-    @commands.group(pass_context=True)
-    async def pokehelp(self, ctx):
-        """This is the list of Pokémon queries you can perform."""
-        help_cmd = self.bot.get_command('help')
-        await ctx.invoke(help_cmd, command='pokedex')
-
-    @pokemon.command(name="version", pass_context=False)
-    async def _version_pokemon(self, ctx):
-        """Display running version of Pokedex
-
-            Returns:
-                Text ouput of your installed version of Pokedex
-        """
-        await ctx.send("You are running pokedex version {}".format(self.version))
-
     @commands.command(aliases=["dex"])
     async def pokedex(self, ctx, *, pokemon: str):
         """Search for information on a Pokémon
@@ -93,7 +78,7 @@ class Pokedex:
 
             await ctx.send(embed=embed)
 
-    @pokemon.command(name="moves", pass_context=False)
+    @commands.command(name="pokemoves")
     async def _moves_pokemon(self, ctx, *, poke: str):
         """Search for a Pokémon's moveset
 
@@ -126,7 +111,7 @@ class Pokedex:
 
             await ctx.send(embed=embed)
 
-    @pokemon.command(name="item")
+    @commands.command(name="pokeitem")
     async def _item_pokemon(self, *, item_name: str):
         """Search for an item in the Pokémon universe
 
@@ -155,7 +140,7 @@ class Pokedex:
             embed.add_field(name="Effect", value=item.effect)
             await ctx.send(embed=embed)
 
-    @pokemon.command(name="tmset")
+    @commands.command(name="poketmset")
     async def _tmset_pokemon(self, ctx, generation: str, *, poke: str):
         """Get a Pokémon's learnset by generation(1-7).
 
@@ -200,7 +185,7 @@ class Pokedex:
         except AttributeError:
             await ctx.send("Could not locate a Pokémon with that name.")
 
-    @pokemon.command(name="location")
+    @commands.command(name="pokelocation")
     async def _location_pokemon(self, ctx, *, poke: str):
         """Get a Pokémon's catch location.
         Example !pokedex location voltorb
