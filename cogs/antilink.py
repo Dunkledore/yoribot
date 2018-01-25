@@ -27,12 +27,16 @@ class Antilink:
         self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
 
 
+
+
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
     async def antilinkownerdm(self, ctx):
         """Enable or disable notifications to the server owner via DM when a link is shared in the server."""
         serverid = ctx.message.guild.id
+        if str(serverid) not in self.json:        
+            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         if self.json[str(serverid)]['ownerdm'] is True:
             self.json[str(serverid)]['ownerdm'] = False
             await ctx.send('Owner DM now disabled')
@@ -47,6 +51,8 @@ class Antilink:
     async def toggleantilink(self, ctx):
         """Enable or disable anti-link entirely (if disabled, members can share links to other Discord servers)."""
         serverid = ctx.message.guild.id
+        if str(serverid) not in self.json:        
+            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         if self.json[str(serverid)]['toggle'] is True:
             self.json[str(serverid)]['toggle'] = False
             await ctx.send('Antilink is now disabled')
@@ -61,6 +67,8 @@ class Antilink:
     async def antilinkmessage(self, ctx, *, text):
         """Customize the message sent to the person attempting to share a Discord link in your server."""
         serverid = ctx.message.guild.id
+        if str(serverid) not in self.json:        
+            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         self.json[str(serverid)]['message'] = text
         dataIO.save_json(self.location, self.json)
         await ctx.send('Message is set')
@@ -73,6 +81,8 @@ class Antilink:
     async def antilinktoggledm(self, ctx):
         """ Enable or Disable the anti-link DM"""
         serverid = ctx.message.guild.id
+        if str(serverid) not in self.json:        
+            self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         if self.json[str(serverid)]['dm'] is False:
             self.json[str(serverid)]['dm'] = True
             await ctx.send('Enabled DMs on removal of invite links')
