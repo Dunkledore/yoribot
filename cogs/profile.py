@@ -213,9 +213,12 @@ class Rank:
             cooldown = Cooldown(2,10)
             self.cooldowns[ctx.author] = cooldown
         else:
-            self.cooldowns[ctx.author].check_time()
+            coodown = self.cooldowns[ctx.author]
+            cooldown.check_time()
             if not self.cooldowns[ctx.author].is_allowed():
                 return
+            cooldown.increment()
+
 
         if str(member.id) in self.message_data:
             if str(guild.id) in self.message_data[str(member.id)]:
