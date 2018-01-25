@@ -154,6 +154,12 @@ class YoriBot(commands.AutoShardedBot):
             return
         await self.process_commands(message)
 
+    async def on_error(self, event, *args, **kwargs):
+        stats = self.get_cog('stats')
+        webhook = await stats.webhook()
+        await webhook.send('error')
+        hook = await self.webhook()
+
     async def close(self):
         await super().close()
         await self.session.close()
