@@ -156,7 +156,9 @@ class YoriBot(commands.AutoShardedBot):
     async def close(self):
         await super().close()
         await self.session.close()
-
+    async def set_presence(self):
+        await self.change_presence(game=discord.Game(name='my game'))
+        
     def run(self):
         super().run(config.token, reconnect=True)
 
