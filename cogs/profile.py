@@ -639,7 +639,7 @@ def check_files():
 def setup(bot):
     check_folders()
     check_files()
-    rank = Rank(bot)
+    rank = Rank(bot, rank)
     bot.add_cog(rank)
     bot.loop.create_task(rank.saveloop())
     bot.add_cog(Profile(bot, rank))
