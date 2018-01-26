@@ -44,7 +44,7 @@ class RandomStatus:
         Shows current list if empty."""
         current_status = ctx.message.guild.me.status
         if statuses == () or "" in statuses:
-            await self.bot.whisper("Current statuses: " + " | ".join(self.statuses))
+            await ctx.send("Current statuses: " + " | ".join(self.statuses))
             return
         self.statuses = list(statuses)
         fileIO("data/rndstatus/statuses.json", "save", self.statuses)
