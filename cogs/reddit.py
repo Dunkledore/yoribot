@@ -206,7 +206,7 @@ class Reddit:
                         self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
                 else:
                     '''We have a set of cached posts to work with'''
-                    if self.max_item_idx[ctx.message.guild][stx.message.author] > self.next_item_idx[ctx.message.guild][ctx.message.author]:
+                    if self.max_item_idx[ctx.message.guild][ctx.message.author] > self.next_item_idx[ctx.message.guild][ctx.message.author]:
                         item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
                         if item["over_18"] and not ctx.message.channel.is_nsfw():
                             '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
