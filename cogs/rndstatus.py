@@ -74,7 +74,7 @@ class RandomStatus:
                     new_game = self.random_status(message)
                     await self.bot.change_presence(game=discord.Game(name=new_game), status=current_status)
 
-            if message.author.id != self.bot.user.id:
+            if str(message.author.id) != str(self.bot.user.id):
                 if abs(self.last_change - int(time.perf_counter())) >= self.settings["DELAY"]:
                     self.last_change = int(time.perf_counter())
                     new_game = self.random_status(message)
