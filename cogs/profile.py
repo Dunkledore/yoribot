@@ -335,7 +335,7 @@ class Profile:
 
     @commands.command()
     @commands.guild_only()
-    async def profile(self, ctx, user: discord.Member=None):
+    async def profile(self, ctx, *, user: discord.Member=None):
         """Displays the profile of a mentioned user or the caller if no mention is provided"""
 
         if user == ctx.bot.user:
