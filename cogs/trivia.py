@@ -160,15 +160,9 @@ class Trivia:
             em.set_author(name="OOPS!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @commands.command()
+    @commands.command(aliases=['triviastop', 'stoptrivia'])
     @commands.guild_only()
     async def triviastop(self, ctx):
-        """Stops the current trivia session"""
-        session = self.get_trivia_by_channel(ctx.message.channel)
-        await session.end_game(ctx)
-
-    @commands.command(name="stop")
-    async def stoptrivia(self, ctx):
         """Stops the current trivia session"""
         session = self.get_trivia_by_channel(ctx.message.channel)
         await session.end_game(ctx)
