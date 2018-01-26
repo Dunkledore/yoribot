@@ -50,7 +50,7 @@ class Trivia:
             await ctx.send(embed=em)
 
     @triviaset.command()
-    async def triviamaxscore(self, ctx, score : int=-1):
+    async def maxscore(self, ctx, score : int=-1):
         """Set the max score for trivia (the game will end once the score is met)"""
         guild = ctx.message.guild
         if score < 0:
@@ -74,7 +74,7 @@ class Trivia:
             await ctx.send(embed=em)
 
     @triviaset.command()
-    async def triviatimelimit(self, ctx, seconds : int=-1):
+    async def timelimit(self, ctx, seconds : int=-1):
         """Sets a time limit for each trivia question before the next one is asked"""
         guild = ctx.message.guild
         if seconds < 0:
@@ -98,7 +98,7 @@ class Trivia:
             await ctx.send(embed=em)
 
     @triviaset.command()
-    async def triviabotplays(self, ctx):
+    async def botplays(self, ctx):
         """Sets if the bot will play as part of the trivia game"""
         guild = ctx.message.guild
         if self.settings[guild.id]["BOT_PLAYS"]:
@@ -160,7 +160,7 @@ class Trivia:
             em.set_author(name="OOPS!", icon_url="http://bit.ly/2qlsl5I")
             await ctx.send(embed=em)
 
-    @commands.command(aliases=['triviastop', 'stoptrivia'])
+    @commands.command(aliases=['stoptrivia'])
     @commands.guild_only()
     async def triviastop(self, ctx):
         """Stops the current trivia session"""
