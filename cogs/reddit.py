@@ -19,6 +19,7 @@ class Reddit:
         self.settings_file = 'data/reddit/reddit.json'
         self.settings = dataIO.load_json(self.settings_file)
         self.next_item_idx = {}
+        self.max_item_idx = {}
         self.current_subreddit = {}
         self.current_mode = {}
         self._nextCursor = {}
@@ -47,6 +48,9 @@ class Reddit:
     async def _getAndCachePosts(self, ctx, url):
         res = requests.get(url, headers = { 'User-agent': 'Yoribot/reddit', 'Authorization': 'Bearer {}'.format(self.token["access_token"]) })
         if res.status_code != 200:
+            if res.status_code == 403:
+                await ctx.send("That subreddit is invite only I can't get posts from it.")
+                return False
             print("Error {}: Cannot connect to reddit.com :cry:".format(res.status_code))
             await ctx.send("Error {}: Cannot connect to reddit.com :cry:".format(res.status_code))
             return False
@@ -54,12 +58,15 @@ class Reddit:
         resJson = json.loads(res.text)
 
         if "data" in resJson:
+            if "dist" in resJson["data"]:
+                self.max_item_idx[ctx.message.guild][ctx.message.author] = resJson["data"]["dist"]-1
             if "children" in resJson["data"]:
                 if len(resJson["data"]["children"]) == 0:
                     await ctx.send("Huh... I couldn't find that subreddit.")
                     return False
                 else:
-                    self._nextCursor[ctx.message.guild][ctx.message.author] = resJson["data"]["after"]
+                    if "after" in resJson["data"]:
+                        self._nextCursor[ctx.message.guild][ctx.message.author] = resJson["data"]["after"]
                     self._cache[ctx.message.guild][ctx.message.author] = resJson["data"]["children"]
                     self.next_item_idx[ctx.message.guild][ctx.message.author] = 0
                     return True
@@ -135,7 +142,7 @@ class Reddit:
         return
 
     @commands.command(name="reddit")
-    async def _reddit(self, ctx, subreddit: str = "$$next_item", mode = "top"):
+    async def _reddit(self, ctx, subreddit: str = "$$next_item", mode = "hot"):
         '''Gets posts from a provided subreddit on reddit.'''
         if ctx.message.guild not in self.current_subreddit:
             self.current_subreddit[ctx.message.guild] = {}
@@ -167,7 +174,7 @@ class Reddit:
             r = await self._ensureAuth(ctx)
             baseUrl = "https://oauth.reddit.com/r/"
 
-            if mode not in self.modes:
+            if mode and mode not in self.modes:
                 '''Oops someone entered a mode that doesn't exist'''
                 await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
                 return
@@ -194,7 +201,7 @@ class Reddit:
                         self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
                 else:
                     '''We have a set of cached posts to work with'''
-                    if len(self._cache[ctx.message.guild][ctx.message.author]) > self.next_item_idx[ctx.message.guild][ctx.message.author]+1:
+                    if len(self._cache[ctx.message.guild][ctx.message.author]) >= self.next_item_idx[ctx.message.guild][ctx.message.author]+1 and self.max_item_idx[ctx.message.guild][ctx.message.author] == 5:
                         item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
                         if item["over_18"] and not ctx.message.channel.is_nsfw():
                             '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
@@ -207,7 +214,7 @@ class Reddit:
             else:
                 self.current_mode[ctx.message.guild][ctx.message.author] = mode
                 self.current_subreddit[ctx.message.guild][ctx.message.author] = subreddit.lower()
-                url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + mode + ".json?limit=5"
+                url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + mode if mode else "" + ".json?limit=5"
                 t = await self._getAndCachePosts(ctx, url)
                 if not t:
                     '''_getAndCachePosts returns False if there is an error or if the subreddit could not be found.'''
