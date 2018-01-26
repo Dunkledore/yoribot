@@ -50,8 +50,8 @@ class Trivia:
             await ctx.send(embed=em)
 
     @commands.command()
-    """Set the max score for trivia (the game will end once the score is met)"""
     async def triviamaxscore(self, ctx, score : int=-1):
+        """Set the max score for trivia (the game will end once the score is met)"""
         guild = ctx.message.guild
         if score < 0:
             settings = self.settings[guild.id]
