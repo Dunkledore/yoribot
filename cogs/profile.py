@@ -23,6 +23,7 @@ class Rank:
         self.loaded_settings = False
         self.message_data = dataIO.load_json("data/rank/message_data.json")
         self.ranks = None
+        self.rank = rank
         self.cooldowns = {}
 
     def save_message_data(self):
