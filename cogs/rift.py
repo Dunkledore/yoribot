@@ -15,7 +15,7 @@ def formatembed(m):
     avatar = m.author.avatar_url
     author_name = m.author.nick+" ("+m.author.name+")" if m.author.nick else m.author.name
     em.set_author(name=author_name,icon_url=avatar)
-    footer = "- sent from #"+m.channel.name+" in "+m.guild.name
+    footer = "- sent by " + m.author.id + " from #"+m.channel.name+" in "+m.guild.name
     if len(m.attachments) == 1:
         for attachment in m.attachments:
             if re.match(r"([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))", attachment.filename, re.IGNORECASE) is not None:
