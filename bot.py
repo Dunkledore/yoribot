@@ -66,7 +66,6 @@ initial_extensions = (
     'cogs.streamrole',
     'cogs.tags',
     'cogs.terminal',
-    'cogs.trivia',
     'cogs.utilities',
     'cogs.welcome',
     'cogs.whoplays',
