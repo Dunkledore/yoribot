@@ -49,7 +49,7 @@ class Trivia:
             em.set_author(name="Trivia Settings Help", icon_url="http://bit.ly/2qrhjLu")
             await ctx.send(embed=em)
 
-    @commands.command()
+    @triviaset.command()
     async def triviamaxscore(self, ctx, score : int=-1):
         """Set the max score for trivia (the game will end once the score is met)"""
         guild = ctx.message.guild
