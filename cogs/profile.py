@@ -251,8 +251,8 @@ class Rank:
                 em.add_field(name='Rank', value=role.mention)
         if str(ctx.author.id) in self.message_data:
             member = ctx.author
-            await ctx.send(self.message_data[str(ctx.author.id)][str(ctx.guild.id)])
-            em.set_author(name=member.name + "Rank and XP", icon_url=ctx.message.guild.icon_url)
+            em.set_author(name=member.name + " Rank and XP", icon_url=ctx.message.guild.icon_url)
+            em.set_thumbnail(url=member.avatar_url)
             await ctx.send(embed=em)
         else:
             await ctx.send("0")
