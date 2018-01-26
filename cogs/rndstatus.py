@@ -22,7 +22,16 @@ class RandomStatus:
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def rndstatus(self, ctx):
+        """Sets Red's random statuses
+
+        Accepts multiple statuses.
+        Must be enclosed in double quotes in case of multiple words.
+        Example:
+        !rndstatus set \"Tomb Raider II\" \"Transistor\" \"with your heart.\"
+        Shows current list if empty."""
         if ctx.invoked_subcommand is None:
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='rndstatus')
 
     @rndstatus.command(name="set", pass_context=True, no_pm=True)
     async def _set(self, ctx, *statuses : str):
