@@ -241,7 +241,7 @@ class Rank:
         if not self.loaded_settings:
             await self.load_settings()
         xp = self.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.message_data else "1"
-        embed.add_field(name='XP', value =xp)
+        em.add_field(name='XP', value =xp)
         guild_ranks = [rank for rank in self.ranks if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
         if guild_ranks:
             sorted_guild_ranks = list(reversed(sorted(guild_ranks, key=lambda x: x["xp_required"])))
@@ -252,7 +252,6 @@ class Rank:
             await ctx.send(self.message_data[str(ctx.author.id)][str(ctx.guild.id)])
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name=member.name + "Rank and XP", icon_url=ctx.message.guild.icon_url)
-            em.add_field(name='Experience Points', value=self.message_data[str(ctx.author.id)][str(ctx.guild.id)])
             await ctx.send(embed=em)
         else:
             await ctx.send("0")
