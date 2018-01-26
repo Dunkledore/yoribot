@@ -247,7 +247,7 @@ class Rank:
             sorted_guild_ranks = list(reversed(sorted(guild_ranks, key=lambda x: x["xp_required"])))
             role = discord.utils.get(ctx.guild.roles, id=sorted_guild_ranks[0]["role_id"])
             if role:
-                embed.add_field(name='Rank', value=role.mention)
+                em.add_field(name='Rank', value=role.mention)
         if str(ctx.author.id) in self.message_data:
             await ctx.send(self.message_data[str(ctx.author.id)][str(ctx.guild.id)])
             em = discord.Embed(color=ctx.message.author.color, description=" ")
