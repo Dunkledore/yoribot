@@ -168,7 +168,10 @@ class Reddit:
             self.next_item_idx[ctx.message.guild] = {}
         if ctx.message.author not in self.next_item_idx[ctx.message.guild]:
             self.next_item_idx[ctx.message.guild][ctx.message.author] = 0
-
+        if ctx.message.guild not in self.max_item_idx:
+            self.max_item_idx[ctx.message.guild] = {}
+        if ctx.message.author not in self.next_item_idx[ctx.message.guild]:
+            self.max_item_idx[ctx.message.guild][ctx.message.author] = 0
         if self.settings["REDDIT_API_KEY"]:
             '''Ensure we are authenticated with Reddit'''
             r = await self._ensureAuth(ctx)
