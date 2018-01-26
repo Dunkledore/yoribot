@@ -59,7 +59,7 @@ class Reddit:
 
         if "data" in resJson:
             if "dist" in resJson["data"]:
-                self.max_item_idx[ctx.message.guild][ctx.message.author] = resJson["data"]["dist"]-1
+                self.max_item_idx[ctx.message.guild][ctx.message.author] = resJson["data"]["dist"]
             if "children" in resJson["data"]:
                 if len(resJson["data"]["children"]) == 0:
                     await ctx.send("Huh... I couldn't find that subreddit.")
@@ -186,8 +186,10 @@ class Reddit:
                     '''No subreddit selected and someone used the command with no arguments'''
                     help_cmd = self.bot.get_command("help")
                     await ctx.invoke(help_cmd, command="reddit")
-                elif self.next_item_idx[ctx.message.guild][ctx.message.author] == 5:
+                elif self.next_item_idx[ctx.message.guild][ctx.message.author] == self.max_item_idx[ctx.message.guild][ctx.message.author]:
                     '''Get and Cache the next 5 items from reddit'''
+                    if not self._nextCursor[ctx.message.guild][ctx.message.author]:
+                        await ctx.sent("No more posts found")
                     url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + self.current_mode[ctx.message.guild][ctx.message.author] + ".json?limit=5&after=" + self._nextCursor[ctx.message.guild][ctx.message.author]
                     t = await self._getAndCachePosts(ctx, url)
                     if not t:
@@ -204,7 +206,7 @@ class Reddit:
                         self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
                 else:
                     '''We have a set of cached posts to work with'''
-                    if len(self._cache[ctx.message.guild][ctx.message.author]) >= self.next_item_idx[ctx.message.guild][ctx.message.author]+1 and self.max_item_idx[ctx.message.guild][ctx.message.author] == 5:
+                    if self.max_item_idx[ctx.message.guild][stx.message.author] > self.next_item_idx[ctx.message.guild][ctx.message.author]:
                         item = self._cache[ctx.message.guild][ctx.message.author][self.next_item_idx[ctx.message.guild][ctx.message.author]]["data"]
                         if item["over_18"] and not ctx.message.channel.is_nsfw():
                             '''Self-explanatory. Won't post reddit posts marked as NSFW in an SFW channel'''
