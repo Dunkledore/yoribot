@@ -189,7 +189,8 @@ class Reddit:
                 elif self.next_item_idx[ctx.message.guild][ctx.message.author] == self.max_item_idx[ctx.message.guild][ctx.message.author]:
                     '''Get and Cache the next 5 items from reddit'''
                     if not self._nextCursor[ctx.message.guild][ctx.message.author]:
-                        await ctx.sent("No more posts found")
+                        await ctx.send("No more posts found")
+                        return
                     url = baseUrl + self.current_subreddit[ctx.message.guild][ctx.message.author] + "/" + self.current_mode[ctx.message.guild][ctx.message.author] + ".json?limit=5&after=" + self._nextCursor[ctx.message.guild][ctx.message.author]
                     t = await self._getAndCachePosts(ctx, url)
                     if not t:
