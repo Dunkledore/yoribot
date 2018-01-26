@@ -176,7 +176,7 @@ class Trivia:
         lists = [l.replace(".txt", "") for l in lists]
 
         if lists:
-            msg = "\n ".join(sorted(lists))
+            msg = "\n".join(sorted(lists))
             msg = box(msg, lang="diff")
             if len(lists) < 100:
                 em = discord.Embed(color=ctx.message.author.color, description=msg)
