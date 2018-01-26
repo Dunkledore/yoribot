@@ -18,7 +18,7 @@ from .utils.cooldown import Cooldown
 
 class Rank:
 
-    def __init__(self, bot : commands.Bot):
+    def __init__(self, bot : commands.Bot, rank):
         self.bot = bot
         self.loaded_settings = False
         self.message_data = dataIO.load_json("data/rank/message_data.json")
