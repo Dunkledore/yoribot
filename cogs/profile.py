@@ -240,6 +240,7 @@ class Rank:
         """Checks your XP in the current server- how are you doing?"""
         if not self.loaded_settings:
             await self.load_settings()
+        em = discord.Embed(color=ctx.message.author.color, description=" ")
         xp = self.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.message_data else "1"
         em.add_field(name='XP', value =xp)
         guild_ranks = [rank for rank in self.ranks if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
@@ -250,7 +251,6 @@ class Rank:
                 em.add_field(name='Rank', value=role.mention)
         if str(ctx.author.id) in self.message_data:
             await ctx.send(self.message_data[str(ctx.author.id)][str(ctx.guild.id)])
-            em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name=member.name + "Rank and XP", icon_url=ctx.message.guild.icon_url)
             await ctx.send(embed=em)
         else:
