@@ -411,17 +411,18 @@ class Rift:
             if msg.channel in orift[rift]:
                 if str(msg.author.id) in self.mutedUsers[rift]:
                     return
-                message_group = [msg]
+                cache_message_group = [msg]
                 for chan in orift[rift]:
-                    message = None
+                    cache_message = None
                     if chan != msg.channel:
                         if self.embeds[chan]:
-                            message = await chan.send(embed=formatembed(msg))
+                            cache_message = await chan.send(embed=formatembed(msg))
                         else:
                             message = escape(msg.content, mass_mentions=True)
-                            message = await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
-                    message_group.append(message)
-                self.message_cache.append(message_group)
+                            cache_message = await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
+                    if cache_message:
+                        cache_message_group.append(cache_message)
+                self.message_cache.append(cache_message_group)
 
     async def update_descriptions(self):
         if not self.ready:
