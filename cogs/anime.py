@@ -38,7 +38,7 @@ class AnimeList:
     @commands.guild_only()
     async def anime(self, ctx, *, title):
         """Search for your favorite anime on myanimelist.net"""
-        if ctx.invoked_subcommand is None:
+        if title is None:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='anime')
         cmd = "anime"
@@ -48,7 +48,7 @@ class AnimeList:
     @commands.guild_only()
     async def manga(self, ctx, *, title):
         """Search for your favorite manga on myanimelist.net"""
-        if ctx.invoked_subcommand is None:
+        if title is None:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='manga')
         cmd = "manga"
