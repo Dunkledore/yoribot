@@ -290,7 +290,7 @@ class Config:
         await self._bulk_ignore_entries(ctx, ctx.guild.text_channels)
         await ctx.send('Successfully blocking all channels here.')
 
-    @commands.command(name='clear')
+    @commands.command()
     @checks.is_mod()
     async def ignoreclear(self, ctx):
         """Clears all the currently set ignores.
