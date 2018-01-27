@@ -10,3 +10,4 @@ cogs/admin.py
 cogs/admin.py
 .idea/yoribot.iml
 .vscode
+*.gif
