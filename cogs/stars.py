@@ -1106,9 +1106,9 @@ class Stars:
         else:
             await self.star_member_stats(ctx, member)
 
-    @star.command(name='random')
+    @commands.command()
     @requires_starboard()
-    async def star_random(self, ctx):
+    async def starrandom(self, ctx):
         """Shows a random starred message."""
 
         query = """SELECT bot_message_id
