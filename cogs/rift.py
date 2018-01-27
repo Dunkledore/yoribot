@@ -286,7 +286,8 @@ class Rift:
                         return
                     self.mutedUsers[_rift][str(converted.id)] = True
                 else:
-                    await ctx.send("riftmute can only be used in an open rift.")
+                    '''Ignore rifts where the channel isn't connected to it'''
+                    continue
             self.save_settings()
             await ctx.send("{} has been muted in all rifts connected to this channel".format(converted.display_name))
         else:
@@ -332,7 +333,8 @@ class Rift:
                     else:
                         await ctx.send("{} is not muted in this rift.".format(converted.display_name))
                 else:
-                    await ctx.send("riftunmute can only be used in an open rift.")
+                    '''Ignore rifts where the channel isn't connected to it'''
+                    continue
             self.save_settings()
             await ctx.send("{} has been unmuted in all rifts connected to this channel".format(converted.display_name))
         else:
