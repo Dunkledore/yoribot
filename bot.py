@@ -62,7 +62,6 @@ initial_extensions = (
     'cogs.socialmedia',
     'cogs.stars',
     'cogs.stats',
-    'cogs.steam',
     'cogs.streamrole',
     'cogs.tags',
     'cogs.terminal',
