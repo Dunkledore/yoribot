@@ -34,7 +34,7 @@ class terminal:
             dataIO.save_json(abspath(dirname(argv[0])) + '/data/terminal/settings.json', self.settings)
 
     @commands.command(hidden=True)
-    @checks.is_owner()
+    @checks.is_developer()
     async def cmddebug(self, ctx):
         """This command is for debugging only"""
         try:
@@ -82,7 +82,7 @@ class terminal:
             await ctx.send(page)
 
     @commands.group(hidden=True)
-    @checks.is_owner()
+    @checks.is_developer()
     async def system(self, ctx):
         """Returns system infromation"""
         await ctx.send('{} is running on {} {} using {}'
@@ -90,7 +90,7 @@ class terminal:
                                  uname()[0], uname()[2], python_version()))
 
     @commands.command()
-    @checks.is_owner()
+    @checks.is_developer()
     async def cmd(self, ctx):
         """Starts up the prompt"""
         if ctx.message.channel.id in self.sessions:
@@ -116,7 +116,7 @@ class terminal:
                        ' `exit()` or `quit` to exit.'.format(self.prefix.replace("`", "\\`")))
 
     @commands.group()
-    @checks.is_owner()
+    @checks.is_developer()
     async def cmdsettings(self, ctx):
         """Settings for terminal"""
         if ctx.invoked_subcommand is None:
@@ -125,7 +125,7 @@ class terminal:
                 await ctx.send(page)
 
     @cmdsettings.group(name="customcom")
-    @checks.is_owner()
+    @checks.is_developer()
     async def _cc(self, ctx):
         """Custom commands for terminal"""
         await ctx.send('This feature is WIP')
@@ -137,7 +137,7 @@ class terminal:
                 """
 
     @cmdsettings.command(name="os")
-    @checks.is_owner()
+    @checks.is_developer()
     async def _os(self, ctx, os: str = None):
         """Set the prompt type of terminal to emulate another Operatingsystem.
         these 'emulations' arent 100% accurate on other Operatingsystems"""
@@ -166,7 +166,7 @@ class terminal:
         await ctx.send('Changed prompt type to {} '.format(self.cos.replace("`", "\\`")))
 
     @cmdsettings.command(name="prefix")
-    @checks.is_owner()
+    @checks.is_developer()
     async def _prefix(self, ctx, prefix: str = None):
         """Set the prefix for the Terminal"""
 
@@ -183,7 +183,7 @@ class terminal:
         await ctx.send('Changed prefix to {} '.format(self.prefix.replace("`", "\\`")))
 
     @commands.command(name="sendlogs")
-    @checks.is_owner()
+    @checks.is_developer()
     async def enablelogs(self, ctx):
         """Sets a channel system logs should be sent to."""
         self.settings["logs"]["enabled"] = True
@@ -192,7 +192,7 @@ class terminal:
         await ctx.send("System logs will now be sent to this channel.")
 
     @commands.command(name="nologs")
-    @checks.is_owner()
+    @checks.is_developer()
     async def disablelogs(self, ctx):
         """Disables sending system logs to a channel."""
         self.settings["logs"]["enabled"] = False
@@ -201,7 +201,7 @@ class terminal:
         await ctx.send("System logs will no longer be sent.")
 
     @commands.command(name="lastlogs")
-    @checks.is_owner()
+    @checks.is_developer()
     async def sendlatestlogs(self,ctx):
         """Sends the last 10 log items."""
         try:
