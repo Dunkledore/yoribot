@@ -60,6 +60,11 @@ class Admin:
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
         for guild in self.bot.guilds:
+            em = discord.Embed(color=ctx.message.author.color, description=" ")
+            em.set_author(name=guild.name)
+            em.add_field(name='Owner Name', value=guild.owner.name)
+            em.set_footer(text=str(guild.id))
+            await ctx.send(embed=em)
             string += "**ID: **"+ str(guild.id) + " **Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
 
         await ctx.send(string)
