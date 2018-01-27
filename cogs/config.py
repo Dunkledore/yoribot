@@ -227,13 +227,8 @@ class Config:
         if isinstance(error, commands.BadArgument):
             await ctx.send(error)
 
-    @commands.group()
-    async def config(self, ctx):
-        """Handles the server or channel permission configuration for the bot."""
-        if ctx.invoked_subcommand is None:
-            await ctx.show_help('config')
 
-    @config.group(invoke_without_command=True, aliases=['plonk'])
+    @commands.command(invoke_without_command=True)
     @checks.is_mod()
     async def ignore(self, ctx, *entities: ChannelOrMember):
         """Ignores text channels or members from using the bot.
@@ -255,10 +250,10 @@ class Config:
 
         await ctx.send(ctx.tick(True))
 
-    @ignore.command(name='list')
+    @commands.command()
     @checks.is_mod()
     @commands.cooldown(2.0, 60.0, commands.BucketType.guild)
-    async def ignore_list(self, ctx):
+    async def ignorelist(self, ctx):
         """Tells you what channels or members are currently ignored in this server.
 
         To use this command you must have Manage Server permissions.
@@ -281,9 +276,9 @@ class Config:
         except Exception as e:
             await ctx.send(str(e))
 
-    @ignore.command(name='all')
+    @commands.command()
     @checks.is_mod()
-    async def _all(self, ctx):
+    async def ignoreall(self, ctx):
         """Ignores every channel in the server from being processed.
 
         This works by adding every channel that the server currently has into
@@ -295,9 +290,9 @@ class Config:
         await self._bulk_ignore_entries(ctx, ctx.guild.text_channels)
         await ctx.send('Successfully blocking all channels here.')
 
-    @ignore.command(name='clear')
+    @commands.command(name='clear')
     @checks.is_mod()
-    async def ignore_clear(self, ctx):
+    async def ignoreclear(self, ctx):
         """Clears all the currently set ignores.
 
         To use this command you must have Manage Server permissions.
@@ -307,7 +302,7 @@ class Config:
         await ctx.db.execute(query, ctx.guild.id)
         await ctx.send('Successfully cleared all ignores.')
 
-    @config.group(pass_context=True, invoke_without_command=True, aliases=['unplonk'])
+    @commands.command(pass_context=True, invoke_without_command=True)
     @checks.is_mod()
     async def unignore(self, ctx, *entities: ChannelOrMember):
         """Allows channels or members to use the bot again.
@@ -327,23 +322,6 @@ class Config:
 
         await ctx.send(ctx.tick(True))
 
-    @unignore.command(name='all')
-    @checks.is_mod()
-    async def unignore_all(self, ctx):
-        """An alias for ignore clear command."""
-        await ctx.invoke(self.ignore_clear)
-
-    @config.group(aliases=['guild'])
-    @checks.is_mod()
-    async def server(self, ctx):
-        """Handles the server-specific permissions."""
-        pass
-
-    @config.group()
-    @checks.is_mod()
-    async def channel(self, ctx):
-        """Handles the channel-specific permissions."""
-        pass
 
     async def command_toggle(self, connection, guild_id, channel_id, name, *, whitelist=True):
         # clear the cache
@@ -364,8 +342,9 @@ class Config:
             msg = 'This command is already disabled.' if not whitelist else 'This command is already explicitly enabled.'
             raise RuntimeError('This command is already disabled.')
 
-    @channel.command(name='disable')
-    async def channel_disable(self, ctx, *, command: CommandName):
+    @commands.command()
+    @checks.is_mod()
+    async def channeldisable(self, ctx, *, command: CommandName):
         """Disables a command for this channel."""
 
         try:
@@ -375,8 +354,9 @@ class Config:
         else:
             await ctx.send('Command successfully disabled for this channel.')
 
-    @channel.command(name='enable')
-    async def channel_enable(self, ctx, *, command: CommandName):
+    @commands.command()
+    @checks.is_mod()
+    async def channelenable(self, ctx, *, command: CommandName):
         """Enables a command for this channel."""
 
         try:
@@ -386,8 +366,9 @@ class Config:
         else:
             await ctx.send('Command successfully enabled for this channel.')
 
-    @server.command(name='disable')
-    async def server_disable(self, ctx, *, command: CommandName):
+    @commands.command()
+    @checks.is_mod()
+    async def serverdisable(self, ctx, *, command: CommandName):
         """Disables a command for this server."""
 
         try:
@@ -397,8 +378,9 @@ class Config:
         else:
             await ctx.send('Command successfully disabled for this server')
 
-    @server.command(name='enable')
-    async def server_enable(self, ctx, *, command: CommandName):
+    @commands.command()
+    @checks.is_mod()
+    async def serverenable(self, ctx, *, command: CommandName):
         """Enables a command for this server."""
 
         try:
@@ -408,17 +390,6 @@ class Config:
         else:
             await ctx.send('Command successfully enabled for this server.')
 
-    @config.command(name='enable')
-    @checks.is_mod()
-    async def config_enable(self, ctx, *, command: CommandName):
-        """Enables a command for this server."""
-        await ctx.invoke(self.server_enable, command=command)
-
-    @config.command(name='disable')
-    @checks.is_mod()
-    async def config_disable(self, ctx, *, command: CommandName):
-        """Disables a command for this server."""
-        await ctx.invoke(self.server_disable, command=command)
 
 def setup(bot):
     bot.add_cog(Config(bot))
