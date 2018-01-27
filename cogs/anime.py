@@ -48,7 +48,7 @@ class AnimeList:
     @commands.guild_only()
     async def manga(self, ctx, *, title):
         """Search for your favorite manga on myanimelist.net"""
-        if title is None:
+        if not title:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='manga')
         cmd = "manga"
