@@ -54,7 +54,6 @@ class Pages:
             ('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', self.last_page),
             ('\N{INPUT SYMBOL FOR NUMBERS}', self.numbered_page ),
             ('\N{BLACK SQUARE FOR STOP}', self.stop_pages),
-            ('\N{INFORMATION SOURCE}', self.show_help),
         ]
 
         if ctx.guild is not None:
@@ -105,7 +104,6 @@ class Pages:
             return
 
         p.append('')
-        p.append('Confused? React with \N{INFORMATION SOURCE} for more info.')
         self.embed.description = '\n'.join(p)
         self.message = await self.channel.send(embed=self.embed)
         for (reaction, _) in self.reaction_emojis:
@@ -170,26 +168,6 @@ class Pages:
             await self.channel.delete_messages(to_delete)
         except Exception:
             pass
-
-    async def show_help(self):
-        """shows this message"""
-        messages = ['Navigating the help menu\n']
-        messages.append('This interactively allows you to see pages of text by navigating with ' \
-                        'reactions. They are as follows:\n')
-
-        for (emoji, func) in self.reaction_emojis:
-            messages.append(f'{emoji} {func.__doc__}')
-
-        self.embed.description = '\n'.join(messages)
-        self.embed.clear_fields()
-        self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
-        await self.message.edit(embed=self.embed)
-
-        async def go_back_to_current_page():
-            await asyncio.sleep(60.0)
-            await self.show_current_page()
-
-        self.bot.loop.create_task(go_back_to_current_page())
 
     async def stop_pages(self):
         """stops the interactive pagination session"""
@@ -333,7 +311,6 @@ def _command_signature(cmd):
 class HelpPaginator(Pages):
     def __init__(self, ctx, entries, *, per_page=4):
         super().__init__(ctx, entries=entries, per_page=per_page)
-        self.reaction_emojis.append(('\N{WHITE QUESTION MARK ORNAMENT}', self.show_bot_help))
         self.total = len(entries)
 
     @classmethod
@@ -461,48 +438,6 @@ class HelpPaginator(Pages):
 
             await self.message.add_reaction(reaction)
 
-    async def show_help(self):
-        """shows this message"""
-
-        self.embed.title = 'Help Navigation'
-        self.embed.description = 'This bot uses reactions to navigate through the command'
-
-        messages = [f'{emoji} {func.__doc__}' for emoji, func in self.reaction_emojis]
-        self.embed.clear_fields()
-        self.embed.add_field(name='What are these reactions for?', value='\n'.join(messages), inline=False)
-
-        self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
-        await self.message.edit(embed=self.embed)
-
-        async def go_back_to_current_page():
-            await asyncio.sleep(30.0)
-            await self.show_current_page()
-
-        self.bot.loop.create_task(go_back_to_current_page())
-
-    async def show_bot_help(self):
-        """shows how to use the bot"""
-
-        self.embed.title = 'Using the bot'
-        self.embed.description = 'Hello! Welcome to the help page.'
-        self.embed.clear_fields()
-
-        entries = (
-            ('<argument>', 'This means the argument is __**required**__.'),
-            ('[argument]', 'This means the argument is __**optional**__.'),
-            ('[A|B]', 'This means the it can be __**either A or B**__.'),
-            ('[argument...]', 'This means you can have multiple arguments.\n' \
-                              'Now that you know the basics, it should be noted that...\n' \
-                              '__**You do not type in the brackets!**__')
-        )
-
-        self.embed.add_field(name='How do I use this bot?', value='Reading the bot signature is pretty simple.')
-
-        for name, value in entries:
-            self.embed.add_field(name=name, value=value, inline=False)
-
-        self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
-        await self.message.edit(embed=self.embed)
 
         async def go_back_to_current_page():
             await asyncio.sleep(30.0)
