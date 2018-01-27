@@ -205,7 +205,7 @@ class terminal:
     async def sendlatestlogs(self,ctx):
         """Sends the last 10 log items."""
         try:
-            output = Popen("journalctl -u yato -q -n", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[0].decode("utf_8")
+            output = Popen("journalctl -u yori-dev -q -n", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[0].decode("utf_8")
         except:
             return
         await ctx.send(f"```py\n{output}\n```")
@@ -218,7 +218,7 @@ class terminal:
                 if chan is not None:
                     try:
                         output = \
-                        Popen('journalctl -u yato -q -S "-10s"', shell=True, stdout=PIPE, stderr=STDOUT).communicate()[
+                        Popen('journalctl -u yori-dev -q -S "-10s"', shell=True, stdout=PIPE, stderr=STDOUT).communicate()[
                             0].decode("utf_8")
                     except:
                         return
