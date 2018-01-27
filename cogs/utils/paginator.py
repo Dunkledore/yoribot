@@ -411,7 +411,7 @@ class HelpPaginator(Pages):
             value ='**Yato Bot**'
             #self.embed.add_field(name='Support', value=value, inline=False)
 
-        self.embed.set_footer(text=f'Use ``{self.prefix}help command`` for more info on a specific command.')
+        self.embed.set_footer(text=f'Visit http://yoribot.com/commands for a full list.')
 
         signature = _command_signature
 
