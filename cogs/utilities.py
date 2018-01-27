@@ -357,4 +357,4 @@ def check_folders():
         os.makedirs("data/chatchart")
 
 def setup(bot):
-    bot.add_cog(Meta(bot))
+    bot.add_cog(Utilities(bot))
