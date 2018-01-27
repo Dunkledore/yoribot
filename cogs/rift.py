@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from collections import namedtuple
 from cogs.utils.chat_formatting import escape, pagify
+from cogs.utils.maxlist import MaxList
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 import os
@@ -32,6 +33,7 @@ class Rift:
         self.embeds = {}
         self.ready = False
         self.mutedUsers = {}
+        self.message_cache = MaxList(300)
 
     async def load_settings(self):
         await self.bot.wait_until_ready()
@@ -372,6 +374,26 @@ class Rift:
         self.save_settings()
         await self.update_descriptions()
 
+    async def on_message_delete(message):
+        if not self.ready:
+            await self.load_settings()
+        in_rift = False
+        for k, v in self.open_rifts.items():
+            if message.channel in v:
+                in_rift = True
+
+        if not in_rift:
+            return
+
+        for group in self.message_cache:
+            if message in group:
+                group.remove(message)
+                for msg in group:
+                    await msg.delete()
+
+
+
+
     async def on_message(self, msg):
         if not self.ready:
             await self.load_settings()
@@ -389,19 +411,17 @@ class Rift:
             if msg.channel in orift[rift]:
                 if str(msg.author.id) in self.mutedUsers[rift]:
                     return
+                message_group = [msg]
                 for chan in orift[rift]:
+                    message = None
                     if chan != msg.channel:
-                        #try:
                         if self.embeds[chan]:
-                            await chan.send(embed=formatembed(msg))
+                            message = await chan.send(embed=formatembed(msg))
                         else:
                             message = escape(msg.content, mass_mentions=True)
-                            await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
-                        #except Exception as baseerr:
-                        #    try:
-                        #        await msg.channel.send("Couldn't send your message." + baseerr)
-                        #    except:
-                        #        print("Couldn't send the message. An exception occured: ",baseerr)
+                            message = await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
+                    message_group.append(message)
+                self.message_cache.append(messages)
 
     async def update_descriptions(self):
         if not self.ready:
