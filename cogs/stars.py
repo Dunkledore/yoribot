@@ -93,15 +93,9 @@ class StarboardConfig:
         return guild and guild.get_channel(self.channel_id)
 
 class Stars:
-    """A starboard to upvote posts obviously.
-
-    There are two ways to make use of this feature, the first is
-    via reactions, react to a message with \N{WHITE MEDIUM STAR} and
-    the bot will automatically add (or remove) it to the starboard.
-
-    The second way is via Developer Mode. Enable it under Settings >
-    Appearance > Developer Mode and then you get access to Copy ID
-    and using the star/unstar commands.
+    """A starboard to upvote posts via reactions, react to a message
+    with \N{WHITE MEDIUM STAR} and the bot will automatically add 
+    (or remove) it to the designated channel.
     """
 
     def __init__(self, bot):
@@ -535,7 +529,6 @@ class Stars:
         and makes it into the server's "starboard". If no
         name is passed in then it defaults to "starboard".
 
-        You must have Manage Server permission to use this.
         """
 
         # bypass the cache just in case someone used the star
@@ -589,7 +582,7 @@ class Stars:
             self.get_starboard.invalidate(self, ctx.guild.id)
             await ctx.send(f'\N{GLOWING STAR} Starboard created at {channel.mention}.')
 
-    @commands.group(invoke_without_command=True, ignore_extra=False)
+    @commands.command(invoke_without_command=True, ignore_extra=False)
     @commands.guild_only()
     async def star(self, ctx, message: MessageID):
         """Stars a message via message ID.
@@ -626,10 +619,10 @@ class Stars:
         else:
             await ctx.message.delete()
 
-    @star.command(name='clean')
+    @commands.command()
     @checks.is_mod()
     @requires_starboard()
-    async def star_clean(self, ctx, stars=1):
+    async def starclean(self, ctx, stars=1):
         """Cleans the starboard
 
         This removes messages in the starboard that only have less
@@ -674,9 +667,9 @@ class Stars:
         else:
             await ctx.send(f'\N{PUT LITTER IN ITS PLACE SYMBOL} Deleted {Plural(message=len(to_delete))}.')
 
-    @star.command(name='show')
+    @commands.command()
     @requires_starboard()
-    async def star_show(self, ctx, message: MessageID):
+    async def starshow(self, ctx, message: MessageID):
         """Shows a starred message via its ID.
 
         To get the ID of a message you should right click on the
@@ -727,9 +720,9 @@ class Stars:
         content, embed = self.get_emoji_message(msg, record['Stars'])
         await ctx.send(content, embed=embed)
 
-    @star.command(name='who')
+    @commands.command()
     @requires_starboard()
-    async def star_who(self, ctx, message: MessageID):
+    async def starwho(self, ctx, message: MessageID):
         """Show who starred a message.
 
         The ID can either be the starred message ID
@@ -762,10 +755,10 @@ class Stars:
         except Exception as e:
             await ctx.send(e)
 
-    @star.command(name='migrate')
+    @commands.command()
     @requires_starboard()
     @checks.is_mod()
-    async def star_migrate(self, ctx):
+    async def starmigrate(self, ctx):
         """Migrates the starboard to the newest version.
 
         If you don't do this, the starboard will be locked
@@ -1103,9 +1096,9 @@ class Stars:
 
         await ctx.send(embed=e)
 
-    @star.command(name='stats')
+    @commands.command()
     @requires_starboard()
-    async def star_stats(self, ctx, *, member: discord.Member = None):
+    async def starstats(self, ctx, *, member: discord.Member = None):
         """Shows statistics on the starboard usage of the server or a member."""
 
         if member is None:
@@ -1146,10 +1139,10 @@ class Stars:
         else:
             await ctx.send(message.content)
 
-    @star.command(name='lock')
+    @commands.command()
     @checks.is_mod()
     @requires_starboard()
-    async def star_lock(self, ctx):
+    async def starlock(self, ctx):
         """Locks the starboard from being processed.
 
         This is a moderation tool that allows you to temporarily
@@ -1173,10 +1166,10 @@ class Stars:
 
         await ctx.send('Starboard is now locked.')
 
-    @star.command(name='unlock')
+    @commands.command()
     @checks.is_mod()
     @requires_starboard()
-    async def star_unlock(self, ctx):
+    async def starunlock(self, ctx):
         """Unlocks the starboard for re-processing.
 
         To use this command you need Manage Server permission.
@@ -1191,10 +1184,10 @@ class Stars:
 
         await ctx.send('Starboard is now unlocked.')
 
-    @star.command(name='limit', aliases=['threshold'])
+    @commands.command()
     @checks.is_mod()
     @requires_starboard()
-    async def star_limit(self, ctx, stars: int):
+    async def starlimit(self, ctx, stars: int):
         """Sets the minimum number of stars required to show up.
 
         When this limit is set, messages must have this number
@@ -1220,10 +1213,10 @@ class Stars:
 
         await ctx.send(f'Messages now require {Plural(star=stars)} to show up in the starboard.')
 
-    @star.command(name='age')
+    @commands.command()
     @checks.is_mod()
     @requires_starboard()
-    async def star_age(self, ctx, number: int, units='days'):
+    async def starage(self, ctx, number: int, units='days'):
         """Sets the maximum age of a message valid for starring.
 
         By default, the maximum age is 7 days. Any message older
@@ -1271,7 +1264,7 @@ class Stars:
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def star_announce(self, ctx, *, message):
+    async def starannounce(self, ctx, *, message):
         """Announce stuff to every starboard."""
         query = "SELECT id, channel_id FROM starboard;"
         records = await ctx.db.fetch(query)
