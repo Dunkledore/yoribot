@@ -374,7 +374,7 @@ class Rift:
         self.save_settings()
         await self.update_descriptions()
 
-    async def on_message_delete(message):
+    async def on_message_delete(self, message):
         if not self.ready:
             await self.load_settings()
         in_rift = False
@@ -421,7 +421,7 @@ class Rift:
                             message = escape(msg.content, mass_mentions=True)
                             message = await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
                     message_group.append(message)
-                self.message_cache.append(messages)
+                self.message_cache.append(messages_group)
 
     async def update_descriptions(self):
         if not self.ready:
