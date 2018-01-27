@@ -68,7 +68,6 @@ initial_extensions = (
     'cogs.terminal',
     'cogs.utilities',
     'cogs.welcome',
-    'cogs.whoplays',
 )
 
 def _prefix_callable(bot, msg):

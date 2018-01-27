@@ -24,7 +24,7 @@ class Prefix(commands.Converter):
             raise commands.BadArgument('That is a reserved prefix already in use.')
         return argument
 
-class Meta:
+class Utilities:
     """Commands for utilities related to Discord or the Bot itself."""
 
     def __init__(self, bot):
