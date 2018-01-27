@@ -133,6 +133,7 @@ class YoriBot(commands.AutoShardedBot):
     async def on_ready(self):
         if not hasattr(self, 'uptime'):
             self.uptime = datetime.datetime.utcnow()
+        await self.change_presence(game=discord.Game(name='yoribot.com'))
 
         print(f'Ready: {self.user} (ID: {self.user.id})')
 
@@ -157,6 +158,8 @@ class YoriBot(commands.AutoShardedBot):
         await super().close()
         await self.session.close()
 
+
+        
     def run(self):
         super().run(config.token, reconnect=True)
 
