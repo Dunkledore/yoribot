@@ -20,6 +20,10 @@ class Discomegle:
     @commands.guild_only()
     async def discomegle(self, ctx):
         """Chat with other discord people anonymously!"""
+        if ctx.invoked_subcommand is None:
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='discomegle')
+
         user = ctx.message.author
         channel = ctx.message.channel
         server = user.guild
