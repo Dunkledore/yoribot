@@ -421,7 +421,7 @@ class Rift:
                             message = escape(msg.content, mass_mentions=True)
                             message = await chan.send("**Rift Message** from {} in #{} on {}: \n\n{}".format((msg.author.nick+" ("+msg.author.name+")" if msg.author.nick else msg.author.name), msg.channel.name, msg.guild.name,message))
                     message_group.append(message)
-                self.message_cache.append(messages_group)
+                self.message_cache.append(message_group)
 
     async def update_descriptions(self):
         if not self.ready:
