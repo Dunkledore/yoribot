@@ -286,9 +286,10 @@ class Rift:
                         return
                     self.mutedUsers[_rift][str(converted.id)] = True
                 else:
-                    await ctx.send("riftmute can only be used in an open rift.")
+                    '''Ignore rifts where the channel isn't connected to it'''
+                    continue
             self.save_settings()
-            await ctx.send("{} has been muted in all rifts connected to this channel".format(converted.display_name))
+            await ctx.send("{} has been muted in all rifts connected to this channel, if any".format(converted.display_name))
         else:
             if rift in self.open_rifts:
                 if ctx.message.channel not in self.open_rifts[rift]:
