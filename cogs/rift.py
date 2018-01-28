@@ -385,12 +385,11 @@ class Rift:
         if not in_rift:
             return
 
-        await message.channel.send(str(self.message_cache))
-
         for group in self.message_cache:
             if message in group:
                 group.remove(message)
                 for msg in group:
+                    await ctx.send(msg.content)
                     await msg.delete()
 
 
