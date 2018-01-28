@@ -389,7 +389,7 @@ class Rift:
             if message in group:
                 group.remove(message)
                 for msg in group:
-                    await message.channel.send(msg.content)
+                    await message.channel.send(msg.content or msg.embed[0].title)
                     await msg.delete()
 
 
