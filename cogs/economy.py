@@ -119,23 +119,23 @@ class Economy():
 
 		await ctx.send("This will reset the banks for everyone in this server. Are you sure you want to do this? (yes/no)")
 
-        def check(m):
-            try:
-                if m.author != ctx.message.author:
-                    return False
-                if m.channel != ctx.message.channel:
-                    return False
-                return True
-            except:
-                return False
+	   def check(m):
+		  try:
+			 if m.author != ctx.message.author:
+				return False
+			 if m.channel != ctx.message.channel:
+				return False
+			 return True
+		  except:
+			 return False
 
-        choice = await self.bot.wait_for('message', check=check, timeout=30.0)
+	   choice = await self.bot.wait_for('message', check=check, timeout=30.0)
 
-        if choice.content in ["yes","Yes"]:
-        	#empty banks
-            await ctx.send(embed=bankmanagerembed("I have emptied everyone's bank account"))
-        else:
-            await ctx.send(embed=bankmanagerembed("I will not empty everyone's bank account"))
+	   if choice.content in ["yes","Yes"]:
+	   	#empty banks
+		  await ctx.send(embed=bankmanagerembed("I have emptied everyone's bank account"))
+	   else:
+		  await ctx.send(embed=bankmanagerembed("I will not empty everyone's bank account"))
 
 	#User section of commands
 	@commands.command()
