@@ -45,9 +45,9 @@ class Mail2Discord():
         imap_creds = [imapaddress,username,password]
 
         try:
-            await ctx.db.execute(insertquery, str(ctx.guild.id), imap_creds)
+            await ctx.db.execute(insertquery, ctx.guild.id, imap_creds)
         except asyncpg.UniqueViolationError:
-            await ctx.db.execute(alterquery, str(ctx.guild.id), imap_creds)
+            await ctx.db.execute(alterquery, ctx.guild.id, imap_creds)
         await ctx.author.send('Details Saved')
 
     @commands.command()
