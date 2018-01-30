@@ -167,7 +167,7 @@ class Economy():
 
 
 
-class Shop()
+class Shop():
 	"""Shop related commands"""
 
 	def __init__(bot, economy):
