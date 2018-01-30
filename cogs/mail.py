@@ -30,12 +30,12 @@ class Mail2Discord():
 
         await ctx.author.send("Please email username. Usually your full email address.")
         username = await self.bot.wait_for('message', check=check, timeout=30.0)
-        username = consumer_secret.content
+        username = username.content
         await asyncio.sleep(1)
 
         await ctx.author.send("Please send your password")
         password = await self.bot.wait_for('message', check=check, timeout=30.0)
-        password = access_token.content
+        password = password.content
         await asyncio.sleep(1)
 
         insertquery = "INSERT INTO mail_config (guild_id, imap) VALUES ($1, $2)"
