@@ -210,32 +210,16 @@ class Shop():
 	@commands.command()
 	@commands.guild_only()
 	async def buy(self, ctx, item):
-	"""Buys an item from the shop"""
+		"""Buys an item from the shop"""
 
 	@commands.command()
 	@commands.guild_only()
 	async def sell(self, ctx, item, person_buying : discord.Member):
-	"""Sells an item to another member. They must accept the transaction"""
+		"""Sells an item to another member. They must accept the transaction"""
 
 	@commands.command()
 	@commands.guild_only()
 	async def owneditems(self, ctx):
-	"""Shows all of the items you own."""
+		"""Shows all of the items you own."""
 
 	async def on_reaction_add(reaction):
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
