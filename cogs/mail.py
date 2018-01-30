@@ -111,6 +111,20 @@ class Mail2Discord():
                 await self.send_message(_pmowner, _result[1][:2000])
             asyncio.sleep(120)
 
+
+
+def check_folders():
+    if not os.path.exists("data/mail"):
+        print("Creating data/mail folder...")
+        os.makedirs("data/mail")
+
+def check_files():
+    if not os.path.isfile("data/mail/settings.json"):
+        print("Creating empty settings.json...")
+        dataIO.save_json("data/mail/settings.json", {})
+
 def setup(bot):
+    check_folders()
+    check_files()
     bot.add_cog(Mail2Discord(bot))
 
