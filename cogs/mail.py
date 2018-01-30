@@ -1,4 +1,5 @@
 import discord, asyncio, imaplib, json, os, colorama, threading, time
+import asyncpg
 colorama.init()
 from .utils import checks
 from .utils.dataIO import dataIO
@@ -45,7 +46,7 @@ class Mail2Discord():
 
         try:
             await ctx.db.execute(insertquery, str(ctx.guild.id), imap_creds)
-        except
+        except asyncpg.UniqueViolationError:
             await ctx.db.execute(alterquery, str(ctx.guild.id), imap_creds)
         await ctx.author.send('Details Saved')
 
