@@ -117,7 +117,7 @@ class Economy():
 	async def clearbanks(self, ctx):
 		"""Clears the banks of every member of the guild"""
 
-		        await ctx.send("This will reset the banks for everyone in this server. Are you sure you want to do this? (yes/no)")
+		await ctx.send("This will reset the banks for everyone in this server. Are you sure you want to do this? (yes/no)")
 
         def check(m):
             try:
