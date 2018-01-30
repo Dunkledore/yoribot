@@ -51,7 +51,7 @@ class Mail2Discord():
     @commands.command()
     @checks.is_admin()
     async def fetchmail(self, ctx):
-        mails = get_mails(ctx.guild.id)
+        mails = await get_mails(ctx.guild.id)
 
         await ctx.send(_mails[1][:2000])
 
@@ -62,7 +62,7 @@ class Mail2Discord():
         _c = color if color else ""
         print(_c+("{:!^50}" if center else "{}").format(text))
 
-    def get_mails(self, guild_id ):
+    async def get_mails(self, guild_id ):
 
         query = "SELECT guild_id, imap_creds FROM social_config WHERE guild_id = $1"
         results = await self.bot.pool.fetch(query, guild_id)
