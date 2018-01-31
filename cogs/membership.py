@@ -259,9 +259,9 @@ class MemberAudit:
 		for guild in self.bot.guilds:
 			try:
 				bans = await guild.bans()
-			for banentry in bans:
-				if member == banentry[1]:
-					bannedin += guild.name + '\n'
+				for banentry in bans:
+					if member == banentry[1]:
+						bannedin += guild.name + '\n'
 			except Exception as e:
 				pass
 
