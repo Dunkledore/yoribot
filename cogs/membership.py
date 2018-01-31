@@ -257,10 +257,13 @@ class MemberAudit:
 			return 
 		bannedin= ""
 		for guild in self.bot.guilds:
-			bans = await guild.bans()
+			try:
+				bans = await guild.bans()
 			for banentry in bans:
 				if member == banentry[1]:
 					bannedin += guild.name + '\n'
+			except Exception as e:
+				pass
 
 		created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
 		if created < 30 or bannedin:
