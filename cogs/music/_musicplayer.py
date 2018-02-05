@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 youtube_dl.utils.bug_reports_message = lambda: ''
 
 ytdl_format_options = {
-    'format': 'best',
+    'format': 'bestaudio',
     'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'noplaylist': True,
