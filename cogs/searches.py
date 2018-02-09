@@ -430,7 +430,7 @@ class Searches:
                 except ValueError:
                     return False
             def check(m):
-                return m.author == ctx.message_author
+                return m.author.id == ctx.message.author.id
             answer = await self.bot.wait_for('message',timeout=15, check=check)
 
             if answer:
