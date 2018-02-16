@@ -17,7 +17,8 @@ default_settings = {
 	"on": False,
 	"channel": None,
 	"raid": False,
-	"auto_raid" : False
+	"auto_raid" : False,
+	"message_on" : False
 }
 
 
@@ -37,6 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
+
 
 	@commands.command(hidden=True)
 	@commands.guild_only()
@@ -207,6 +209,23 @@ class MemberAudit:
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
+	async def messageinfotoggle(self, ctx: commands.Context):
+		"""Turns message events on or off."""
+
+		self.checksettings(ctx)
+		server = ctx.message.guild
+		self.settings[str(server.id)]["message_on"] = not self.settings[str(server.id)]["message_on"]
+		if self.settings[str(server.id)]["message_on"]:
+			await ctx.send(
+				cf.info("Message events will now be announced."))
+		else:
+			await ctx.send(
+				cf.info("Message events will no longer be announced."))
+		dataIO.save_json(self.settings_path, self.settings)
+
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_admin()
 	async def auditchannel(self, ctx: commands.Context,
 					   channel: discord.TextChannel=None):
 		"""Sets the text channel to which the announcements will be sent.
@@ -215,7 +234,6 @@ class MemberAudit:
 		 """
 		
 		self.checksettings(ctx)
-		await ctx.send('Command Invoked')
 		server = ctx.message.guild
 
 		if not channel:
@@ -233,6 +251,33 @@ class MemberAudit:
 		await channel.send(  ("{0.mention}, " +
 									 cf.info(
 										 "I will now send membership"
+										 " announcements to {1.mention}."))
+									.format(ctx.message.author, channel))
+
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_admin()
+	async def messageinfochannel(self, ctx: commands.Context,
+					   channel: discord.TextChannel):
+		"""Sets the text channel to which the message announcements will be sent.
+
+		 """
+		self.checksettings(ctx)
+		server = ctx.message.guild
+
+
+		if not self.speak_permissions(server, channel):
+			await ctx.send(
+				"I don't have permission to send messages in {0.mention}."
+				.format(channel))
+			return
+
+		self.settings[str(server.id)]["channel"] = str(channel.id)
+		dataIO.save_json(self.settings_path, self.settings)
+		channel = self.get_info_channel(server)
+		await channel.send(  ("{0.mention}, " +
+									 cf.info(
+										 "I will now send message"
 										 " announcements to {1.mention}."))
 									.format(ctx.message.author, channel))
 
@@ -326,8 +371,12 @@ class MemberAudit:
 			self.settings[server.id] = deepcopy(default_settings)
 			self.settings[server.id]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
+
+		if not self.settings[server.id]["message_on"]:
+			return
+
 		
-		ch = self.get_welcome_channel(server)
+		ch = self.get_info_channel(server)
 		if message.channel.is_nsfw():
 			return
 		if ch is None:
@@ -456,6 +505,9 @@ class MemberAudit:
 
 	def get_welcome_channel(self, guild: discord.Guild):
 		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
+
+	def get_info_channel(self, guild: discord.Guild):
+		return guild.get_channel(int(self.settings[str(guild.id)]["message_info_channel"]))
 
 	async def get_mod_channel(self, guild :discord.Guild):
 		query = "SELECT * FROM mod_config WHERE guild_id = $1"
