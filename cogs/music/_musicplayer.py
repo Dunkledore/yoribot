@@ -123,7 +123,6 @@ class MusicPlayer:
             stop_current (bool): Whether to stop the currently playing song
         """
 
-        self.t1 = time.perf_counter()
         await self.setup(author, text_channel)
 
         if self.state == 'ready':
@@ -594,8 +593,6 @@ class MusicPlayer:
             self.streamer.volume = self.volume / 100
             self.vclient.play(player, after=vafter_inside)
 
-            t2 = time.perf_counter()
-            self.statuslog.info(str(t2-self.t1))
             self.nowplayinglog.info(songname)
 
             await self.embed.sent_embed.clear_reactions()

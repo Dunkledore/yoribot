@@ -1,6 +1,8 @@
 import discord, asyncio, imaplib, json, os, colorama, threading, time
+import asyncpg
 colorama.init()
-from cogs.utils.dataIO import dataIO
+from .utils import checks
+from .utils.dataIO import dataIO
 from discord.ext import commands
 
 
@@ -29,12 +31,12 @@ class Mail2Discord():
 
         await ctx.author.send("Please email username. Usually your full email address.")
         username = await self.bot.wait_for('message', check=check, timeout=30.0)
-        username = consumer_secret.content
+        username = username.content
         await asyncio.sleep(1)
 
         await ctx.author.send("Please send your password")
         password = await self.bot.wait_for('message', check=check, timeout=30.0)
-        password = access_token.content
+        password = password.content
         await asyncio.sleep(1)
 
         insertquery = "INSERT INTO mail_config (guild_id, imap) VALUES ($1, $2)"
@@ -51,7 +53,7 @@ class Mail2Discord():
     @commands.command()
     @checks.is_admin()
     async def fetchmail(self, ctx):
-        mails = get_mails(ctx.guild.id)
+        mails = await get_mails(ctx.guild.id)
 
         await ctx.send(_mails[1][:2000])
 
@@ -62,7 +64,7 @@ class Mail2Discord():
         _c = color if color else ""
         print(_c+("{:!^50}" if center else "{}").format(text))
 
-    def get_mails(self, guild_id ):
+    async def get_mails(self, guild_id ):
 
         query = "SELECT guild_id, imap_creds FROM social_config WHERE guild_id = $1"
         results = await self.bot.pool.fetch(query, guild_id)
@@ -110,6 +112,20 @@ class Mail2Discord():
                 await self.send_message(_pmowner, _result[1][:2000])
             asyncio.sleep(120)
 
+
+
+def check_folders():
+    if not os.path.exists("data/mail"):
+        print("Creating data/mail folder...")
+        os.makedirs("data/mail")
+
+def check_files():
+    if not os.path.isfile("data/mail/settings.json"):
+        print("Creating empty settings.json...")
+        dataIO.save_json("data/mail/settings.json", {})
+
 def setup(bot):
+    check_folders()
+    check_files()
     bot.add_cog(Mail2Discord(bot))
 

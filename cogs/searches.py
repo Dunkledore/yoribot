@@ -429,8 +429,9 @@ class Searches:
                     return True
                 except ValueError:
                     return False
-
-            answer = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
+            def check(m):
+                return m.author.id == ctx.message.author.id
+            answer = await self.bot.wait_for('message',timeout=15, check=check)
 
             if answer:
                 if is_number(answer.content.strip()) and int(answer.content.strip()) in range(1, 6):
