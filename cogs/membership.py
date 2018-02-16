@@ -342,8 +342,8 @@ class MemberAudit:
 		if self.speak_permissions(server, ch):
 			embed = discord.Embed(title='📤 Message Deleted', colour=discord.Colour.blurple())
 			embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
-			embed.add_field(name='Message:' + str(message.id), value= message.content)
-			embed.add_field(name='Sent In:', value= message.channel.name)
+			embed.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
+			embed.add_field(name='Sent In:  ', value= 'Channel:  ' + message.channel.name + 'Channel ID:  ' + str(message.channel.id))
 			await ch.send(embed=embed)
 		else:
 			print("Tried to send message to channel, but didn't have"
