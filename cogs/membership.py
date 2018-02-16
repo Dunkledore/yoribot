@@ -341,7 +341,7 @@ class MemberAudit:
 		if self.speak_permissions(server, ch):
 			await ch.send(embed=discord.Embed(
 								title = "🔨 Deleted Message",
-								description = msg)
+								description = message)
 								)
 		else:
 			print("Tried to send message to channel, but didn't have"
