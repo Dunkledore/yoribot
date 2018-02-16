@@ -330,8 +330,6 @@ class MemberAudit:
 		ch = self.get_welcome_channel(server)
 		if message.channel.is_nsfw():
 			return
-		await ch.send("deleted")
-
 		if ch is None:
 			return
 		if server is None:
