@@ -430,7 +430,7 @@ class MemberAudit:
 		channel = message.channel
 		timestamp = datetime.utcnow()
 		ch = self.get_welcome_channel(server)
-		if not ch is None:
+		if ch is None:
 			return
 		if await msg.author == self.bot.user:
 			embed = discord.Embed(color=self.red)
