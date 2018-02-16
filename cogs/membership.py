@@ -427,7 +427,7 @@ class MemberAudit:
 	async def on_message_delete(self, message):
 		server = message.guild
 		member = message.author
-		mchannel = message.channel
+		channel = message.channel
 		timestamp = datetime.utcnow()
 		ch = self.get_welcome_channel(server)
 		if not ch is None:
@@ -446,7 +446,7 @@ class MemberAudit:
 				if message.attachments:
 					for attachment in message.attachments:
 						embed.add_field(name='**Attachment**', value='[{filename}]({url})'.format(**attachment), inline=True)
-				await channel.send(embed=embed)
+				await ch.send(embed=embed)
 
 	def get_welcome_channel(self, guild: discord.Guild):
 		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
