@@ -372,7 +372,7 @@ class MemberAudit:
 			self.settings[server.id]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
-		if not self.settings[server.id]["message_on"]:
+		if not self.settings[str(server.id)]["message_on"]:
 			return
 
 		
