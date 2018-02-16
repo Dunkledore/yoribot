@@ -431,22 +431,21 @@ class MemberAudit:
 		timestamp = datetime.utcnow()
 		ch = self.get_welcome_channel(server)
 		if not ch is None:
-			if await msg.author == self.bot.user:
-				return
-			if await member.id != self.bot.user.id:
-				embed = discord.Embed(color=self.red)
-				avatar = member.avatar_url if member.avatar else member.default_avatar_url
-				embed.set_author(name='Message removed', icon_url=avatar)
-				embed.add_field(name='**Member**', value='{0.display_name}#{0.discriminator} ({0.id})'.format(member))
-				embed.add_field(name='**Channel**', value=message.channel.name)
-				embed.add_field(name='**Message timestamp**', value=message.timestamp.strftime('%Y-%m-%d %H:%M:%S'))
-				embed.add_field(name='**Removal timestamp**', value=timestamp.strftime('%Y-%m-%d %H:%M:%S'))
-				if message.content:
-					embed.add_field(name='**Message**', value=message.content, inline=False)
-				if message.attachments:
-					for attachment in message.attachments:
-						embed.add_field(name='**Attachment**', value='[{filename}]({url})'.format(**attachment), inline=True)
-				await ch.send(embed=embed)
+			return
+		if await msg.author == self.bot.user:
+			embed = discord.Embed(color=self.red)
+			avatar = member.avatar_url if member.avatar else member.default_avatar_url
+			embed.set_author(name='Message removed', icon_url=avatar)
+			embed.add_field(name='**Member**', value='{0.display_name}#{0.discriminator} ({0.id})'.format(member))
+			embed.add_field(name='**Channel**', value=message.channel.name)
+			embed.add_field(name='**Message timestamp**', value=message.timestamp.strftime('%Y-%m-%d %H:%M:%S'))
+			embed.add_field(name='**Removal timestamp**', value=timestamp.strftime('%Y-%m-%d %H:%M:%S'))
+			if message.content:
+				embed.add_field(name='**Message**', value=message.content, inline=False)
+			if message.attachments:
+				for attachment in message.attachments:
+					embed.add_field(name='**Attachment**', value='[{filename}]({url})'.format(**attachment), inline=True)
+			await ch.send(embed=embed)
 
 	def get_welcome_channel(self, guild: discord.Guild):
 		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
