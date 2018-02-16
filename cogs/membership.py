@@ -328,6 +328,7 @@ class MemberAudit:
 			dataIO.save_json(self.settings_path, self.settings)
 		
 		ch = self.get_welcome_channel(server)
+		await ch.send("deleted")
 
 		if ch is None:
 			return
@@ -336,10 +337,9 @@ class MemberAudit:
 			print("The server was None, so this was either a PM or an error."
 				  " The user was {}.".format(user.name))
 			return
-		msg = message
-		channel = self.get_welcome_channel(server)
-		if self.speak_permissions(server, channel):
-			await channel.send(embed=discord.Embed(
+
+		if self.speak_permissions(server, ch):
+			await ch.send(embed=discord.Embed(
 								title = "🔨 Deleted Message",
 								description = msg)
 								)
