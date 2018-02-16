@@ -333,7 +333,7 @@ class MemberAudit:
 		if ch is None:
 			return
 		if message.channel.is_nsfw():
-    		return
+			return
 		if server is None:
 			print("The server was None, so this was either a PM or an error."
 				  " The user was {}.".format(user.name))
