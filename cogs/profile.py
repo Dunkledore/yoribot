@@ -267,8 +267,8 @@ class Rank:
         if str(ctx.author.id) in self.message_data:
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.add_field(name='Global XP', value = str(self.message_data[str(ctx.author.id)]["global"]))
-            em.set_author(name=member.name + " Global XP", icon_url=ctx.message.guild.icon_url)
-            em.set_thumbnail(url=member.avatar_url)
+            em.set_author(name=ctx.author.name + " Global XP", icon_url=ctx.message.guild.icon_url)
+            em.set_thumbnail(url=ctx.author.avatar_url)
             await ctx.send()
         else:
             await ctx.send("0")
