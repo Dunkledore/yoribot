@@ -328,11 +328,11 @@ class MemberAudit:
 			dataIO.save_json(self.settings_path, self.settings)
 		
 		ch = self.get_welcome_channel(server)
+		if message.channel.is_nsfw():
+			return
 		await ch.send("deleted")
 
 		if ch is None:
-			return
-		if message.channel.is_nsfw():
 			return
 		if server is None:
 			print("The server was None, so this was either a PM or an error."
