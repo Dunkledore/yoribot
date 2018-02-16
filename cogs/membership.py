@@ -320,6 +320,36 @@ class MemberAudit:
 				  " permission. User was {}.".format(member))
 		await self._log(guild.id, user, 'Leave')
 
+	async def on_message_delete(self, message):
+		server = message.guild
+		if str(server.id) not in self.settings:
+			self.settings[server.id] = deepcopy(default_settings)
+			self.settings[server.id]["channel"] = str(server.text_channels[0].id)
+			dataIO.save_json(self.settings_path, self.settings)
+		
+		ch = self.get_welcome_channel(server)
+		if message.channel.is_nsfw():
+			return
+		if ch is None:
+			return
+		if server is None:
+			print("The server was None, so this was either a PM or an error."
+				  " The user was {}.".format(user.name))
+			return
+
+		if self.speak_permissions(server, ch):
+			embed = discord.Embed(title='📤 Message Deleted', colour=discord.Colour.red())
+			embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+			embed.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
+			embed.add_field(name='Sent In:  ', value= 'Channel:  ' + message.channel.name + '  Channel ID:  ' + str(message.channel.id))
+			await ch.send(embed=embed)
+		else:
+			print("Tried to send message to channel, but didn't have"
+				  " permission. User was {}.".format(user.name))
+		bans = await guild.bans()
+		reason = discord.utils.get(bans, user=user)[0]
+		await self._log(guild.id, user, 'Ban', reason)
+
 	async def member_ban(self, guild, user: discord.User):
 		server = guild
 		if str(server.id) not in self.settings:
@@ -423,12 +453,6 @@ class MemberAudit:
 			embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
 
 		return embed
-
-
-
-
-
-
 
 	def get_welcome_channel(self, guild: discord.Guild):
 		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
