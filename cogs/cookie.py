@@ -93,7 +93,10 @@ class Cookie:
             settings["Players"][str(author.id)]["Cookies"] -= cookies
             settings["Players"][str(user.id)]["Cookies"] += cookies
             dataIO.save_json(self.file_path, self.system)
-            y = ":cookie:" * cookies
+            if (cookies < 200):
+                y= ":cookie:" * cookies
+            else:
+                y=":cookie:" * 200
             msg = "You gave **{}** cookies to {} \n {}".format(cookies, user.name, y)
         else:
             msg = "You don't have enough cookies in your account"
@@ -200,7 +203,10 @@ class Cookie:
                 settings["Players"][str(user.id)]["Cookies"] -= stolen
                 settings["Players"][str(author.id)]["Cookies"] += stolen
                 dataIO.save_json(self.file_path, self.system)
-                y = ":cookie:" * stolen
+                if (stolen < 200):
+                    y= ":cookie:" * stolen
+                else:
+                    y=":cookie:" * 200
                 msg = (":grin: You stole {} cookies from "
                        "{}! \n {}".format(stolen, user.name, y))
             else:
