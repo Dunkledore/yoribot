@@ -321,7 +321,7 @@ class MemberAudit:
 		await self._log(guild.id, user, 'Leave')
 
 	async def on_message_delete(self, message):
-		server = guild
+		server = message.guild
 		if str(server.id) not in self.settings:
 			self.settings[server.id] = deepcopy(default_settings)
 			self.settings[server.id]["channel"] = str(server.text_channels[0].id)
@@ -336,12 +336,12 @@ class MemberAudit:
 			print("The server was None, so this was either a PM or an error."
 				  " The user was {}.".format(user.name))
 			return
-
+		msg = message
 		channel = self.get_welcome_channel(server)
 		if self.speak_permissions(server, channel):
 			await channel.send(embed=discord.Embed(
 								title = "🔨 Deleted Message",
-								description = message)
+								description = msg)
 								)
 		else:
 			print("Tried to send message to channel, but didn't have"
