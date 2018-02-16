@@ -31,14 +31,19 @@ class MemberAudit:
 		self.settings_path = "data/membership/settings.json"
 		self.settings = dataIO.load_json(self.settings_path)
 
+	@commands.command()
+	@checks.is_developer()
+	def updatemembershipsettings(self, ctx):
+		for k in self.settings.items():
+			for k2,v in default_settings.items():
+				if k2 not in self.setitngs[k]:
+					self.settings[k][k2] = v
 
 	def checksettings(self, ctx):
 		server = ctx.message.guild
 		if str(server.id) not in self.settings:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
-			if "message_on" not in self.settings[str(server.id)]:
-				self.settings[str(server.id)]["message_on"] = False
 			dataIO.save_json(self.settings_path, self.settings)
 
 
@@ -212,7 +217,7 @@ class MemberAudit:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def messageinfotoggle(self, ctx: commands.Context):
-		"""Turns message event commands on or off."""
+		"""Turns message events on or off."""
 
 		self.checksettings(ctx)
 		server = ctx.message.guild
