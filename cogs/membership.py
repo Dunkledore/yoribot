@@ -33,7 +33,7 @@ class MemberAudit:
 
 	@commands.command()
 	@checks.is_developer()
-	def updatemembershipsettings(self, ctx):
+	async def updatemembershipsettings(self, ctx):
 		for k in self.settings.items():
 			for k2,v in default_settings.items():
 				if k2 not in self.setitngs[k]:
