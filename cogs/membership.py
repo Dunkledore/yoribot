@@ -36,8 +36,8 @@ class MemberAudit:
 	async def updatemembershipsettings(self, ctx):
 		for k in self.settings.items():
 			for k2,v in default_settings.items():
-				if k2 not in self.settings[k]:
-					self.settings[k][k2] = v
+				if str(k2) not in self.settings[k]:
+					self.settings[k][str(k2)] = v
 
 	def checksettings(self, ctx):
 		server = ctx.message.guild
