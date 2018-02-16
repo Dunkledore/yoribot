@@ -18,7 +18,7 @@ default_settings = {
 	"channel": None,
 	"raid": False,
 	"auto_raid" : False,
-	"message_info_channel" : False
+	"message_on" : False
 }
 
 
@@ -37,8 +37,8 @@ class MemberAudit:
 		if str(server.id) not in self.settings:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
-			if "message_info_channel" not in self.settings[str(server.id)]:
-				self.settings[str(server.id)]["message_info_channel"] = None
+			if "message_on" not in self.settings[str(server.id)]:
+				self.settings[str(server.id)]["message_on"] = False
 			dataIO.save_json(self.settings_path, self.settings)
 
 
@@ -211,6 +211,23 @@ class MemberAudit:
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
+	async def messageinfotoggle(self, ctx: commands.Context):
+		"""Turns message event commands on or off."""
+
+		self.checksettings(ctx)
+		server = ctx.message.guild
+		self.settings[str(server.id)]["message_on"] = not self.settings[str(server.id)]["message_on"]
+		if self.settings[str(server.id)]["message_on"]:
+			await ctx.send(
+				cf.info("Message events will now be announced."))
+		else:
+			await ctx.send(
+				cf.info("Messageb events will no longer be announced."))
+		dataIO.save_json(self.settings_path, self.settings)
+
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_admin()
 	async def auditchannel(self, ctx: commands.Context,
 					   channel: discord.TextChannel=None):
 		"""Sets the text channel to which the announcements will be sent.
@@ -243,23 +260,13 @@ class MemberAudit:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def messageinfochannel(self, ctx: commands.Context,
-					   channel: discord.TextChannel=None):
+					   channel: discord.TextChannel):
 		"""Sets the text channel to which the message announcements will be sent.
 
-		 If none is specified it will be disabled.
 		 """
 		self.checksettings(ctx)
 		server = ctx.message.guild
 
-		if not channel:
-			self.settings[str(server.id)]["message_info_channel"] = None
-			return
-
-
-
-
-		if not channel:
-			channel = server.text_channels[0]
 
 		if not self.speak_permissions(server, channel):
 			await ctx.send(
@@ -367,7 +374,7 @@ class MemberAudit:
 			self.settings[server.id]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
 
-		if not self.settings[server.id]["message_info_channel"]:
+		if not self.settings[server.id]["message_on"]:
 			return
 
 		
