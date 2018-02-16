@@ -17,7 +17,8 @@ default_settings = {
 	"on": False,
 	"channel": None,
 	"raid": False,
-	"auto_raid" : False
+	"auto_raid" : False,
+	"message_info_channel" : False
 }
 
 
@@ -215,7 +216,6 @@ class MemberAudit:
 		 """
 		
 		self.checksettings(ctx)
-		await ctx.send('Command Invoked')
 		server = ctx.message.guild
 
 		if not channel:
@@ -233,6 +233,42 @@ class MemberAudit:
 		await channel.send(  ("{0.mention}, " +
 									 cf.info(
 										 "I will now send membership"
+										 " announcements to {1.mention}."))
+									.format(ctx.message.author, channel))
+
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_admin()
+	async def messageinfochannel(self, ctx: commands.Context,
+					   channel: discord.TextChannel=None):
+		"""Sets the text channel to which the message announcements will be sent.
+
+		 If none is specified it will be disabled.
+		 """
+		
+		if not channel:
+			self.settings[str(server.id)]["message_info_channel"] = None
+			return
+
+
+		self.checksettings(ctx)
+		server = ctx.message.guild
+
+		if not channel:
+			channel = server.text_channels[0]
+
+		if not self.speak_permissions(server, channel):
+			await ctx.send(
+				"I don't have permission to send messages in {0.mention}."
+				.format(channel))
+			return
+
+		self.settings[str(server.id)]["channel"] = str(channel.id)
+		dataIO.save_json(self.settings_path, self.settings)
+		channel = self.get_info_channel(server)
+		await channel.send(  ("{0.mention}, " +
+									 cf.info(
+										 "I will now send message"
 										 " announcements to {1.mention}."))
 									.format(ctx.message.author, channel))
 
@@ -326,8 +362,12 @@ class MemberAudit:
 			self.settings[server.id] = deepcopy(default_settings)
 			self.settings[server.id]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
+
+		if not self.settings[server.id]["message_info_channel"]:
+			return
+
 		
-		ch = self.get_welcome_channel(server)
+		ch = self.get_info_channel(server)
 		if message.channel.is_nsfw():
 			return
 		if ch is None:
@@ -456,6 +496,9 @@ class MemberAudit:
 
 	def get_welcome_channel(self, guild: discord.Guild):
 		return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
+
+	def get_info_channel(self, guild: discord.Guild):
+		return guild.get_channel(int(self.settings[str(guild.id)]["message_info_channel"]))
 
 	async def get_mod_channel(self, guild :discord.Guild):
 		query = "SELECT * FROM mod_config WHERE guild_id = $1"
