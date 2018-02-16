@@ -332,17 +332,19 @@ class MemberAudit:
 
 		if ch is None:
 			return
-
+		if message.channel.is_nsfw():
+    		return
 		if server is None:
 			print("The server was None, so this was either a PM or an error."
 				  " The user was {}.".format(user.name))
 			return
 
 		if self.speak_permissions(server, ch):
-			await ch.send(embed=discord.Embed(
-								title = "🔨 Deleted Message",
-								description = message.content)
-								)
+			embed = discord.Embed(title='📤 Message Deleted', colour=discord.Colour.blurple())
+        	embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+        	embed.add_field(name='Message:' + message.id, value= message.content)
+        	embed.add_field(name='Sent In:', value= message.channel.name)
+			await ch.send(embed=embed)
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
