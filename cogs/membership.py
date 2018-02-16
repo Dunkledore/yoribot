@@ -220,7 +220,7 @@ class MemberAudit:
 				cf.info("Message events will now be announced."))
 		else:
 			await ctx.send(
-				cf.info("Messageb events will no longer be announced."))
+				cf.info("Message events will no longer be announced."))
 		dataIO.save_json(self.settings_path, self.settings)
 
 	@commands.command()
