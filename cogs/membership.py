@@ -37,7 +37,10 @@ class MemberAudit:
 		if str(server.id) not in self.settings:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
+			if "message_info_channel" not in self.settings[str(server.id)]:
+				self.settings[str(server.id)]["message_info_channel"] = None
 			dataIO.save_json(self.settings_path, self.settings)
+
 
 	@commands.command(hidden=True)
 	@commands.guild_only()
@@ -245,14 +248,15 @@ class MemberAudit:
 
 		 If none is specified it will be disabled.
 		 """
-		
+		self.checksettings(ctx)
+		server = ctx.message.guild
+
 		if not channel:
 			self.settings[str(server.id)]["message_info_channel"] = None
 			return
 
 
-		self.checksettings(ctx)
-		server = ctx.message.guild
+
 
 		if not channel:
 			channel = server.text_channels[0]
