@@ -265,7 +265,11 @@ class Rank:
             await self.load_settings()
 
         if str(ctx.author.id) in self.message_data:
-            await ctx.send(self.message_data[str(ctx.author.id)]["global"])
+        	em = discord.Embed(color=ctx.message.author.color, description=" ")
+        	em.add_field(name='Global XP', value = str(self.message_data[str(ctx.author.id)]["global"]))
+        	em.set_author(name=member.name + " Global XP", icon_url=ctx.message.guild.icon_url)
+            em.set_thumbnail(url=member.avatar_url)
+            await ctx.send()
         else:
             await ctx.send("0")
 
@@ -355,13 +359,11 @@ class Profile:
         embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
         query = "SELECT * FROM profile WHERE user_id = $1;"
         if user is None:
-            profile = await ctx.db.fetch(query, ctx.author.id)
-            embed.set_author(name=ctx.message.author.name, icon_url=ctx.message.guild.icon_url)
-            embed.set_thumbnail(url=ctx.message.author.avatar_url)
-        else:
-            profile = await ctx.db.fetch(query, user.id)
-            embed.set_author(name=user.name, icon_url=ctx.message.guild.icon_url)
-            embed.set_thumbnail(url=user.avatar_url)
+        	user = ctx.author
+
+        profile = await ctx.db.fetch(query, user.id)
+        embed.set_author(name=user.name, icon_url=ctx.message.guild.icon_url)
+        embed.set_thumbnail(url=user.avatar_url)
 
         if not profile:
             await ctx.send("This person has not made a profile yet")
@@ -370,7 +372,7 @@ class Profile:
         if not self.rank.loaded_settings:
             await self.rank.load_settings()
 
-        xp = self.rank.message_data[str(ctx.author.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
+        xp = self.rank.message_data[str(user.id)][str(ctx.guild.id)] or "1" if str(ctx.author.id) in self.rank.message_data else "1"
         embed.add_field(name='XP', value =xp)
         guild_ranks = [rank for rank in self.rank.ranks if rank["guild_id"]==ctx.guild.id and rank["xp_required"] <= xp]
         if guild_ranks:
