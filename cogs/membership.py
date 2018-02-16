@@ -37,8 +37,6 @@ class MemberAudit:
 		if str(server.id) not in self.settings:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
-			if "message_on" not in self.settings[str(server.id)]:
-				self.settings[str(server.id)]["message_on"] : False
 			dataIO.save_json(self.settings_path, self.settings)
 
 
