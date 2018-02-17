@@ -60,10 +60,6 @@ class ModConfig:
         self.mention_count = record['mention_count']
         self.safe_mention_channel_ids = set(record['safe_mention_channel_ids'] or [])
         return self
-        self.location = 'data/antilink/settings.json'
-        self.json = dataIO.load_json(self.location)
-        self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
-        self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
 
     @property
     def broadcast_channel(self):
@@ -123,6 +119,10 @@ class Mod:
         # guild_id: set(user_id)
         self._recently_kicked = defaultdict(set)
         self.media_count = {} #For anti media/image spam
+        self.location = 'data/antilink/settings.json'
+        self.json = dataIO.load_json(self.location)
+        self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
+        self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
 
     def __repr__(self):
         return '<cogs.Mod>'
