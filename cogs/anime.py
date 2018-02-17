@@ -52,10 +52,14 @@ class AnimeList:
         if self.verify_credentials():
             await self.fetch_info(ctx, cmd, title)
         else:
-            await ctx.send("The bot owner has not setup their credentials. "
+            await ctx.send(embed=discord.Embed(
+                                title = "⚠ Error",
+                                description = "The bot owner has not setup their credentials. "
                                "An account on <https://myanimelist.net> is required. "
                                "When the owner is ready, setup this cog with {}animeset "
                                "to enter the credentials".format(ctx.prefix))
+                                )
+
     async def owner_set(self, ctx):
         
         def check(m):
@@ -107,7 +111,9 @@ class AnimeList:
             root = ET.fromstring(data)
 
         except ET.ParseError:
-            return await ctx.send("I couldn't find anything!")
+            return await ctx.send(embed=discord.Embed(
+                                title = "⚠ Error",
+                                description = "I couldn't find anything matching your search"))
 
         else:
             if len(root) == 1:
