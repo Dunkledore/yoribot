@@ -390,7 +390,7 @@ class MemberAudit:
 			embed = discord.Embed(title='📤 Message Deleted', colour=discord.Colour.red())
 			embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
 			embed.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
-			embed.add_field(name='Sent In:  ', value= 'Channel:  ' + message.channel.name + '  Channel ID:  ' + str(message.channel.id))
+			embed.set_footer(text='Sent In:  ' + message.channel.name + '  Channel ID:  ' + str(message.channel.id))
 			await ch.send(embed=embed)
 		else:
 			print("Tried to send message to channel, but didn't have"
@@ -516,8 +516,6 @@ class MemberAudit:
 			mod_channel_id = results[0]["mod_channel"]
 			return guild.get_channel(mod_channel_id)
 		return None
-
-
 
 	def speak_permissions(self, server: discord.Guild,
 						  channel: discord.TextChannel=None):
