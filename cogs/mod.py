@@ -312,39 +312,6 @@ class Mod:
                                 title = "✅ Success",
                                 description ='Updated the reaction delete threshold.'))
 
-
-    @commands.command()
-    @checks.is_mod()
-    async def cleanup(self, ctx, search=100):
-        """Cleans up the bot's messages from the channel.
-
-        If a search number is specified, it searches that many messages to delete.
-        If the bot has Manage Messages permissions then it will try to delete
-        messages that look like they invoked the bot as well.
-
-        After the cleanup is completed, the bot will send you a message with
-        which people got their messages deleted and their count. This is useful
-        to see which users are spammers.
-
-        You must have Manage Messages permission to use this.
-        """
-
-        strategy = self._basic_cleanup_strategy
-        if ctx.me.permissions_in(ctx.channel).manage_messages:
-            strategy = self._complex_cleanup_strategy
-
-        spammers = await strategy(ctx, search)
-        deleted = sum(spammers.values())
-        messages = [f'{deleted} message{" was" if deleted == 1 else "s were"} removed.']
-        if deleted:
-            messages.append('')
-            spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
-            messages.extend(f'- **{author}**: {count}' for author, count in spammers)
-
-        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ='\n'.join(messages), delete_after=10))
-
     @commands.command(no_pm=True)
     @checks.is_mod()
     async def kick(self, ctx, member: discord.Member, *, reason: ActionReason = None):
