@@ -348,12 +348,12 @@ class Mod:
 
         To use this command you must have Ban Members permission.
         """
-        user = self.get_user(member)
+        user = self.bot.get_user(member)
         if user is not None:
             name = user.name
         else:
             name = f"User with ID #{member}"
-            
+
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
