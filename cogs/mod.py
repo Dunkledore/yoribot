@@ -129,9 +129,9 @@ class Mod:
                             "You don't have to go home, but you can't stay here.", "Did I do that?"]
         self.unbanmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!",
                             "You don't have to go home, but you can't stay here.", "Did I do that?"]
-        self.mutemessage = ["Silence! I will have order!","About time","Hush little baby don't say a word",
+        self.mutemessages = ["Silence! I will have order!","About time","Hush little baby don't say a word",
                             "Insert clever mute message here", "Did I do that?"]
-        self.unmutemessage = ["Are you ready to behave?","I guess","Remember - if you can't say anything nice...",
+        self.unmutemessages = ["Are you ready to behave?","I guess","Remember - if you can't say anything nice...",
                             "Insert clever unmute message here.", "Is this a good idea?"]
     def __repr__(self):
         return '<cogs.Mod>'
@@ -520,7 +520,7 @@ class Mod:
         await channel.set_permissions(user,reason=f"Mute by {ctx.author}", send_messages=False)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "🔇  " + user.name + " was muted in" + channel.name ,
-                                description = choice(mutemessages)))
+                                description = choice(self.mutemessages)))
 
     @commands.command(name="unmute", no_pm=True)
     @checks.is_mod()
@@ -531,7 +531,7 @@ class Mod:
         await channel.set_permissions(user,reason=f"Unmute by {ctx.author}", send_messages=None)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "🔊  " + user.name + " was unmuted in" + channel.name ,
-                                description = choice(unmutemessages)))
+                                description = choice(self.unmutemessages)))
 
     @commands.command(name="muteall", no_pm=True)
     @checks.is_mod()
@@ -541,7 +541,7 @@ class Mod:
             await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "🔇  " + user.name + " was muted in the server" ,
-                                description = choice(mutemessages)))
+                                description = choice(self.mutemessages)))
 
 
     @commands.command(name="unmuteall", no_pm=True)
@@ -553,7 +553,7 @@ class Mod:
                 await tchan.set_permissions(user, reason=f"Unmute in all channels by {ctx.author}", send_messages=None)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "🔊  " + user.name + " was unmuted in the server",
-                                description = choice(unmutemessages)))
+                                description = choice(self.unmutemessages)))
 
     @commands.command(name="cleanoverrides", no_pm=True)
     @checks.is_admin()
