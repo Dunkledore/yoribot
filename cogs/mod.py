@@ -359,7 +359,7 @@ class Mod:
 
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🔨  " + person + " was Banned",
+                                title = "🔨  " + name + " was Banned",
                                 description = choice(self.banmessages)))
 
     @commands.command(no_pm=True)
