@@ -138,7 +138,9 @@ class Mod:
 
     async def __error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.send(error)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =error))
         elif isinstance(error, commands.CommandInvokeError):
             original = error.original
             if isinstance(original, discord.Forbidden):
@@ -594,19 +596,27 @@ class Mod:
 
             row = await ctx.db.fetchrow(query, ctx.guild.id)
             if row is None or not row['mention_count']:
-                return await ctx.send('This server has not set up mention spam banning.')
+                return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description ='This server has not set up mention spam banning.'))
 
             ignores = ', '.join(f'<#{e}>' for e in row['channel_ids']) or 'None'
-            return await ctx.send(f'- Threshold: {row["mention_count"]} mentions\n- Ignored Channels: {ignores}')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description =f'- Threshold: {row["mention_count"]} mentions\n- Ignored Channels: {ignores}'))
 
         if count == 0:
             query = """UPDATE guild_mod_config SET mention_count = NULL WHERE id=$1;"""
             await ctx.db.execute(query, ctx.guild.id)
             self.get_guild_config.invalidate(self, ctx.guild.id)
-            return await ctx.send('Auto-banning members has been disabled.')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Auto-banning members has been disabled.'))
 
         if count <= 3:
-            await ctx.send('\N{NO ENTRY SIGN} Auto-ban threshold must be greater than three.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Auto-ban threshold must be greater than three.'))
             return
 
         query = """INSERT INTO guild_mod_config (id, mention_count, safe_mention_channel_ids)
@@ -616,7 +626,9 @@ class Mod:
                 """
         await ctx.db.execute(query, ctx.guild.id, count)
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Now auto-banning members that mention more than {count} users.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =f'Now auto-banning members that mention more than {count} users.'))
 
     @mentionspam.command(name='ignore', aliases=['bypass'])
     async def mentionspam_ignore(self, ctx, *channels: discord.TextChannel):
@@ -635,7 +647,9 @@ class Mod:
                 """
 
         if len(channels) == 0:
-            return await ctx.send('Missing channels to ignore.')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Missing channels to ignore.'))
 
         channel_ids = [c.id for c in channels]
         await ctx.db.execute(query, ctx.guild.id, channel_ids)
@@ -727,7 +741,9 @@ class Mod:
                                 description =f'Successfully removed {deleted} messages.', delete_after=10))
             await ctx.message.delete()
         else:
-            await ctx.send(to_send, delete_after=10)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =to_send, delete_after=10))
             await ctx.message.delete()
 
     @clear.command()
@@ -855,7 +871,9 @@ class Mod:
         try:
             args = parser.parse_args(shlex.split(args))
         except Exception as e:
-            await ctx.send(str(e))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =str(e)))
             return
 
         predicates = []
@@ -883,7 +901,9 @@ class Mod:
                     user = await converter.convert(ctx, u)
                     users.append(user)
                 except Exception as e:
-                    await ctx.send(str(e))
+                    await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =str(e)))
                     return
 
             predicates.append(lambda m: m.author in users)
@@ -945,7 +965,9 @@ class Mod:
         try:
             reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=120.0)
         except Exception as e:
-            await ctx.send(str(e))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =str(e)))
             await message.clear_reactions()
             return
 
