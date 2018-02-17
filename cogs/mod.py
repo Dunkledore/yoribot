@@ -348,13 +348,13 @@ class Mod:
 
         To use this command you must have Ban Members permission.
         """
-
+        person = guil.member.name
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🔨  " + member.name + " was Banned",
+                                title = "🔨  " + person + " was Banned",
                                 description = choice(self.banmessages)))
 
     @commands.command(no_pm=True)
