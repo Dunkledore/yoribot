@@ -2,6 +2,8 @@
   This Source Code Form is subject to the terms of the Mozilla Public
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+  Original Author: Kowlin
 """
 
 import discord
@@ -16,18 +18,12 @@ import asyncio
 class Antilink:
     """Hate when people spam invite links to other Discord servers? This plugin allows you to prevent users from sharing links in chat and will notify the server owner when someone attempts to share a link.'"""
 
-    __author__ = "Kowlin"
-    __version__ = "AL-v1.1-LTS"
-
     def __init__(self, bot):
         self.bot = bot
         self.location = 'data/antilink/settings.json'
         self.json = dataIO.load_json(self.location)
         self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
         self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
-
-
-
 
     @commands.command()
     @commands.guild_only()
