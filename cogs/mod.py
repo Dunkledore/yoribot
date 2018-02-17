@@ -129,9 +129,9 @@ class Mod:
                             "You don't have to go home, but you can't stay here.", "Did I do that?"]
         self.unbanmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!",
                             "You don't have to go home, but you can't stay here.", "Did I do that?"]
-        self.mutemessages = ["Silence! I will have order!","About time","Hush little baby don't say a word",
+        self.mutemessage = ["Silence! I will have order!","About time","Hush little baby don't say a word",
                             "Insert clever mute message here", "Did I do that?"]
-        self.unmutemessages = ["Are you ready to behave?","I guess","Remember - if you can't say anything nice...",
+        self.unmutemessage = ["Are you ready to behave?","I guess","Remember - if you can't say anything nice...",
                             "Insert clever unmute message here.", "Is this a good idea?"]
     def __repr__(self):
         return '<cogs.Mod>'
