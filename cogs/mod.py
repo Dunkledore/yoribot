@@ -13,9 +13,9 @@ import argparse, shlex
 import logging
 import asyncpg
 from .utils import checks
+from random import choice
 from cogs.utils.dataIO import dataIO
 import os
-
 
 
 log = logging.getLogger(__name__)
@@ -123,6 +123,8 @@ class Mod:
         self.json = dataIO.load_json(self.location)
         self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
         self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
+        self.kickmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!"
+                            "You don't have to go home, but you can't stay here.", "Did I do that?"]
 
     def __repr__(self):
         return '<cogs.Mod>'
@@ -327,8 +329,8 @@ class Mod:
 
         await member.kick(reason=reason)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✋  " + member.name + "was Kicked",
-                                description ="Don't let the door hit you on the way out!"))
+                                title = "👋  " + member.name + " was Kicked",
+                                description = choice(self.kickmessages)))
 
     @commands.command(no_pm=True)
     @checks.is_mod()
