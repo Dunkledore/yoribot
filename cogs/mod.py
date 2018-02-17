@@ -348,7 +348,7 @@ class Mod:
 
         To use this command you must have Ban Members permission.
         """
-        person = guil.member.name
+        person = discord.Member.name
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
