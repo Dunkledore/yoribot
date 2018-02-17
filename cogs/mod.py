@@ -233,9 +233,9 @@ class Mod:
                                 title = "✅ Success",
                                 description ='Message is set'))
         if self.json[str(serverid)]['dm'] is False:
-            await ctx.sendembed=discord.Embed(color=ctx.message.author.color,
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "❕ Notice",
-                                description ='Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinktoggledm``')
+                                description ='Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinktoggledm``'))
 
     @commands.command()
     @commands.guild_only()
