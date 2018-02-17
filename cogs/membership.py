@@ -390,7 +390,7 @@ class MemberAudit:
 			embed = discord.Embed(title='📤 Message Deleted', colour=discord.Colour.red())
 			embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
 			embed.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
-			embed.set_footer(text='Sent In:  ' + message.channel.name + '  Channel ID:  ' + str(message.channel.id))
+			embed.add_field(name='Sent In:  ', value= 'Channel:  ' + message.channel.name + '  Channel ID:  ' + str(message.channel.id))
 			await ch.send(embed=embed)
 		else:
 			print("Tried to send message to channel, but didn't have"
