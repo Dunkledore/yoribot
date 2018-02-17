@@ -123,7 +123,9 @@ class AnimeList:
                 msg += "\n".join(['{} - {}'.format(n + 1, entry[1].text)
                                   for n, entry in enumerate(root) if n < 10])
 
-                await ctx.send(msg)
+                await ctx.send(embed=discord.Embed(
+                                title = "❔ Please Select the Item you Want",
+                                description = msg))
                 def check(m):
                 
                     return m.content.isdigit() and int(m.content) in range(1, len(root) + 1) and ctx.author.id == m.author.id
