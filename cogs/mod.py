@@ -297,7 +297,7 @@ class Mod:
             query = "SELECT * FROM mod_config WHERE guild_id = $1"
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
             number = conf[2]
-            await ctx.send(discord.Embed(color=ctx.message.author.color,
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "❕ Notice",
                                 description = 'The current number of reactions needed is' + str(number)))
         else:
