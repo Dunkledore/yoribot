@@ -327,7 +327,7 @@ class Mod:
 
         await member.kick(reason=reason)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✋  " + discord.Member + "was Kicked",
+                                title = "✋  " + discord.Member.name + "was Kicked",
                                 description ="Don't let the door hit you on the way out!"))
 
     @commands.command(no_pm=True)
