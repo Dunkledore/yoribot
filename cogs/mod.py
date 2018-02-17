@@ -299,7 +299,7 @@ class Mod:
             number = conf[2]
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "❕ Notice",
-                                description = 'The current number of reactions needed is' + str(number)))
+                                description = 'The current number of reactions needed is ' + str(number)))
         else:
             insertquery = "INSERT INTO mod_config (guild_id, reaction_del_number) VALUES ($1, $2)"
             alterquery = "UPDATE mod_config SET reaction_del_number = $2 WHERE guild_id = $1"
@@ -312,167 +312,6 @@ class Mod:
                                 title = "✅ Success",
                                 description ='Updated the reaction delete threshold.'))
 
-
-    @commands.command(aliases=['newmembers'], no_pm=True)
-    @checks.is_mod()
-    async def newusers(self, ctx, *, count=5):
-        """Tells you the newest members of the server.
-
-        This is useful to check if any suspicious members have
-        joined.
-
-        The count parameter can only be up to 25.
-        """
-        count = max(min(count, 25), 5)
-
-        if not ctx.guild.chunked:
-            await self.bot.request_offline_members(ctx.guild)
-
-        members = sorted(ctx.guild.members, key=lambda m: m.joined_at, reverse=True)[:count]
-
-        e = discord.Embed(title='New Members', colour=discord.Colour.green())
-
-        for member in members:
-            body = f'joined {time.human_timedelta(member.joined_at)}, created {time.human_timedelta(member.created_at)}'
-            e.add_field(name=f'{member} (ID: {member.id})', value=body, inline=False)
-
-        await ctx.send(embed=e)
-
-    @commands.group(aliases=['raidmode'], invoke_without_command=True, no_pm=True)
-    @checks.is_mod()
-    async def raid(self, ctx):
-        """Controls raid mode on the server.
-
-        Calling this command with no arguments will show the current raid
-        mode information. Other options are on and off. 
-
-        You must have Manage Server permissions to use this command or
-        its subcommands.
-        """
-
-        query = "SELECT raid_mode, broadcast_channel FROM guild_mod_config WHERE id=$1;"
-
-        row = await ctx.db.fetchrow(query, ctx.guild.id)
-        if row is None:
-            fmt = 'Raid Mode: off\nBroadcast Channel: None'
-        else:
-            ch = f'<#{row[1]}>' if row[1] else None
-            fmt = f'Raid Mode: {RaidMode(row[0])}\nBroadcast Channel: {ch}'
-
-        await ctx.send(fmt)
-
-    @raid.command(name='on', aliases=['enable', 'enabled'])
-    async def raid_on(self, ctx, *, channel: discord.TextChannel = None):
-        """Enables basic raid mode on the server.
-
-        When enabled, the moderation level for the server will be set
-        to medium (users must be registered with Discord for 5 min 
-        before they are able to speak). The channel this command is
-        used in will show information on joining members color-coded
-        from green to red based on how likely the person is a troll.
-
-        If no channel is given, then the bot will broadcast join
-        messages on the channel this command was used in.
-        """
-
-        channel = channel or ctx.channel
-
-        try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
-        except discord.HTTPException:
-            await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        query = """INSERT INTO guild_mod_config (id, raid_mode, broadcast_channel)
-                   VALUES ($1, $2, $3) ON CONFLICT (id)
-                   DO UPDATE SET
-                        raid_mode = EXCLUDED.raid_mode,
-                        broadcast_channel = EXCLUDED.broadcast_channel;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, RaidMode.on.value, channel.id)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Raid mode enabled. Broadcasting join messages to {channel.mention}.')
-
-    @raid.command(name='off', aliases=['disable', 'disabled'])
-    async def raid_off(self, ctx):
-        """Disables raid mode on the server.
-
-        When disabled, the server verification levels are set
-        back to Low levels and the bot will stop broadcasting
-        join messages.
-        """
-
-        try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.low)
-        except discord.HTTPException:
-            await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        query = """INSERT INTO guild_mod_config (id, raid_mode, broadcast_channel)
-                   VALUES ($1, $2, NULL) ON CONFLICT (id)
-                   DO UPDATE SET
-                        raid_mode = EXCLUDED.raid_mode,
-                        broadcast_channel = NULL;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, RaidMode.off.value)
-        self._recently_kicked.pop(ctx.guild.id, None)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send('Raid mode disabled. No longer broadcasting join messages.')
-
-    @raid.command(name='strict')
-    async def raid_strict(self, ctx, *, channel: discord.TextChannel = None):
-        """Enables strict raid mode on the server.
-
-        Strict mode is similar to regular enabled raid mode, with the added
-        benefit of auto-kicking members that meet the following requirements:
-
-        - Account creation date and join date are at most 30 minutes apart.
-        - First message recorded on the server is 30 minutes apart from join date.
-        - Joining a voice channel within 30 minutes of joining.
-
-        Members who meet these requirements will get a private message saying that the
-        server is currently in lock down.
-
-        If this is considered too strict, it is recommended to fall back to regular
-        raid mode.
-        """
-        channel = channel or ctx.channel
-
-        if not ctx.me.guild_permissions.kick_members:
-            return await ctx.send('\N{NO ENTRY SIGN} I do not have permissions to kick members.')
-
-        try:
-            await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
-        except discord.HTTPException:
-            await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        query = """INSERT INTO guild_mod_config (id, raid_mode, broadcast_channel)
-                   VALUES ($1, $2, $3) ON CONFLICT (id)
-                   DO UPDATE SET
-                        raid_mode = EXCLUDED.raid_mode,
-                        broadcast_channel = EXCLUDED.broadcast_channel;
-                """
-
-        await ctx.db.execute(query, ctx.guild.id, RaidMode.strict.value, ctx.channel.id)
-        self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Raid mode enabled strictly. Broadcasting join messages to {channel.mention}.')
-
-    async def _basic_cleanup_strategy(self, ctx, search):
-        count = 0
-        async for msg in ctx.history(limit=search, before=ctx.message):
-            if msg.author == ctx.me:
-                await msg.delete()
-                count += 1
-        return { 'Bot': count }
-
-    async def _complex_cleanup_strategy(self, ctx, search):
-        prefixes = tuple(self.bot.get_guild_prefixes(ctx.guild)) # thanks startswith
-
-        def check(m):
-            return m.author == ctx.me or m.content.startswith(prefixes)
-
-        deleted = await ctx.channel.purge(limit=search, check=check, before=ctx.message)
-        return Counter(m.author.display_name for m in deleted)
 
     @commands.command()
     @checks.is_mod()
@@ -502,7 +341,9 @@ class Mod:
             spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
             messages.extend(f'- **{author}**: {count}' for author, count in spammers)
 
-        await ctx.send('\n'.join(messages), delete_after=10)
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='\n'.join(messages), delete_after=10))
 
     @commands.command(no_pm=True)
     @checks.is_mod()
@@ -518,7 +359,9 @@ class Mod:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         await member.kick(reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✋  " + discord.Member + "was Kicked",
+                                description ="Don't let the door hit you on the way out!"))
 
     @commands.command(no_pm=True)
     @checks.is_mod()
@@ -694,8 +537,8 @@ class Mod:
 
     @commands.command(name="cleanoverrides", no_pm=True)
     @checks.is_admin()
-    async def cleanoverrides(self, ctx):
-        """Removes all empty overrides from the server."""
+    async def pruneperms(self, ctx):
+        """Removes empty user-specific permission overrides from the server (manual channel permissions) ."""
         count = 0
         for tchan in ctx.guild.text_channels:
             for overwrite in tchan.overwrites:
