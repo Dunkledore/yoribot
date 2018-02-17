@@ -1260,5 +1260,6 @@ def check_file():
 def setup(bot):
     check_folder()
     check_file()
-    bot.add_cog(Mod(bot))
+    n=Mod(bot)
+    bot.add_cog(n)
     bot.add_listener(n._new_message, 'on_message')
