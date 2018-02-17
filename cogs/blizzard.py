@@ -112,7 +112,9 @@ class Blizzard:
                 page = 0
 
         except asyncio.TimeoutError:
-            await ctx.send("Menu timed out - please use the command again to use the menu.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Menu timed out - please use the command again to use the menu."))
             return [None, message]
             self.paginating = False
 
@@ -143,7 +145,9 @@ class Blizzard:
 
         self.settings['apikey'] = key
         dataIO.save_json(self.settings_path, self.settings)
-        await ctx.send('API key set.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='API key set.'))
 
     @commands.command()
     @checks.is_owner()
@@ -157,11 +161,15 @@ class Blizzard:
         if form in accept:
             self.settings['notes_format'] = form
             dataIO.save_json(self.settings_path, self.settings)
-            await ctx.send("Patch notes format set to `{}`.".format(form))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Patch notes format set to `{}`.".format(form)))
         else:
-            await ctx.send("`{}` is not a valid format. Please choose "
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="`{}` is not a valid format. Please choose "
                                "`{}`, `{}`, or `{}`.".format(form, accept[0],
-                                                             accept[1], accept[2]))
+                                                             accept[1], accept[2])))
 
     @commands.command()
     @checks.is_owner()
@@ -174,10 +182,14 @@ class Blizzard:
             self.settings['notes_timeout'] = timeout
             dataIO.save_json(self.settings_path, self.settings)
             # Need str() casting?
-            await ctx.send("Timeout period set to `{} sec`.".format(timeout))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Timeout period set to `{} sec`.".format(timeout)))
         else:
-            await ctx.send("Please choose a duration between "
-                               "{} and {} seconds.".format(min_max[0], min_max[1]))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Please choose a duration between "
+                               "{} and {} seconds.".format(min_max[0], min_max[1])))
 
     @commands.command()
     async def setblizzardtag(self, ctx, tag: str):
@@ -185,12 +197,16 @@ class Blizzard:
 
         pattern = re.compile(r'.#\d{4,5}\Z')
         if pattern.search(tag) is None:
-            await ctx.send("That doesn't look like a valid battletag.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="That doesn't look like a valid battletag."))
             return
         uid = str(ctx.message.author.id)
         self.settings['battletags'][uid] = tag
         dataIO.save_json(self.settings_path, self.settings)
-        await ctx.send("Your battletag has been set.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Your battletag has been set."))
 
     @commands.command()
     async def clearblizzardtag(self, ctx):
@@ -198,9 +214,13 @@ class Blizzard:
 
         uid = str(ctx.message.author.id)
         if self.settings['battletags'].pop(uid, None) is not None:
-            await ctx.send("Your battletag has been removed.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Your battletag has been removed."))
         else:
-            await ctx.send("I had no battletag stored for you.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I had no battletag stored for you."))
         dataIO.save_json(self.settings_path, self.settings)
 
     @commands.command()
@@ -226,8 +246,10 @@ class Blizzard:
         if tag is None:
             tag = self.settings['battletags'].get(uid)
             if tag is None:
-                await ctx.send('You did not provide a battletag '
-                                   'and I do not have one stored for you.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = 'You did not provide a battletag '
+                                   'and I do not have one stored for you.'))
                 return
 
         tag = tag.replace("#", "-")
@@ -237,12 +259,14 @@ class Blizzard:
                 stats = await resp.json()
 
         if 'error' in stats:
-            await ctx.send('Could not fetch your statistics. '
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Could not fetch your statistics. '
                                'Battletags are case sensitive '
                                'and require a 4 or 5-digit identifier '
                                '(e.g. CoolDude#1234)'
                                'Or, you may have an invalid tag '
-                               'on file.')
+                               'on file.'))
             return
 
         if region is None:
@@ -253,17 +277,21 @@ class Blizzard:
             elif stats['kr']:
                 region = 'kr'
             else:
-                await ctx.send('That battletag has no stats in any region.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='That battletag has no stats in any region.'))
                 return
 
         region_full = self.ow_full_region(region)
 
         if region not in stats.keys() or stats[region] is None:
-            await ctx.send('That battletag exists, but I could not '
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='That battletag exists, but I could not '
                                'find stats for the region specified. '
                                'Try a different region '
                                '<us/eu/kr> or leave that field blank '
-                               'so I can autodetect the region.')
+                               'so I can autodetect the region.'))
             return
 
         url = 'https://playoverwatch.com/en-us/career/pc/' + region + '/' + tag
@@ -348,7 +376,9 @@ class Blizzard:
         url = self.wowtoken_url
 
         if realm.lower() not in ['us', 'eu', 'cn', 'tw', 'kr']:
-            await ctx.send("'" + realm + "' is not a valid realm.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="'" + realm + "' is not a valid realm."))
             return
 
         await self.print_token(url, self.wow_full_region(realm))
@@ -389,14 +419,18 @@ class Blizzard:
             if uid in self.settings['battletags']:
                 tag = self.settings['battletags'][uid]
             else:
-                await ctx.send('You did not provide a battletag '
-                                   'and I do not have one stored for you.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='You did not provide a battletag '
+                                   'and I do not have one stored for you.'))
                 return
 
         if 'apikey' not in self.settings:
-            await ctx.send('The bot owner has not provided a '
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='The bot owner has not provided a '
                                'battle.net API key, which is '
-                               'required for Diablo 3 stats.')
+                               'required for Diablo 3 stats.'))
             return
 
         if region is not None:
@@ -423,7 +457,9 @@ class Blizzard:
                 stats = await resp.json()
 
         if 'code' in stats:
-            await ctx.send("I coulnd't find Diablo 3 stats for that battletag.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I coulnd't find Diablo 3 stats for that battletag."))
             return
 
         tag = tag.replace("-", "#") + ' (' + region.upper() + ')'
@@ -442,7 +478,9 @@ class Blizzard:
                                  ' (RIP)\n' if hero['dead'] else '\n'])
 
         if not hero_txt:
-            await ctx.send("You don't have any Diablo 3 heroes.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="You don't have any Diablo 3 heroes."))
             return
 
         kills = "Lifetime monster kills: " + str(stats['kills']['monsters'])
@@ -578,7 +616,9 @@ class Blizzard:
             await ctx.send(embed=embed)
 
         except:
-            await ctx.send("Error finding WoW token prices.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Error finding WoW token prices."))
 
 
 def check_folders():
