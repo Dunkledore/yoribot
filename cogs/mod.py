@@ -123,7 +123,11 @@ class Mod:
         self.json = dataIO.load_json(self.location)
         self.regex = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.gg|discordapp\.com\/invite)\b([-a-zA-Z0-9/]*)>?")
         self.regex_discordme = re.compile(r"<?(https?:\/\/)?(www\.)?(discord\.me\/)\b([-a-zA-Z0-9/]*)>?")
-        self.kickmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!"
+        self.kickmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!",
+                            "You don't have to go home, but you can't stay here.", "Did I do that?"]
+        self.banmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!",
+                            "You don't have to go home, but you can't stay here.", "Did I do that?"]
+        self.unbanmessages = ["Don't let the door hit you on your way out!","About time","Now we're cooking with gas!",
                             "You don't have to go home, but you can't stay here.", "Did I do that?"]
 
     def __repr__(self):
@@ -349,7 +353,9 @@ class Mod:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔨  " + member.name + " was Banned",
+                                description = choice(self.banmessages)))
 
     @commands.command(no_pm=True)
     @checks.is_mod()
@@ -370,7 +376,9 @@ class Mod:
         for member_id in members:
             await ctx.guild.ban(discord.Object(id=member_id), reason=reason)
 
-        await ctx.send('\N{OK HAND SIGN}')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔨  Ban Jackhammer ",
+                                description = choice(self.banmessages)))
 
     @commands.command(no_pm=True)
     @checks.is_mod()
@@ -392,8 +400,9 @@ class Mod:
         obj = discord.Object(id=member)
         await ctx.guild.ban(obj, reason=reason)
         await ctx.guild.unban(obj, reason=reason)
-        await ctx.send('\N{OK HAND SIGN}')
-
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "👋  " + member.name + " was Kicked",
+                                description = "Reason: " + reason + "\n" + choice(self.kickmessages)))
     @commands.command(no_pm=True)
     @checks.is_mod()
     async def unban(self, ctx, member: BannedMember, *, reason: ActionReason = None):
@@ -412,9 +421,13 @@ class Mod:
 
         await ctx.guild.unban(member.user, reason=reason)
         if member.reason:
-            await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🕊  " + member.name + " was Unbanned",
+                                description = f'Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.'))
         else:
-            await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}).')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🕊  " + member.name + " was Unbanned",
+                                description = choice(self.unbanmessages)))
 
     @commands.command(no_pm=True)
     @checks.is_mod()
