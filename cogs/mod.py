@@ -133,11 +133,17 @@ class Mod:
         elif isinstance(error, commands.CommandInvokeError):
             original = error.original
             if isinstance(original, discord.Forbidden):
-                await ctx.send('I do not have permission to execute this action.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = "I do not have permission to execute this action."))
             elif isinstance(original, discord.NotFound):
-                await ctx.send(f'This entity does not exist: {original.text}')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = f'This entity does not exist: {original.text}'))
             elif isinstance(original, discord.HTTPException):
-                await ctx.send('Somehow, an unexpected error occurred. Try again later?')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Somehow, an unexpected error occurred. Try again later?'))
 
     async def get_mod_channel(self, guild :discord.Guild):
         query = "SELECT * FROM mod_config WHERE guild_id = $1"
@@ -155,174 +161,6 @@ class Mod:
             if record is not None:
                 return await ModConfig.from_record(record, self.bot)
             return None
-
-    async def check_raid(self, config, guild, member, timestamp):
-        if config.raid_mode != RaidMode.strict.value:
-            return
-
-        delta  = (member.joined_at - member.created_at).total_seconds() // 60
-
-        # they must have created their account at most 30 minutes before they joined.
-        if delta > 30:
-            return
-
-        delta = (timestamp - member.joined_at).total_seconds() // 60
-
-        # check if this is their first action in the 30 minutes they joined
-        if delta > 30:
-            return
-
-        try:
-            fmt = f"""Howdy. The server {guild.name} is currently in a raid mode lockdown.
-
-                   A raid is when a server is being bombarded with trolls or low effort posts.
-                   Unfortunately, what this means is that you have been automatically kicked for
-                   meeting the suspicious thresholds currently set.
-
-                   **Do not worry though, as you will be able to join again in the future!**
-                   """
-
-            fmt = cleandoc(fmt)
-            await member.send(fmt)
-        except discord.HTTPException:
-            pass
-
-        # kick anyway
-        try:
-            await member.kick(reason='Strict raid mode')
-        except discord.HTTPException:
-            log.info(f'[Raid Mode] Failed to kick {member} (ID: {member.id}) from server {member.guild} via strict mode.')
-        else:
-            log.info(f'[Raid Mode] Kicked {member} (ID: {member.id}) from server {member.guild} via strict mode.')
-            self._recently_kicked[guild.id].add(member.id)
-
-#    async def check_image_spam(self, message):
-#
-#       if message.guild not in self.media_count:
-#            self.media_count[message.guild] = {}
-#
-#        if message.author not in self.media_count[message.guild]:
-#            self.media_count[message.guild][message.author] = []
-#
-#        if message.attachments:
-#            if not message.channel.is_nsfw():
-#                for attachment in message.attachments:
-#                    self.media_count[message.guild][message.author].append([message, attachment.filename, attachment.proxy_url, message.created_at])
-#
-#            if len(self.media_count[message.guild][message.author]) > 2:
-#                if (self.media_count[message.guild][message.author][-1][3] - self.media_count[message.guild][message.author][-3][3]).total_seconds() < 10:
-#                    for item in self.media_count[message.guild][message.author][-3:]:
-#                        try:
-#                            await item[0].delete()
-#                        except Exception as e:
-#                            await message.channel.send(e)
-#                            pass
-#                    for tchan in message.guild.text_channels:
-#                        await tchan.set_permissions(message.author, reason=f"Mute in all channels by {self.bot.user.name}", send_messages=False)
-#                    mod_channel = await self.get_mod_channel(message.guild)
-#                    await mod_channel.send(f"{message.author} has been muted in this server for image spam in {message.channel}")
-#
-#    async def on_message(self, message):
-#        author = message.author
-#        if author.id in (self.bot.user.id, self.bot.owner_id):
-#            return
-#
-#        if message.guild is None:
-#            return
-#
-#        if not isinstance(author, discord.Member):
-#            return
-#
-#        await self.check_image_spam(message)
-#        # we're going to ignore members with roles
-#        if len(author.roles) > 1:
-#            return
-
-#        guild_id = message.guild.id
-#        config = await self.get_guild_config(guild_id)
-#        if config is None:
-#            return
-
-        # check for raid mode stuff
-        await self.check_raid(config, message.guild, author, message.created_at)
-
-        # auto-ban tracking for mention spams begin here
-        if len(message.mentions) <= 3:
-            return
-
-        if not config.mention_count:
-            return
-
-        # check if it meets the thresholds required
-        mention_count = sum(not m.bot for m in message.mentions)
-        if mention_count < config.mention_count:
-            return
-
-        if message.channel.id in config.safe_mention_channel_ids:
-            return
-
-        try:
-            await author.ban(reason=f'Spamming mentions ({mention_count} mentions)')
-        except Exception as e:
-            log.info(f'Failed to autoban member {author} (ID: {author.id}) in guild ID {guild_id}')
-        else:
-            await message.channel.send(f'Banned {author} (ID: {author.id}) for spamming {mention_count} mentions.')
-            log.info(f'Member {author} (ID: {author.id}) has been autobanned from guild ID {guild_id}')
-
-    async def on_voice_state_update(self, user, before, after):
-        if not isinstance(user, discord.Member):
-            return
-
-        # joined a voice channel
-        if before.channel is None and after.channel is not None:
-            config = await self.get_guild_config(user.guild.id)
-            if config is None:
-                return
-
-            await self.check_raid(config, user.guild, user, datetime.datetime.utcnow())
-
-    async def on_member_join(self, member):
-        config = await self.get_guild_config(member.guild.id)
-        if config is None or not config.raid_mode:
-            return
-
-        now = datetime.datetime.utcnow()
-
-        # these are the dates in minutes
-        created = (now - member.created_at).total_seconds() // 60
-        was_kicked = False
-
-        if config.raid_mode == RaidMode.strict.value:
-            was_kicked = self._recently_kicked.get(member.guild.id)
-            if was_kicked is not None:
-                try:
-                    was_kicked.remove(member.id)
-                except KeyError:
-                    was_kicked = False
-                else:
-                    was_kicked = True
-
-        # Do the broadcasted message to the channel
-        if was_kicked:
-            title = 'Member Re-Joined'
-            colour = 0xdd5f53 # red
-        else:
-            title = 'Member Joined'
-            colour = 0x53dda4 # green
-
-            if created < 30:
-                colour = 0xdda453 # yellow
-
-        e = discord.Embed(title=title, colour=colour)
-        e.timestamp = now
-        e.set_footer(text='Created')
-        e.set_author(name=str(member), icon_url=member.avatar_url)
-        e.add_field(name='ID', value=member.id)
-        e.add_field(name='Joined', value=member.joined_at)
-        e.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
-
-        if config.broadcast_channel:
-            await config.broadcast_channel.send(embed=e)
 
     async def on_reaction_add(self, reaction, user):
         if reaction.emoji != '\U0000274c':
@@ -351,10 +189,14 @@ class Mod:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         if self.json[str(serverid)]['ownerdm'] is True:
             self.json[str(serverid)]['ownerdm'] = False
-            await ctx.send('Owner DM now disabled')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Owner DM now disabled'))
         elif self.json[str(serverid)]['ownerdm'] is False:
             self.json[str(serverid)]['ownerdm'] = True
-            await ctx.send('Owner DM now enabled')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Owner DM now enabled'))
         dataIO.save_json(self.location, self.json)
 
     @commands.command()
@@ -367,10 +209,14 @@ class Mod:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         if self.json[str(serverid)]['toggle'] is True:
             self.json[str(serverid)]['toggle'] = False
-            await ctx.send('Antilink is now disabled')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Antilink is now disabled'))
         elif self.json[str(serverid)]['toggle'] is False:
             self.json[str(serverid)]['toggle'] = True
-            await ctx.send('Antilink is now enabled')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Antilink is now enabled'))
         dataIO.save_json(self.location, self.json)
 
     @commands.command()
@@ -383,9 +229,13 @@ class Mod:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         self.json[str(serverid)]['message'] = text
         dataIO.save_json(self.location, self.json)
-        await ctx.send('Message is set')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Message is set'))
         if self.json[str(serverid)]['dm'] is False:
-            await ctx.send('Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinktoggledm``')
+            await ctx.sendembed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description ='Remember: Direct Messages on removal is disabled!\nEnable it with ``antilinktoggledm``')
 
     @commands.command()
     @commands.guild_only()
@@ -397,10 +247,14 @@ class Mod:
             self.json[str(serverid)] = {'toggle': False, 'message': '', 'dm': False, 'ownerdm': False}
         if self.json[str(serverid)]['dm'] is False:
             self.json[str(serverid)]['dm'] = True
-            await ctx.send('Enabled DMs on removal of invite links')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Enabled DMs on removal of invite links'))
         elif self.json[str(serverid)]['dm'] is True:
             self.json[str(serverid)]['dm'] = False
-            await ctx.send('Disabled DMs on removal of invite links')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Disabled DMs on removal of invite links'))
         dataIO.save_json(self.location, self.json)
 
     async def _new_message(self, message):
@@ -443,7 +297,9 @@ class Mod:
             query = "SELECT * FROM mod_config WHERE guild_id = $1"
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
             number = conf[2]
-            await ctx.send(number)
+            await ctx.send(discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description = 'The current number of reactions needed is' + number))
         else:
             insertquery = "INSERT INTO mod_config (guild_id, reaction_del_number) VALUES ($1, $2)"
             alterquery = "UPDATE mod_config SET reaction_del_number = $2 WHERE guild_id = $1"
@@ -452,7 +308,9 @@ class Mod:
                 await ctx.db.execute(insertquery, ctx.guild.id, int(number))
             except asyncpg.UniqueViolationError:
                 await ctx.db.execute(alterquery, ctx.guild.id, int(number))
-            await ctx.send('updated')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Updated the reaction delete threshold.'))
 
 
     @commands.command(aliases=['newmembers'], no_pm=True)
