@@ -519,7 +519,7 @@ class Mod:
             channel = ctx.channel
         await channel.set_permissions(user,reason=f"Mute by {ctx.author}", send_messages=False)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🔇  " + user.name + " was muted in" + channel.name ,
+                                title = "🔇  " + user.name + " was muted in " + channel.name ,
                                 description = choice(self.mutemessages)))
 
     @commands.command(name="unmute", no_pm=True)
@@ -530,7 +530,7 @@ class Mod:
             channel = ctx.channel
         await channel.set_permissions(user,reason=f"Unmute by {ctx.author}", send_messages=None)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🔊  " + user.name + " was unmuted in" + channel.name ,
+                                title = "🔊  " + user.name + " was unmuted in " + channel.name ,
                                 description = choice(self.unmutemessages)))
 
     @commands.command(name="muteall", no_pm=True)
@@ -555,7 +555,7 @@ class Mod:
                                 title = "🔊  " + user.name + " was unmuted in the server",
                                 description = choice(self.unmutemessages)))
 
-    @commands.command(name="cleanoverrides", no_pm=True)
+    @commands.command(no_pm=True)
     @checks.is_admin()
     async def pruneperms(self, ctx):
         """Removes empty user-specific permission overrides from the server (manual channel permissions) ."""
@@ -640,7 +640,9 @@ class Mod:
         channel_ids = [c.id for c in channels]
         await ctx.db.execute(query, ctx.guild.id, channel_ids)
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send(f'Mentions are now ignored on {", ".join(c.mention for c in channels)}.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =f'Mentions are now ignored on {", ".join(c.mention for c in channels)}.'))
 
     @mentionspam.command(name='unignore', aliases=['protect'])
     async def mentionspam_unignore(self, ctx, *channels: discord.TextChannel):
@@ -650,7 +652,9 @@ class Mod:
         """
 
         if len(channels) == 0:
-            return await ctx.send('Missing channels to protect.')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Missing channels to protect.'))
 
         query = """UPDATE guild_mod_config
                    SET safe_mention_channel_ids =
@@ -661,7 +665,9 @@ class Mod:
 
         await ctx.db.execute(query, ctx.guild.id, [c.id for c in channels])
         self.get_guild_config.invalidate(self, ctx.guild.id)
-        await ctx.send('Updated mentionspam ignore list.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Updated mentionspam ignore list.'))
 
     @commands.group(aliases=['purge'], no_pm=True)
     @checks.is_mod()
@@ -682,7 +688,9 @@ class Mod:
 
     async def do_removal(self, ctx, limit, predicate, *, before=None, after=None):
         if limit > 2000:
-            return await ctx.send(f'Too many messages to search given ({limit}/2000)')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =f'Too many messages to search given ({limit}/2000)'))
 
         if before is None:
             before = ctx.message
@@ -695,9 +703,13 @@ class Mod:
         try:
             deleted = await ctx.channel.purge(limit=limit, before=before, after=after, check=predicate)
         except discord.Forbidden as e:
-            return await ctx.send('I do not have permissions to delete messages.')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='I do not have permissions to delete messages.'))
         except discord.HTTPException as e:
-            return await ctx.send(f'Error: {e} (try a smaller search?)')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =f'Error: {e} (try a smaller search?)'))
 
         spammers = Counter(m.author.display_name for m in deleted)
         deleted = len(deleted)
@@ -710,7 +722,9 @@ class Mod:
         to_send = '\n'.join(messages)
 
         if len(to_send) > 2000:
-            await ctx.send(f'Successfully removed {deleted} messages.', delete_after=10)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =f'Successfully removed {deleted} messages.', delete_after=10))
             await ctx.message.delete()
         else:
             await ctx.send(to_send, delete_after=10)
@@ -748,7 +762,9 @@ class Mod:
         The substring must be at least 3 characters long.
         """
         if len(substr) < 3:
-            await ctx.send('The substring length must be at least 3 characters.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='The substring length must be at least 3 characters.'))
         else:
             await self.do_removal(ctx, 100, lambda e: substr in e.content)
 
@@ -775,7 +791,9 @@ class Mod:
         """Removes all reactions from messages that have them."""
 
         if search > 2000:
-            return await ctx.send(f'Too many messages to search for ({search}/2000)')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =f'Too many messages to search for ({search}/2000)'))
 
         total_reactions = 0
         async for message in ctx.history(limit=search, before=ctx.message):
@@ -783,7 +801,9 @@ class Mod:
                 total_reactions += sum(r.count for r in message.reactions)
                 await message.clear_reactions()
 
-        await ctx.send(f'Successfully removed {total_reactions} reactions.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =f'Successfully removed {total_reactions} reactions.'))
 
     @clear.command()
     async def custom(self, ctx, *, args: str):
@@ -895,13 +915,17 @@ class Mod:
         invites = [i for i in all_invites if i.uses <= uses and i.created_at < (datetime.utcnow() - timedelta(hours=1))]
 
         if not invites:
-            await ctx.send('I didn\'t find any invites matching your criteria')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description ='I didn\'t find any invites matching your criteria'))
             return
 
-        message = await ctx.send('Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
+        message = await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
                 len(invites),
                 len({i.inviter.id for i in invites}),
-                sum(i.uses for i in invites)))   
+                sum(i.uses for i in invites))))   
 
         await message.add_reaction('✅')
         await message.add_reaction('❌')
@@ -926,13 +950,17 @@ class Mod:
             return
 
         if reaction.emoji != '✅':
-            await ctx.send("Invites not cleared")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Invites not cleared"))
             await message.clear_reactions()
             return
 
         for invite in invites:
             await invite.delete()
-        await ctx.send("Invites cleared")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Invites cleared"))
         await message.clear_reactions()
 
 def check_folder():
