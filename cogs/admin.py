@@ -45,14 +45,18 @@ class Admin:
             if id == guild.id:
                 await guild.leave()
                 return
-        await ctx.send("You are not in that guild")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="You are not in that guild"))
 
 
 
     @commands.command(hidden=True)
     @checks.is_developer()
     async def ping(self, ctx):
-        await ctx.send('Pong')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🖧 Ping",
+                                description ='Pong'))
 
     @commands.command(hidden=True)
     @checks.is_developer()
@@ -60,14 +64,11 @@ class Admin:
         """List of guilds the bot is in"""
         string = "List of  guilds the bot is in: \n"
         for guild in self.bot.guilds:
-            em = discord.Embed(color=ctx.message.author.color, description=" ")
-            em.set_author(name=guild.name)
-            em.add_field(name='Owner Name', value=guild.owner.name)
-            em.set_footer(text=str(guild.id))
-            await ctx.send(embed=em)
             string += "**ID: **"+ str(guild.id) + " **Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
 
-        await ctx.send(string)
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🖧 Servers the Bot is In:",
+                                description = string))
 
     @commands.command(hidden=True)
     @checks.is_admin()
@@ -81,7 +82,9 @@ class Admin:
             await ctx.db.execute(insertquery, ctx.guild.id, role.id)
         except asyncpg.UniqueViolationError:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
-        await ctx.send('Role set')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description = 'Role set'))
 
     
     @commands.command(hidden=True)
@@ -92,7 +95,9 @@ class Admin:
         for guild in self.bot.guilds:
             await guild.owner.send(message)
 
-        await ctx.send("Messages Delivered")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Messages Delivered"))
 
     @commands.command(hidden=True)
     @checks.is_developer()
@@ -101,9 +106,13 @@ class Admin:
         try:
             self.bot.load_extension(module)
         except Exception as e:
-            await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =f'```py\n{traceback.format_exc()}\n```'))
         else:
-            await ctx.send(f'\N{OK HAND SIGN}')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Plugin Loaded"))
 
     @commands.command(hidden=True)
     @checks.is_developer()
@@ -112,9 +121,13 @@ class Admin:
         try:
             self.bot.unload_extension(module)
         except Exception as e:
-            await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =f'```py\n{traceback.format_exc()}\n```'))
         else:
-            await ctx.send(f'\N{OK HAND SIGN}')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Plugin Unloaded"))
 
     @commands.command(name='reload', hidden=True)
     @checks.is_developer()
@@ -124,9 +137,13 @@ class Admin:
             self.bot.unload_extension(module)
             self.bot.load_extension(module)
         except Exception as e:
-            await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = f'```py\n{traceback.format_exc()}\n```'))
         else:
-            await ctx.send('\N{OK HAND SIGN}')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Plugin Reloaded"))
 
     @commands.command(pass_context=True, hidden=True, name='eval')
     @checks.is_developer()
@@ -153,7 +170,9 @@ class Admin:
         try:
             exec(to_compile, env)
         except Exception as e:
-            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = f'```py\n{e.__class__.__name__}: {e}\n```'))
 
         func = env['func']
         try:
@@ -161,7 +180,9 @@ class Admin:
                 ret = await func()
         except Exception as e:
             value = stdout.getvalue()
-            await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = f'```py\n{value}{traceback.format_exc()}\n```'))
         else:
             value = stdout.getvalue()
             try:
@@ -191,11 +212,15 @@ class Admin:
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send('Already running a REPL session in this channel. Exit it with `quit`.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Already running a REPL session in this channel. Exit it with `quit`.'))
             return
 
         self.sessions.add(ctx.channel.id)
-        await ctx.send('Enter code to execute or evaluate. `exit()` or `quit` to exit.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description = 'Enter code to execute or evaluate. `exit()` or `quit` to exit.'))
 
         def check(m):
             return m.author.id == ctx.author.id and \
@@ -206,14 +231,18 @@ class Admin:
             try:
                 response = await self.bot.wait_for('message', check=check, timeout=10.0 * 60.0)
             except asyncio.TimeoutError:
-                await ctx.send('Exiting REPL session.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description = 'Exiting REPL session.'))
                 self.sessions.remove(ctx.channel.id)
                 break
 
             cleaned = self.cleanup_code(response.content)
 
             if cleaned in ('quit', 'exit', 'exit()'):
-                await ctx.send('Exiting.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description = 'Exiting.'))
                 self.sessions.remove(ctx.channel.id)
                 return
 
@@ -231,7 +260,9 @@ class Admin:
                 try:
                     code = compile(cleaned, '<repl session>', 'exec')
                 except SyntaxError as e:
-                    await ctx.send(self.get_syntax_error(e))
+                    await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = self.get_syntax_error(e)))
                     continue
 
             variables['message'] = response
@@ -258,13 +289,19 @@ class Admin:
             try:
                 if fmt is not None:
                     if len(fmt) > 2000:
-                        await ctx.send('Content too big to be printed.')
+                        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = 'Content too big to be printed.'))
                     else:
-                        await ctx.send(fmt)
+                        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description = fmt))
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
-                await ctx.send(f'Unexpected error: `{e}`')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = f'Unexpected error: `{e}`'))
 
 
     @commands.command(hidden=True)
@@ -292,11 +329,15 @@ class Admin:
             results = await strategy(query)
             dt = (time.perf_counter() - start) * 1000.0
         except Exception:
-            return await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description = f'```py\n{traceback.format_exc()}\n```'))
 
         rows = len(results)
         if is_multistatement or rows == 0:
-            return await ctx.send(f'`{dt:.2f}ms: {results}`')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =f'`{dt:.2f}ms: {results}`'))
 
         headers = list(results[0].keys())
         table = TabularData()
@@ -307,9 +348,13 @@ class Admin:
         fmt = f'```\n{render}\n```\n*Returned {Plural(row=rows)} in {dt:.2f}ms*'
         if len(fmt) > 2000:
             fp = io.BytesIO(fmt.encode('utf-8'))
-            await ctx.send('Too many results...', file=discord.File(fp, 'results.txt'))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Too many results...', file=discord.File(fp, 'results.txt')))
         else:
-            await ctx.send(fmt)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =fmt))
 
 def setup(bot):
     bot.add_cog(Admin(bot))
