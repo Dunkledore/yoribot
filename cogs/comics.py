@@ -72,7 +72,9 @@ class Comics:
             em = await ComicsEmbed.xkcd()
             await ctx.send(embed = em)
         except:
-            await ctx.send("Could not load comic")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Could not load comic"))
             raise
 
     @commands.command(aliases=['funnyc', 'fc'])
@@ -82,7 +84,9 @@ class Comics:
             em = await ComicsEmbed.cnh()
             await ctx.send(embed = em)
         except:
-            await ctx.send("Could not load comic")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Could not load comic"))
             raise
 
     @commands.command(aliases=['funnys', 'fs'])
@@ -92,7 +96,9 @@ class Comics:
             em = await ComicsEmbed.se()
             await ctx.send(embed = em)
         except:
-            await ctx.send("Could not load comic")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Could not load comic"))
             raise
 
     @commands.command(aliases=['fr', "bored"])
@@ -111,9 +117,13 @@ class Comics:
                 em = await ComicsEmbed.se()
                 await ctx.send(embed = em)
             else:
-                await ctx.send("Thats odd you shouldn't be seeing this")
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Thats odd you shouldn't be seeing this"))
         except:
-            await ctx.send("Could not load comic")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Could not load comic"))
             raise
 
 
