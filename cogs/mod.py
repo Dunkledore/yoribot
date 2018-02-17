@@ -471,6 +471,11 @@ class Mod:
 
         To use this command you must have Ban Members permission.
         """
+        user = self.bot.get_user(member)
+        if user is not None:
+            name = user.name
+        else:
+            name = f"User with ID #{member}"
 
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
@@ -487,7 +492,7 @@ class Mod:
 
 
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🔨  " + str(member.user) + " was Banned",
+                                title = "🔨  " + name + " was Banned",
                                 description = f'The ban is active for {time.human_timedelta(duration.dt)}.'))
 
     async def on_tempban_timer_complete(self, timer):
