@@ -52,7 +52,7 @@ class AnimeList:
         if self.verify_credentials():
             await self.fetch_info(ctx, cmd, title)
         else:
-            await ctx.send(embed=discord.Embed(
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "⚠ Error",
                                 description = "The bot owner has not setup their credentials. "
                                "An account on <https://myanimelist.net> is required. "
@@ -111,7 +111,7 @@ class AnimeList:
             root = ET.fromstring(data)
 
         except ET.ParseError:
-            return await ctx.send(embed=discord.Embed(
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "⚠ Error",
                                 description = "I couldn't find anything matching your search"))
 
@@ -123,7 +123,7 @@ class AnimeList:
                 msg += "\n".join(['{} - {}'.format(n + 1, entry[1].text)
                                   for n, entry in enumerate(root) if n < 10])
 
-                await ctx.send(embed=discord.Embed(
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "❔ Please Select the Item you Want",
                                 description = msg))
                 def check(m):
@@ -156,7 +156,7 @@ class AnimeList:
                 synopsis = "There is not a synopsis for {}".format(title)
 
             # Build Embed
-            embed = discord.Embed(colour=0x0066FF, description=desc)
+            embed = discord.Embed(color=ctx.message.author.color, description=desc)
             embed.title = title
             embed.set_thumbnail(url=entry.find('image').text)
             embed.set_footer(text=synopsis)
