@@ -125,7 +125,7 @@ class Welcome:
 
 		await ctx.db.execute(query, ctx.guild.id)
 		
-		await ctx.send('I will no longer send a welcome messgae. To re-enable please use. ?setwelcomechannel')
+		await ctx.send('I will no longer send a welcome messgae. To re-enable please use. {}setwelcomechannel'.format(ctx.prefix))
 
 
 	@commands.command()
