@@ -398,7 +398,14 @@ class Mod:
 
         To use this command you must have Kick Members permissions.
         """
+        user = self.bot.get_user(member)
+        if user is not None:
+            name = user.name
+        else:
+            name = f"User with ID #{member}"
 
+        if reason is None:
+            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
@@ -406,7 +413,7 @@ class Mod:
         await ctx.guild.ban(obj, reason=reason)
         await ctx.guild.unban(obj, reason=reason)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "👋  " + member.name + " was Kicked",
+                                title = "👋  " + name + " was Kicked",
                                 description = "Reason: " + reason + "\n" + choice(self.kickmessages)))
     @commands.command(no_pm=True)
     @checks.is_mod()
@@ -420,14 +427,21 @@ class Mod:
 
         To use this command you must have Ban Members permissions.
         """
+        user = self.bot.get_user(member)
+        if user is not None:
+            name = user.name
+        else:
+            name = f"User with ID #{member}"
 
+        if reason is None:
+            reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
         if reason is None:
             reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
         await ctx.guild.unban(member.user, reason=reason)
         if member.reason:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🕊  " + member.name + " was Unbanned",
+                                title = "🕊  " + name + " was Unbanned",
                                 description = f'Unbanned {member.user} (ID: {member.user.id}), previously banned for {member.reason}.'))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
