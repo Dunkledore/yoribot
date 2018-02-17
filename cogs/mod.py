@@ -299,7 +299,7 @@ class Mod:
             number = conf[2]
             await ctx.send(discord.Embed(color=ctx.message.author.color,
                                 title = "❕ Notice",
-                                description = 'The current number of reactions needed is' + number))
+                                description = 'The current number of reactions needed is' + str(number)))
         else:
             insertquery = "INSERT INTO mod_config (guild_id, reaction_del_number) VALUES ($1, $2)"
             alterquery = "UPDATE mod_config SET reaction_del_number = $2 WHERE guild_id = $1"
