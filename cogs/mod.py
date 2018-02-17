@@ -472,11 +472,18 @@ class Mod:
 
         reminder = self.bot.get_cog('Reminder')
         if reminder is None:
-            return await ctx.send('Sorry, this functionality is currently unavailable. Try again later?')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Sorry, this functionality is currently unavailable. Try again later?'))
 
         await ctx.guild.ban(discord.Object(id=member), reason=reason)
         timer = await reminder.create_timer(duration.dt, 'tempban', ctx.guild.id, ctx.author.id, member, connection=ctx.db)
-        await ctx.send(f'Banned ID {member} for {time.human_timedelta(duration.dt)}.')
+
+
+
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔨  " + str(member.user) + " was Banned",
+                                description = f'The ban is active for {time.human_timedelta(duration.dt)}.'))
 
     async def on_tempban_timer_complete(self, timer):
         guild_id, mod_id, member_id = timer.args
@@ -508,7 +515,9 @@ class Mod:
         if channel is None:
             channel = ctx.channel
         await channel.set_permissions(user,reason=f"Mute by {ctx.author}", send_messages=False)
-        await ctx.send(f"{user.name} has been muted in {channel.name}.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔇  " + user.name + " was muted in" + channel.name ,
+                                description = choic(mutemessages)))
 
     @commands.command(name="unmute", no_pm=True)
     @checks.is_mod()
@@ -517,7 +526,9 @@ class Mod:
         if channel is None:
             channel = ctx.channel
         await channel.set_permissions(user,reason=f"Unmute by {ctx.author}", send_messages=None)
-        await ctx.send(f"{user.name} has been unmuted in {channel.name}.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔊  " + user.name + " was unmuted in" + channel.name ,
+                                description = choic(unmutemessages)))
 
     @commands.command(name="muteall", no_pm=True)
     @checks.is_mod()
@@ -525,7 +536,10 @@ class Mod:
         """Mutes a user in all channels of this server."""
         for tchan in ctx.guild.text_channels:
             await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
-        await ctx.send(f"{user.name} has been muted in this server.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔇  " + user.name + " was muted in the server" ,
+                                description = choic(mutemessages)))
+
 
     @commands.command(name="unmuteall", no_pm=True)
     @checks.is_mod()
@@ -534,7 +548,9 @@ class Mod:
         for tchan in ctx.guild.text_channels:
             if tchan.overwrites_for(user) and not tchan.overwrites_for(user).is_empty():
                 await tchan.set_permissions(user, reason=f"Unmute in all channels by {ctx.author}", send_messages=None)
-        await ctx.send(f"{user.name} has been unmuted in this server.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "🔊  " + user.name + " was unmuted in the server",
+                                description = choic(unmutemessages)))
 
     @commands.command(name="cleanoverrides", no_pm=True)
     @checks.is_admin()
@@ -547,7 +563,9 @@ class Mod:
                     # tchan.overwrites.remove(overwrite)
                     await tchan.set_permissions(overwrite[0], overwrite=None)
                     count += 1
-        await ctx.send("No overwrites to clean up." if count == 0 else f"Cleaned up {count} overwrites.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice" if count == 0 else "✅ Success",
+                                description ="No channel permission overwrites to clean up." if count == 0 else f"Cleaned up {count} channel permission overwrites."))
 
     @commands.group(invoke_without_command=True, no_pm=True)
     @checks.is_mod()
