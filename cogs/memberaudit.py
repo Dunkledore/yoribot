@@ -431,6 +431,7 @@ class MemberAudit:
 		await self._log(guild.id, user, 'Ban', reason)
 
 	async def hub_ban_audit(self,guild,user: discord.User):
+		server = guild
 		hubchannel=self.bot.get_channel(381089479450034176)
 		await hubchannel.send(embed=discord.Embed(
 								title = "🔨 Member Banned",
