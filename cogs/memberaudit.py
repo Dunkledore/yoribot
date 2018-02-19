@@ -423,13 +423,6 @@ class MemberAudit:
 								title = "🔨 Member Banned",
 								description = self.settings[str(server.id)]["ban_message"].format(user, server)
 								))
-		modhub = "381089479450034176"
-		modserv = "372581201195565056"
-		mhc = self.get_channel(modhub)
-		await mhc.send(embed=discord.Embed(
-						title = "🔨 Member Banned HUB VERSION",
-						description = self.settings[str(server.id)]["ban_message"].format(user, server)
-						))
 
 		else:
 			print("Tried to send message to channel, but didn't have"
@@ -437,6 +430,13 @@ class MemberAudit:
 		bans = await guild.bans()
 		reason = discord.utils.get(bans, user=user)[0]
 		await self._log(guild.id, user, 'Ban', reason)
+		modhub = "381089479450034176"
+		modserv = "372581201195565056"
+		mhc = self.get_channel(modhub)
+		await mhc.send(embed=discord.Embed(
+						title = "🔨 Member Banned HUB VERSION",
+						description = self.settings[str(server.id)]["ban_message"].format(user, server)
+						))
 
 	async def member_unban(self, guild, user: discord.User):
 		server = guild
