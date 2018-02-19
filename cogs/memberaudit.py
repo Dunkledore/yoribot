@@ -435,7 +435,7 @@ class MemberAudit:
 		hubchannel=self.bot.get_channel(381089479450034176)
 		await hubchannel.send(embed=discord.Embed(
 								title = "🔨 Member Banned",
-								description = self.settings[str(server.id)]["ban_message"].format(user, server)
+								description = "self.settings[str(server.id)]["ban_message"].format(user, server)"
 								))
 
 	async def member_unban(self, guild, user: discord.User):
