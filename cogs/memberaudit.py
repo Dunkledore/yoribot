@@ -421,8 +421,7 @@ class MemberAudit:
 		if self.speak_permissions(server, channel):
 			await channel.send(embed=discord.Embed(
 								title = "🔨 Member Banned",
-								description = self.settings[str(server.id)]["ban_message"].format(user, server)
-								))
+								description = "This is a fucking test bitch."))
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
