@@ -425,7 +425,7 @@ class MemberAudit:
 								title = "🔨 Member Banned",
 								description = self.settings[str(server.id)]["ban_message"].format(user, server)
 								))
-		mhc = discord.get_channel(modhub)
+		mhc = self.get_channel(modhub)
 		if self.speak_permissions(modserv, mhc):
 			await mhc.send(embed=discord.Embed(
 								title = "🔨 Member Banned HUB VERSION",
