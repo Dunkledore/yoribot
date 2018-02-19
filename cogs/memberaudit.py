@@ -38,6 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
+			self.deletedmessages = {}
 
 
 	@commands.command(hidden=True)
@@ -365,7 +366,29 @@ class MemberAudit:
 				  " permission. User was {}.".format(member))
 		await self._log(guild.id, user, 'Leave')
 
+	async def gather_proof(self,message):
+		summary=discord.Embed(title="Proof:", colour=discord.Colour.red())
+		
+		
+		for message in self.deletedmessages[user.id]["deletedmessages"]:
+			senderinfo=message["timestamp"] + " " + message["author"] + " in " + message["channel"] + message["channel_id"]
+			content=message["content"]
+			if message["attachments"]:
+				for attachment in message["attachments"]:
+					content=content + "\n " + attachment
+			summary.add_field(name=senderinfo, value= content)
+	
+		return summary		
+
 	async def on_message_delete(self, message):
+		bans = await guild.bans()
+		if self.bot.utils.get(bans, user=message.author)[0]:
+			hubchannel=self.bot.get_channel(381089479450034176)
+			embed = discord.Embed(title= "User Name: " + message.author.name + " User ID: " + str(message.author.id),  colour=discord.Colour.red())
+			embed.set_author(name= "Message ID: " + str(message.id), icon_url=message.author.avatar_url)
+			embed.add_field(name= "Message:" + sre(message.id), value= message.content, inline=False)
+			await hubchannel.send(embed=embed)
+
 		server = message.guild
 		if str(server.id) not in self.settings:
 			self.settings[server.id] = deepcopy(default_settings)
