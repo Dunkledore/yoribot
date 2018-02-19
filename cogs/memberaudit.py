@@ -433,8 +433,9 @@ class MemberAudit:
 	async def hub_ban_audit(self,guild,user: discord.User):
 		server = guild
 		hubchannel=self.bot.get_channel(381089479450034176)
-		embed = discord.Embed(title= "User Name: " + str(user.name)+ " User ID: " + str(user.id) + "WAS BANNED",  colour=discord.Colour.red())
-		embed.set_author(name= "🔨 User Action Report", icon_url=server.icon_url)
+		embed = discord.Embed(title= "User Name: " + str(user.mention)+ " User ID: " + str(user.id),  colour=discord.Colour.red())
+		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
+		embed.add_field(name= "Server:", value= server.name)
 		embed.set_thumbnail(url=user.avatar_url)
 		await hubchannel.send(embed=embed)
 
