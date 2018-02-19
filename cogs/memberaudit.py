@@ -407,8 +407,6 @@ class MemberAudit:
 			dataIO.save_json(self.settings_path, self.settings)
 		
 		ch = self.get_welcome_channel(server)
-		modhub = int(381089479450034176)
-		modserv = int(372581201195565056)
 		if not self.settings[str(server.id)]["on"] or ch is None:
 			return
 		
@@ -425,12 +423,13 @@ class MemberAudit:
 								title = "🔨 Member Banned",
 								description = self.settings[str(server.id)]["ban_message"].format(user, server)
 								))
+		modhub = "381089479450034176"
+		modserv = "372581201195565056"
 		mhc = self.get_channel(modhub)
-		if self.speak_permissions(modserv, mhc):
-			await mhc.send(embed=discord.Embed(
-								title = "🔨 Member Banned HUB VERSION",
-								description = self.settings[str(server.id)]["ban_message"].format(user, server)
-								))
+		await mhc.send(embed=discord.Embed(
+						title = "🔨 Member Banned HUB VERSION",
+						description = self.settings[str(server.id)]["ban_message"].format(user, server)
+						))
 
 		else:
 			print("Tried to send message to channel, but didn't have"
