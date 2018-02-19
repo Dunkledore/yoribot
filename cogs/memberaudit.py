@@ -423,16 +423,19 @@ class MemberAudit:
 								title = "🔨 Member Banned",
 								description = self.settings[str(server.id)]["ban_message"].format(user, server)
 								))
-			await self.bot.get_channel(381089479450034176).send(embed=discord.Embed(
-								title = "🔨 Member Banned",
-								description = self.settings[str(server.id)]["ban_message"].format(user, server)
-								))
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(user.name))
 		bans = await guild.bans()
 		reason = discord.utils.get(bans, user=user)[0]
 		await self._log(guild.id, user, 'Ban', reason)
+
+	async def hub_ban_audit(self,guild,user: discord.User):
+		hubchannel=self.bot.get_channel(381089479450034176)
+		await hubchannel.send(embed=discord.Embed(
+								title = "🔨 Member Banned",
+								description = self.settings[str(server.id)]["ban_message"].format(user, server)
+								))
 
 	async def member_unban(self, guild, user: discord.User):
 		server = guild
@@ -548,5 +551,6 @@ def setup(bot: commands.Bot):
 	bot.add_listener(n.member_join, "on_member_join")
 	bot.add_listener(n.member_leave, "on_member_remove")
 	bot.add_listener(n.member_ban, "on_member_ban")
+	bot.add_listener(n.hub_ban_audit, "on_member_ban")
 	bot.add_listener(n.member_unban, "on_member_unban")
 	bot.add_cog(n)
