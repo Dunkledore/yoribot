@@ -381,13 +381,12 @@ class MemberAudit:
 		return summary		
 
 	async def on_message_delete(self, message):
-		bans = await guild.bans()
-		if self.bot.utils.get(bans, user=message.author)[0]:
-			hubchannel=self.bot.get_channel(381089479450034176)
-			embed = discord.Embed(title= "User Name: " + message.author.name + " User ID: " + str(message.author.id),  colour=discord.Colour.red())
-			embed.set_author(name= "Message ID: " + str(message.id), icon_url=message.author.avatar_url)
-			embed.add_field(name= "Message:" + sre(message.id), value= message.content, inline=False)
-			await hubchannel.send(embed=embed)
+
+		hubchannel=self.bot.get_channel(381089479450034176)
+		embed = discord.Embed(title= "User Name: " + message.author.name + " User ID: " + str(message.author.id),  colour=discord.Colour.red())
+		embed.set_author(name= "Message ID: " + str(message.id), icon_url=message.author.avatar_url)
+		embed.add_field(name= "Message:" + sre(message.id), value= message.content, inline=False)
+		await hubchannel.send(embed=embed)
 
 		server = message.guild
 		if str(server.id) not in self.settings:
