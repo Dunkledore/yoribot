@@ -383,7 +383,7 @@ class MemberAudit:
 	async def on_message_delete(self, message):
 
 		hubchannel=self.bot.get_channel(381089479450034176)
-		he = discord.Embed(title=' ', colour=discord.Colour.red())
+		he = discord.Embed(colour=discord.Colour.red())
 		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
 		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
 		await hubchannel.send(embed=he)
