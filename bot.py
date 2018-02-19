@@ -44,7 +44,7 @@ initial_extensions = (
     'cogs.fun',
     'cogs.greet',
     'cogs.hangman',
-    'cogs.membership',
+    'cogs.memberaudit',
     'cogs.mod',
     'cogs.nsfw',
     'cogs.oweather',
