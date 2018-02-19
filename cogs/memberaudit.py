@@ -438,7 +438,7 @@ class MemberAudit:
 		embed.add_field(name='In Guild Name Here', value= "ID: 093485029348")
 		embed.add_field(name='Reason:  ', value= 'If the reason was provided it would go here')
 		embed.add_field(name= 'Proof', value= 'This is where deleted messages would go.')
-		embedset_thumbnail(url=user.icon_url)
+		embedset_thumbnail(url="")
 		await hubchannel.send(embed=embed)
 
 	async def member_unban(self, guild, user: discord.User):
