@@ -435,7 +435,7 @@ class MemberAudit:
 
 		hubchannel=self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title='🔨 User Action Report', colour=discord.Colour.red())
-		embed.set_author(name= user.name "WAS BANNED",icon_url=user.icon_url)
+		embed.set_author(name= user.name + "WAS BANNED",icon_url=user.icon_url)
 		await hubchannel.send(embed=embed)
 
 	async def member_unban(self, guild, user: discord.User):
