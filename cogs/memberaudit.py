@@ -384,11 +384,11 @@ class MemberAudit:
 
 		hubchannel=self.bot.get_channel(381089479450034176)
 		he = discord.Embed(title='Proof: ', colour=discord.Colour.red())
-		he.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+		he.set_author(name=message.author.name)
 		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
-		he.add_field(name='Sent In:  ', value= 'Channel:  ' + message.channel.name + '  Channel ID:  ' + str(message.channel.id))
+		he.add_field(name='Sent In: ' + message.channel.name, value= 'Channel ID:  ' + str(message.channel.id))
 		await hubchannel.send(embed=he)
-		await hubchannel.send(embed=self.gather_proof(user))
+
 
 		server = message.guild
 		if str(server.id) not in self.settings:
