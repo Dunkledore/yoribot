@@ -434,7 +434,7 @@ class MemberAudit:
 		server = guild
 		user = self.bot.get_user(member)
 		hubchannel=self.bot.get_channel(381089479450034176)
-		embed = discord.Embed(title= user.name' WAS BANNED ', colour=discord.Colour.red())
+		embed = discord.Embed(title= user.name + ' WAS BANNED ', colour=discord.Colour.red())
 		embed.set_author(name= "🔨 User Action Report",)
 		await hubchannel.send(embed=embed)
 
