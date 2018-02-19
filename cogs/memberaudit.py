@@ -433,9 +433,13 @@ class MemberAudit:
 	async def hub_ban_audit(self,guild,user: discord.User):
 		server = guild
 		hubchannel=self.bot.get_channel(381089479450034176)
-		await hubchannel.send(embed=discord.Embed(
-								title = "🔨 Member Banned",
-								description = "FUCKING BULLSHIT BOT SHIT"))
+		embed = discord.Embed(title='🔨 User Action Report', colour=discord.Colour.red())
+		embed.set_author(name=user.name + "WAS BANNED", icon_url=guild.icon_url)
+		embed.add_field(name='In Guild Name Here', value= "ID: 093485029348")
+		embed.add_field(name='Reason:  ', value= 'If the reason was provided it would go here')
+		embed.add_field(name= 'Proof', value= 'This is where deleted messages would go.')
+		embedset_thumbnail(url=user.icon_url)
+		await hubchannel.send(embed=embed)
 
 	async def member_unban(self, guild, user: discord.User):
 		server = guild
