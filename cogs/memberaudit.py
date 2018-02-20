@@ -466,8 +466,8 @@ class MemberAudit:
 		embed.add_field(name="Proof:", value = "Coming Soon")
 
 		messages = gather_proof(user)
-			for memssage in messages:
-				em.add_field(name = message.time_stamp, value = message.content)
+		for memssage in messages:
+			em.add_field(name = message.time_stamp, value = message.content)
 		embed.set_thumbnail(url=user.avatar_url)
 
 		if bannedin:
