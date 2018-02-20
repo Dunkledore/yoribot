@@ -30,7 +30,7 @@ class MemberAudit:
 		self.bot = bot
 		self.settings_path = "data/membership/settings.json"
 		self.settings = dataIO.load_json(self.settings_path)
-
+		self.deletedmessages = MaxList(500)
 
 	def checksettings(self, ctx):
 		server = ctx.message.guild
@@ -38,8 +38,6 @@ class MemberAudit:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
-			self.deletedmessages = {}
-
 
 	@commands.command(hidden=True)
 	@commands.guild_only()
