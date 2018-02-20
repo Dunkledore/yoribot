@@ -368,7 +368,7 @@ class MemberAudit:
 		
 		summary=[]
 		for message in self.deletedmessage:
-			if str(message.author) == str(user):
+			if message.author == user:
 				summary.append(message)
 		return summary(5)
 
@@ -379,7 +379,7 @@ class MemberAudit:
 		he = discord.Embed(colour=discord.Colour.red())
 		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
 		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
-		messages = gather_proof(str(user))
+		messages = gather_proof(user)
 		for message in messages:
 			he.add_field(name= "test name", value="Testvalue")
 		await hubchannel.send(embed=he)
