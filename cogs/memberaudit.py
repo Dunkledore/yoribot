@@ -370,7 +370,7 @@ class MemberAudit:
 
 		summary=[]
 		for message in self.deletedmessages:
-			if message.author == user:
+			if message.author == str(user):
 				summary.append(message)
 		return summary(5)
 
@@ -464,7 +464,7 @@ class MemberAudit:
 		embed.add_field(name= "Reason: ", value= reason)
 		embed.add_field(name="Proof:", value = "Coming Soon")
 
-		messages = gather_proof(user)
+		messages = gather_proof(str(user))
 		for memssage in messages:
 			embed.add_field(name = message.created_at, value = message.content)
 		embed.set_thumbnail(url=user.avatar_url)
