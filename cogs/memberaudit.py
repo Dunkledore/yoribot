@@ -381,7 +381,7 @@ class MemberAudit:
 		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
 		messages = gather_proof(str(user))
 		for message in messages:
-			he.add_field(name= message.created_at, value= message.content)
+			he.add_field(name= "test name", value="Testvalue")
 		await hubchannel.send(embed=he)
 
 
