@@ -373,7 +373,7 @@ class MemberAudit:
 		for message in self.deletedmessages:
 			if message.author == user:
 				messages_from_user.append(message)
-		return summary(5:)
+		return summary(5)
 
 	async def on_message_delete(self, message):
 
