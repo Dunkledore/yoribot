@@ -360,7 +360,6 @@ class MemberAudit:
 								title = "📤 Member Leave",
 								description = self.settings[str(server.id)]["leave_message"].format(member, server)
 								))
-
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(member))
@@ -378,7 +377,6 @@ class MemberAudit:
 
 		self.deletedmessages.append(message)
 
-
 		server = message.guild
 		if str(server.id) not in self.settings:
 			self.settings[server.id] = deepcopy(default_settings)
@@ -387,7 +385,6 @@ class MemberAudit:
 
 		if not self.settings[str(server.id)]["message_on"]:
 			return
-
 		
 		ch = self.get_info_channel(server)
 		if message.channel.is_nsfw():
@@ -445,32 +442,17 @@ class MemberAudit:
 
 	async def hub_ban_audit(self,guild,user: discord.User):
 		server = guild
-		bannedin= ""
-		for guild in self.bot.guilds:
-			try:
-				bans = await guild.bans()
-				for banentry in bans:
-					if member == banentry[1]:
-						bannedin += guild.name + '\n'
-			except Exception as e:
-				pass
 
-		reason = discord.utils.get(bans, user=user)[0]
-		hubchannel=self.bot.get_channel(381089479450034176)
+		hubchannel = self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
 		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
 		embed.add_field(name= "Server:", value= server.name)
 		embed.add_field(name= "Server ID: ", value = str(server.id))
-		embed.add_field(name= "Reason: ", value= reason)
-		embed.add_field(name="Proof:", value = "Coming Soon")
 
 		messages = gather_proof(str(user))
 		for memssage in messages:
 			embed.add_field(name = message.created_at, value = message.content)
 		embed.set_thumbnail(url=user.avatar_url)
-
-		if bannedin:
-			embed.add_field(name='Banned In', value = bannedin, inline=False)
 		await hubchannel.send(embed=embed)
 
 	async def member_unban(self, guild, user: discord.User):
