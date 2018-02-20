@@ -439,7 +439,7 @@ class MemberAudit:
 								))
 		else:
 			print("Tried to send message to channel, but didn't have"
-				  " permission. User was {}.".format(user.name))
+				" permission. User was {}.".format(user.name))
 		bans = await guild.bans()
 		reason = discord.utils.get(bans, user=user)[0]
 		await self._log(guild.id, user, 'Ban', reason)
@@ -464,10 +464,10 @@ class MemberAudit:
 		embed.add_field(name= "Server ID: ", value = str(server.id))
 		embed.add_field(name= "Reason: ", value= reason)
 		embed.add_field(name="Proof:", value = "Coming Soon")
-		
+
 		messages = gather_proof(user)
-    		for memssage in messages:
-        		em.add_field(name = message.time_stamp, value = message.content)
+			for memssage in messages:
+				em.add_field(name = message.time_stamp, value = message.content)
 		embed.set_thumbnail(url=user.avatar_url)
 
 		if bannedin:
