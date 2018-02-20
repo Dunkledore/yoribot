@@ -4,7 +4,7 @@ import os
 import discord
 import datetime
 from discord.ext import commands
-
+from utils.maxlist import MaxList
 from .utils.dataIO import dataIO
 from .utils import checks, time, chat_formatting as cf
 
@@ -30,7 +30,7 @@ class MemberAudit:
 		self.bot = bot
 		self.settings_path = "data/membership/settings.json"
 		self.settings = dataIO.load_json(self.settings_path)
-
+		self.deletedmessages = MaxList(500)
 
 	def checksettings(self, ctx):
 		server = ctx.message.guild
@@ -38,7 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
-			self.deletedmessages = MaxList(500)
+
 
 
 	@commands.command(hidden=True)
@@ -459,7 +459,7 @@ class MemberAudit:
 		reason = discord.utils.get(bans, user=user)[0]
 		hubchannel=self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
-		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
+		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)?
 		embed.add_field(name= "Server:", value= server.name)
 		embed.add_field(name= "Server ID: ", value = str(server.id))
 		embed.add_field(name= "Reason: ", value= reason)
