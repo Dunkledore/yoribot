@@ -459,7 +459,7 @@ class MemberAudit:
 		reason = discord.utils.get(bans, user=user)[0]
 		hubchannel=self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
-		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)?
+		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
 		embed.add_field(name= "Server:", value= server.name)
 		embed.add_field(name= "Server ID: ", value = str(server.id))
 		embed.add_field(name= "Reason: ", value= reason)
