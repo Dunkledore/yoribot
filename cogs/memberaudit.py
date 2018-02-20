@@ -4,7 +4,7 @@ import os
 import discord
 import datetime
 from discord.ext import commands
-from .utils.maxlist import MaxList
+
 from .utils.dataIO import dataIO
 from .utils import checks, time, chat_formatting as cf
 
@@ -30,7 +30,7 @@ class MemberAudit:
 		self.bot = bot
 		self.settings_path = "data/membership/settings.json"
 		self.settings = dataIO.load_json(self.settings_path)
-		self.deletedmessages = MaxList(500)
+
 
 	def checksettings(self, ctx):
 		server = ctx.message.guild
@@ -38,7 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
-
+			self.deletedmessages = {}
 
 
 	@commands.command(hidden=True)
@@ -360,22 +360,34 @@ class MemberAudit:
 								title = "📤 Member Leave",
 								description = self.settings[str(server.id)]["leave_message"].format(member, server)
 								))
+
 		else:
 			print("Tried to send message to channel, but didn't have"
 				  " permission. User was {}.".format(member))
 		await self._log(guild.id, user, 'Leave')
 
-	async def gather_proof(self,user: discord.User):
-
-		summary=[]
-		for message in self.deletedmessages:
-			if message.author == str(user):
-				summary.append(message)
-		return summary(5)
+	async def gather_proof(self,message):
+		summary=discord.Embed(title="Proof:", colour=discord.Colour.red())
+		
+		
+		for message in self.deletedmessages[user.id]["deletedmessages"]:
+			senderinfo=message["timestamp"] + " " + message["author"] + " in " + message["channel"] + message["channel_id"]
+			content=message["content"]
+			if message["attachments"]:
+				for attachment in message["attachments"]:
+					content=content + "\n " + attachment
+			summary.add_field(name=senderinfo, value= content)
+	
+		return summary		
 
 	async def on_message_delete(self, message):
 
-		self.deletedmessages.append(message)
+		hubchannel=self.bot.get_channel(381089479450034176)
+		he = discord.Embed(colour=discord.Colour.red())
+		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
+		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
+		await hubchannel.send(embed=he)
+
 
 		server = message.guild
 		if str(server.id) not in self.settings:
@@ -385,6 +397,7 @@ class MemberAudit:
 
 		if not self.settings[str(server.id)]["message_on"]:
 			return
+
 		
 		ch = self.get_info_channel(server)
 		if message.channel.is_nsfw():
@@ -435,24 +448,34 @@ class MemberAudit:
 								))
 		else:
 			print("Tried to send message to channel, but didn't have"
-				" permission. User was {}.".format(user.name))
+				  " permission. User was {}.".format(user.name))
 		bans = await guild.bans()
 		reason = discord.utils.get(bans, user=user)[0]
 		await self._log(guild.id, user, 'Ban', reason)
 
 	async def hub_ban_audit(self,guild,user: discord.User):
 		server = guild
-
-		hubchannel = self.bot.get_channel(381089479450034176)
+		bannedin= ""
+		for guild in self.bot.guilds:
+			try:
+				bans = await guild.bans()
+				for banentry in bans:
+					if member == banentry[1]:
+						bannedin += guild.name + '\n'
+			except Exception as e:
+				pass
+		reason = discord.utils.get(bans, user=user)[0]
+		hubchannel=self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
 		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
 		embed.add_field(name= "Server:", value= server.name)
 		embed.add_field(name= "Server ID: ", value = str(server.id))
-
-		messages = gather_proof(str(user))
-		for memssage in messages:
-			embed.add_field(name = message.created_at, value = message.content)
+		embed.add_field(name= "Reason: ", value= reason)
+		embed.add_field(name="Proof:", value = "Coming Soon")
 		embed.set_thumbnail(url=user.avatar_url)
+
+		if bannedin:
+			embed.add_field(name='Banned In', value = bannedin, inline=False)
 		await hubchannel.send(embed=embed)
 
 	async def member_unban(self, guild, user: discord.User):
