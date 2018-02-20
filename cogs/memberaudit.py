@@ -367,12 +367,11 @@ class MemberAudit:
 		await self._log(guild.id, user, 'Leave')
 
 	async def gather_proof(self,user):
-		summary=discord.Embed(title="Proof:", colour=discord.Colour.red())
 
 		summary=[]
 		for message in self.deletedmessages:
 			if message.author == user:
-				messages_from_user.append(message)
+				summary.append(message)
 		return summary(5)
 
 	async def on_message_delete(self, message):
