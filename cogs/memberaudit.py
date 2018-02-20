@@ -365,21 +365,15 @@ class MemberAudit:
 		await self._log(guild.id, user, 'Leave')
 
 	async def gather_proof(self,message):
-		summary=discord.Embed(title="Proof:", colour=discord.Colour.red())
 		
-		
-		for message in self.deletedmessages[user.id]["deletedmessages"]:
-			senderinfo=message["timestamp"] + " " + message["author"] + " in " + message["channel"] + message["channel_id"]
-			content=message["content"]
-			if message["attachments"]:
-				for attachment in message["attachments"]:
-					content=content + "\n " + attachment
-			summary.add_field(name=senderinfo, value= content)
-	
-		return summary		
+		summary=[]
+		for message in self.deletedmessage:
+			if message.author == str(user):
+				summary.append(message)
+		return summary(5)
 
 	async def on_message_delete(self, message):
-
+		self.deletedmessages.append(message)
 		hubchannel=self.bot.get_channel(381089479450034176)
 		he = discord.Embed(colour=discord.Colour.red())
 		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
