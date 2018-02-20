@@ -38,7 +38,7 @@ class MemberAudit:
 			self.settings[str(server.id)] = deepcopy(default_settings)
 			self.settings[str(server.id)]["channel"] = str(server.text_channels[0].id)
 			dataIO.save_json(self.settings_path, self.settings)
-			self.deletedmessages = {}
+			self.deletedmessages = MaxList(500)
 
 
 	@commands.command(hidden=True)
@@ -366,27 +366,18 @@ class MemberAudit:
 				  " permission. User was {}.".format(member))
 		await self._log(guild.id, user, 'Leave')
 
-	async def gather_proof(self,message):
+	async def gather_proof(self,user):
 		summary=discord.Embed(title="Proof:", colour=discord.Colour.red())
-		
-		
-		for message in self.deletedmessages[user.id]["deletedmessages"]:
-			senderinfo=message["timestamp"] + " " + message["author"] + " in " + message["channel"] + message["channel_id"]
-			content=message["content"]
-			if message["attachments"]:
-				for attachment in message["attachments"]:
-					content=content + "\n " + attachment
-			summary.add_field(name=senderinfo, value= content)
-	
-		return summary		
+
+		summary=[]
+		for message in self.deletedmessages:
+			if message.author == user:
+				messages_from_user.append(message)
+		return summary(5:)
 
 	async def on_message_delete(self, message):
 
-		hubchannel=self.bot.get_channel(381089479450034176)
-		he = discord.Embed(colour=discord.Colour.red())
-		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
-		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
-		await hubchannel.send(embed=he)
+		self.deletedmessages.append(message)
 
 
 		server = message.guild
@@ -464,6 +455,9 @@ class MemberAudit:
 						bannedin += guild.name + '\n'
 			except Exception as e:
 				pass
+		messages = gather_proof(user)
+    		for memssage in messages
+        em.add_field(name = message.time_stamp, value = message.content)
 		reason = discord.utils.get(bans, user=user)[0]
 		hubchannel=self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
