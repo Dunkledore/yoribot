@@ -4,7 +4,7 @@ import os
 import discord
 import datetime
 from discord.ext import commands
-from utils.maxlist import MaxList
+from .utils.maxlist import MaxList
 from .utils.dataIO import dataIO
 from .utils import checks, time, chat_formatting as cf
 
