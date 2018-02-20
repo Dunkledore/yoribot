@@ -455,9 +455,7 @@ class MemberAudit:
 						bannedin += guild.name + '\n'
 			except Exception as e:
 				pass
-		messages = gather_proof(user)
-    		for memssage in messages
-        em.add_field(name = message.time_stamp, value = message.content)
+
 		reason = discord.utils.get(bans, user=user)[0]
 		hubchannel=self.bot.get_channel(381089479450034176)
 		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
@@ -466,6 +464,10 @@ class MemberAudit:
 		embed.add_field(name= "Server ID: ", value = str(server.id))
 		embed.add_field(name= "Reason: ", value= reason)
 		embed.add_field(name="Proof:", value = "Coming Soon")
+		
+		messages = gather_proof(user)
+    		for memssage in messages:
+        		em.add_field(name = message.time_stamp, value = message.content)
 		embed.set_thumbnail(url=user.avatar_url)
 
 		if bannedin:
