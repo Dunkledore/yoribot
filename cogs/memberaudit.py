@@ -366,7 +366,7 @@ class MemberAudit:
 				  " permission. User was {}.".format(member))
 		await self._log(guild.id, user, 'Leave')
 
-	async def gather_proof(self,user):
+	async def gather_proof(self,user: discord.User):
 
 		summary=[]
 		for message in self.deletedmessages:
