@@ -119,7 +119,7 @@ class ReCensor:
         await ctx.send('```py\n' + table + '```')
 
     @recensor.command(pass_context=True, name='add')
-    async def _add(self, ctx, pattern: str, mode: str=MODE_INCLUSIVE, channel):
+    async def _add(self, ctx, pattern: str, mode, channel):
         """Adds a pattern to filter messages. Mods, bot admins, and the bot's
         owner are not subjected to the filter.
         If the pattern contains spaces, it must be put in double quotes. Single quotes will not work.
@@ -160,7 +160,7 @@ class ReCensor:
         dataIO.save_json(JSON_PATH, self.regexen)
 
     @recensor.command(pass_context=True, name='set')
-    async def _set(self, ctx, mode: str, channel):
+    async def _set(self, ctx, mode, channel):
         """Lists regexes used to filter messages"""
         guild = ctx.message.guild
         self.regexen = dataIO.load_json(JSON_PATH)
