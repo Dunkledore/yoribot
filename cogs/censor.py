@@ -84,7 +84,7 @@ class ReCensor:
                 self.recache[regex] = re.compile(regex)
 
     @commands.group(name='recensor', pass_context=True)
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.is_mod()
     async def recensor(self, ctx):
         """Configure regular expression censorship"""
         if ctx.invoked_subcommand is None:
