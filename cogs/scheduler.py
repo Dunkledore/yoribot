@@ -121,7 +121,8 @@ class Scheduler:
     @checks.is_mod()
     async def scheduler(self, ctx):
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='scheduler')
             return
 
     @scheduler.command(pass_context=True, name="add")
@@ -138,7 +139,8 @@ class Scheduler:
             s = self._parse_time(time_interval)
             log.debug('run command in {}s'.format(s))
         except:
-            await self.bot.send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='_scheduler_add')
             return
         if s < 30:
             await ctx.send('yeah I can\'t do that, your time'
@@ -165,7 +167,8 @@ class Scheduler:
             s = self._parse_time(time_interval)
             log.debug('run command in {}s'.format(s))
         except:
-            await self.bot.send_cmd_help(ctx)
+            help_cmd = self.bot.get_command('help')
+            await ctx.invoke(help_cmd, command='_scheduler_repeat')
             return
         if s < 30:
             await ctx.send('yeah I can\'t do that, your time'
