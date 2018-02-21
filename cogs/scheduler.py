@@ -129,10 +129,9 @@ class Scheduler:
         name = command.lower()
         try:
             s = self._parse_time(time_interval)
-            log.debug('run command in {}s'.format(s))
         except:
             help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='_scheduler_add')
+            await ctx.invoke(help_cmd, command='scheduleadd')
             return
         if s < 30:
             await ctx.send('yeah I can\'t do that, your time'

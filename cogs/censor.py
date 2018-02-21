@@ -35,7 +35,6 @@ class ReCensor:
         self.bot = bot
         self.regexen = dataIO.load_json(JSON_PATH)
         self.recache = {}
-        self.analytics = CogAnalytics(self)
         bot.loop.create_task(self.compile_regexen())
 
     def _re_present(self, obj):
