@@ -117,16 +117,8 @@ class Scheduler:
             await self.queue.put(event)
         self.queue_lock.release()
 
-    @commands.group(no_pm=True, pass_context=True)
-    @checks.is_mod()
-    async def scheduler(self, ctx):
-        if ctx.invoked_subcommand is None:
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='scheduler')
-            return
-
-    @scheduler.command(pass_context=True, name="add")
-    async def _scheduler_add(self, ctx, time_interval, *, command):
+    @commands.command()
+    async def scheduleadd(self, ctx, time_interval, *, command):
         """Add a command to run in [time_interval] seconds.
 
         Times are formed as follows: 1s, 2m, 3h, 5d, 1w
@@ -153,8 +145,8 @@ class Scheduler:
         await self._add_event(name, command, guild, channel, author, s)
         await ctx.send('I will run "{}" in {}s'.format(command, s))
 
-    @scheduler.command(pass_context=True, name="repeat")
-    async def _scheduler_repeat(self, ctx, name, time_interval, *, command):
+    @scheduler.command()
+    async def schedulerepeat(self, ctx, name, time_interval, *, command):
         """Add a command to run every [time_interval] seconds.
 
         Times are formed as follows: 1s, 2m, 3h, 5d, 1w
@@ -182,8 +174,8 @@ class Scheduler:
         await ctx.send('"{}" will run "{}" every {}s'.format(name, command,
                                                                  s))
 
-    @scheduler.command(pass_context=True, name="remove")
-    async def _scheduler_remove(self, ctx, name):
+    @scheduler.command()
+    async def scheduleremove(self, ctx, name):
         """Removes scheduled command from running.
         """
         guild = ctx.message.guild
@@ -201,8 +193,8 @@ class Scheduler:
         await ctx.send('"{}" has successfully been removed but'
                            ' it may run once more.'.format(name))
 
-    @scheduler.command(pass_context=True, name="list")
-    async def _scheduler_list(self, ctx):
+    @scheduler.command()
+    async def schedulelist(self, ctx):
         """Lists all repeated commands
         """
         guild = ctx.message.guild
