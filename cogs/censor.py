@@ -305,13 +305,11 @@ class ReCensor:
 
 def check_folder():
     if not os.path.exists(DATA_PATH):
-        log.debug('Creating folder: %s' % DATA_PATH)
         os.makedirs(DATA_PATH)
 
 
 def check_file():
     if dataIO.is_valid_json(JSON_PATH) is False:
-        log.debug('Creating json: %s' % JSON_PATH)
         dataIO.save_json(JSON_PATH, {})
 
 
