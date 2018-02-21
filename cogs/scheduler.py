@@ -145,7 +145,7 @@ class Scheduler:
         await self._add_event(name, command, guild, channel, author, s)
         await ctx.send('I will run "{}" in {}s'.format(command, s))
 
-    @scheduler.command()
+    @commands.command()
     async def schedulerepeat(self, ctx, name, time_interval, *, command):
         """Add a command to run every [time_interval] seconds.
 
@@ -174,7 +174,7 @@ class Scheduler:
         await ctx.send('"{}" will run "{}" every {}s'.format(name, command,
                                                                  s))
 
-    @scheduler.command()
+    @commands.command()
     async def scheduleremove(self, ctx, name):
         """Removes scheduled command from running.
         """
@@ -193,7 +193,7 @@ class Scheduler:
         await ctx.send('"{}" has successfully been removed but'
                            ' it may run once more.'.format(name))
 
-    @scheduler.command()
+    @commands.command()
     async def schedulelist(self, ctx):
         """Lists all repeated commands
         """
