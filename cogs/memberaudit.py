@@ -447,6 +447,7 @@ class MemberAudit:
 		await self._log(guild.id, user, 'Ban', reason)
 
 	async def hub_ban_audit(self,guild,user: discord.User):
+
 		server = guild
 		bannedin= ""
 		for guild in self.bot.guilds:
@@ -455,23 +456,26 @@ class MemberAudit:
 				for banentry in bans:
 					if member == banentry[1]:
 						bannedin += guild.name + '\n'
-			except Exception as e:
-				pass
-		reason = discord.utils.get(bans, user=user)[0]
-		hubchannel=self.bot.get_channel(381089479450034176)
-		embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
-		embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
-		embed.add_field(name= "Server:", value= server.name)
-		embed.add_field(name= "Server ID: ", value = str(server.id))
-		embed.add_field(name= "Reason: ", value= reason)
-		messages = gather_proof(user)
-		for message in messages:
-			embed.add_field(name= message.created_at, value= message.content)
-		embed.set_thumbnail(url=user.avatar_url)
+				except Exception as e:
+					pass
+			reason = discord.utils.get(bans, user=user)[0]
+			hubchannel=self.bot.get_channel(381089479450034176)
+		try:
+			embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
+			embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
+			embed.add_field(name= "Server:", value= server.name)
+			embed.add_field(name= "Server ID: ", value = str(server.id))
+			embed.add_field(name= "Reason: ", value= reason)
+			messages = gather_proof(user)
+			for message in messages:
+				embed.add_field(name= message.created_at, value= message.content)
+			embed.set_thumbnail(url=user.avatar_url)
 
-		if bannedin:
-			embed.add_field(name='Banned In', value = bannedin, inline=False)
-		await hubchannel.send(embed=embed)
+			if bannedin:
+				embed.add_field(name='Banned In', value = bannedin, inline=False)
+			await hubchannel.send(embed=embed)
+		except Exception as e:
+			await hubchannel.send(e)
 
 	async def member_unban(self, guild, user: discord.User):
 		server = guild
