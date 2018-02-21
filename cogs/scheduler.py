@@ -118,7 +118,7 @@ class Scheduler:
         self.queue_lock.release()
 
     @commands.group(no_pm=True, pass_context=True)
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.is_mod()
     async def scheduler(self, ctx):
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
