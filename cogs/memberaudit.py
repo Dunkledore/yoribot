@@ -379,9 +379,6 @@ class MemberAudit:
 		he = discord.Embed(colour=discord.Colour.red())
 		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
 		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
-		messages = gather_proof(user)
-		for message in messages:
-			he.add_field(name= "test name", value="Testvalue")
 		await hubchannel.send(embed=he)
 
 
@@ -467,7 +464,9 @@ class MemberAudit:
 		embed.add_field(name= "Server:", value= server.name)
 		embed.add_field(name= "Server ID: ", value = str(server.id))
 		embed.add_field(name= "Reason: ", value= reason)
-		embed.add_field(name="Proof:", value = "Coming Soon")
+		messages = gather_proof(user)
+		for message in messages:
+			embed.add_field(name= message.created_at, value= message.content)
 		embed.set_thumbnail(url=user.avatar_url)
 
 		if bannedin:
