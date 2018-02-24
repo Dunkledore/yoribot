@@ -107,7 +107,7 @@ class Censor:
         await ctx.send('```py\n' + table + '```')
 
     @commands.command()
-    async def censoradd(self, ctx, pattern: str, mode, channel : discord.TextChannel)
+    async def censoradd(self, ctx, pattern: str, mode, channel: discord.TextChannel):
         """Adds a pattern to filter messages. Mods, bot admins, and the bot's
         owner are not subjected to the filter.
         If the pattern contains spaces, it must be put in double quotes. Single quotes will not work.
