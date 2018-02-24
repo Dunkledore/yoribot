@@ -80,6 +80,10 @@ class Censor:
                 self.recache[regex] = re.compile(regex)
 
     @commands.command()
+    async def censortest(self, ctx, test):
+        self.on_message(ctx.message)
+
+    @commands.command()
     async def censorlist(self, ctx, channel):
         """Lists regexes used to filter messages.
         Channel listing includes global patterns."""
