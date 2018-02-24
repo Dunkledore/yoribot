@@ -140,7 +140,7 @@ class Censor:
             if channel and str(channel.id) in self._ls_excl(guild):
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
-        cid = channel.id if channel else ALL_CHANNELS
+        cid = str(channel.id) if channel else ALL_CHANNELS
         if cid not in self.regexen[str(guild.id)]:
             self.regexen[str(guild.id)][cid] = {}
         self.regexen[str(guild.id)][cid][pattern] = mode
