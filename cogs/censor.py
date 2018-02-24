@@ -49,16 +49,16 @@ class Censor:
         elif type(obj) is discord.TextChannel:
             guild = obj.guild
             channel = obj
-            if channel.id in self.regexen[guild.id]:
-                return bool(self.regexen[guild.id][channel.id])
+            if str(channel.id) in self.regexen[guild.id]:
+                return bool(self.regexen[guild.id][str(channel.id)])
             else:
                 return False
 
         elif type(obj) is str:  # won't work with ALL_CHANNELS
             channel = self.bot.get_channel(obj)
             guild = channel.guild
-            if channel.id in self.regexen[guild.id]:
-                return bool(self.regexen[guild.id][channel.id])
+            if str(channel.id) in self.regexen[guild.id]:
+                return bool(self.regexen[guild.id][str(channel.id)])
             else:
                 return False
 
@@ -92,7 +92,7 @@ class Censor:
         for c in self.regexen[guild.id]:
             if c == ALL_CHANNELS and self._re_present(guild):
                     table += '\nguild-wide:\n'
-            elif (channel and channel.id == c) or not channel:
+            elif (channel and str(channel.id) == c) or not channel:
                 if channel:
                     ch_obj = channel
                 else:
@@ -137,10 +137,10 @@ class Censor:
             if ALL_CHANNELS in self._ls_excl(guild):
                 await ctx.send("There is already a guild-wide exclusive filter. Remove or disable it first.")
                 return
-            if channel and channel.id in self._ls_excl(guild):
+            if channel and str(channel.id) in self._ls_excl(guild):
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
-        cid = channel.id if channel else ALL_CHANNELS
+        cid = str(channel.id) if channel else ALL_CHANNELS
         if cid not in self.regexen[guild.id]:
             self.regexen[guild.id][cid] = {}
         self.regexen[guild.id][cid][pattern] = mode
@@ -162,7 +162,7 @@ class Censor:
             if ALL_CHANNELS in self._ls_excl(guild):
                 await ctx.send("There is already a guild-wide exclusive filter. Remove or disable it first.")
                 return
-            if channel and channel.id in self._ls_excl(guild):
+            if channel and str(channel.id) in self._ls_excl(guild):
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
 
@@ -172,7 +172,7 @@ class Censor:
         for c in self.regexen[guild.id]:
             if c == ALL_CHANNELS and self._re_present(guild):
                     table += '\nguild-wide:\n'
-            elif (channel and channel.id == c) or not channel:
+            elif (channel and str(channel.id) == c) or not channel:
                 if channel:
                     ch_obj = channel
                 else:
@@ -213,7 +213,7 @@ class Censor:
         for c in self.regexen[guild.id]:
             if c == ALL_CHANNELS and self._re_present(guild):
                     table += '\nguild-wide:\n'
-            elif (channel and channel.id == c) or not channel:
+            elif (channel and str(channel.id) == c) or not channel:
                 if channel:
                     ch_obj = channel
                 else:
@@ -272,7 +272,7 @@ class Censor:
         if sid in self.regexen:
             patterns = {}
             # compile list of patterns from global and channel
-            for key in [ALL_CHANNELS, message.channel.id]:
+            for key in [ALL_CHANNELS, message.str(channel.id)]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
             # Iterate through patterns
