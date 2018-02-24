@@ -57,7 +57,7 @@ class Censor:
         elif type(obj) is str:  # won't work with ALL_CHANNELS
             channel = self.bot.get_channel(obj)
             guild = channel.guild
-            if str(channel.id) in self.regexen[guild.id]:
+            if str(channel.id) in self.regexen[str(guild.id)]:
                 return bool(self.regexen[guild.id][str(channel.id)])
             else:
                 return False
