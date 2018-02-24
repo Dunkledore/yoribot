@@ -23,9 +23,9 @@ class Smite:
         self.url_pc = 'http://api.smitegame.com/smiteapi.svc'
         self.header = {"User-Agent": "flapjackcogs/1.0"}
 
-    @commands.command(name="auth")
+    @commands.command()
     @checks.is_owner()
-    async def _auth_smite(self, ctx, devid: str, key: str):
+    async def smitekey(self, ctx, devid: str, key: str):
         """Set the cog's Smite API authorization credentials, required for statistics.
         (get them at https://fs12.formsite.com/HiRez/form48/secure_index.html)
         Use a direct message to keep the credentials secret."""
@@ -33,7 +33,9 @@ class Smite:
         self.settings['devid'] = devid
         self.settings['authkey'] = key
         dataIO.save_json(self.settings_path, self.settings)
-        await ctx.send('API access credentials set.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='API access credentials set.'))
 
 
     @commands.command()
@@ -43,7 +45,9 @@ class Smite:
         uid = ctx.message.author.id
         self.settings['smitenames'][uid] = name
         dataIO.save_json(self.settings_path, self.settings)
-        await ctx.send("Your Smite name has been set.")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Your Smite name has been set."))
 
     @commands.command()
     async def smiteclear(self, ctx):
@@ -51,9 +55,13 @@ class Smite:
 
         uid = ctx.message.author.id
         if self.settings['smitenames'].pop(uid, None) is not None:
-            await ctx.send("Your Smite name has been removed.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Your Smite name has been removed."))
         else:
-            await ctx.send("I had no Smite name stored for you.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description ="I had no Smite name stored for you."))
         dataIO.save_json(self.settings_path, self.settings)
 
     @commands.command()
@@ -66,9 +74,11 @@ class Smite:
 
         if not await self.test_session():
             if not await self.create_session():
-                await ctx.send("I could not establish a connection "
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I could not establish a connection "
                                    "to the Smite API. Has my owner input "
-                                   "valid credentials?")
+                                   "valid credentials?"))
                 return
 
         uid = ctx.message.author.id
@@ -76,8 +86,10 @@ class Smite:
             if uid in self.settings['smitenames']:
                 name = self.settings['smitenames'][uid]
             else:
-                await ctx.send('You did not provide a name '
-                                   'and I do not have one stored for you.')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='You did not provide a name '
+                                   'and I do not have one stored for you.'))
                 return
 
         dev_id = self.settings['devid']
@@ -99,7 +111,9 @@ class Smite:
                 re = await resp.json()
 
         if not re:
-            await ctx.send("That profile is hidden or was not found.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="That profile is hidden or was not found."))
             return
 
         # Smite - Icon by J1mB091 on DeviantArt (http://j1mb091.deviantart.com/art/Smite-Icon-314198305)
