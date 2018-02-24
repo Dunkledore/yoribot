@@ -17,10 +17,7 @@ DATA_PATH = "data/recensor/"
 JSON_PATH = DATA_PATH + "regexen.json"
 
 
-__version__ = '1.5.0'
-
-
-class ReCensor:
+class Censor:
 
     # Data format:
     # {
@@ -41,8 +38,8 @@ class ReCensor:
         """Determines if any patterns are set for a guild or channel"""
         if type(obj) is discord.guild:
             guild = obj
-            if str(guild.id) in self.regexen:
-                for relist in self.regexen[str(guild.id)].values():
+            if guild.id in self.regexen:
+                for relist in self.regexen[guild.id].values():
                     if bool(relist):  # nonempty list
                         return True
                 return False
@@ -52,16 +49,16 @@ class ReCensor:
         elif type(obj) is discord.TextChannel:
             guild = obj.guild
             channel = obj
-            if str(channel.id) in self.regexen[str(guild.id)]:
-                return bool(self.regexen[str(guild.id)][str(channel.id)])
+            if channel.id in self.regexen[guild.id]:
+                return bool(self.regexen[guild.id][channel.id])
             else:
                 return False
 
         elif type(obj) is str:  # won't work with ALL_CHANNELS
             channel = self.bot.get_channel(obj)
             guild = channel.guild
-            if str(channel.id) in self.regexen[str(guild.id)]:
-                return bool(self.regexen[str(guild.id)][str(channel.id)])
+            if channel.id in self.regexen[guild.id]:
+                return bool(self.regexen[guild.id][channel.id])
             else:
                 return False
 
@@ -69,7 +66,7 @@ class ReCensor:
         """returns a list of channel IDs with exclusive filters"""
         clist = []
         if type(guild) is discord.guild:
-            guild = str(guild.id)
+            guild = guild.id
         if guild in self.regexen:
             for c, relist in self.regexen[guild].items():
                 if MODE_EXCLUSIVE in relist.values():
@@ -92,10 +89,10 @@ class ReCensor:
             await ctx.send('There are no filter patterns set for this guild.')
             return
         table = ' | '.join(['mode', 'pattern']) + '\n'  # header
-        for c in self.regexen[str(guild.id)]:
+        for c in self.regexen[guild.id]:
             if c == ALL_CHANNELS and self._re_present(guild):
                     table += '\nguild-wide:\n'
-            elif (channel and str(channel.id) == c) or not channel:
+            elif (channel and channel.id == c) or not channel:
                 if channel:
                     ch_obj = channel
                 else:
@@ -105,7 +102,7 @@ class ReCensor:
                 if self._re_present(ch_obj):
                     table += '\n#' + ch_obj.name + '\n'
 
-            for regex, mode in self.regexen[str(guild.id)][c].items():
+            for regex, mode in self.regexen[guild.id][c].items():
                 table += ' | '.join([mode, regex]) + '\n'
         await ctx.send('```py\n' + table + '```')
 
@@ -126,8 +123,8 @@ class ReCensor:
 
         # initialize
         self.regexen = dataIO.load_json(JSON_PATH)
-        if str(guild.id) not in self.regexen:
-            self.regexen[str(guild.id)] = {}
+        if guild.id not in self.regexen:
+            self.regexen[guild.id] = {}
 
         if pattern.startswith("'"):
             await ctx.send("Patterns cannot be specified within single quotes.")
@@ -140,13 +137,13 @@ class ReCensor:
             if ALL_CHANNELS in self._ls_excl(guild):
                 await ctx.send("There is already a guild-wide exclusive filter. Remove or disable it first.")
                 return
-            if channel and str(channel.id) in self._ls_excl(guild):
+            if channel and channel.id in self._ls_excl(guild):
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
-        cid = str(channel.id) if channel else ALL_CHANNELS
-        if cid not in self.regexen[str(guild.id)]:
-            self.regexen[str(guild.id)][cid] = {}
-        self.regexen[str(guild.id)][cid][pattern] = mode
+        cid = channel.id if channel else ALL_CHANNELS
+        if cid not in self.regexen[guild.id]:
+            self.regexen[guild.id][cid] = {}
+        self.regexen[guild.id][cid][pattern] = mode
         await ctx.send('Pattern added.')
         dataIO.save_json(JSON_PATH, self.regexen)
 
@@ -165,17 +162,17 @@ class ReCensor:
             if ALL_CHANNELS in self._ls_excl(guild):
                 await ctx.send("There is already a guild-wide exclusive filter. Remove or disable it first.")
                 return
-            if channel and str(channel.id) in self._ls_excl(guild):
+            if channel and channel.id in self._ls_excl(guild):
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
 
         re_list = {}
         i = 1
         table = ' | '.join(['#'.ljust(4), 'mode', 'pattern']) + '\n'  # header
-        for c in self.regexen[str(guild.id)]:
+        for c in self.regexen[guild.id]:
             if c == ALL_CHANNELS and self._re_present(guild):
                     table += '\nguild-wide:\n'
-            elif (channel and str(channel.id) == c) or not channel:
+            elif (channel and channel.id == c) or not channel:
                 if channel:
                     ch_obj = channel
                 else:
@@ -185,9 +182,9 @@ class ReCensor:
                 if self._re_present(ch_obj):
                     table += '\n#' + ch_obj.name + '\n'
 
-            for regex, oldmode in self.regexen[str(guild.id)][c].items():
+            for regex, oldmode in self.regexen[guild.id][c].items():
                 table += ' | '.join([str(i).ljust(4), oldmode, regex]) + '\n'
-                re_list[str(i)] = (str(guild.id), c, regex, oldmode)
+                re_list[str(i)] = (guild.id, c, regex, oldmode)
                 i += 1
         prompt = 'Choose the number of the pattern to set to `%s`:\n' % mode
         await ctx.send(prompt + '```py\n' + table + '```')
@@ -213,10 +210,10 @@ class ReCensor:
         re_list = {}
         i = 1
         table = ' | '.join(['#'.ljust(4), 'mode', 'pattern']) + '\n'  # header
-        for c in self.regexen[str(guild.id)]:
+        for c in self.regexen[guild.id]:
             if c == ALL_CHANNELS and self._re_present(guild):
                     table += '\nguild-wide:\n'
-            elif (channel and str(channel.id) == c) or not channel:
+            elif (channel and channel.id == c) or not channel:
                 if channel:
                     ch_obj = channel
                 else:
@@ -226,9 +223,9 @@ class ReCensor:
                 if self._re_present(ch_obj):
                     table += '\n#' + ch_obj.name + '\n'
 
-            for regex, mode in self.regexen[str(guild.id)][c].items():
+            for regex, mode in self.regexen[guild.id][c].items():
                 table += ' | '.join([str(i).ljust(4), mode, regex]) + '\n'
-                re_list[str(i)] = (str(guild.id), c, regex)
+                re_list[str(i)] = (guild.id, c, regex)
                 i += 1
         prompt = 'Choose the number of the pattern to delete:\n'
         await ctx.send(prompt + '```py\n' + table + '```')
@@ -249,7 +246,7 @@ class ReCensor:
         admin_role = self.bot.settings.get_guild_admin(guild)
         mod_role = self.bot.settings.get_guild_mod(guild)
 
-        if str(user.id) == self.bot.settings.owner:
+        if user.id == self.bot.settings.owner:
             return True
         elif discord.utils.get(user.roles, name=admin_role):
             return True
@@ -265,7 +262,7 @@ class ReCensor:
             return
 
         guild = message.guild
-        sid = str(guild.id)
+        sid = guild.id
         can_delete = message.channel.permissions_for(guild.me).manage_messages
 
         # Owner, admins and mods are immune to the filter
@@ -275,7 +272,7 @@ class ReCensor:
         if sid in self.regexen:
             patterns = {}
             # compile list of patterns from global and channel
-            for key in [ALL_CHANNELS, str(message.channel.id)]:
+            for key in [ALL_CHANNELS, message.channel.id]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
             # Iterate through patterns
