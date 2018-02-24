@@ -44,7 +44,7 @@ class Smite:
 
     @smite.command(name="ping")
     @checks.is_owner()
-    async def _ping_smite(self, ctx):
+    async def _ping_smite(self):
         """Ping the Smite API"""
 
         await self.ping()
