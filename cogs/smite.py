@@ -23,14 +23,7 @@ class Smite:
         self.url_pc = 'http://api.smitegame.com/smiteapi.svc'
         self.header = {"User-Agent": "flapjackcogs/1.0"}
 
-    @commands.group(name="smite", pass_context=True)
-    async def smite(self, ctx):
-        """Smite cog commands."""
-        if ctx.invoked_subcommand is None:
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='smite')
-
-    @smite.command(name="auth")
+    @commands.command(name="auth")
     @checks.is_owner()
     async def _auth_smite(self, ctx, devid: str, key: str):
         """Set the cog's Smite API authorization credentials, required for statistics.
@@ -42,15 +35,9 @@ class Smite:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send('API access credentials set.')
 
-    @smite.command(name="ping")
-    @checks.is_owner()
-    async def _ping_smite(self):
-        """Ping the Smite API"""
 
-        await self.ping()
-
-    @smite.command(name="nameset")
-    async def _nameset_smite(self, ctx, name: str):
+    @commands.command()
+    async def setsmite(self, ctx, name: str):
         """Set your Smite name"""
 
         uid = ctx.message.author.id
@@ -58,8 +45,8 @@ class Smite:
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send("Your Smite name has been set.")
 
-    @smite.command(name="nameclear")
-    async def _nameclear_smite(self, ctx):
+    @commands.command()
+    async def smiteclear(self, ctx):
         """Remove your Smite name"""
 
         uid = ctx.message.author.id
@@ -69,8 +56,8 @@ class Smite:
             await ctx.send("I had no Smite name stored for you.")
         dataIO.save_json(self.settings_path, self.settings)
 
-    @smite.command(name="stats")
-    async def _stats_smite(self, ctx, name: str=None):
+    @commands.command()
+    async def smitestats(self, ctx, name: str=None):
         """Smite stats for your in game name.
         If name is ommitted, bot will use your name if stored.
 
