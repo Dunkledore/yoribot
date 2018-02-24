@@ -39,7 +39,7 @@ class Smite:
 
 
     @commands.command()
-    async def setsmite(self, ctx, name: str):
+    async def smitesset(self, ctx, name: str):
         """Set your Smite name"""
 
         uid = ctx.message.author.id
