@@ -221,7 +221,6 @@ class Scheduler:
             guild = channel.guild
             prefix = self.bot.settings.get_prefixes(guild)[0]
         except AttributeError:
-            log.debug("Channel no longer found, not running scheduled event.")
             return
         data = {}
         data['timestamp'] = time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime())

@@ -82,16 +82,8 @@ class ReCensor:
             for regex in channels:
                 self.recache[regex] = re.compile(regex)
 
-    @commands.group(name='recensor', pass_context=True)
-    @checks.is_mod()
-    async def recensor(self, ctx):
-        """Configure regular expression censorship"""
-        if ctx.invoked_subcommand is None:
-            help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, command='recensor')
-
-    @recensor.command(pass_context=True, name='list')
-    async def _list(self, ctx, channel):
+    @commands.command()
+    async def censorlist(self, ctx, channel):
         """Lists regexes used to filter messages.
         Channel listing includes global patterns."""
         guild = ctx.message.guild
@@ -117,8 +109,8 @@ class ReCensor:
                 table += ' | '.join([mode, regex]) + '\n'
         await ctx.send('```py\n' + table + '```')
 
-    @recensor.command(pass_context=True, name='add')
-    async def _add(self, ctx, pattern: str, mode, channel):
+    @commands.command()
+    async def censoradd(self, ctx, pattern: str, mode, channel):
         """Adds a pattern to filter messages. Mods, bot admins, and the bot's
         owner are not subjected to the filter.
         If the pattern contains spaces, it must be put in double quotes. Single quotes will not work.
@@ -158,8 +150,8 @@ class ReCensor:
         await ctx.send('Pattern added.')
         dataIO.save_json(JSON_PATH, self.regexen)
 
-    @recensor.command(pass_context=True, name='set')
-    async def _set(self, ctx, mode, channel):
+    @commands.command()
+    async def censorset(self, ctx, mode, channel):
         """Lists regexes used to filter messages"""
         guild = ctx.message.guild
         self.regexen = dataIO.load_json(JSON_PATH)
@@ -210,8 +202,8 @@ class ReCensor:
             await ctx.send('Mode set.')
             dataIO.save_json(JSON_PATH, self.regexen)
 
-    @recensor.command(pass_context=True, name='del')
-    async def _del(self, ctx, channel):
+    @commands.command()
+    async def censordelete(self, ctx, channel):
         """Lists regexes used to filter messages"""
         guild = ctx.message.guild
         self.regexen = dataIO.load_json(JSON_PATH)
