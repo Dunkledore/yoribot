@@ -107,7 +107,7 @@ class Censor:
         await ctx.send('```py\n' + table + '```')
 
     @commands.command()
-    async def censoradd(self, ctx, pattern: str, mode, channel):
+    async def censoradd(self, ctx, pattern: str, mode, channel : discord.TextChannel)
         """Adds a pattern to filter messages. Mods, bot admins, and the bot's
         owner are not subjected to the filter.
         If the pattern contains spaces, it must be put in double quotes. Single quotes will not work.
@@ -140,7 +140,7 @@ class Censor:
             if channel and str(channel.id) in self._ls_excl(guild):
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
-        cid = self.bot.get_channel(str(channel)) if channel else ALL_CHANNELS
+        cid = channel.id if channel else ALL_CHANNELS
         if cid not in self.regexen[str(guild.id)]:
             self.regexen[str(guild.id)][cid] = {}
         self.regexen[str(guild.id)][cid][pattern] = mode
@@ -272,7 +272,7 @@ class Censor:
         if sid in self.regexen:
             patterns = {}
             # compile list of patterns from global and channel
-            for key in [ALL_CHANNELS, message.str(channel.id)]:
+            for key in [ALL_CHANNELS, message.channel.id]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
             # Iterate through patterns
