@@ -141,9 +141,9 @@ class Censor:
                 await ctx.send("That channel already has an exclusive filter. Remove or disable it first.")
                 return
         cid = self.bot.get_channel(channel) if channel else ALL_CHANNELS
-        if str(cid) not in self.regexen[guild.id]:
-            self.regexen[guild.id][cid] = {}
-        self.regexen[guild.id][cid][pattern] = mode
+        if str(cid) not in self.regexen[str(guild.id)]:
+            self.regexen[str(guild.id)][str(cid)] = {}
+        self.regexen[str(guild.id)][str(cid)][pattern] = mode
         await ctx.send('Pattern added.')
         dataIO.save_json(JSON_PATH, self.regexen)
 
