@@ -289,6 +289,8 @@ class Censor:
                     regex)
                 if regex.match(message.content):
                     await message.channel.send("match")
+                else:
+                    await message.channel.send("no match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
                     await self.bot.delete_message(message)
 
