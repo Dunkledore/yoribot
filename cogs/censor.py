@@ -264,14 +264,13 @@ class Censor:
         # Fast checks
         if message.channel.is_private or self.bot.user == message.author \
                 or not isinstance(message.author, discord.Member):
-            await message.channel.send("ummm...")
             return
 
         guild = message.guild
         sid = str(guild.id)
         can_delete = message.channel.permissions_for(guild.me).manage_messages
-        await message.channel.send(str(message.guild.id))
-        await message.channel.send(str(can_delete))
+        await message.channel.send(message.guild.id)
+        await message.channel.send(can_delete)
         # Owner, admins and mods are immune to the filter
         if self.immune_from_filter(message) or not can_delete:
             await message.channel.send("that member's messages are immune from deletion or insufficient privileges to delete messages")
