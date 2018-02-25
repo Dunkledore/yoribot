@@ -36,7 +36,7 @@ class Censor:
 
     def _re_present(self, obj):
         """Determines if any patterns are set for a guild or channel"""
-        if type(obj) is discord.guild:
+        if type(obj) is discord.Guild:
             guild = obj
             if str(guild.id) in self.regexen:
                 for relist in self.regexen[str(guild.id)].values():
