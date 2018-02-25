@@ -262,9 +262,9 @@ class Censor:
 
     async def on_message(self, message):
         # Fast checks
-        await message.channel.send(message.guild.id)
         if message.channel.is_private or self.bot.user == message.author \
                 or not isinstance(message.author, discord.Member):
+            await message.channel.send("ummm...")
             return
 
         guild = message.guild
