@@ -84,7 +84,7 @@ class Censor:
         self.on_message(ctx.message)
 
     @commands.command()
-    async def censorlist(self, ctx, channel: discord.TextChannel):
+    async def censorlist(self, ctx, channel: discord.TextChannel= None):
         """Lists regexes used to filter messages.
         Channel listing includes global patterns."""
         guild = ctx.message.guild
