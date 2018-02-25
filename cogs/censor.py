@@ -275,7 +275,7 @@ class Censor:
             await message.channel.send("that member's messages are immune from deletion or insufficient privileges to delete messages")
             return
 
-        await message.channel.send(sid)
+        await message.channel.send(str(message.guild.id))
         if sid in self.regexen:
             await message.channel.send("woo we found the guild")
             patterns = {}
