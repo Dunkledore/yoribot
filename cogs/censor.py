@@ -262,7 +262,7 @@ class Censor:
 
     async def on_message(self, message):
         # Fast checks
-        await message.channel.send(str(isinstance(message.Author, discord.Member)))
+        await message.channel.send("test")
         if message.channel.is_private or self.bot.user == message.author \
                 or not isinstance(message.author, discord.Member):
             return
