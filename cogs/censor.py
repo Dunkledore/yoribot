@@ -272,7 +272,7 @@ class Censor:
 
         # Owner, admins and mods are immune to the filter
         if self.immune_from_filter(message) or not can_delete:
-            await message.channel.send("that member's messages are immune from deletion or can't delete messages")
+            await message.channel.send("that member's messages are immune from deletion or insufficient privileges to delete messages")
             return
 
         if sid in self.regexen:
