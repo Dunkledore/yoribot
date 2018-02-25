@@ -285,6 +285,7 @@ class Censor:
                 if mode == MODE_DISABLED:
                     continue
                 regex = self.recache[regex] if regex in self.recache else re.compile(regex)
+                await message.channel.send(str(bool(regex.match(messge.content)))
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
                     await self.bot.delete_message(message)
 
