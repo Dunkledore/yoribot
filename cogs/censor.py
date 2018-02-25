@@ -312,3 +312,4 @@ def setup(bot):
     check_file()
     n = Censor(bot)
     bot.add_cog(n)
+    bot.add_listener(n.on_message, 'on_message')
