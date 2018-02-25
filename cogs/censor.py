@@ -264,7 +264,7 @@ class Censor:
         if message.channel.is_private or self.bot.user == message.author \
          or not isinstance(message.author, discord.Member):
             return
-
+        await message.channel.send("test")
         guild = message.guild
         sid = str(guild.id)
         can_delete = message.channel.permissions_for(guild.me).manage_messages
