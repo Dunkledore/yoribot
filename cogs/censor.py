@@ -290,7 +290,7 @@ class Censor:
                 if regex.match(message.content):
                     await message.channel.send("match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
-                    await self.bot.delete_message(message)
+                    await Message.delete(message)
 
     async def on_message_edit(self, old_message, new_message):
         await self.on_message(new_message)
