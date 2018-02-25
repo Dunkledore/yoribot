@@ -95,7 +95,7 @@ class Censor:
         table = ' | '.join(['mode', 'pattern']) + '\n'  # header
         for c in self.regexen[str(guild.id)]:
             if c == ALL_CHANNELS and self._re_present(guild):
-                    table += '\nguild-wide:\n'
+                table += '\nguild-wide:\n'
             elif (channel and str(channel.id) == c) or not channel:
                 if channel:
                     ch_obj = channel
@@ -160,7 +160,8 @@ class Censor:
             await ctx.send('There are no patterns in the guild to modify.')
             return
         if mode not in MODES:
-            self.bot.reply('"%s" is not a valid mode. You must specify one of `%s`.') % (mode, '`, `'.join(MODES))
+            self.bot.reply('"%s" is not a valid mode. You must specify one of `%s`.') % (
+                mode, '`, `'.join(MODES))
 
         if mode == MODE_EXCLUSIVE:
             if ALL_CHANNELS in self._ls_excl(guild):
@@ -175,7 +176,7 @@ class Censor:
         table = ' | '.join(['#'.ljust(4), 'mode', 'pattern']) + '\n'  # header
         for c in self.regexen[str(guild.id)]:
             if c == ALL_CHANNELS and self._re_present(guild):
-                    table += '\nguild-wide:\n'
+                table += '\nguild-wide:\n'
             elif (channel and str(channel.id) == c) or not channel:
                 if channel:
                     ch_obj = channel
@@ -216,7 +217,7 @@ class Censor:
         table = ' | '.join(['#'.ljust(4), 'mode', 'pattern']) + '\n'  # header
         for c in self.regexen[str(guild.id)]:
             if c == ALL_CHANNELS and self._re_present(guild):
-                    table += '\nguild-wide:\n'
+                table += '\nguild-wide:\n'
             elif (channel and str(channel.id) == c) or not channel:
                 if channel:
                     ch_obj = channel
@@ -261,10 +262,11 @@ class Censor:
 
     async def on_message(self, message):
         # Fast checks
-        if message.channel.is_private or self.bot.user == message.author \
-         or not isinstance(message.author, discord.Member):
-            return
         await message.channel.send("test")
+        if message.channel.is_private or self.bot.user == message.author \
+                or not isinstance(message.author, discord.Member):
+            return
+
         guild = message.guild
         sid = str(guild.id)
         can_delete = message.channel.permissions_for(guild.me).manage_messages
@@ -284,7 +286,8 @@ class Censor:
                 # Skip disabled patterns
                 if mode == MODE_DISABLED:
                     continue
-                regex = self.recache[regex] if regex in self.recache else re.compile(regex)
+                regex = self.recache[regex] if regex in self.recache else re.compile(
+                    regex)
                 if regex.match(message.content):
                     await message.channel.send("match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
@@ -296,6 +299,7 @@ class Censor:
     async def on_command(self, command, ctx):
         if ctx.cog is self:
             self.analytics.command(ctx)
+
 
 def check_folder():
     if not os.path.exists(DATA_PATH):
