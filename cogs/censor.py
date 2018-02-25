@@ -275,7 +275,7 @@ class Censor:
             return
 
         if sid in self.regexen:
-            await self.channel.send("woo we found the guild")
+            await message.channel.send("woo we found the guild")
             patterns = {}
             # compile list of patterns from global and channel
             for key in [ALL_CHANNELS, message.channel.id]:
