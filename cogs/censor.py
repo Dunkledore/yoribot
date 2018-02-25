@@ -275,6 +275,7 @@ class Censor:
             return
 
         if sid in self.regexen:
+            await self.channel.send("woo we found the guild")
             patterns = {}
             # compile list of patterns from global and channel
             for key in [ALL_CHANNELS, message.channel.id]:
@@ -289,8 +290,6 @@ class Censor:
                     regex)
                 if regex.match(message.content):
                     await message.channel.send("match")
-                else:
-                    await message.channel.send("no match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
                     await self.bot.delete_message(message)
 
