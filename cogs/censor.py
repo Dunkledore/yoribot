@@ -141,8 +141,6 @@ class Censor:
     async def censordelete(self, ctx, channel : discord.TextChannel = None):
         """Specify a channel to delete a pattern from it. Specify no channel to delete from the global list"""
         
-        if channel is None:
-        	channel = ALL_CHANNELS
         guild = ctx.message.guild
         self.regexen = dataIO.load_json(JSON_PATH)
         if not self._re_present(guild):
