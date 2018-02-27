@@ -106,7 +106,7 @@ class Censor:
         await ctx.send('```py\n' + table + '```')
 
     @commands.command()
-    async def censoradd(self, ctx, pattern: str, mode, channel: discord.TextChannel = None:
+    async def censoradd(self, ctx, pattern: str, mode, channel: discord.TextChannel = None):
         """Adds a pattern to filter messages. Modes avaliable are incl or excl"""
         guild = ctx.message.guild
 
