@@ -273,20 +273,20 @@ class Censor:
                     patterns.update(self.regexen[sid][key])
             await message.channel.send(str(patterns))
             # Iterate through patterns
-           	try:
-	            for regex, mode in patterns.items():
-	                # Skip disabled patterns
-	                if mode == MODE_DISABLED:
-	                    continue
-	                regex = self.recache[regex] if regex in self.recache else re.compile(
-	                    regex)
-	                if regex.match(message.content):
-	                    await message.channel.send("match")
-	                if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
-	                    await message.delete(message)
-	            await message.channel.send("Not found")
-	        except Exception as e:
-	        	await message.channel.send(str(e))
+               try:
+                for regex, mode in patterns.items():
+                    # Skip disabled patterns
+                    if mode == MODE_DISABLED:
+                        continue
+                    regex = self.recache[regex] if regex in self.recache else re.compile(
+                        regex)
+                    if regex.match(message.content):
+                        await message.channel.send("match")
+                    if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
+                        await message.delete(message)
+                await message.channel.send("Not found")
+            except Exception as e:
+                await message.channel.send(str(e))
 
     async def on_message_edit(self, old_message, new_message):
         await self.on_message(new_message)
