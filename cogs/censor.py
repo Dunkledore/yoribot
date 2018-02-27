@@ -248,7 +248,7 @@ class Censor:
         """Tests message to see if it is exempt from filter"""
         try:
             resolved = message.author.guild_permissions
-            return check(getattr(resolved, name, None) == value for name, value in {'administrator': True})
+            return check(getattr(resolved, name, None) == value for name, value in {'administrator': True}.items())
         except Exception as e:
             await message.channel.send(e)
 
