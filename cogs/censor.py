@@ -268,7 +268,7 @@ class Censor:
             await message.channel.send("woo we found the guild")
             patterns = {}
             # compile list of patterns from global and channel
-            for key in [ALL_CHANNELS, message.channel.id]:
+            for key in [ALL_CHANNELS, str(message.channel.id)]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
             await message.channel.send(str(patterns))
