@@ -244,7 +244,7 @@ class Censor:
             await ctx.send('Pattern removed.')
         dataIO.save_json(JSON_PATH, self.regexen)
 
-    async def immune_from_filter(self, message):
+    async def immune_from_filter(self, message, *, check=all):
         """Tests message to see if it is exempt from filter"""
         try:
             resolved = message.author.guild_permissions
