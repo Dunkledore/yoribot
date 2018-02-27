@@ -185,7 +185,6 @@ class Censor:
         """Tests message to see if it is exempt from filter"""
         resolved = message.author.guild_permissions
         checked =  check(getattr(resolved, name, None) == value for name, value in {'administrator': True}.items())
-        await message.channel.send(str(checked))
         return checked
 
 
