@@ -273,7 +273,7 @@ class Censor:
                     patterns.update(self.regexen[sid][key])
             await message.channel.send(str(patterns))
             # Iterate through patterns
-               try:
+            try:
                 for regex, mode in patterns.items():
                     # Skip disabled patterns
                     if mode == MODE_DISABLED:
