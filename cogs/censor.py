@@ -244,7 +244,7 @@ class Censor:
             await ctx.send('Pattern removed.')
         dataIO.save_json(JSON_PATH, self.regexen)
 
-    def immune_from_filter(self, message):
+    async def immune_from_filter(self, message):
         """Tests message to see if it is exempt from filter"""
         try:
             resolved = message.author.guild_permissions
@@ -263,7 +263,7 @@ class Censor:
         can_delete = message.channel.permissions_for(guild.me).manage_messages
         # Owner, admins and mods are immune to the filter
         await message.channel.send("pre immune check")
-        if self.immune_from_filter(message) or not can_delete:
+        if await self.immune_from_filter(message) or not can_delete:
             await message.channel.send("that member's messages are immune from deletion or insufficient privileges to delete messages")
             return
         await message.channel.send("post immune check")
