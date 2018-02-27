@@ -156,7 +156,7 @@ class Censor:
                 if channel:
                     ch_obj = channel
                 else:
-                    ch_obj = self.bot.get_channel(c)
+                    ch_obj = self.bot.get_channel(int(c))
                 if ch_obj is None:
                     table += '\n' + 'Channel ID %s (deleted):' % c + '\n'
                 if self._re_present(ch_obj):
@@ -168,7 +168,10 @@ class Censor:
                 i += 1
         prompt = 'Choose the number of the pattern to delete:\n'
         await ctx.send(prompt + '```py\n' + table + '```')
-        msg = await self.bot.wait_for_message(author=ctx.message.author, timeout=15)
+        def check(m):
+        	return m.author == ctx.message.author
+
+        msg = await self.bot.wait_for("message", check=check, timeout=15.0)
         if msg is None:
             return
         msg = msg.content.strip()
