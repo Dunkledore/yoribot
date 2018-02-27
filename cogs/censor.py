@@ -271,7 +271,7 @@ class Censor:
             for key in [ALL_CHANNELS, message.channel.id]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
-            await message.channel.send("Pattern compiled")
+            await message.channe.send(patterns)
             # Iterate through patterns
             for regex, mode in patterns.items():
                 # Skip disabled patterns
@@ -283,6 +283,7 @@ class Censor:
                     await message.channel.send("match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
                     await Message.delete(message)
+            await message.channel.send("Not found")
 
     async def on_message_edit(self, old_message, new_message):
         await self.on_message(new_message)
