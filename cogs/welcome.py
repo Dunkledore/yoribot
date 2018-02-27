@@ -102,7 +102,7 @@ class Welcome:
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def welcometext(self, ctx, *, text):
+	async def welcometext(self, ctx, *, text = None):
 		"""Set a non-embed welcome message - this can be combined with the embed so you can use mentions. Use {0.mention} to mention the user joining and {0.name} to simply say their name."""
 
 		insertquery = "INSERT INTO welcome_config (guild_id, text_message) VALUES ($1, $2)"
@@ -112,7 +112,14 @@ class Welcome:
 			await ctx.db.execute(insertquery, ctx.guild.id, text)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, text)
-		await ctx.send('Message set')
+		
+		if text:
+			await ctx.send('Message set')
+		else:
+			await ctx.send('Message removed')
+
+
+
 
 	@commands.command()
 	@commands.guild_only()
