@@ -271,7 +271,7 @@ class Censor:
             for key in [ALL_CHANNELS, message.channel.id]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
-            await message.channe.send(str(patterns))
+            await message.channel.send(str(patterns))
             # Iterate through patterns
             for regex, mode in patterns.items():
                 # Skip disabled patterns
