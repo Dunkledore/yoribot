@@ -245,20 +245,13 @@ class Censor:
         dataIO.save_json(JSON_PATH, self.regexen)
 
     def immune_from_filter(self, message):
-        """Tests message to see if it is exempt from filter. Taken from mod.py"""
+        """Tests message to see if it is exempt from filter"""
         user = message.author
         guild = message.guild
         admin_role = self.bot.settings.get_guild_admin(guild)
-        mod_role = self.bot.settings.get_guild_mod(guild)
 
-        if user.id == self.bot.settings.owner:
-            return True
-        elif discord.utils.get(user.roles, name=admin_role):
-            return True
-        elif discord.utils.get(user.roles, name=mod_role):
-            return True
-        else:
-            return False
+        resolved = message.author.guild_permissions
+    	return check(getattr(resolved, name, None) == value for name, value in {'administrator': True})
 
     async def on_message(self, message):
         # Fast checks
