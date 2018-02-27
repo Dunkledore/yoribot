@@ -100,7 +100,7 @@ class Censor:
                 if channel:
                     ch_obj = channel
                 else:
-                    ch_obj = self.bot.get_channel(c)
+                    ch_obj = self.bot.get_channel(int(c))
                 if ch_obj is None:
                     table += '\n' + 'Channel ID %s (deleted):' % c + '\n'
                 if self._re_present(ch_obj):
