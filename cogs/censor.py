@@ -246,7 +246,6 @@ class Censor:
 
     async def immune_from_filter(self, message, *, check=all):
         """Tests message to see if it is exempt from filter"""
-        return False
         resolved = message.author.guild_permissions
         return check(getattr(resolved, name, None) == value for name, value in {'administrator': True}.items())
 
@@ -262,16 +261,13 @@ class Censor:
         can_delete = message.channel.permissions_for(guild.me).manage_messages
         # Owner, admins and mods are immune to the filter
         if await self.immune_from_filter(message) or not can_delete:
-            await message.channel.send("that member's messages are immune from deletion or insufficient privileges to delete messages")
             return
         if sid in self.regexen:
-            await message.channel.send("woo we found the guild")
             patterns = {}
             # compile list of patterns from global and channel
             for key in [ALL_CHANNELS, str(message.channel.id)]:
                 if key in self.regexen[sid]:
                     patterns.update(self.regexen[sid][key])
-            await message.channel.send(str(patterns))
             # Iterate through patterns
             for regex, mode in patterns.items():
                 # Skip disabled patterns
@@ -280,10 +276,8 @@ class Censor:
                 regex = self.recache[regex] if regex in self.recache else re.compile(
                     regex)
                 if regex.match(message.content):
-                    await message.channel.send("match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
                     await message.delete()
-            await message.channel.send("Not found")
 
 
     async def on_message_edit(self, old_message, new_message):
