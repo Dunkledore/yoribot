@@ -275,7 +275,6 @@ class Censor:
                     continue
                 regex = self.recache[regex] if regex in self.recache else re.compile(
                     regex)
-                if regex.match(message.content):
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
                     await message.delete()
 
