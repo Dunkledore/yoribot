@@ -184,7 +184,9 @@ class Censor:
     async def immune_from_filter(self, message, *, check=all):
         """Tests message to see if it is exempt from filter"""
         resolved = message.author.guild_permissions
-        return check(getattr(resolved, name, None) == value for name, value in {'administrator': True}.items())
+        checked =  check(getattr(resolved, name, None) == value for name, value in {'administrator': True}.items())
+        await message.channel.send(str(checked))
+        return checked
 
 
 
