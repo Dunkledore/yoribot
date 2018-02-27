@@ -282,7 +282,7 @@ class Censor:
                 if regex.match(message.content):
                     await message.channel.send("match")
                 if (mode == MODE_EXCLUSIVE) != bool(regex.match(message.content)):  # xor
-                    await Message.delete(message)
+                    await message.delete(message)
             await message.channel.send("Not found")
 
     async def on_message_edit(self, old_message, new_message):
