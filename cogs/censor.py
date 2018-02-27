@@ -246,9 +246,6 @@ class Censor:
 
     def immune_from_filter(self, message):
         """Tests message to see if it is exempt from filter"""
-        user = message.author
-        guild = message.guild
-        admin_role = self.bot.settings.get_guild_admin(guild)
 
         resolved = message.author.guild_permissions
         return check(getattr(resolved, name, None) == value for name, value in {'administrator': True})
