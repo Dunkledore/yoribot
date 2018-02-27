@@ -171,7 +171,7 @@ class Censor:
         def check(m):
         	return m.author == ctx.message.author
 
-        msg = await self.bot.wait_for("message", check=check, timeout=15.0)
+        msg = await self.bot.wait_for("message", check=check, timeout=360.0)
         if msg is None:
             return
         msg = msg.content.strip()
