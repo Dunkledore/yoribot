@@ -259,9 +259,11 @@ class Censor:
         sid = str(guild.id)
         can_delete = message.channel.permissions_for(guild.me).manage_messages
         # Owner, admins and mods are immune to the filter
+        await message.channel.send("pre immune check")
         if self.immune_from_filter(message) or not can_delete:
             await message.channel.send("that member's messages are immune from deletion or insufficient privileges to delete messages")
             return
+        await message.channel.send("post immune check")
         await message.channel.send(sid)
         if sid in self.regexen:
             await message.channel.send("woo we found the guild")
