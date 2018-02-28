@@ -90,7 +90,7 @@ class Rank:
             await ctx.send("I will now replace old ranks with new ones")
         else:
             on = self.rank_settings[str(guild.id)]
-            self.rank_settings[str(guild.id)] == not on
+            self.rank_settings[str(guild.id)] = not on
         if on:
             await ctx.send("I will now replace old ranks with new ones")
         else:
