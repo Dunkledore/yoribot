@@ -84,8 +84,8 @@ class Rank:
     @checks.is_admin()
     async def togglereplacerank(self, ctx):
         """Will toggle the latest rank replacing an old rank"""
-
-        if str(ctx.guild.id) not in self.rank_settings:
+        guild = ctx.guild
+        if str(guild.id) not in self.rank_settings:
             self.rank_settings[str(guild.id)] = True
             await ctx.send("I will now replace old ranks with new ones")
         else:
