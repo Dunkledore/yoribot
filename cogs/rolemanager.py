@@ -23,7 +23,7 @@ class RoleManager:
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def iam(self, ctx, *, role):
-        """Self-assign a role."""
+        """Self-assign a role. You can also just use the prefix and then the role name."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
                                description="There are no self-assignable roles for this server.")
@@ -145,7 +145,7 @@ class RoleManager:
     @commands.guild_only()
     @checks.is_mod()
     async def addroles(self, ctx, group, *, role_names: str):
-        """Adds multiple addable roles at once, separated by <separator>."""
+        """Adds multiple addable roles at once, separated by ,."""
         for rolename in role_names.split(','):
             await self.addrole(ctx, rolename, group, role=rolename.strip())
 
