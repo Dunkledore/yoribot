@@ -303,7 +303,7 @@ class Mod:
     @commands.command()
     @checks.is_admin()
     async def reactiondelnumber(self, ctx, number=None):
-        """Changes the number of \U0000274c reactions required to delete the message. Set to 0 to turn off."""
+        """Allows non mods to remove messages by way of vote. Use this command to changes the number of \U0000274c reactions required to delete a message. Set to 0 to turn off."""
         if number is None:
             query = "SELECT * FROM mod_config WHERE guild_id = $1"
             conf = await ctx.db.fetchrow(query, ctx.message.guild.id)
@@ -691,15 +691,7 @@ class Mod:
     @commands.group(aliases=['purge'], no_pm=True)
     @checks.is_mod()
     async def clear(self, ctx):
-        """Removes messages that meet a criteria.
-
-        In order to use this command, you must have Manage Messages permissions.
-        Note that the bot needs Manage Messages as well. These commands cannot
-        be used in a private message.
-
-        When the command is done doing its work, you will get a message
-        detailing which users got removed and how many messages got removed.
-        """
+        """Allows mass deletion of messages based on criteria. Use help clear for more info."""
 
         if ctx.invoked_subcommand is None:
             help_cmd = self.bot.get_command('help')
@@ -935,6 +927,7 @@ class Mod:
     @commands.command()
     @checks.is_mod()
     async def clearinvites(self, ctx, uses=1):
+        """Deletes invites from the invite list that have been used less than the number provided by uses. Will not delete any invite less than 1 hour old."""
         all_invites = await ctx.guild.invites()
 
         invites = [i for i in all_invites if i.uses <= uses and i.created_at < (datetime.utcnow() - timedelta(hours=1))]
