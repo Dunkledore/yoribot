@@ -24,6 +24,7 @@ class Rank:
         self.message_data = dataIO.load_json("data/rank/message_data.json")
         self.ranks = None
         self.cooldowns = {}
+        self.rank_settings = dataIO.load_json("data/rank/rank_settings.json")
 
     def save_message_data(self):
         dataIO.save_json("data/rank/message_data.json", self.message_data)
@@ -43,12 +44,32 @@ class Rank:
                 await hook.send("Error saving Message data")
 
     async def check_level(self, member, guild, message):
-        xp = self.message_data[str(member.id)][str(guild.id)]
-        for rank in self.ranks:
-            if rank["guild_id"] == guild.id and rank["xp_required"] == xp:
-                role = discord.utils.get(guild.roles, id=rank["role_id"])
-                await member.add_roles(role)
-                await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
+        try:
+            xp = self.message_data[str(member.id)][str(guild.id)]
+            guild_ranks = [rank for rank in self.ranks if rank["guild_id"] == guild.id]
+            for rank in guild_ranks:
+                if  rank["xp_required"] == xp:
+                    role = discord.utils.get(guild.roles, id=rank["role_id"])
+                    await member.add_roles(role)
+                    await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
+                    if str(guild.id) in self.rank_settings:
+                        if "replacerank" in self.rank_settings[str(guild.id)]:
+                            if self.rank_settings[str(guild.id)]["replacerank"]:
+                                ordered = guild_ranks
+                                ordered.sort(key=lambda x: x[1])
+                                rank_index = ordered.index(rank)
+                                if rank_index != 0:
+                                    role = discord.utils.get(guild.role, id=ordered[rank_index-1]["role_id"])
+                                    try:
+                                        await member.remove_roles(role)
+                                    except:
+                                        pass
+        except Exception as e:
+            await message.channel.send(e)
+
+
+
+
     
     async def load_settings(self):
         self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
@@ -58,6 +79,24 @@ class Rank:
             self.message_data = {}
         self.loaded_settings = True
     
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_admin()
+    async def togglereplacerank(self, ctx):
+        """Will toggle the latest rank replacing an old rank"""
+
+        if str(ctx.guild.id) not in self.rank_settings:
+            self.rank_settings[str(guild.id)] = True
+            await ctx.send("I will now replace old ranks with new ones")
+        else:
+            on = self.rank_settings[str(guild.id)]
+            self.rank_settings[str(guild.id)] == not on
+        if on:
+            await ctx.send("I will now replace old ranks with new ones")
+        else:
+            await ctx.send("I will not replace old ranks with new ones")
+
+
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
@@ -635,11 +674,13 @@ def check_folders():
         print("Creating data/rank folder...")
         os.makedirs("data/rank")
 
-
 def check_files():
     if not os.path.exists("data/rank/message_data.json"):
         print("Creating data/rank/message_data.json file...")
         dataIO.save_json("data/rank/message_data.json", {})
+    if not os.path.exists("data/rank/rank_settings.json"):
+        print("Creating data/rank/message_data.json file...")
+        dataIO.save_json("data/rank/rank_settings.json", {})
 
 def setup(bot):
     check_folders()
