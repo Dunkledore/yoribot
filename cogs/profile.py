@@ -70,10 +70,7 @@ class Rank:
                                         pass
         except Exception as e:
             await message.channel.send(e)
-            exc_type, exc_obj, tb = sys.exc_info()
-            f = tb.tb_frame
-            lineno = tb.tb_lineno
-            await message.channel.send(str(lineno))
+            await message.channel.send(str(sys.exc_info()[-1].tb_lineno))
 
 
 
