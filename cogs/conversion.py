@@ -23,7 +23,7 @@ class Convert:
 
     @commands.command()
     async def moneyconvert(self, ctx, amount: float, base: str, to: str):
-        """Currency convertern Set the amount, currency FROM (base) and currency to Available currencies for conversion: AUD BGN BRL CAD CHF CNY CZK DKK EUR GBP HKD HRK HUF IDR ILS INR JPY KRW MXN MYR NOK NZD PHP PLN RON RUB SEK SGD THB TRY USD ZAR"""
+        """Base is the money to convert from and to is the money to convert to. \nAvailable currencies for conversion: \nAUD BGN BRL CAD CHF CNY CZK DKK EUR GBP HKD HRK HUF IDR ILS INR JPY KRW MXN MYR NOK NZD PHP PLN RON RUB SEK SGD THB TRY USD ZAR"""
         if base.upper() not in self.currencies or to.upper() not in self.currencies:
             await ctx.send('One or both of the currencies selected are invalid')
         else:
