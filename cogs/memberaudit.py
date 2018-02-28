@@ -133,64 +133,6 @@ class MemberAudit:
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def joinaudit(self, ctx: commands.Context, *,
-					format_str: str):
-		"""Sets the join/greeting/welcome message for the server.
-		{0} is the member
-		{1} is the server
-		"""
-		self.checksettings(ctx)
-		server = ctx.message.guild
-		self.settings[str(server.id)]["join_message"] = format_str
-		dataIO.save_json(self.settings_path, self.settings)
-		await ctx.send(cf.info("Join message set."))
-
-	@commands.command()
-	@commands.guild_only()
-	@checks.is_admin()
-	async def leaveaudit(self, ctx: commands.Context, *,
-					 format_str: str):
-		"""Sets the leave/farewell message for the server.
-		{0} is the member
-		{1} is the server
-		"""
-		self.checksettings(ctx)
-		server = ctx.message.guild
-		self.settings[str(server.id)]["leave_message"] = format_str
-		dataIO.save_json(self.settings_path, self.settings)
-		await ctx.send(cf.info("Leave message set."))
-
-	@commands.command()
-	@commands.guild_only()
-	@checks.is_admin()
-	async def banaudit(self, ctx: commands.Context, *, format_str: str):
-		"""Sets the ban message for the server.
-		{0} is the member
-		{1} is the server
-		"""
-		self.checksettings(ctx)
-		server = ctx.message.guild
-		self.settings[str(server.id)]["ban_message"] = format_str
-		dataIO.save_json(self.settings_path, self.settings)
-		await ctx.send(cf.info("Ban message set."))
-
-	@commands.command()
-	@commands.guild_only()
-	@checks.is_admin()
-	async def unbanaudit(self, ctx: commands.Context, *, format_str: str):
-		"""Sets the unban message for the server.
-		{0} is the member
-		{1} is the server
-		"""
-		self.checksettings(ctx)
-		server = ctx.message.guild
-		self.settings[str(server.id)]["unban_message"] = format_str
-		dataIO.save_json(self.settings_path, self.settings)
-		await ctx.send(cf.info("Unban message set."))
-
-	@commands.command()
-	@commands.guild_only()
-	@checks.is_admin()
 	async def audittoggle(self, ctx: commands.Context):
 		"""Turns membership event commands on or off."""
 
