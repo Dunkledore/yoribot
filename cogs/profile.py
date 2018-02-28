@@ -14,6 +14,7 @@ import traceback
 import asyncpg
 import psutil
 import os
+import sys
 from .utils.cooldown import Cooldown
 
 class Rank:
@@ -62,13 +63,17 @@ class Rank:
                                 ordered.sort(key=lambda x: x[1])
                                 rank_index = ordered.index(rank)
                                 if rank_index != 0:
-                                    role = discord.utils.get(guild.role, id=ordered[rank_index-1]["role_id"])
+                                    role = discord.utils.get(guild.roles, id=ordered[rank_index-1]["role_id"])
                                     try:
                                         await member.remove_roles(role)
                                     except:
                                         pass
         except Exception as e:
             await message.channel.send(e)
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            lineno = tb.tb_lineno
+            await message.channel.send(str(lineno))
 
 
 
