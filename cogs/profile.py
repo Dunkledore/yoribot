@@ -48,32 +48,21 @@ class Rank:
                 await hook.send("Error saving Message data")
 
     async def check_level(self, member, guild, message):
-        try:
-            xp = self.message_data[str(member.id)][str(guild.id)]
-            guild_ranks = [rank for rank in self.ranks if rank["guild_id"] == guild.id]
-            for rank in guild_ranks:
-                if  rank["xp_required"] == xp:
-                    role = discord.utils.get(guild.roles, id=rank["role_id"])
-                    await member.add_roles(role)
-                    await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
-                    if str(guild.id) in self.rank_settings:
-                        if self.rank_settings[str(guild.id)]:
-                            ordered = guild_ranks
-                            ordered.sort(key=lambda x: x[1])
-                            rank_index = ordered.index(rank)
-                            if rank_index != 0:
-                                role = discord.utils.get(guild.roles, id=ordered[rank_index-1]["role_id"])
-                                try:
-                                    await member.remove_roles(role)
-                                except:
-                                    pass
-        except Exception as e:
-            await message.channel.send(e)
-            await message.channel.send(str(sys.exc_info()[-1].tb_lineno))
-
-
-
-
+        xp = self.message_data[str(member.id)][str(guild.id)]
+        guild_ranks = [rank for rank in self.ranks if rank["guild_id"] == guild.id]
+        for rank in guild_ranks:
+            if  rank["xp_required"] == xp:
+                role = discord.utils.get(guild.roles, id=rank["role_id"])
+                await member.add_roles(role)
+                await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
+                if str(guild.id) in self.rank_settings:
+                    if self.rank_settings[str(guild.id)]:
+                        ordered = guild_ranks
+                        ordered.sort(key=lambda x: x[1])
+                        rank_index = ordered.index(rank)
+                        if rank_index != 0:
+                            role = discord.utils.get(guild.roles, id=ordered[rank_index-1]["role_id"])
+                            await member.remove_roles(role)
     
     async def load_settings(self):
         self.ranks = await self.bot.pool.fetch("SELECT * FROM rank")
