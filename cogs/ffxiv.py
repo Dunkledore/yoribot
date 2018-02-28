@@ -958,7 +958,7 @@ class FFXIV:
 
     @commands.group(invoke_without_command=True)
     async def fflogs(self, ctx):
-        """Display FFlogs rankings and parse infos."""
+        """FFLOGS group command. Use help fflogs for more information"""
         if not ctx.invoked_subcommand:
             return
 
