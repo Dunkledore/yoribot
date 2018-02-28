@@ -29,6 +29,9 @@ class Rank:
     def save_message_data(self):
         dataIO.save_json("data/rank/message_data.json", self.message_data)
 
+    def save_rank_settings(self):
+        dataIO.save_json("data/rank/rank_settings.json", self.rank_settings)
+
     async def saveloop(self):
         while True:
             try:
@@ -91,11 +94,11 @@ class Rank:
         else:
             on = self.rank_settings[str(guild.id)]
             self.rank_settings[str(guild.id)] = not on
-        if on:
-            await ctx.send("I will now replace old ranks with new ones")
-        else:
-            await ctx.send("I will not replace old ranks with new ones")
-
+            if on:
+                await ctx.send("I will now replace old ranks with new ones")
+            else:
+                await ctx.send("I will not replace old ranks with new ones")
+        self.save_rank_settings()
 
     @commands.command()
     @commands.guild_only()
