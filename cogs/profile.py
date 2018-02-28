@@ -173,7 +173,7 @@ class Rank:
     @commands.command()
     @commands.guild_only()
     async def listranks(self, ctx):
-        """Will remove the given rank from the rank system"""
+        """Shows all ranks avaliable in the server"""
         if not self.load_settings:
             await self.load_settings()
 

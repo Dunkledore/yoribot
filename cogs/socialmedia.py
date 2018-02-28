@@ -16,7 +16,7 @@ import tweepy
 import os
 
 class SocialMedia:
-	"""Commands used to set up your server profile"""
+	"""Commands used to set up twitter. This can be quite confusing. Please contact the support server if you need help. https://discord.gg/SFvZPmE"""
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
