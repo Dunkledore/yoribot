@@ -452,7 +452,7 @@ class Profile:
     @commands.command()
     @commands.guild_only()
     async def age(self, ctx, age: int):
-        """Sets the age of the caller"""
+        """Sets your age"""
 
         query = "SELECT * FROM Profile WHERE user_id = $1"
         results = await ctx.db.fetch(query, ctx.message.author.id)
