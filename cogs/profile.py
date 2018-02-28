@@ -96,9 +96,9 @@ class Rank:
             on = self.rank_settings[str(guild.id)]
             self.rank_settings[str(guild.id)] = not on
             if on:
-                await ctx.send("I will now replace old ranks with new ones")
-            else:
                 await ctx.send("I will not replace old ranks with new ones")
+            else:
+                await ctx.send("I will now replace old ranks with new ones")
         self.save_rank_settings()
 
     @commands.command()
