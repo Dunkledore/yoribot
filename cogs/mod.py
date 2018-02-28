@@ -213,7 +213,7 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def toggleantilink(self, ctx):
+    async def antilinktoggle(self, ctx):
         """Enable or disable anti-link entirely (if disabled, members can share links to other Discord servers)."""
         serverid = ctx.message.guild.id
         if str(serverid) not in self.json:        
