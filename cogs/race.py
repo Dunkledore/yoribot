@@ -109,7 +109,7 @@ class Race:
     @commands.guild_only()
     @checks.is_admin()
     async def setrace(self, ctx):
-        """Race cog's settings group command"""
+        """Race settings group command. Use help setrace for mor information"""
 
     @setrace.command(name="time")
     @commands.guild_only()
