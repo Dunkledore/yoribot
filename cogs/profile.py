@@ -351,7 +351,7 @@ class Profile:
     @commands.command()
     @commands.guild_only()
     async def profile(self, ctx, *, user: discord.Member=None):
-        """Displays the profile of a mentioned user or the caller if no mention is provided"""
+        """Displays the profile of a mentioned user or you if no user is provided"""
 
         if user == ctx.bot.user:
             await self.sendYori(ctx)
@@ -381,11 +381,14 @@ class Profile:
             if role:
                 embed.add_field(name='Rank', value=role.mention)
 
-
-        embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
+        if profile[0]['age']:
+            embed.add_field(name='Age', value= profile[0]['age'] or "Not Provided")
+        if profile[0]['gender']:
+            embed.add_field(name='Gender', value= profile[0]['gender'] or "Not Provided")
+        if profile[0]['sexuality']:
+            embed.add_field(name='Sexuality', value= profile[0]['sexuality'] or "Not Provided")
+        
         embed.add_field(name='Region', value= profile[0]['region'] or "Not Provided")
-        embed.add_field(name='Gender', value= profile[0]['gender'] or "Not Provided")
-        embed.add_field(name='Sexuality', value= profile[0]['sexuality'] or "Not Provided")
 
         if profile[0]['fields']:
             for fields in profile[0]['fields']:
@@ -465,7 +468,7 @@ class Profile:
     @commands.command()
     @commands.guild_only()
     async def gender(self, ctx, *, gender):
-        """Sets the gender of the caller"""
+        """Sets your gender"""
 
         query = "SELECT * FROM Profile WHERE user_id = $1"
         results = await ctx.db.fetch(query, ctx.message.author.id)
@@ -481,7 +484,7 @@ class Profile:
     @commands.command()
     @commands.guild_only()
     async def sexuality(self, ctx, *, sexuality):
-        """Sets the sexuality of the caller"""
+        """Sets your sexuality"""
 
         query = "SELECT * FROM Profile WHERE user_id = $1"
         results = await ctx.db.fetch(query, ctx.message.author.id)
@@ -494,7 +497,7 @@ class Profile:
             await ctx.db.execute(query, sexuality, ctx.message.author.id)
             await ctx.send("Sexuality Set")
 
-    @commands.command(aliases=['northamerica'])
+    @commands.command(aliases=['northamerica'], hidden=True)
     @commands.guild_only()
     async def NorthAmerica(self, ctx):
         """Sets the region of the caller to North America"""
@@ -510,7 +513,7 @@ class Profile:
             await ctx.db.execute(query, "North America", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(aliases=['europe'])
+    @commands.command(aliases=['europe'], hidden=True)
     @commands.guild_only()
     async def Europe(self, ctx):
         """Sets the region of the caller to Europe"""
@@ -526,7 +529,7 @@ class Profile:
             await ctx.db.execute(query, "Europe", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(aliases=['africa'])
+    @commands.command(aliases=['africa'], hidden=True)
     @commands.guild_only()
     async def Africa(self, ctx):
         """Sets the region of the caller to Africa"""
@@ -542,7 +545,7 @@ class Profile:
             await ctx.db.execute(query, "Africa", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(aliases=['oceania'])
+    @commands.command(aliases=['oceania'], hidden=True)
     @commands.guild_only()
     async def Oceania(self, ctx):
         """Sets the region of the caller to Oceania"""
@@ -558,7 +561,7 @@ class Profile:
             await ctx.db.execute(query, "Oceania", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(aliases=['southamerica'])
+    @commands.command(aliases=['southamerica'], hidden=True)
     @commands.guild_only()
     async def SouthAmerica(self, ctx):
         """Sets the region of the caller to South America"""
@@ -574,7 +577,7 @@ class Profile:
             await ctx.db.execute(query, "South America", ctx.message.author.id)
             await ctx.send("Region Set")
 
-    @commands.command(aliases=['asia'])
+    @commands.command(aliases=['asia'], hidden=True)
     @commands.guild_only()
     async def Asia(self, ctx):
         """Sets the region of the caller to Asia"""
