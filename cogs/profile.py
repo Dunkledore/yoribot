@@ -57,17 +57,16 @@ class Rank:
                     await member.add_roles(role)
                     await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
                     if str(guild.id) in self.rank_settings:
-                        if "replacerank" in self.rank_settings[str(guild.id)]:
-                            if self.rank_settings[str(guild.id)]["replacerank"]:
-                                ordered = guild_ranks
-                                ordered.sort(key=lambda x: x[1])
-                                rank_index = ordered.index(rank)
-                                if rank_index != 0:
-                                    role = discord.utils.get(guild.roles, id=ordered[rank_index-1]["role_id"])
-                                    try:
-                                        await member.remove_roles(role)
-                                    except:
-                                        pass
+                        if self.rank_settings[str(guild.id)]:
+                            ordered = guild_ranks
+                            ordered.sort(key=lambda x: x[1])
+                            rank_index = ordered.index(rank)
+                            if rank_index != 0:
+                                role = discord.utils.get(guild.roles, id=ordered[rank_index-1]["role_id"])
+                                try:
+                                    await member.remove_roles(role)
+                                except:
+                                    pass
         except Exception as e:
             await message.channel.send(e)
             await message.channel.send(str(sys.exc_info()[-1].tb_lineno))
