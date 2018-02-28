@@ -86,7 +86,7 @@ class FFXIV:
 
     @commands.group(invoke_without_command=True)
     async def ffxiv(self, ctx):
-        """FFXIV command group."""
+        """FFXIV group command. Use help ffxiv for more information."""
         if not ctx.invoked_subcommand:
             return
 
@@ -160,7 +160,7 @@ class FFXIV:
 
     @ffxiv.group(name="news", invoke_without_command=True)
     async def ffxiv_news(self, ctx):
-        """Lodestone news."""
+        """FFXIV news group command. Use help ffxiv news for more information"""
         if not ctx.invoked_subcommand:
             return
 
