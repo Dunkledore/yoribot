@@ -44,7 +44,7 @@ class Cookie:
     async def cookietop(self, ctx):
 
         settings = self.check_guild_settings(ctx.guild)
-        players = settings["players"]
+        players = settings["Players"]
         
         guild_player_list = []
         for id, data in guild_data.items():
