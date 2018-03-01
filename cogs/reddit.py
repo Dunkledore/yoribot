@@ -142,7 +142,7 @@ class Reddit:
         return
 
     @commands.command(name="reddit")
-    async def _reddit(self, ctx, subreddit: str = "$$next_item", mode = "hot"):
+    async def _reddit(self, ctx, subreddit: str = None, mode = "hot"):
         '''Gets posts from a provided subreddit on reddit.'''
         if ctx.message.guild not in self.current_subreddit:
             self.current_subreddit[ctx.message.guild] = {}
@@ -181,11 +181,11 @@ class Reddit:
                 '''Oops someone entered a mode that doesn't exist'''
                 await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
                 return
-            if subreddit.lower() == "$$next_item":
+            if subreddit.lower() is None:
                 if not self.current_subreddit[ctx.message.guild][ctx.message.author]:
                     '''No subreddit selected and someone used the command with no arguments'''
-                    help_cmd = self.bot.get_command("help")
-                    await ctx.invoke(help_cmd, command="reddit")
+                    embed = discord.Embed(color=ctx.message.author.color, title="❔ Help", description="For help with this command please use ``reddithelp``")
+                    await ctx.send()
                 elif self.next_item_idx[ctx.message.guild][ctx.message.author] == self.max_item_idx[ctx.message.guild][ctx.message.author]:
                     '''Get and Cache the next 5 items from reddit'''
                     if not self._nextCursor[ctx.message.guild][ctx.message.author]:
@@ -240,6 +240,10 @@ class Reddit:
             message = 'No API key set. Get one at https://www.reddit.com/prefs/apps'
             await ctx.send('```{}```'.format(message))
             return
+
+    @commands.command(name="reddithelp")
+    async def _reddithelp(self, ctx):
+        pass
 
     @commands.command(name="redditkey")
     @checks.is_owner()
