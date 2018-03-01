@@ -47,10 +47,10 @@ class Cookie:
         players = settings["Players"]
         
         guild_player_list = []
-        for id, data in guild_data.items():
-            guild_data_list.append([id, data])
+        for id, data in players.items():
+            guild_player_list.append([id, data])
 
-        ordered_player_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1]["Cookies"])))
+        ordered_player_list = list(reversed(sorted(guild_player_list, key = lambda x: x[1]["Cookies"])))
 
         entries = {}
         counter = 1
