@@ -133,9 +133,63 @@ def is_greeter():
     async def pref(ctx):
         if ctx.message.author == ctx.guild.owner:
             return True
+        has_mod = await has_level("mod", ctx)
+        if has_mod:
+            return True
         query = "SELECT * FROM greet WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
         tweeter_role = results[0]["greeter_role_id"]
+        for role in ctx.author.roles:
+            if role.id == tweeter_role:
+                return True
+        return False
+
+    return commands.check(pref)
+
+def can_grant_over_18():
+    async def pref(ctx):
+        if ctx.message.author == ctx.guild.owner:
+            return True
+        has_mod = await has_level("mod", ctx)
+        if has_mod:
+            return True
+        query = "SELECT * FROM over_18 WHERE guild_id = $1"
+        results = await ctx.db.fetch(query, ctx.guild.id)
+        tweeter_role = results[0]["grant_over18_role_id"]
+        for role in ctx.author.roles:
+            if role.id == tweeter_role:
+                return True
+        return False
+
+    return commands.check(pref)
+
+def can_grant_over_18():
+    async def pref(ctx):
+        if ctx.message.author == ctx.guild.owner:
+            return True
+        has_mod = await has_level("mod", ctx)
+        if has_mod:
+            return True
+        query = "SELECT * FROM over_18 WHERE guild_id = $1"
+        results = await ctx.db.fetch(query, ctx.guild.id)
+        tweeter_role = results[0]["grant_over18_role_id"]
+        for role in ctx.author.roles:
+            if role.id == tweeter_role:
+                return True
+        return False
+
+    return commands.check(pref)
+
+def can_grant_under_18():
+    async def pref(ctx):
+        if ctx.message.author == ctx.guild.owner:
+            return True
+        has_mod = await has_level("mod", ctx)
+        if has_mod:
+            return True
+        query = "SELECT * FROM under_18 WHERE guild_id = $1"
+        results = await ctx.db.fetch(query, ctx.guild.id)
+        tweeter_role = results[0]["grant_under18_role_id"]
         for role in ctx.author.roles:
             if role.id == tweeter_role:
                 return True
