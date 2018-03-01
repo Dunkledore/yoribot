@@ -184,8 +184,8 @@ class Reddit:
             if subreddit.lower() is None:
                 if not self.current_subreddit[ctx.message.guild][ctx.message.author]:
                     '''No subreddit selected and someone used the command with no arguments'''
-                    embed = discord.Embed(color=ctx.message.author.color, title="❔ Help", description="For help with this command please use ``reddithelp``")
-                    await ctx.send()
+                    embed = discord.Embed(color=ctx.message.author.color, title="❔ Reddit Help", description="For help with this command please use ``reddithelp``")
+                    await ctx.send(embed=embed)
                 elif self.next_item_idx[ctx.message.guild][ctx.message.author] == self.max_item_idx[ctx.message.guild][ctx.message.author]:
                     '''Get and Cache the next 5 items from reddit'''
                     if not self._nextCursor[ctx.message.guild][ctx.message.author]:
