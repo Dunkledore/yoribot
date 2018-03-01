@@ -47,7 +47,6 @@ class Scheduler:
 
     def save_events(self):
         fileIO('data/scheduler/events.json', 'save', self.events)
-        log.debug('saved events:\n\t{}'.format(self.events))
 
     def _load_events(self):
         # for entry in the self.events make an Event
@@ -71,17 +70,15 @@ class Scheduler:
         if offset:
             fut += offset
         await self.queue.put((fut, event))
-        log.debug('Added "{}" to the scheduler queue at {}'.format(event.name,
-                                                                   fut))
 
     async def _add_event(self, name, command, dest_guild, dest_channel,
                          author, timedelta, repeat=False):
         if isinstance(dest_guild, discord.guild):
-            dest_guild = dest_str(guild.id)
+            dest_guild = str(dest_guild.id)
         if isinstance(dest_channel, discord.Channel):
-            dest_channel = dest_channel.id
+            dest_channel = str(dest_channel.id)
         if isinstance(author, discord.User):
-            author = author.id
+            author = str(author.id)
 
         if dest_guild not in self.events:
             self.events[dest_guild] = {}
@@ -92,8 +89,6 @@ class Scheduler:
                       'command': command,
                       'timedelta': timedelta,
                       'repeat': repeat}
-
-        log.debug('event dict:\n\t{}'.format(event_dict))
 
         now = int(time.time())
         event_dict['starttime'] = now
@@ -139,8 +134,6 @@ class Scheduler:
                                  ' likely get rate limited. Try going above'
                                  ' 30 seconds.')
             return
-        log.info('add {} "{}" to {} on {} in {}s'.format(
-            name, command, channel.name, guild.name, s))
         await self._add_event(name, command, guild, channel, author, s)
         await ctx.send('I will run "{}" in {}s'.format(command, s))
 
@@ -156,7 +149,6 @@ class Scheduler:
         name = name.lower()
         try:
             s = self._parse_time(time_interval)
-            log.debug('run command in {}s'.format(s))
         except:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='_scheduler_repeat')
@@ -167,8 +159,6 @@ class Scheduler:
                                  ' likely get rate limited. Try going above'
                                  ' 30 seconds.')
             return
-        log.info('add {} "{}" to {} on {} every {}s'.format(
-            name, command, channel.name, guild.name, s))
         await self._add_event(name, command, guild, channel, author, s, True)
         await ctx.send('"{}" will run "{}" every {}s'.format(name, command,
                                                                  s))
@@ -233,7 +223,6 @@ class Scheduler:
         data['reactions'] = []
         fake_message = discord.Message(**data)
         # coro = self.bot.process_commands(fake_message)
-        log.info("Running '{}' in {}".format(event.name, event.guild))
         # self.bot.loop.create_task(coro)
         self.bot.dispatch('message', fake_message)
 
@@ -248,8 +237,6 @@ class Scheduler:
                 diff = next_time - curr_time
                 diff = diff if diff >= 0 else 0
                 if diff < 30:
-                    log.debug('scheduling call of "{}" in {}s'.format(
-                        next_event.name, diff))
                     fut = self.bot.loop.call_later(diff, self.run_coro,
                                                    next_event)
                     self.to_kill[next_time] = fut
@@ -260,8 +247,6 @@ class Scheduler:
                         del self.events[next_event.guild][next_event.name]
                         self.save_events()
                 else:
-                    log.debug('Will run {} "{}" in {}s'.format(
-                        next_event.name, next_event.command, diff))
                     await self._put_event(next_event, next_time)
             self.queue_lock.release()
 
@@ -274,7 +259,6 @@ class Scheduler:
                 del self.to_kill[item]
 
             await asyncio.sleep(5)
-        log.debug('manager dying')
         while self.queue.qsize() != 0:
             await self.queue.get()
         while len(self.to_kill) != 0:
