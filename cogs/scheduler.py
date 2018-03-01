@@ -203,20 +203,20 @@ class Scheduler:
         return timeint * translate.get(timespec)
 
     def run_coro(self, event):
-        channel = self.bot.get_channel(event.channel)
+        channel = self.bot.get_channel(int(event.channel))
         try:
             guild = channel.guild
-            prefix = self.bot.settings.get_prefixes(guild)[0]
+            prefix = self.bot.get_guild_prefixes(self.bot.get_guild(int(guild)))[0]
         except AttributeError:
             return
         data = {}
         data['timestamp'] = time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime())
         data['id'] = randint(10**(17), (10**18) - 1)
         data['content'] = prefix + event.command
-        data['channel'] = self.bot.get_channel(event.channel)
-        data['author'] = {'id': event.author}
+        data['channel'] = self.bot.get_channel(int(event.channel))
+        data['author'] = {'id': int(event.author)}
         data['nonce'] = randint(-2**32, (2**32) - 1)
-        data['channel_id'] = event.channel
+        data['channel_id'] = int(event.channel)
         data['reactions'] = []
         fake_message = discord.Message(**data)
         # coro = self.bot.process_commands(fake_message)
