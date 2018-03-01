@@ -47,7 +47,6 @@ initial_extensions = (
     'cogs.memberaudit',
     'cogs.mod',
     'cogs.nsfw',
-    'cogs.oweather',
     'cogs.poll',
     'cogs.pokedex',
     'cogs.profile',
@@ -65,6 +64,7 @@ initial_extensions = (
     'cogs.tags',
     'cogs.terminal',
     'cogs.utilities',
+    'cogs.weather',
     'cogs.welcome',
 )
 

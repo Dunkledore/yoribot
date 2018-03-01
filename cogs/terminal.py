@@ -11,9 +11,6 @@ from cogs.utils import checks
 from cogs.utils.dataIO import dataIO
 import asyncio
 
-__author__ = 'Sentry#4141'
-
-
 class terminal:
     """Repl like Terminal in discord"""
 

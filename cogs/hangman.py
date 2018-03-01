@@ -36,7 +36,7 @@ phrases = ["Eat My Hat", "Par For the Course", "Raining Cats and Dogs", "Roll Wi
 					 "Two Down, One to Go", "What Am I, Chopped Liver?", "It's Not Brain Surgery", "Like Father Like Son",
 					 "Easy As Pie", "Elephant in the Room", "Quick On the Draw", "Barking Up The Wrong Tree",
 					 "A Chip on Your Shoulder", "Put a Sock In It", "Quality Time", "Yada Yada", "Head Over Heels",
-					 "My Cup of Tea", "Ugly Duckling", "Drive Me Nuts", "When the Rubber Hits the Road"]
+					 "My Cup of Tea", "Ugly Duckling", "Drive Me Nuts", "When the Rubber Hits the Road", "Sexiest Man Alive"]
 
 
 class Game:
@@ -90,7 +90,7 @@ class Game:
 			man += "   {} {} |\n".format("/" if self.fails > 5 else " ", "\\" if self.fails > 6 else " ")
 			man += "       |\n"
 			man += "    ———————\n"
-			fmt = "```\n{}```".format(man)
+			fmt = "\n{}".format(man)
 			# Then just add the guesses and the blanks to the string
 			fmt += "```\nGuesses: {}\nWord: {}```".format(", ".join(self.failed_letters), " ".join(self.blanks))
 			return fmt
@@ -119,7 +119,9 @@ class Hangman:
 			RESULT: Hopefully a win!"""
 			game = self.games.get(ctx.message.guild.id)
 			if not game:
-					await ctx.send("There are currently no hangman games running!")
+					await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="There are currently no hangman games running!"))
 					return
 
 			# Check if we are guessing a letter or a phrase. Only one letter can be guessed at a time
@@ -128,29 +130,29 @@ class Hangman:
 			# And also add a message for a loss/win
 			if len(guess) == 1:
 					if guess in game.guessed_letters:
-							await ctx.send("That letter has already been guessed!")
+							await ctx.send("❕ That letter has already been guessed!")
 							# Return here as we don't want to count this as a failure
 							return
 					if game.guess_letter(guess):
-							fmt = "That's correct!"
+							fmt = "✅ That's correct!"
 					else:
-							fmt = "Sorry, that letter is not in the phrase..."
+							fmt = "⚠ Sorry, that letter is not in the phrase..."
 			else:
 					if game.guess_word(guess):
-							fmt = "That's correct!"
+							fmt = "✅ That's correct!"
 					else:
-							fmt = "Sorry that's not the correct phrase..."
+							fmt = "⚠ Sorry that's not the correct phrase..."
 
 			if game.win():
-					fmt += " You guys got it! The word was `{}`".format(game.word)
+					fmt += "✅ You guys got it! The word was `{}`".format(game.word)
 					del self.games[ctx.message.guild.id]
 			elif game.failed():
-					fmt += " Sorry, you guys failed...the word was `{}`".format(game.word)
+					fmt += "⚠ Sorry, you guys failed...the word was `{}`".format(game.word)
 					del self.games[ctx.message.guild.id]
 			else:
-					fmt += str(game)
-
-			await ctx.send(fmt)
+			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = fmt,
+                                description = str(game)))
 
 	@commands.command()
 	@commands.guild_only()
@@ -164,13 +166,17 @@ class Hangman:
 			# Only have one hangman game per guild, since anyone
 			# In a guild (except the creator) can guess towards the current game
 			if self.games.get(ctx.message.guild.id) is not None:
-					await ctx.send("Sorry but only one Hangman game can be running per guild!")
+					await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Sorry but only one Hangman game can be running per guild!"))
 					return
 
 			game = self.start(random.SystemRandom().choice(phrases), ctx)
 			# Let them know the game has started, then print the current game so that the blanks are shown
-			await ctx.send(
-					"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game)))
+			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =
+					"Alright, a hangman game has just started, you can start guessing now!\n{}".format(str(game))))
 
 	@commands.command()
 	@commands.guild_only()
@@ -182,11 +188,15 @@ class Hangman:
 			EXAMPLE: !hangman stop
 			RESULT: No more men being hung"""
 			if self.games.get(ctx.message.guild.id) is None:
-					await ctx.send("There are no Hangman games running on this guild!")
+					await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="There are no Hangman games running on this guild!"))
 					return
 
 			del self.games[ctx.message.guild.id]
-			await ctx.send("I have just stopped the game of Hangman, a new should be able to be started now!")
+			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I have just stopped the game of Hangman, a new should be able to be started now!"))
 
 
 def setup(bot):
