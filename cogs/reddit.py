@@ -197,7 +197,8 @@ class Reddit:
 
             if mode and mode not in self.modes:
                 '''Oops someone entered a mode that doesn't exist'''
-                embed = discord.Embed(color=ctx.message.author.color, title="⚠ Error", description="That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
+                embed = discord.Embed(color=ctx.message.author.color, title="⚠ Error",
+                                      description="That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
                 await ctx.send(embed=embed)
                 return
             if subreddit is None:
@@ -266,8 +267,9 @@ class Reddit:
                     self.next_item_idx[ctx.message.guild][ctx.message.author] += 1
         else:
             ''' Reddit OAuth Client ID not set'''
-            message = 'No API key set. Get one at https://www.reddit.com/prefs/apps'
-            await ctx.send('```{}```'.format(message))
+            embed = discord.Embed(color=ctx.message.author.color, title="⚠ Error",
+                                  description="No Reddit API key set. Get one at https://www.reddit.com/prefs/apps then use `redditkey`")
+            await ctx.send(embed=embed)
             return
 
     @commands.command(name="reddithelp")
