@@ -181,7 +181,7 @@ class Reddit:
                 '''Oops someone entered a mode that doesn't exist'''
                 await ctx.send("That retrieval mode is invalid. Valid modes are `top`, `random`, `new`, `rising`, `controversial`, `hot`")
                 return
-            if subreddit.lower() is None:
+            if subreddit is None:
                 if not self.current_subreddit[ctx.message.guild][ctx.message.author]:
                     '''No subreddit selected and someone used the command with no arguments'''
                     embed = discord.Embed(color=ctx.message.author.color, title="❔ Reddit Help", description="For help with this command please use ``reddithelp``")
