@@ -274,7 +274,8 @@ class Reddit:
 
     @commands.command(name="reddithelp")
     async def _reddithelp(self, ctx):
-        pass
+        embed = discord.Embed(color=ctx.message.author.color, title="❔ Reddit Help", description="Gets posts from a provided subreddit on reddit.")
+        embed.add_field(name="Usage", value="`reddit`\n`reddit <subreddit> <mode>`")
 
     @commands.command(name="redditkey")
     @checks.is_owner()
