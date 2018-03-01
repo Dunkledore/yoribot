@@ -150,6 +150,7 @@ class Hangman:
 					fmt += "⚠ Sorry, you guys failed...the word was `{}`".format(game.word)
 					del self.games[ctx.message.guild.id]
 			else:
+				return
 			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = fmt,
                                 description = str(game)))
