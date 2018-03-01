@@ -58,7 +58,7 @@ class Cookie:
             user = self.bot.get_user(int(member[0]))
             if not user:
                 continue
-            text = "Cookies: " + str(member[1]["cookies"])
+            text = "Cookies: " + str(player[1]["cookies"])
             entries[str(counter) + ". " + user.name] = text
             counter += 1
 
