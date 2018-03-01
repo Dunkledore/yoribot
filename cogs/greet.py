@@ -70,7 +70,7 @@ class SpecialRoles:
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def grantover18role(self, ctx, role: discord.Role):
+    async def over18grantrole(self, ctx, role: discord.Role):
         """Sets the role for people who can greet new members"""
 
         insertquery = "INSERT INTO over18 (guild_id, grant_over18_role_id) VALUES ($1, $2)"
@@ -118,6 +118,21 @@ class SpecialRoles:
         await ctx.send(member.name + ' given over 18')
 
     ###################### UNDER 18 #########################
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_admin()
+    async def under18grantrole(self, ctx, role: discord.Role):
+        """Sets the role for people who can greet new members"""
+
+        insertquery = "INSERT INTO under18 (guild_id, grant_under18_role_id) VALUES ($1, $2)"
+        alterquery = "UPDATE under18 SET grant_under18_role_id = $2 WHERE guild_id = $1"
+
+        try:
+            await ctx.db.execute(insertquery, ctx.guild.id, role.id)
+        except asyncpg.UniqueViolationError:
+            await ctx.db.execute(alterquery, ctx.guild.id, role.id)
+        await ctx.send('Role set')
 
     @commands.command()
     @commands.guild_only()
