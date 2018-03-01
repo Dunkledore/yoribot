@@ -276,6 +276,9 @@ class Reddit:
     async def _reddithelp(self, ctx):
         embed = discord.Embed(color=ctx.message.author.color, title="❔ Reddit Help", description="Gets posts from a provided subreddit on reddit.")
         embed.add_field(name="Usage", value="`reddit`\n`reddit <subreddit> <mode>`")
+        embed.add_field(name="Parameters" value="`<subreddit>`\n The desired subreddit. If one isn't found an interactive prompt with search results may show up if subreddits with similar names exist, otherwise an error message will show.\n<mode> Can be one of `top`, `random`, `new`, `rising`, `controversial`, or `hot`. Not all modes may return posts for some subreddits.")
+        embed.add_field(name="Additional Posts", value="Additional posts may be pulled from the same subreddit simply by using `reddit` with no parameters.")
+        embed.add_field(name="Example", value="`reddit cats hot` will pull the current hottest post from r/cats. Using `reddit` without parameters after that will pull the next hottest post from r/cats.")
         await ctx.send(embed=embed)
 
     @commands.command(name="redditkey")
