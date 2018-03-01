@@ -90,7 +90,7 @@ class Game:
 			man += "   {} {} |\n".format("/" if self.fails > 5 else " ", "\\" if self.fails > 6 else " ")
 			man += "       |\n"
 			man += "    ———————\n"
-			fmt = "\n{}".format(man)
+			fmt = "```\n{}```".format(man)
 			# Then just add the guesses and the blanks to the string
 			fmt += "```\nGuesses: {}\nWord: {}```".format(", ".join(self.failed_letters), " ".join(self.blanks))
 			return fmt
@@ -149,8 +149,7 @@ class Hangman:
 			elif game.failed():
 					fmt += "⚠ Sorry, you guys failed...the word was `{}`".format(game.word)
 					del self.games[ctx.message.guild.id]
-			else:
-				return
+
 			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = fmt,
                                 description = str(game)))
