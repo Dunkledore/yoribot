@@ -73,7 +73,7 @@ class Scheduler:
 
     async def _add_event(self, name, command, dest_guild, dest_channel,
                          author, timedelta, repeat=False):
-        if isinstance(dest_guild, discord.guild):
+        if isinstance(dest_guild, discord.Guild):
             dest_guild = str(dest_guild.id)
         if isinstance(dest_channel, discord.Channel):
             dest_channel = str(dest_channel.id)
