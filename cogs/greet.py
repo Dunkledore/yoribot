@@ -4,7 +4,8 @@ from discord.ext import commands
 
 from .utils import checks
 
-
+#create table under18(guild_id bigint unique, grant_under18_role_id bigint, under18_role_id bigint)
+#create table over18(guild_id bigint unique, grant_over18_role_id bigint, over18_role_id bigint)
 class SpecialRoles:
 
     """Allows you to designate a non-mod/admin role that can add special roles to members. """
@@ -71,7 +72,7 @@ class SpecialRoles:
     @commands.guild_only()
     @checks.is_admin()
     async def over18grantrole(self, ctx, role: discord.Role):
-        """Sets the role for people who can greet new members"""
+        """Sets the role for people who can give the over 18 role"""
 
         insertquery = "INSERT INTO over18 (guild_id, grant_over18_role_id) VALUES ($1, $2)"
         alterquery = "UPDATE over18 SET grant_over18_role_id = $2 WHERE guild_id = $1"
@@ -86,7 +87,7 @@ class SpecialRoles:
     @commands.guild_only()
     @checks.is_admin()
     async def over18role(self, ctx, role: discord.Role):
-        """Sets the role assigned to new members"""
+        """Sets the over 18 role"""
 
         insertquery = "INSERT INTO over18 (guild_id, over18_role_id) VALUES ($1, $2)"
         alterquery = "UPDATE over18 SET over18_role_id = $2 WHERE guild_id = $1"
@@ -101,7 +102,7 @@ class SpecialRoles:
     @commands.guild_only()
     @checks.can_grant_over_18()
     async def over18(self, ctx, member: discord.Member):
-        """Assigns the greet role to a new member"""
+        """Assigns the over 18 role to members"""
 
         query = "SELECT * FROM over18 WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
@@ -123,7 +124,7 @@ class SpecialRoles:
     @commands.guild_only()
     @checks.is_admin()
     async def under18grantrole(self, ctx, role: discord.Role):
-        """Sets the role for people who can greet new members"""
+        """Sets the role for people who can give the under 18 role"""
 
         insertquery = "INSERT INTO under18 (guild_id, grant_under18_role_id) VALUES ($1, $2)"
         alterquery = "UPDATE under18 SET grant_under18_role_id = $2 WHERE guild_id = $1"
@@ -138,7 +139,7 @@ class SpecialRoles:
     @commands.guild_only()
     @checks.is_admin()
     async def under18role(self, ctx, role: discord.Role):
-        """Sets the role assigned to new members"""
+        """Sets the under 18 role"""
 
         insertquery = "INSERT INTO under18 (guild_id, under18_role_id) VALUES ($1, $2)"
         alterquery = "UPDATE under18 SET under18_role_id = $2 WHERE guild_id = $1"
@@ -153,7 +154,7 @@ class SpecialRoles:
     @commands.guild_only()
     @checks.can_grant_under_18()
     async def under18(self, ctx, member: discord.Member):
-        """Assigns the greet role to a new member"""
+        """Assigns the over 18 role to members"""
 
         query = "SELECT * FROM under18 WHERE guild_id = $1"
         results = await ctx.db.fetch(query, ctx.guild.id)
