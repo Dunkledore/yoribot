@@ -73,12 +73,9 @@ class Scheduler:
 
     async def _add_event(self, name, command, dest_guild, dest_channel,
                          author, timedelta, repeat=False):
-        if isinstance(dest_guild, discord.Guild):
-            dest_guild = str(dest_guild.id)
-        if isinstance(dest_channel, discord.TextChannel):
-            dest_channel = str(dest_channel.id)
-        if isinstance(author, discord.User):
-            author = str(author.id)
+        dest_guild = str(dest_guild.id)
+        dest_channel = str(dest_channel.id)
+        author = str(author.id)
 
         if dest_guild not in self.events:
             self.events[dest_guild] = {}
