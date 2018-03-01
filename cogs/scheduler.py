@@ -75,7 +75,7 @@ class Scheduler:
                          author, timedelta, repeat=False):
         if isinstance(dest_guild, discord.Guild):
             dest_guild = str(dest_guild.id)
-        if isinstance(dest_channel, discord.Channel):
+        if isinstance(dest_channel, discord.TextChannel):
             dest_channel = str(dest_channel.id)
         if isinstance(author, discord.User):
             author = str(author.id)
