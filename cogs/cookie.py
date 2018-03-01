@@ -42,7 +42,8 @@ class Cookie:
     @commands.command()
     @commands.guild_only()
     async def cookietop(self, ctx):
-        settings = self.check_guild_settings(guild)
+
+        settings = self.check_guild_settings(ctx.guild)
         players = settings["players"]
         
         guild_player_list = []
