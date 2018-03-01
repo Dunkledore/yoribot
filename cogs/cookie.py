@@ -39,6 +39,33 @@ class Cookie:
         self.file_path = "data/cookie/cookie.json"
         self.system = dataIO.load_json(self.file_path)
 
+    @commands.command()
+    @commands.guild_only()
+    async def cookietop(self, ctx):
+        settings = self.check_guild_settings(guild)
+        players = settings["players"]
+        
+        guild_player_list = []
+        for id, data in guild_data.items():
+            guild_data_list.append([id, data])
+
+        ordered_player_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1]["Cookies"])))
+
+        entries = {}
+        counter = 1
+        for player in ordered_player_list:
+            user = self.bot.get_user(int(member[0]))
+            if not user:
+                continue
+            text = "Cookies: " + str(member[1]["cookies"])
+            entries[str(counter) + ". " + user.name] = text
+            counter += 1
+
+        paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
+        paginator.embed.title = "Guild Ranking for " + ctx.guild.name
+        await paginator.paginate()
+
+
     @commands.group()
     @commands.guild_only()
     @checks.is_mod()
