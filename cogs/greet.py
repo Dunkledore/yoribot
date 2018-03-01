@@ -5,7 +5,7 @@ from discord.ext import commands
 from .utils import checks
 
 
-class SpecialRules:
+class SpecialRoles:
 
     """Allows you to designate a non-mod/admin role that can add special roles to members. """
 
@@ -156,5 +156,5 @@ class SpecialRules:
 
 
 def setup(bot: commands.Bot):
-    n = Greet(bot)
+    n = SpecialRoles(bot)
     bot.add_cog(n)
