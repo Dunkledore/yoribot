@@ -108,13 +108,17 @@ class Searches:
         #Your code will go here
         text = " ".join(text)
         query=text.replace(" ", "%20")
-        await ctx.send("Step 1 - Visit google.com")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "Step 1 - Visit google.com"))
         await asyncio.sleep(2)
-        await ctx.send("Step 2 - Type \""+ text +"\"")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title ="Step 2 - Type:", description=text))
         await asyncio.sleep(2)
-        await ctx.send("Step 3 - Click the Button")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title ="Step 3 - Click the Button"))
         await asyncio.sleep(2)
-        await ctx.send("That's it! https://www.google.com/search?q="+query)
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title ="That's it!", description=" https://www.google.com/search?q="+query))
     
     @commands.command()
     @commands.guild_only()
@@ -155,7 +159,9 @@ class Searches:
                 embed.set_footer(text='typeracer.com')
                 await ctx.send(embed=embed)
             else:
-                await ctx.send('`Unable to retieve stats for user {}`'.format(user))
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='`Unable to retieve stats for user {}`'.format(user)))
 
     @commands.command()
     async def xmasclock(self,ctx):
@@ -172,14 +178,17 @@ class Searches:
 
         delta = xmasday - today
 
-        await ctx.send("```" + str(delta.days) + " days left until Xmas!```")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = str(delta.days) + " days left until Xmas!"))
 
     @commands.command()
     @commands.guild_only()
     async def whoplays(self, ctx, *, game):
         """Shows a list of all the people playing a game."""
         if len(game) <= 2:
-            await ctx.send("You need at least 3 characters.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="You need to enter at least 3 characters for the game name."))
             return
 
         user = ctx.message.author
@@ -202,7 +211,9 @@ class Searches:
                                                          member.game.name)
 
         if playing_game == "":
-            await ctx.send("No one is playing that game.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="No one is playing that game."))
         else:
             msg = playing_game
             em = discord.Embed(description=msg, colour=user.colour)
@@ -240,7 +251,9 @@ class Searches:
                              reverse=True)
 
         if not freq_list:
-            await ctx.send("Surprisingly, no one is playing anything.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ WTF?",
+                                description ="Surprisingly, no one is playing anything."))
         else:
             # create display
             msg = ""
@@ -405,7 +418,9 @@ class Searches:
             #     # something went wrong
             #     # await ctx.send('Something went wrong with SteamSpy')
         else:
-            await ctx.send('Something went wrong with Steam')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Something went wrong with Steam'))
 
     @commands.command(name='steam')
     async def steamgame(self, ctx, *, game):
@@ -471,7 +486,9 @@ class Searches:
             else:
                 await refineResults(result)
         else:
-            await ctx.send(data["error"])
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =data["error"]))
 
 def setup(bot):
     n = Searches(bot)
