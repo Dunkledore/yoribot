@@ -8,7 +8,12 @@ from .utils.dataIO import dataIO, fileIO
 prefix = '*'
 
 class Discomegle:
-    """Lets you chat with random person who has access to the bot."""
+    """Lets you chat with random person who has access to the bot.
+        This feature is only of DM messages - none of the commands
+        will work inside guild text channels. To use, DM the bot
+        the commands which are explained when you used the 
+        discomegle command in your guild. 
+    """
 
     def __init__(self, bot):
         self.bot = bot
@@ -19,13 +24,16 @@ class Discomegle:
     @commands.command()
     @commands.guild_only()
     async def discomegle(self, ctx):
-        """Chat with other discord people anonymously!"""
+        """Chat with other discord people anonymously!
+        Use this command to see the available commands to use in DM.
+        """
 
         user = ctx.message.author
         channel = ctx.message.channel
         server = user.guild
 
-        em = discord.Embed(color=ctx.message.author.color, description="Anonymously speak with other members through Yori - like a text version of chatrandom or omegle.")
+        em = discord.Embed(color=ctx.message.author.color, description="Anonymously speak with other members through" 
+            "Yori - like a text version of chatrandom or omegle! Use these commands in a DM to the bot:")
         em.set_author(name="Discomegle", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
         em.add_field(name='joinpool', value="Joins the pool of random people to chat with.", inline=False)
         em.add_field(name='next', value="Moves on to another partner.", inline=False)
