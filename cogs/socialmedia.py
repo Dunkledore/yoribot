@@ -137,7 +137,9 @@ class SocialMedia:
 			await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
-		await ctx.send('Channel Set')
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Channel Set'))
 	
 	@commands.command()
 	@commands.guild_only()
@@ -152,7 +154,9 @@ class SocialMedia:
 			await ctx.db.execute(insertquery, ctx.guild.id, number)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, number)
-		await ctx.send('Number set')
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Number set'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -167,7 +171,9 @@ class SocialMedia:
 			await ctx.db.execute(insertquery, ctx.guild.id, role.id)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, role.id)
-		await ctx.send('Role set')
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Role set'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -207,7 +213,9 @@ class SocialMedia:
 			await ctx.db.execute(insertquery, ctx.guild.id, twitter_creds)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, ctx.guild.id, twitter_creds)
-		await ctx.author.send('Details Saved')
+		await ctx.author.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Details Saved'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -225,12 +233,16 @@ class SocialMedia:
 
 			await self.sendtweet(ctx.guild, tweet, ctx, filename)
 			await ctx.message.delete()
-			await ctx.send("Tweet Tweeted")
+			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Tweet Tweeted"))
 			return
 		
 		await self.sendtweet(ctx.guild, tweet, ctx)		
 		await ctx.message.delete()
-		await ctx.send("Tweet Tweeted")
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Tweet Tweeted"))
 	
 
 	async def sendtweet(self, guild, tweet, ctx=None, attatchment=None):
@@ -239,7 +251,9 @@ class SocialMedia:
 			if ctx is None:
 				return
 			else:
-				await ctx.send("Your guild owner has not setup twitter credentials")
+				await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Your guild owner has not setup twitter credentials"))
 		else:
 			api = self.get_api(creds)
 
