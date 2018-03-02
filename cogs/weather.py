@@ -297,13 +297,19 @@ class Weather:
             request = await self._api_request(location)
             if request['cod'] == 200:
                 weather = await self._parse_data(request)
-                message = '**{0.celcius:.1f} °C / {0.fahrenheit:.1f} °F in {0.place}, {0.country}**'.format(weather)
-                await ctx.send(message)
+                message = '{0.celcius:.1f} °C / {0.fahrenheit:.1f} °F'.format(weather)
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "The Temperature in {0.place}, {0.country}".format(weather),
+                                description = message))
             else:
-                await ctx.send('Can\'t find this location!')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Can\'t find this location!'))
         else:
             message = 'No API key set. Get one at http://openweathermap.org/'
-            await ctx.send('```{}```'.format(message))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='```{}```'.format(message)))
 
     @commands.command(name='weather', aliases=['we'])
     async def _weather(self, ctx, *, location: str):
@@ -320,10 +326,14 @@ class Weather:
                 em.set_footer(text='Weather data provided by OpenWeatherMap', icon_url='http://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/icons/logo_16x16.png')
                 await ctx.send(embed=em)
             else:
-                await ctx.send('Can\'t find this location!')
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Can\'t find this location!'))
         else:
             message = 'No API key set. Get one at http://openweathermap.org/'
-            await ctx.send('```{}```'.format(message))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='```{}```'.format(message)))
 
     @commands.command(name='weatherkey')
     @checks.is_owner()
