@@ -144,10 +144,10 @@ class Hangman:
 							fmt = "⚠ Sorry that's not the correct phrase..."
 
 			if game.win():
-					fmt += "✅ You guys got it! The word was `{}`".format(game.word)
+					fmt += "\n You guys got it! The word was `{}`".format(game.word)
 					del self.games[ctx.message.guild.id]
 			elif game.failed():
-					fmt += "⚠ Sorry, you guys failed...the word was `{}`".format(game.word)
+					fmt += "\n Sorry, you guys failed...the word was `{}`".format(game.word)
 					del self.games[ctx.message.guild.id]
 
 			await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
