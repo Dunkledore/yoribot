@@ -318,7 +318,7 @@ class Fun:
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
-                                description =)'Deleting commands is now OFF.'))
+                                description ='Deleting commands is now OFF.'))
             self.toggle = False
 
     @commands.group(invoke_without_command=True, no_pm=True)
