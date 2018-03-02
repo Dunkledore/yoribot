@@ -64,21 +64,132 @@ class Fun:
     def save_emotes(self):
         dataIO.save_json(self.feelings, self.system)
         dataIO.is_valid_json("data/fun/feelings.json")
-
-    @commands.command()
-    @commands.guild_only()
+    
+    @commands.group(invoke_without_command=True, no_pm=True)
+    async def fun(self, ctx, count: int=None):
+        """Random text commands for creating chaos!
+        """
+    @fun.command()
     async def riot(self, ctx, *text):
         """RIOT!"""
         text = " ".join(text)
         await ctx.send('ヽ༼ຈل͜ຈ༽ﾉ **' + text + '** ヽ༼ຈل͜ຈ༽ﾉ')
     
-    @commands.command()
-    @commands.guild_only()
+    @fun.command()
     async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
         await ctx.send("{} {}".format(ctx.message.mentions[0].name, randchoice(self.thotchoices)))
     def save_items(self):
         fileIO("data/fun/items.json", 'save', self.items)
+
+    @fun.command(pass_context=True)
+    async def roll(self, ctx, number : int = 100):
+        """Rolls random number (between 1 and user choice)
+
+        Defaults to 100.
+        """
+        author = ctx.message.author
+        if number > 1:
+            n = randint(1, number)
+            await ctx.send("{} :game_die: {} :game_die:".format(author.mention, n))
+        else:
+            await ctx.send("{} Maybe higher than 1? ;P".format(author.mention))
+
+    @fun.command()
+    async def rps(self, ctx, your_choice : RPSParser):
+        """Play rock paper scissors"""
+        author = ctx.message.author
+        player_choice = your_choice.choice
+        red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
+        cond = {
+                (RPS.rock,     RPS.paper)    : False,
+                (RPS.rock,     RPS.scissors) : True,
+                (RPS.paper,    RPS.rock)     : True,
+                (RPS.paper,    RPS.scissors) : False,
+                (RPS.scissors, RPS.rock)     : False,
+                (RPS.scissors, RPS.paper)    : True
+               }
+
+        if red_choice == player_choice:
+            outcome = None # Tie
+        else:
+            outcome = cond[(player_choice, red_choice)]
+
+        if outcome is True:
+            await ctx.send("{} You win {}!"
+                               "".format(red_choice.value, author.mention))
+        elif outcome is False:
+            await ctx.send("{} You lose {}!"
+                               "".format(red_choice.value, author.mention))
+        else:
+            await ctx.send("{} We're square {}!"
+                               "".format(red_choice.value, author.mention))
+
+    @fun.command(name="8", aliases=["8ball"])
+    async def _8ball(self, ctx, *, question : str):
+        """Ask 8 ball a question
+
+        Question must end with a question mark.
+        """
+        if question.endswith("?") and question != "?":
+            await ctx.send("`" + choice(self.ball) + "`")
+        else:
+            await ctx.send("That doesn't look like a question.")
+    @fun.command()
+    async def flip(self, ctx, user : discord.Member=None):
+        """Flips a coin... or a user.
+
+        Defaults to coin.
+        """
+        if user != None:
+            msg = ""
+            if user.id == self.bot.user.id:
+                user = ctx.message.author
+                msg = "Nice try. You think this is funny? How about *this* instead:\n\n"
+            char = "abcdefghijklmnopqrstuvwxyz"
+            tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
+            table = str.maketrans(char, tran)
+            name = user.display_name.translate(table)
+            char = char.upper()
+            tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
+            table = str.maketrans(char, tran)
+            name = name.translate(table)
+            await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
+        else:
+            await ctx.send("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
+
+    @fun.command()
+    async def hug(self, ctx, user : discord.Member, intensity : int=1):
+        """Because everyone likes hugs
+
+        Up to 10 intensity levels."""
+        name = user.nick or user.name
+        if intensity <= 0:
+            msg = "(っ˘̩╭╮˘̩)っ" + name
+        elif intensity <= 3:
+            msg = "(っ´▽｀)っ" + name
+        elif intensity <= 6:
+            msg = "╰(*´︶`*)╯" + name
+        elif intensity <= 9:
+            msg = "(つ≧▽≦)つ" + name
+        elif intensity >= 10:
+            msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
+        await ctx.send(msg)
+
+    @fun.command()
+    async def guard(self,ctx):
+        """Says a random guard line from Skyrim"""
+        await ctx.send(choice(self.lines))
+
+    @fun.command()
+    async def countdown(self, ctx):
+        """Count down... 3,2,1, go!"""
+
+        for i in range(3):
+            await ctx.send(3 - i)
+            await asyncio.sleep(1)
+
+        await ctx.send('go')      
 
     @commands.group(invoke_without_command=True)
     async def slap(self, ctx, user: discord.Member=None):
@@ -117,82 +228,6 @@ class Fun:
             self.items.remove(item)
             self.save_items()
             await ctx.send("item removed.")
-    @commands.command(pass_context=True)
-    async def roll(self, ctx, number : int = 100):
-        """Rolls random number (between 1 and user choice)
-
-        Defaults to 100.
-        """
-        author = ctx.message.author
-        if number > 1:
-            n = randint(1, number)
-            await ctx.send("{} :game_die: {} :game_die:".format(author.mention, n))
-        else:
-            await ctx.send("{} Maybe higher than 1? ;P".format(author.mention))
-
-    @commands.command()
-    async def flip(self, ctx, user : discord.Member=None):
-        """Flips a coin... or a user.
-
-        Defaults to coin.
-        """
-        if user != None:
-            msg = ""
-            if user.id == self.bot.user.id:
-                user = ctx.message.author
-                msg = "Nice try. You think this is funny? How about *this* instead:\n\n"
-            char = "abcdefghijklmnopqrstuvwxyz"
-            tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
-            table = str.maketrans(char, tran)
-            name = user.display_name.translate(table)
-            char = char.upper()
-            tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
-            table = str.maketrans(char, tran)
-            name = name.translate(table)
-            await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
-        else:
-            await ctx.send("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
-
-    @commands.command()
-    async def rps(self, ctx, your_choice : RPSParser):
-        """Play rock paper scissors"""
-        author = ctx.message.author
-        player_choice = your_choice.choice
-        red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
-        cond = {
-                (RPS.rock,     RPS.paper)    : False,
-                (RPS.rock,     RPS.scissors) : True,
-                (RPS.paper,    RPS.rock)     : True,
-                (RPS.paper,    RPS.scissors) : False,
-                (RPS.scissors, RPS.rock)     : False,
-                (RPS.scissors, RPS.paper)    : True
-               }
-
-        if red_choice == player_choice:
-            outcome = None # Tie
-        else:
-            outcome = cond[(player_choice, red_choice)]
-
-        if outcome is True:
-            await ctx.send("{} You win {}!"
-                               "".format(red_choice.value, author.mention))
-        elif outcome is False:
-            await ctx.send("{} You lose {}!"
-                               "".format(red_choice.value, author.mention))
-        else:
-            await ctx.send("{} We're square {}!"
-                               "".format(red_choice.value, author.mention))
-
-    @commands.command(name="8", aliases=["8ball"])
-    async def _8ball(self, ctx, *, question : str):
-        """Ask 8 ball a question
-
-        Question must end with a question mark.
-        """
-        if question.endswith("?") and question != "?":
-            await ctx.send("`" + choice(self.ball) + "`")
-        else:
-            await ctx.send("That doesn't look like a question.")
 
     @commands.command(aliases=["sw"])
     async def stopwatch(self, ctx):
@@ -207,42 +242,7 @@ class Fun:
             await ctx.send(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(str(author.id), None)
 
-    @commands.command()
-    @commands.guild_only()
-    async def hug(self, ctx, user : discord.Member, intensity : int=1):
-        """Because everyone likes hugs
 
-        Up to 10 intensity levels."""
-        name = user.nick or user.name
-        if intensity <= 0:
-            msg = "(っ˘̩╭╮˘̩)っ" + name
-        elif intensity <= 3:
-            msg = "(っ´▽｀)っ" + name
-        elif intensity <= 6:
-            msg = "╰(*´︶`*)╯" + name
-        elif intensity <= 9:
-            msg = "(つ≧▽≦)つ" + name
-        elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
-        await ctx.send(msg)
-
-    @commands.command()
-    async def dadjoke(self,ctx):
-        """Gets a random dad joke."""
-        api = 'https://icanhazdadjoke.com/'
-        async with aiohttp.request('GET', api, headers={'Accept': 'text/plain'}) as r:
-            result = await r.text()
-            head, sep, tail = result.partition('?'or'.')
-            await ctx.send(head+sep)
-            await asyncio.sleep(10)
-            if tail is None or tail == "":
-                return
-            else:
-                await ctx.send(tail)
-    @commands.command()
-    async def guard(self,ctx):
-        """Says a random guard line from Skyrim"""
-        await ctx.send(choice(self.lines))
     @commands.group(aliases=["kao"], invoke_without_command=True)
     async def kaomoji(self, ctx, *, category: str, n: int=None):
         """Send a japanese emoji (the text kind)."""
@@ -291,7 +291,13 @@ class Fun:
         else:
             await ctx.send('Deleting commands is now OFF.')
             self.toggle = False
-    @commands.command(pass_context=True, invoke_without_command=True)
+
+    @commands.group(invoke_without_command=True, no_pm=True)
+    async def gif(self, ctx, count: int=None):
+        """Random text commands for creating chaos!
+        """
+
+    @gif.command(pass_context=True, invoke_without_command=True)
     async def kiss(self, ctx, *, user: discord.Member):
         """Kiss people!"""
         sender = ctx.message.author
@@ -301,7 +307,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was KISSED by " + sender.mention + "! :kiss:", folder)
 
-    @commands.command()
+    @gif.command()
     async def bite(self, ctx, *, user: discord.Member):
         """Bite people!"""
         sender = ctx.message.author
@@ -311,7 +317,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was BITTEN by " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def slap(self, ctx, *, user: discord.Member):
         """Slap people!"""
         sender = ctx.message.author
@@ -322,7 +328,7 @@ class Fun:
             await self.upload_random_gif(
                 ctx, user.mention + " was SLAPPED by " + sender.mention + " and i think they liked it! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def taunt(self, ctx, *, user: discord.Member):
         """Taunt people!"""
         sender = ctx.message.author
@@ -332,7 +338,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was TAUNTED by " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def cuddle(self, ctx, *, user: discord.Member):
         """Cuddle people!"""
         sender = ctx.message.author
@@ -344,7 +350,7 @@ class Fun:
             await self.upload_random_gif(
                 ctx, user.mention + " CUDDLES HARD with " + sender.mention + " , and they like it! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def hugg(self, ctx, *, user: discord.Member):
         """Hug people!"""
         sender = ctx.message.author
@@ -354,7 +360,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was given a BIG hug from " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def feed(self, ctx, *, user: discord.Member):
         """Feed people!"""
         sender = ctx.message.author
@@ -364,7 +370,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was FED by " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def spank(self, ctx, *, user: discord.Member):
         """Spank people!"""
         sender = ctx.message.author
@@ -375,7 +381,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was SPANKED HARD by " + sender.mention + " , and they LOVED it! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def tease(self, ctx, *, user: discord.Member):
         """Tease people!"""
         sender = ctx.message.author
@@ -385,7 +391,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was TEASED by " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def hi5(self, ctx, *, user: discord.Member):
         """HighFive people!"""
         sender = ctx.message.author
@@ -395,7 +401,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was HIGHFIVED by " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def shoot(self, ctx, *, user: discord.Member):
         """Shoot people!"""
         sender = ctx.message.author
@@ -405,7 +411,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was SHOT by " + sender.mention + "! They survived! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def lick(self, ctx, *, user: discord.Member):
         """Lick people!"""
         sender = ctx.message.author
@@ -415,7 +421,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " was LICKED by " + sender.mention + "! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def shake(self, ctx, *, user: discord.Member):
         """Handshake!"""
         sender = ctx.message.author
@@ -425,7 +431,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " Shook " + sender.mention + "'s Hand! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def twerk(self, ctx, *, user: discord.Member):
         """TWERK!"""
         sender = ctx.message.author
@@ -437,7 +443,7 @@ class Fun:
             await self.upload_random_gif(ctx, user.mention + " TWERKED FOR " + sender.mention + "! and they LIKED it! ",
                                          folder)
 
-    @commands.command()
+    @gif.command()
     async def strip(self, ctx, *, user: discord.Member):
         """STRIP!"""
         sender = ctx.message.author
@@ -447,7 +453,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, sender.mention + " strips for " + user.mention + " and they LIKE it! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def thirsty(self, ctx, *, user: discord.Member):
         """The Thirst is Real!"""
         sender = ctx.message.author
@@ -458,7 +464,7 @@ class Fun:
             await self.upload_random_gif(ctx, sender.mention + " tells " + user.mention + " To calm your thirsty ass down! ",
                                          folder)
 
-    @commands.command()
+    @gif.command()
     async def moist(self, ctx, *, user: discord.Member):
         """Moist lol!"""
         sender = ctx.message.author
@@ -468,7 +474,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " has made " + sender.mention + " moist. OH LORD! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def whip(self, ctx, *, user: discord.Member):
         """Whip someone!"""
         sender = ctx.message.author
@@ -478,7 +484,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, sender.mention + " has whipped " +  user.mention + " and i think they LIKED it! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def facepalm(self, ctx, *, user: discord.Member):
         """Facepalm images!"""
         sender = ctx.message.author
@@ -488,7 +494,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " has made " + sender.mention + " FACEPALM! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def ohno(self, ctx, *, user: discord.Member):
         """Oh no they didnt images!"""
         sender = ctx.message.author
@@ -498,7 +504,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, sender.mention + " yells at " + user.mention + " Oh no they didn't! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def hungry(self, ctx, *, user: discord.Member):
         """Hungry images!"""
         sender = ctx.message.author
@@ -508,7 +514,7 @@ class Fun:
         else:
             await self.upload_random_gif(ctx, user.mention + " has made " + sender.mention + " HUNGRY! ", folder)
 
-    @commands.command()
+    @gif.command()
     async def nuts(self, ctx, *, user: discord.Member):
         """NutCracker images!"""
         sender = ctx.message.author
@@ -519,7 +525,7 @@ class Fun:
             await self.upload_random_gif(ctx, sender.mention + " wants to kick " + user.mention + " in the NUTS! OUCH!! ",
                                          folder)
 
-    @commands.command()
+    @gif.command()
     async def fever(self, ctx):
         """Do you have the Fever?"""
         sender = ctx.message.author
@@ -535,15 +541,6 @@ class Fun:
         gifPath = folderPath + "/" + fileList[randint(0, len(fileList) - 1)]
         await ctx.send(file=discord.File(gifPath))
 
-    @commands.command()
-    async def countdown(self, ctx):
-        """Count down... 3,2,1, go!"""
-
-        for i in range(3):
-            await ctx.send(3 - i)
-            await asyncio.sleep(1)
-
-        await ctx.send('go')      
 
 def check_folders():
     if not os.path.exists("data/fun"):
