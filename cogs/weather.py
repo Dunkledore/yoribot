@@ -342,7 +342,9 @@ class Weather:
         settings = dataIO.load_json(self.settings_file)
         settings['WEATHER_API_KEY'] = key
         dataIO.save_json(self.settings_file, settings)
-        await ctx.send('Key saved! It might take a minute or ten before the key is active if you just registered it.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Key saved! It might take a minute or ten before the key is active if you just registered it.'))
 
 
 def check_folder():
