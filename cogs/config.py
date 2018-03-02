@@ -225,7 +225,9 @@ class Config:
 
     async def __error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
-            await ctx.send(error)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =error))
 
 
     @commands.command(invoke_without_command=True)
@@ -248,7 +250,9 @@ class Config:
         else:
             await self._bulk_ignore_entries(ctx, entities)
 
-        await ctx.send(ctx.tick(True))
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description = "Now Ignoring" + entities))
 
     @commands.command()
     @checks.is_mod()
@@ -265,7 +269,9 @@ class Config:
         records = await ctx.db.fetch(query, guild.id)
 
         if len(records) == 0:
-            return await ctx.send('I am not ignoring anything here.')
+            return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description ='I am not ignoring anything here.'))
 
         entries = [LazyEntity(guild, r[0]) for r in records]
         await ctx.release()
@@ -274,7 +280,9 @@ class Config:
             p = Pages(ctx, entries=entries, per_page=20)
             await p.paginate()
         except Exception as e:
-            await ctx.send(str(e))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "Currently Ignoring",
+                                description =str(e)))
 
     @commands.command()
     @checks.is_mod()
@@ -288,7 +296,9 @@ class Config:
         To use this command you must have Manage Server permissions.
         """
         await self._bulk_ignore_entries(ctx, ctx.guild.text_channels)
-        await ctx.send('Successfully blocking all channels here.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Successfully blocking all channels here.'))
 
     @commands.command()
     @checks.is_mod()
@@ -300,7 +310,9 @@ class Config:
 
         query = "DELETE FROM plonks WHERE guild_id=$1;"
         await ctx.db.execute(query, ctx.guild.id)
-        await ctx.send('Successfully cleared all ignores.')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Successfully cleared all ignores.'))
 
     @commands.command(pass_context=True, invoke_without_command=True)
     @checks.is_mod()
@@ -320,7 +332,9 @@ class Config:
             entities = [c.id for c in entities]
             await ctx.db.execute(query, ctx.guild.id, entities)
 
-        await ctx.send(ctx.tick(True))
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description = "Ok - I will no longer ignore" + entities))
 
 
     async def command_toggle(self, connection, guild_id, channel_id, name, *, whitelist=True):
@@ -350,9 +364,13 @@ class Config:
         try:
             await self.command_toggle(ctx.db, ctx.guild.id, ctx.channel.id, command, whitelist=False)
         except RuntimeError as e:
-            await ctx.send(e)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =e))
         else:
-            await ctx.send('Command successfully disabled for this channel.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Command successfully disabled for this channel.'))
 
     @commands.command()
     @checks.is_mod()
@@ -362,9 +380,13 @@ class Config:
         try:
             await self.command_toggle(ctx.db, ctx.guild.id, ctx.channel.id, command, whitelist=True)
         except RuntimeError as e:
-            await ctx.send(e)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =e))
         else:
-            await ctx.send('Command successfully enabled for this channel.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Command successfully enabled for this channel.'))
 
     @commands.command()
     @checks.is_mod()
@@ -374,9 +396,13 @@ class Config:
         try:
             await self.command_toggle(ctx.db, ctx.guild.id, None, command, whitelist=False)
         except RuntimeError as e:
-            await ctx.send(e)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =e))
         else:
-            await ctx.send('Command successfully disabled for this server')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Command successfully disabled for this server'))
 
     @commands.command()
     @checks.is_mod()
@@ -386,9 +412,13 @@ class Config:
         try:
             await self.command_toggle(ctx.db, ctx.guild.id, None, command, whitelist=True)
         except RuntimeError as e:
-            await ctx.send(e)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description =e))
         else:
-            await ctx.send('Command successfully enabled for this server.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Command successfully enabled for this server.'))
 
 
 def setup(bot):
