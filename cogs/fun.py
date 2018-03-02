@@ -75,7 +75,7 @@ class Fun:
         text = " ".join(text)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "(ʘ言ʘ╬)  This is a Riot!    (╬ Ò ‸ Ó)",
-                                description =text)
+                                description =text))
     
     @fun.command()
     async def thot(self, ctx, user):
