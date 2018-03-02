@@ -66,19 +66,23 @@ class Fun:
         dataIO.is_valid_json("data/fun/feelings.json")
     
     @commands.group(invoke_without_command=True, no_pm=True)
-    async def fun(self, ctx, count: int=None):
+    async def fun(self, ctx):
         """Random text commands for creating chaos!
         """
     @fun.command()
     async def riot(self, ctx, *text):
         """RIOT!"""
         text = " ".join(text)
-        await ctx.send('ヽ༼ຈل͜ຈ༽ﾉ **' + text + '** ヽ༼ຈل͜ຈ༽ﾉ')
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "(ʘ言ʘ╬)  This is a Riot!    (╬ Ò ‸ Ó)",
+                                description =text)
     
     @fun.command()
     async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
-        await ctx.send("{} {}".format(ctx.message.mentions[0].name, randchoice(self.thotchoices)))
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "Is {} a thot?".format(ctx.message.mentions[0].name),
+                                description ="{} {}".format(ctx.message.mentions[0].name, randchoice(self.thotchoices))))
     def save_items(self):
         fileIO("data/fun/items.json", 'save', self.items)
 
@@ -91,9 +95,13 @@ class Fun:
         author = ctx.message.author
         if number > 1:
             n = randint(1, number)
-            await ctx.send("{} :game_die: {} :game_die:".format(author.mention, n))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = ":game_die:",
+                                description ="You rolled: {}".format(n)))
         else:
-            await ctx.send("{} Maybe higher than 1? ;P".format(author.mention))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="{} Maybe higher than 1? ;P".format(author.mention)))
 
     @fun.command()
     async def rps(self, ctx, your_choice : RPSParser):
@@ -116,14 +124,23 @@ class Fun:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await ctx.send("{} You win {}!"
-                               "".format(red_choice.value, author.mention))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "You win {}!"
+                               "".format(author.mention),
+                                description = "Yori picked {}"
+                               "".format(red_choice.value)))
         elif outcome is False:
-            await ctx.send("{} You lose {}!"
-                               "".format(red_choice.value, author.mention))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "You lost {}!"
+                               "".format(author.mention),
+                                description = "Yori picked {}"
+                               "".format(red_choice.value)))
         else:
-            await ctx.send("{} We're square {}!"
-                               "".format(red_choice.value, author.mention))
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "{} it was a tie!"
+                               "".format(author.mention),
+                                description = "Yori picked {} too."
+                               "".format(red_choice.value)))
 
     @fun.command(name="8", aliases=["8ball"])
     async def _8ball(self, ctx, *, question : str):
@@ -132,9 +149,13 @@ class Fun:
         Question must end with a question mark.
         """
         if question.endswith("?") and question != "?":
-            await ctx.send("`" + choice(self.ball) + "`")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "The Magic 8 Ball Says",
+                                description = choice(self.ball)))
         else:
-            await ctx.send("That doesn't look like a question.")
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="That doesn't look like a question."))
     @fun.command()
     async def flip(self, ctx, user : discord.Member=None):
         """Flips a coin... or a user.
@@ -272,7 +293,9 @@ class Fun:
     async def _list(self,ctx):
         """Shows all categories"""
         categories = [i for i in self.system]
-        await ctx.send("```" + ', '.join(categories) + "```")
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "Kaomoji Categories",
+                                description =', '.join(categories) ))
         print("Kaomoji list called")
 
     @kaomoji.command()
@@ -280,20 +303,26 @@ class Fun:
         """Displays count per category"""
         str_category = category.lower()
         amount = len(self.system[str_category])
-        await ctx.send("There are " + str(amount) + " kaomojis for " + str_category)
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "Kaomoji's Available in "+ str_category,
+                                description ="There are " + str(amount) + " kaomojis for " + str_category))
 
     @kaomoji.command()
     async def cleaner(self, ctx, on_off: str):
         """Cleans up your commands"""
         if on_off is True:
-            await ctx.send('Deleting commands is now ON.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='Deleting commands is now ON.'))
             self.toggle = True
         else:
-            await ctx.send('Deleting commands is now OFF.')
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description =)'Deleting commands is now OFF.'))
             self.toggle = False
 
     @commands.group(invoke_without_command=True, no_pm=True)
-    async def gif(self, ctx, count: int=None):
+    async def gif(self, ctx):
         """Random text commands for creating chaos!
         """
 

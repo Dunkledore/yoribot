@@ -119,7 +119,21 @@ class Searches:
         await asyncio.sleep(2)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title ="That's it!", description=" https://www.google.com/search?q="+query))
-    
+
+    @commands.command()
+    async def dadjoke(self,ctx):
+        """Gets a random dad joke."""
+        api = 'https://icanhazdadjoke.com/'
+        async with aiohttp.request('GET', api, headers={'Accept': 'text/plain'}) as r:
+            result = await r.text()
+            head, sep, tail = result.partition('?'or'.')
+            await ctx.send(head+sep)
+            await asyncio.sleep(10)
+            if tail is None or tail == "":
+                return
+            else:
+                await ctx.send(tail)
+
     @commands.command()
     @commands.guild_only()
     async def fortune(self, ctx):
@@ -212,7 +226,7 @@ class Searches:
 
         if playing_game == "":
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
+                                title = "❕ WTF?",
                                 description ="No one is playing that game."))
         else:
             msg = playing_game
@@ -359,7 +373,9 @@ class Searches:
             appId = None
             if len(result) == 0:
                 # no games were found
-                return await ctx.send('There are no games like that one :\'(')
+                return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='There are no games like that one :\'('))
             elif len(result) == 1:
                 # only one game matched
                 appId = result[0]['appid']
@@ -435,7 +451,9 @@ class Searches:
             for game in enumerate(result):
                 message += str(game[0] + 1) + ". " + str(game[1]['name']) + "\n"
 
-            await ctx.send(message)
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "Games",
+                                description =message))
 
             # number checker
             def is_number(s):
@@ -453,7 +471,9 @@ class Searches:
                     await ctx.send("http://store.steampowered.com/app/" +
                                        str(result[int(answer.content.strip()) - 1]['appid']))
                 else:
-                    await ctx.send("Please enter just a number next time :(")
+                    await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Please enter just a number next time :("))
 
         # get the appIds list first
         url = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/"
@@ -479,7 +499,9 @@ class Searches:
                         "name": d['name']
                     })
             if len(result) == 0:
-                return await ctx.send('There are no games like that one :\'(')
+                return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='There are no games like that one :\'('))
             elif len(result) == 1 or result[0]['name'] == game:
                 await ctx.send("http://store.steampowered.com/app/" +
                                    str(result[0]['appid']))
