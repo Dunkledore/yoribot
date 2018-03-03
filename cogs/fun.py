@@ -24,9 +24,10 @@ defaults = [
     "My Hand",
     "Granola's wet fish"]
 
+
 class RPS(Enum):
-    rock     = "\N{MOYAI}"
-    paper    = "\N{PAGE FACING UP}"
+    rock = "\N{MOYAI}"
+    paper = "\N{PAGE FACING UP}"
     scissors = "\N{BLACK SCISSORS}"
 
 
@@ -42,6 +43,7 @@ class RPSParser:
         else:
             raise
 
+
 class Fun:
     """
     Various fun and entertaining commands to keep things interesting!
@@ -50,7 +52,7 @@ class Fun:
     def __init__(self, bot):
         self.bot = bot
         self.items = fileIO("data/fun/items.json", "load")
-        self.thotchoices = fileIO("data/fun/thotchoices.json","load")
+        self.thotchoices = fileIO("data/fun/thotchoices.json", "load")
         self.lines = dataIO.load_json("data/fun/lines.json")
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
                      "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
@@ -64,7 +66,7 @@ class Fun:
     def save_emotes(self):
         dataIO.save_json(self.feelings, self.system)
         dataIO.is_valid_json("data/fun/feelings.json")
-    
+
     @commands.group(invoke_without_command=True, no_pm=True)
     async def fun(self, ctx):
         """Random text commands for creating chaos!
@@ -74,20 +76,22 @@ class Fun:
         """RIOT!"""
         text = " ".join(text)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "(ʘ言ʘ╬)  This is a Riot!    (╬ Ò ‸ Ó)",
-                                description =text))
-    
+                                           title="(ʘ言ʘ╬)  This is a Riot!    (╬ Ò ‸ Ó)",
+                                           description=text))
+
     @fun.command()
     async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "Is {} a thot?".format(ctx.message.mentions[0].name),
-                                description ="{} {}".format(ctx.message.mentions[0].name, randchoice(self.thotchoices))))
+                                           title="Is {} a thot?".format(
+                                               ctx.message.mentions[0].name),
+                                           description="{} {}".format(ctx.message.mentions[0].name, randchoice(self.thotchoices))))
+
     def save_items(self):
         fileIO("data/fun/items.json", 'save', self.items)
 
     @fun.command(pass_context=True)
-    async def roll(self, ctx, number : int = 100):
+    async def roll(self, ctx, number: int = 100):
         """Rolls random number (between 1 and user choice)
 
         Defaults to 100.
@@ -96,68 +100,69 @@ class Fun:
         if number > 1:
             n = randint(1, number)
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = ":game_die:",
-                                description ="You rolled: {}".format(n)))
+                                               title=":game_die:",
+                                               description="You rolled: {}".format(n)))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="{} Maybe higher than 1? ;P".format(author.mention)))
+                                               title="⚠ Error",
+                                               description="{} Maybe higher than 1? ;P".format(author.mention)))
 
     @fun.command()
-    async def rps(self, ctx, your_choice : RPSParser):
+    async def rps(self, ctx, your_choice: RPSParser):
         """Play rock paper scissors"""
         author = ctx.message.author
         player_choice = your_choice.choice
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
-                (RPS.rock,     RPS.paper)    : False,
-                (RPS.rock,     RPS.scissors) : True,
-                (RPS.paper,    RPS.rock)     : True,
-                (RPS.paper,    RPS.scissors) : False,
-                (RPS.scissors, RPS.rock)     : False,
-                (RPS.scissors, RPS.paper)    : True
-               }
+            (RPS.rock,     RPS.paper): False,
+            (RPS.rock,     RPS.scissors): True,
+            (RPS.paper,    RPS.rock): True,
+            (RPS.paper,    RPS.scissors): False,
+            (RPS.scissors, RPS.rock): False,
+            (RPS.scissors, RPS.paper): True
+        }
 
         if red_choice == player_choice:
-            outcome = None # Tie
+            outcome = None  # Tie
         else:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "You win {}!"
-                               "".format(author.mention),
-                                description = "Yori picked {}"
-                               "".format(red_choice.value)))
+                                               title="You win {}!"
+                                               "".format(author.mention),
+                                               description="Yori picked {}"
+                                               "".format(red_choice.value)))
         elif outcome is False:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "You lost {}!"
-                               "".format(author.mention),
-                                description = "Yori picked {}"
-                               "".format(red_choice.value)))
+                                               title="You lost {}!"
+                                               "".format(author.mention),
+                                               description="Yori picked {}"
+                                               "".format(red_choice.value)))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "{} it was a tie!"
-                               "".format(author.mention),
-                                description = "Yori picked {} too."
-                               "".format(red_choice.value)))
+                                               title="{} it was a tie!"
+                                               "".format(author.mention),
+                                               description="Yori picked {} too."
+                                               "".format(red_choice.value)))
 
     @fun.command(name="8", aliases=["8ball"])
-    async def _8ball(self, ctx, *, question : str):
+    async def _8ball(self, ctx, *, question: str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
         """
         if question.endswith("?") and question != "?":
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "The Magic 8 Ball Says",
-                                description = choice(self.ball)))
+                                               title="The Magic 8 Ball Says",
+                                               description=choice(self.ball)))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="That doesn't look like a question."))
+                                               title="⚠ Error",
+                                               description="That doesn't look like a question."))
+
     @fun.command()
-    async def flip(self, ctx, user : discord.Member=None):
+    async def flip(self, ctx, user: discord.Member=None):
         """Flips a coin... or a user.
 
         Defaults to coin.
@@ -180,7 +185,7 @@ class Fun:
             await ctx.send("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
 
     @fun.command()
-    async def hug(self, ctx, user : discord.Member, intensity : int=1):
+    async def hug(self, ctx, user: discord.Member, intensity: int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
@@ -198,7 +203,7 @@ class Fun:
         await ctx.send(msg)
 
     @fun.command()
-    async def guard(self,ctx):
+    async def guard(self, ctx):
         """Says a random guard line from Skyrim"""
         await ctx.send(choice(self.lines))
 
@@ -210,7 +215,7 @@ class Fun:
             await ctx.send(3 - i)
             await asyncio.sleep(1)
 
-        await ctx.send('go')      
+        await ctx.send('go')
 
     @commands.group(invoke_without_command=True)
     async def slap(self, ctx, user: discord.Member=None):
@@ -223,11 +228,11 @@ class Fun:
             user = ctx.message.author
             botname = self.bot.user.name
             await ctx.send("-" + botname + " slaps " + ctx, user.mention +
-                               " multiple times with " +
-                               (randchoice(self.items) + "-"))
+                           " multiple times with " +
+                           (randchoice(self.items) + "-"))
         else:
             await ctx.send("-slaps " + (user.nick or user.name) + " with " +
-                               (randchoice(self.items) + "-"))
+                           (randchoice(self.items) + "-"))
 
     @slap.command()
     async def add(self, ctx, item):
@@ -250,6 +255,12 @@ class Fun:
             self.save_items()
             await ctx.send("item removed.")
 
+    @commands.command()
+    async def blame(self, ctx, user: discord.Member):
+        embed = discord.Embed(title="This person is at fault", description=user.display_name)
+        embed.set_thumbnail(url=user.avatar_url())
+        await ctx.send(embed=embed);
+
     @commands.command(aliases=["sw"])
     async def stopwatch(self, ctx):
         """Starts/stops stopwatch"""
@@ -258,11 +269,11 @@ class Fun:
             self.stopwatches[str(author.id)] = int(time.perf_counter())
             await ctx.send(author.mention + " Stopwatch started!")
         else:
-            tmp = abs(self.stopwatches[str(author.id)] - int(time.perf_counter()))
+            tmp = abs(self.stopwatches[str(author.id)
+                                       ] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
             await ctx.send(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(str(author.id), None)
-
 
     @commands.group(aliases=["kao"], invoke_without_command=True)
     async def kaomoji(self, ctx, *, category: str, n: int=None):
@@ -276,7 +287,7 @@ class Fun:
             else:
                 if n > amount:
                     await ctx.send("The highest kaomoji count for " + str_category + " is "
-                                       + str(amount) + ". \n(╯°□°）╯︵ ┻━┻")
+                                   + str(amount) + ". \n(╯°□°）╯︵ ┻━┻")
                 else:
                     await ctx.send(self.system[str_category][n])
             print(str_category + " kaomoji called")
@@ -290,12 +301,12 @@ class Fun:
                 await ctx.send("Wanted to delete mid {} but no permissions".format(m.id))
 
     @kaomoji.command(name="list")
-    async def _list(self,ctx):
+    async def _list(self, ctx):
         """Shows all categories"""
         categories = [i for i in self.system]
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "Kaomoji Categories",
-                                description =', '.join(categories) ))
+                                           title="Kaomoji Categories",
+                                           description=', '.join(categories)))
         print("Kaomoji list called")
 
     @kaomoji.command()
@@ -304,21 +315,21 @@ class Fun:
         str_category = category.lower()
         amount = len(self.system[str_category])
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "Kaomoji's Available in "+ str_category,
-                                description ="There are " + str(amount) + " kaomojis for " + str_category))
+                                           title="Kaomoji's Available in " + str_category,
+                                           description="There are " + str(amount) + " kaomojis for " + str_category))
 
     @kaomoji.command()
     async def cleaner(self, ctx, on_off: str):
         """Cleans up your commands"""
         if on_off is True:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ='Deleting commands is now ON.'))
+                                               title="✅ Success",
+                                               description='Deleting commands is now ON.'))
             self.toggle = True
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ='Deleting commands is now OFF.'))
+                                               title="✅ Success",
+                                               description='Deleting commands is now OFF.'))
             self.toggle = False
 
     @commands.group(invoke_without_command=True, no_pm=True)
@@ -511,7 +522,7 @@ class Fun:
         if ctx.message.author == user:
             await ctx.send(sender.mention + " Well aren't you just a kinky thing! ")
         else:
-            await self.upload_random_gif(ctx, sender.mention + " has whipped " +  user.mention + " and i think they LIKED it! ", folder)
+            await self.upload_random_gif(ctx, sender.mention + " has whipped " + user.mention + " and i think they LIKED it! ", folder)
 
     @gif.command()
     async def facepalm(self, ctx, *, user: discord.Member):
@@ -561,7 +572,6 @@ class Fun:
         folder = "fever"
         await self.upload_random_gif(ctx, sender.mention + "I see you have the fever.... The Bieber fever", folder)
 
-
     async def upload_random_gif(self, ctx, msg, folder):
         if msg:
             await ctx.send(msg)
@@ -576,6 +586,7 @@ def check_folders():
         print("Creating data/slap folder...")
         os.makedirs("data/fun")
 
+
 def check_files():
     f = "data/fun/items.json"
     if not fileIO(f, "check"):
@@ -587,6 +598,7 @@ def check_files():
     if not os.path.isfile("data/fun/feelings.json"):
         raise RuntimeError(
             "Required data is missing. Please reinstall this cog.")
+
 
 def setup(bot):
     check_folders()
