@@ -257,9 +257,10 @@ class Fun:
 
     @commands.command()
     async def blame(self, ctx, user: discord.Member):
-        embed = discord.Embed(title="This person is at fault", description=user.display_name)
-        embed.set_thumbnail(url=user.avatar_url())
-        await ctx.send(embed=embed);
+        embed = discord.Embed(title="This person is at fault",
+                              description=user.display_name)
+        embed.set_thumbnail(url=user.avatar_url)
+        await ctx.send(embed=embed)
 
     @commands.command(aliases=["sw"])
     async def stopwatch(self, ctx):
