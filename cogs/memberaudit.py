@@ -36,7 +36,7 @@ class MemberAudit:
         self.cache_invites()
 
     def cache_invites(self):
-        for g in self.bot.guilds():
+        for g in self.bot.guilds:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
 
