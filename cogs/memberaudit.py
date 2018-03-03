@@ -300,7 +300,7 @@ class MemberAudit:
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member))
-        await self._log(guild.id, user, 'Join')
+        await self._log(guild.id, member, 'Join')
 
     async def member_leave(self, member: discord.Member):
         server = member.guild
@@ -333,19 +333,19 @@ class MemberAudit:
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(member))
-        await self._log(guild.id, user, 'Leave')
+        await self._log(server.id, member, 'Leave')
 
-    async def gather_proof(self, message):
+    async def gather_proof(self, user):
 
         summary = []
-        for message in self.deletedmessage:
+        for message in self.deletedmessages:
             if message.author == user:
                 summary.append(message)
         return summary[-5:]
 
     async def on_message_delete(self, message):
         self.deletedmessages.append(message)
-
+        user = message.author
         hubchannel = self.bot.get_channel(381089479450034176)
         he = discord.Embed(colour=discord.Colour.red())
         he.add_field(name='Message: ' + str(message.id),
@@ -387,9 +387,9 @@ class MemberAudit:
         else:
             print("Tried to send message to channel, but didn't have"
                   " permission. User was {}.".format(user.name))
-        bans = await guild.bans()
+        bans = await server.bans()
         reason = discord.utils.get(bans, user=user)[0]
-        await self._log(guild.id, user, 'Ban', reason)
+        await self._log(server.id, user, 'Ban', reason)
 
     async def member_ban(self, guild, user: discord.User):
         server = guild
@@ -432,7 +432,7 @@ class MemberAudit:
             try:
                 bans = await guild.bans()
                 for banentry in bans:
-                    if member == banentry[1]:
+                    if user == banentry[1]:
                         bannedin += guild.name + '\n'
             except Exception as e:
                 pass
@@ -446,7 +446,7 @@ class MemberAudit:
             embed.add_field(name="Server:", value=server.name)
             embed.add_field(name="Server ID: ", value=str(server.id))
             embed.add_field(name="Reason: ", value=reason)
-            messages = gather_proof(user)
+            messages = self.gather_proof(user)
             for message in messages:
                 embed.add_field(name=message.created_at, value=message.content)
             embed.set_thumbnail(url=user.avatar_url)
