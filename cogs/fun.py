@@ -258,7 +258,7 @@ class Fun:
     @commands.command()
     async def blame(self, ctx, user: discord.Member):
         embed = discord.Embed(color=ctx.message.author.color, title="ℹ️ Blame this person",
-                              description=user.display_name + "---------->")
+                              description=user.display_name + " ----------> ")
         embed.set_thumbnail(url=user.avatar_url)
         await ctx.send(embed=embed)
 
