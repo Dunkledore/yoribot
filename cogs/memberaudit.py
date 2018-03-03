@@ -434,8 +434,8 @@ class MemberAudit:
                 for banentry in bans:
                     if member == banentry[1]:
                         bannedin += guild.name + '\n'
-                    except Exception as e:
-                        pass
+            except Exception as e:
+                pass
             reason = discord.utils.get(bans, user=user)[0]
             hubchannel = self.bot.get_channel(381089479450034176)
         try:
