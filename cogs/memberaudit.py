@@ -237,13 +237,13 @@ class MemberAudit:
     async def member_join(self, member: discord.Member):
         server = member.guild
         used_invite = None
-        for i in server.invites:
+        """for i in server.invites:
             if i.code not in self.invites[str(server.id)]:
                 self.invites[str(server.id)][i.code] = (i.uses, i.inviter)
             uses, inviter = self.invites[str(server.id)][i.code]
             if i.uses < uses:
                 used_invite = i
-                self.invites[str(server.id)][i.code] = (i.uses, inviter)
+                self.invites[str(server.id)][i.code] = (i.uses, inviter)"""
 
         if str(server.id) not in self.settings:
             self.settings[str(server.id)] = deepcopy(default_settings)
