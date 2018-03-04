@@ -178,18 +178,19 @@ class MemberAudit:
                                                description="Sending message events here"))
 
     async def member_join(self, member: discord.Member):
-        used_invite = None
-        """for i in server.invites:
-            if i.code not in self.invites[str(server.id)]:
-                self.invites[str(server.id)][i.code] = (i.uses, i.inviter)
-            uses, inviter = self.invites[str(server.id)][i.code]
-            if i.uses < uses:
-                used_invite = i
-                self.invites[str(server.id)][i.code] = (i.uses, inviter)"""
-
+        
         self.checksettings(member.guild)
         guild = member.guild
         guild_settings = self.settings[str(guild.id)]
+
+        used_invite = None
+        for i in await guild.invites():
+            if i.code not in self.invites[str(guild.id)]:
+                self.invites[str(guild.id)][i.code] = (i.uses, i.inviter)
+            uses, inviter = self.invites[str(guild.id)][i.code]
+            if i.uses < uses:
+                used_invite = i
+                self.invites[str(guild.id)][i.code] = (i.uses, inviter)
 
         if not guild_settings["on"]:
             return
