@@ -27,11 +27,19 @@ class MemberAudit:
         self.deletedmessages = MaxList(500)
         self.invites = {}
 
+    async def cacheloop(self):
+        while True:
+            try:
+                await self.bot.wait_until_ready()
+                await self.cache_invites()
+                await asyncio.sleep(3600)
+            except Exception as e:
+                print(e)
+
     async def cache_invites(self):
         for g in self.bot.guilds:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
-            
             try:
                 for i in await g.invites():
                     self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
@@ -368,4 +376,4 @@ def setup(bot: commands.Bot):
     #bot.add_listener(n.hub_ban_audit, "on_member_ban")
     bot.add_listener(n.member_unban, "on_member_unban")
     bot.add_cog(n)
-    bot.loop.create_task(n.cache_invites())
+    bot.loop.create_task(n.cacheloop())
