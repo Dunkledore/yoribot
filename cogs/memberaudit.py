@@ -1,6 +1,7 @@
 from copy import deepcopy
 import os
 
+import asyncio
 import discord
 import datetime
 from discord.ext import commands
@@ -26,7 +27,9 @@ class MemberAudit:
         self.deletedmessages = MaxList(500)
         self.invites = {}
 
-        self.cache_invites()
+        loop = asyncio.get_event_loop()
+        loop.run_until_comlete(self.cache_invites)
+        loop.close()
 
     async def cache_invites(self):
         for g in self.bot.guilds:
