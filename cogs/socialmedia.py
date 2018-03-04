@@ -42,7 +42,7 @@ class SocialMedia:
 
 
 	def tweetToEmbed(self, tweet):
-		em = "https://twitter.com/"+tweet.user.screen_name+"/status/"+tweet.id_str, description="\n" + tweet.full_text + "\n", color=discord.Colour.teal())
+		em = discord.Embed(title="https://twitter.com/"+tweet.user.screen_name+"/status/"+tweet.id_str, description="\n" + tweet.full_text + "\n", color=discord.Colour.teal())
 		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
 		em.set_footer(text="Tweets: " + str(tweet.user.statuses_count) + " | Followers: " +str(tweet.user.followers_count) + " | Following: "
 		 + str(tweet.user.friends_count) +"  http://twitter.com/"+tweet.user.screen_name, icon_url="http://bit.ly/2mDlBim")
