@@ -32,8 +32,9 @@ class MemberAudit:
         for g in self.bot.guilds:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
+            
             try:
-                for i in await g.invites():
+                for i in g.invites():
                     self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
             except Exception as e:
                 print(e)
