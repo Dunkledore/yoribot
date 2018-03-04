@@ -27,10 +27,6 @@ class MemberAudit:
         self.deletedmessages = MaxList(500)
         self.invites = {}
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(asyncio.ensure_future(self.cache_invites()))
-        loop.close()
-
     async def cache_invites(self):
         for g in self.bot.guilds:
             if str(g.id) not in self.invites:
