@@ -44,7 +44,7 @@ class MemberAudit:
                 for i in await g.invites():
                     self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
             except Exception as e:
-                print(e)
+                print("Can't get invited from {}: {}".format(g, e))
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
