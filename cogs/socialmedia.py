@@ -42,13 +42,7 @@ class SocialMedia:
 
 
 	def tweetToEmbed(self, tweet):
-		em = discord.Embed(title="Follow Us", url="https://twitter.com/"+tweet.user.screen_name+"/status/"+tweet.id_str, description="\n" + tweet.full_text + "\n", color=discord.Colour.teal())
-		em.set_author(name=tweet.user.name, icon_url=tweet.user.profile_image_url)
-		em.set_footer(text="Tweets: " + str(tweet.user.statuses_count) + " | Followers: " +str(tweet.user.followers_count) + " | Following: "
-		 + str(tweet.user.friends_count) +"  http://twitter.com/"+tweet.user.screen_name, icon_url="http://bit.ly/2mDlBim")
-		if 'media' in tweet.entities:
-			if tweet.entities['media'][0]['type'] == 'photo':
-				em.set_image(url=tweet.entities['media'][0]['media_url_https'])
+		em = "https://twitter.com/"+tweet.user.screen_name+"/status/"+tweet.id_str
 		return em
 
 
@@ -121,7 +115,7 @@ class SocialMedia:
 			msg += "\n {}twitterfeed<channel>".format(ctx.prefix)
 			em = discord.Embed(color=ctx.message.author.color, description=msg)
 			em.set_author(name="Twitter Settings Help", icon_url="http://bit.ly/2qrhjLu")
-			await ctx.send(embed=em)
+			await ctx.send(em)
 			
 
 	@commands.command()
