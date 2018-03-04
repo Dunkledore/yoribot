@@ -10,14 +10,7 @@ from .utils import checks, time, chat_formatting as cf
 
 
 default_settings = {
-    "join_message": "{0.mention} has joined the server.",
-    "leave_message": "{0.display_name} has left the server.",
-    "ban_message": "{0.display_name} has been banned.",
-    "unban_message": "{0.display_name} has been unbanned.",
     "on": False,
-    "channel": None,
-    "raid": False,
-    "auto_raid": False,
     "message_on": False
 }
 
@@ -43,199 +36,138 @@ class MemberAudit:
             for i in g.invites():
                 self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
 
-    def checksettings(self, ctx):
-        server = ctx.message.guild
-        if str(server.id) not in self.settings:
-            self.settings[str(server.id)] = deepcopy(default_settings)
-            self.settings[str(server.id)]["channel"] = str(
-                server.text_channels[0].id)
+    def checksettings(self, guild):
+        if str(guild.id) not in self.settings:
+            self.settings[str(guild.id)] = deepcopy(default_settings)
             dataIO.save_json(self.settings_path, self.settings)
 
-    @commands.command(hidden=True)
-    @commands.guild_only()
-    @checks.is_admin()
-    async def auto_raid(self, ctx):
-        """Toggles Auto-Raid
-        Auto-Raid On: Will turn raid on if 3 people join within 1 minute
-        Auto_Raid Off: Raid mode will never be automatically turned on"""
-
-        self.settings[str(ctx.guild.id)]["raid"] = not self.settings[str(
-            ctx.guild.id)]["raid"]
-
-        if self.settings[str(ctx.guild.id)]["raid"]:
-            await ctx.send("Auto-Raid On")
-        else:
-            await ctx.send("Auto-Raid Off")
-
-        dataIO.save_json(self.settings_path, self.settings)
-
-    @commands.command(hidden=True)
-    @commands.guild_only()
-    @checks.is_admin()
-    async def temp_raid(self, ctx):
-        await self._raid(ctx)  # temp to enable raid
-
-    # Seperate definition to allow other definitions to call raid.
-    async def _raid(self, ctx):
-        """Toggles Raid Mode
-        Raid On: Moderation Level will be set to High. Users must be in for more than 10 minutes before speaking
-        Raid Off: Morderation Level will be set to Low. Users must have a email on their discord account befores speaking"""
-
-        self.settings[str(ctx.guild.id)]["raid"] = not self.settings[str(
-            ctx.guild.id)]["raid"]
-
-        if self.settings[str(ctx.guild.id)]["raid"]:
-            try:
-                await ctx.guild.edit(verification_level=discord.VerificationLevel.high)
-                await ctx.send('Raid On')
-            except discord.HTTPException:
-                await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-        else:
-            try:
-                await ctx.guild.edit(verification_level=discord.VerificationLevel.low)
-                await ctx.send('Raid Off')
-            except discord.HTTPException:
-                await ctx.send('\N{WARNING SIGN} Could not set verification level.')
-
-        dataIO.save_json(self.settings_path, self.settings)
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.is_mod()
-    async def log(self, ctx, member: discord.Member, *, reason=None):
-        """Add an entry to a mod log about a member"""
-
-        if reason:
-            await self._log(ctx.guild.id, member, 'Note', reason, ctx.author.id, ctx.author.name)
-
-        embed = await self.log_as_embed(member.id, ctx.guild.id)
-        await ctx.send("I will add that to the log for you.")
-
-    async def _log(self, guild_id, member, action, reason=None, mod_id=None, mod_name=None):
-
-        query = "INSERT INTO mod_log (guild_id, user_id, user_name, action, reason, mod_id, mod_name) VALUES ($1, $2, $3, $4, $5, $6, $7)"
-        await self.bot.pool.execute(query, guild_id, member.id, member.nick or member.name, action, reason, mod_id, mod_name)
-
-    @commands.command()
-    @commands.guild_only()
-    @checks.is_mod()
-    async def modlog(self, ctx, member):
-        """Pulls up any previous log entries for that member."""
-        converter = commands.MemberConverter()
-        converted = None
-        try:
-            converted = await converter.convert(ctx, member)
-        except:
-            pass
-
-        if converted:
-            embed = await self.log_as_embed(converted.id, ctx.guild.id)
-        else:
-            try:
-                embed = await self.log_as_embed(int(member), ctx.guild.id)
-            except ValueError:
-                await ctx.send("Member not found")
-
-        if embed:
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send("Member not found")
-
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def audittoggle(self, ctx: commands.Context):
-        """Turns membership event commands on or off."""
+    async def memberaudittoggle(self, ctx: commands.Context):
+        """Turns member events on or off."""
 
-        self.checksettings(ctx)
-        server = ctx.message.guild
-        self.settings[str(server.id)
-                      ]["on"] = not self.settings[str(server.id)]["on"]
-        if self.settings[str(server.id)]["on"]:
-            await ctx.send(
-                cf.info("Membership events will now be announced."))
+        self.checksettings(ctx.guild)
+        guild = ctx.message.guild
+        guild_settings = self.settings[str(guild.id)]
+        on = guild_settings["on"]
+
+        if on #Turning off is easy no checks required
+            on = False
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Membership events will now not be announced"))
         else:
-            await ctx.send(
-                cf.info("Membership events will no longer be announced."))
+            if "channel" not in guild_settings: #No channel set ever
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Can't turn member events on since no member audit channel has been set. Please set one first."))
+                return
+            elif not self.bot.get_channel(int(guild_settings["channel"])): #channel has been set but the bot cant find it. Most likely deleted
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Can't turn member events on since the member audit channel has been deleted. Please set one first"))
+                return
+            else:
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Membership events will now be announced"))
+                on = True
+
+
+        self.settings[str(guild.id)]["on"] = on
         dataIO.save_json(self.settings_path, self.settings)
 
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def messageinfotoggle(self, ctx: commands.Context):
+    async def messageaudittoggle(self, ctx: commands.Context):
         """Turns message events on or off."""
 
-        self.checksettings(ctx)
-        server = ctx.message.guild
-        self.settings[str(server.id)]["message_on"] = not self.settings[str(
-            server.id)]["message_on"]
-        if self.settings[str(server.id)]["message_on"]:
-            await ctx.send(
-                cf.info("Message events will now be announced."))
+        self.checksettings(ctx.guild)
+        guild = ctx.message.guild
+        guild_settings = self.settings[str(guild.id)]
+        on = guild_settings["message_on"]
+
+        if on #Turning off is easy no checks required
+            on = False
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Message events will now not be announced"))
         else:
-            await ctx.send(
-                cf.info("Message events will no longer be announced."))
+            if "message_info_channel" not in guild_settings: #No channel set ever
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Can't turn message events on since no message audit channel has been set. Please set one first"))
+                return
+            elif not self.bot.get_channel(int(guild_settings["message_info_channel"])): #channel has been set but the bot cant find it. Most likely deleted
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="Can't turn message events on since the message audit channel has been deleted. Please set one first"))
+                return
+            else:
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Message events will now be announced"))
+                on = True
+
+        self.settings[str(guild.id)]["message_on"] = on
         dataIO.save_json(self.settings_path, self.settings)
 
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
     async def auditchannel(self, ctx: commands.Context,
-                           channel: discord.TextChannel=None):
-        """Sets the text channel to which the announcements will be sent.
+                           channel: discord.TextChannel):
+        """Sets the text channel to which the member announcements will be sent."""
 
-         If none is specified, the default will be used.
-         """
+        self.checksettings(ctx.guild)
+        guild = ctx.message.guild
 
-        self.checksettings(ctx)
-        server = ctx.message.guild
-
-        if not channel:
-            channel = server.text_channels[0]
-
-        if not self.speak_permissions(server, channel):
-            await ctx.send(
-                "I don't have permission to send messages in {0.mention}."
-                .format(channel))
+        if not self.speak_permissions(guild, channel):
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I don't have permissions to talk in that channel."))
             return
 
-        self.settings[str(server.id)]["channel"] = str(channel.id)
+        self.settings[str(guild.id)]["channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
-        channel = self.get_welcome_channel(server)
-        await channel.send(("{0.mention}, " +
-                            cf.info(
-                                "I will now send membership"
-                                " announcements to {1.mention}."))
-                           .format(ctx.message.author, channel))
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="I will now send member events to that channel"))
+        channel = self.get_welcome_channel(guild)
+        await channel.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Sending member events here"))
 
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
     async def messageinfochannel(self, ctx: commands.Context,
                                  channel: discord.TextChannel):
-        """Sets the text channel to which the message announcements will be sent.
+        """Sets the text channel to which the meessage announcements will be sent."""
 
-         """
-        self.checksettings(ctx)
-        server = ctx.message.guild
+        self.checksettings(ctx.guild)
+        guild = ctx.message.guild
 
-        if not self.speak_permissions(server, channel):
-            await ctx.send(
-                "I don't have permission to send messages in {0.mention}."
-                .format(channel))
+        if not self.speak_permissions(guild, channel):
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I don't have permissions to talk in that channel."))
             return
 
-        self.settings[str(server.id)]["message_info_channel"] = str(channel.id)
+        self.settings[str(guild.id)]["channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
-        channel = self.get_info_channel(server)
-        await channel.send(("{0.mention}, " +
-                            cf.info(
-                                "I will now send message"
-                                " announcements to {1.mention}."))
-                           .format(ctx.message.author, channel))
+        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="I will now send message events to that channel"))
+        channel = self.get_member_event_channel(server)
+        await channel.send(embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Sending message events here"))
+
 
     async def member_join(self, member: discord.Member):
-        server = member.guild
         used_invite = None
         """for i in server.invites:
             if i.code not in self.invites[str(server.id)]:
@@ -245,305 +177,151 @@ class MemberAudit:
                 used_invite = i
                 self.invites[str(server.id)][i.code] = (i.uses, inviter)"""
 
-        if str(server.id) not in self.settings:
-            self.settings[str(server.id)] = deepcopy(default_settings)
-            self.settings[str(server.id)]["channel"] = str(
-                server.text_channels[0].id)
-            dataIO.save_json(self.settings_path, self.settings)
+        self.checksettings(ctx.guild)
+        guild = member.guild
+        guild_settings = self.settings[str(guild.id)]
 
-        ch = self.get_welcome_channel(server)
-
-        if not self.settings[str(server.id)]["on"] or ch is None:
+        if not guild_settings["on"]:
             return
 
-        await ch.trigger_typing()
-
-        if server is None:
-            print("The server was None, so this was either a PM or an error."
-                  " The user was {}.".format(
-                      member.name))
+        member_event_channel = self.get_member_event_channel(guild)
+        if not member_event_channel:
             return
-        bannedin = ""
-        for guild in self.bot.guilds:
-            try:
-                bans = await guild.bans()
-                for banentry in bans:
-                    if member == banentry[1]:
-                        bannedin += guild.name + '\n'
-            except Exception as e:
-                pass
 
-        created = (datetime.datetime.utcnow() -
-                   member.created_at).total_seconds() // 60
+        created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
         if created < 30 or bannedin:
             colour = 0xdda453
         else:
             colour = 0x53dda4
 
-        channel = self.get_welcome_channel(server)
-        if self.speak_permissions(server, channel):
-            embed = discord.Embed(title="📥 Member Join", description=self.settings[str(
-                server.id)]["join_message"].format(member, server), colour=colour)
-            embed.timestamp = datetime.datetime.utcnow()
-            embed.set_footer(text='Joined')
-            embed.set_author(name=str(member), icon_url=member.avatar_url)
-            embed.add_field(name='ID', value=member.id)
-            embed.add_field(name='Joined', value=member.joined_at)
-            embed.add_field(name='Created', value=time.human_timedelta(
-                member.created_at), inline=False)
-            embed.add_field(name="Used Invite", value=used_invite.code + " created by " +
-                            used_invite.inviter.display_name if used_invite.inviter is not None else " Server" + "({} uses)".format(used_invite.uses))
+        embed = discord.Embed(title="📥 Member Join", description=member.mention, colour=colour)
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.set_footer(text='Joined')
+        embed.set_author(name=str(member), icon_url=member.avatar_url)
+        embed.add_field(name='ID', value=member.id)
+        embed.add_field(name='Joined', value=member.joined_at)
+        embed.add_field(name='Created', value=time.human_timedelta(
+            member.created_at), inline=False)
+        embed.add_field(name="Used Invite", value=used_invite.code + " created by " +
+                        used_invite.inviter.display_name if used_invite.inviter is not None else " Server" + "({} uses)".format(used_invite.uses))
+        
+        if ban_permissions(guild):
+            bannedin = ""
+            for g in self.bot.guilds:
+                try:
+                    bans = await guild.bans()
+                    for banentry in bans:
+                        if member == banentry[1]:
+                            bannedin += guild.name + '\n'
+                except Exception as e:  
             if bannedin:
                 embed.add_field(name='Banned In', value=bannedin)
-
-            await channel.send(embed=embed)
         else:
-            print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member))
-        await self._log(guild.id, member, 'Join')
+            embed.add_field(name="No Ban Permissions", value="This member may be banned in other Yori servers. Please enable the ban permissions for yori to see this in future")
+
+        await channel.send(embed=embed)
 
     async def member_leave(self, member: discord.Member):
-        server = member.guild
-        if str(server.id) not in self.settings:
-            self.settings[str(server.id)] = deepcopy(default_settings)
-            self.settings[str(server.id)]["channel"] = str(
-                server.text_channels[0].id)
-            dataIO.save_json(self.settings_path, self.settings)
+        self.checksettings(ctx.guild)
+        guild = member.guild
+        guild_settings = self.settings[str(guild.id)]
 
-        ch = self.get_welcome_channel(server)
-
-        if not self.settings[str(server.id)]["on"] or ch is None:
+        if not guild_settings["on"]:
             return
 
-        await ch.trigger_typing()
-
-        if server is None:
-            print("The server was None, so this was either a PM or an error."
-                  " The user was {}.".format(member.name))
+        member_event_channel = self.get_member_event_channel(guild)
+        if not member_event_channel:
             return
 
-        channel = self.get_welcome_channel(server)
-        if self.speak_permissions(server, channel):
-            await channel.send(embed=discord.Embed(
+        embed=discord.Embed(
                 title="📤 Member Leave",
-                description=self.settings[str(
-                    server.id)]["leave_message"].format(member, server)
-            ))
+                description=member.mention + member.name)
+        embed.set_footer(text='Left')
+        await member_event_channel.send(embed=embed)
 
-        else:
-            print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(member))
-        await self._log(server.id, member, 'Leave')
 
-    async def gather_proof(self, user):
-
-        summary = []
-        for message in self.deletedmessages:
-            if message.author == user:
-                summary.append(message)
-        return summary[-5:]
-
-    async def on_message_delete(self, message):
-        self.deletedmessages.append(message)
-        user = message.author
-        hubchannel = self.bot.get_channel(381089479450034176)
-        he = discord.Embed(colour=discord.Colour.red())
-        he.add_field(name='Message: ' + str(message.id),
-                     value=message.content, inline=False)
-        he.set_footer(text=""'Sent In: ' + message.channel.name +
-                      ' Channel ID:  ' + str(message.channel.id))
-        await hubchannel.send(embed=he)
-
-        server = message.guild
-        if str(server.id) not in self.settings:
-            self.settings[server.id] = deepcopy(default_settings)
-            self.settings[server.id]["channel"] = str(
-                server.text_channels[0].id)
-            dataIO.save_json(self.settings_path, self.settings)
-
-        if not self.settings[str(server.id)]["message_on"]:
-            return
-
-        ch = self.get_info_channel(server)
-        if message.channel.is_nsfw():
-            return
-        if ch is None:
-            return
-        if server is None:
-            print("The server was None, so this was either a PM or an error."
-                  " The user was {}.".format(user.name))
-            return
-
-        if self.speak_permissions(server, ch):
-            embed = discord.Embed(title='📤 Message Deleted',
-                                  colour=discord.Colour.red())
-            embed.set_author(name=message.author.name,
-                             icon_url=message.author.avatar_url)
-            embed.add_field(name='Message: ' + str(message.id),
-                            value=message.content, inline=False)
-            embed.add_field(name='Sent In:  ', value='Channel:  ' +
-                            message.channel.name + '  Channel ID:  ' + str(message.channel.id))
-            await ch.send(embed=embed)
-        else:
-            print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(user.name))
-        bans = await server.bans()
-        reason = discord.utils.get(bans, user=user)[0]
-        await self._log(server.id, user, 'Ban', reason)
 
     async def member_ban(self, guild, user: discord.User):
-        server = guild
-        if str(server.id) not in self.settings:
-            self.settings[server.id] = deepcopy(default_settings)
-            self.settings[server.id]["channel"] = str(
-                server.text_channels[0].id)
-            dataIO.save_json(self.settings_path, self.settings)
+        self.checksettings(guild)
+        guild_settings = self.settings[str(guild.id)]
 
-        ch = self.get_welcome_channel(server)
-        if not self.settings[str(server.id)]["on"] or ch is None:
+        if not guild_settings["on"]:
             return
 
-        await ch.trigger_typing()
-
-        if server is None:
-            print("The server was None, so this was either a PM or an error."
-                  " The user was {}.".format(user.name))
+        member_event_channel = self.get_member_event_channel(guild)
+        if not member_event_channel:
             return
 
-        channel = self.get_welcome_channel(server)
-        if self.speak_permissions(server, channel):
-            await channel.send(embed=discord.Embed(
-                title="🔨 Member Banned",
-                description=self.settings[str(
-                    server.id)]["ban_message"].format(user, server)
-            ))
+        embed=discord.Embed(title="🔨 Member Banned", description=user.name)
+        embed.set_footer('Banned')
+        if audit_log_permissions(guild):
+            ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
+            banner = ban_info[0].user
+            embed.add_field(name="Banned by", Value= banner.name + " " + banner.mention)
         else:
-            print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(user.name))
-        bans = await guild.bans()
-        reason = discord.utils.get(bans, user=user)[0]
-        await self._log(guild.id, user, 'Ban', reason)
+            embed.add_field(name="Banned by", value="Please enable access to AuditLogs to see this")
 
-    async def hub_ban_audit(self, guild, user: discord.User):
-
-        server = guild
-        bannedin = ""
-        for guild in self.bot.guilds:
-            try:
-                bans = await guild.bans()
-                for banentry in bans:
-                    if user == banentry[1]:
-                        bannedin += guild.name + '\n'
-            except Exception as e:
-                pass
-            reason = discord.utils.get(bans, user=user)[0]
-            hubchannel = self.bot.get_channel(381089479450034176)
-        try:
-            embed = discord.Embed(title="User Name: " + str(user.name) +
-                                  " User ID: " + str(user.id),  colour=discord.Colour.red())
-            embed.set_author(name="🔨 User Action Report for " +
-                             str(user.name), icon_url=server.icon_url)
-            embed.add_field(name="Server:", value=server.name)
-            embed.add_field(name="Server ID: ", value=str(server.id))
-            embed.add_field(name="Reason: ", value=reason)
-            messages = self.gather_proof(user)
-            for message in messages:
-                embed.add_field(name=message.created_at, value=message.content)
-            embed.set_thumbnail(url=user.avatar_url)
-
-            if bannedin:
-                embed.add_field(name='Banned In', value=bannedin, inline=False)
-            await hubchannel.send(embed=embed)
-        except Exception as e:
-            await hubchannel.send(e)
+        await member_event_channel.send(embed=embed)
+            
 
     async def member_unban(self, guild, user: discord.User):
-        server = guild
-        if str(server.id) not in self.settings:
-            self.settings[str(server.id)] = deepcopy(default_settings)
-            self.settings[str(server.id)]["channel"] = str(
-                server.text_channels[0].id)
-            dataIO.save_json(self.settings_path, self.settings)
+        self.checksettings(guild)
+        guild_settings = self.settings[str(guild.id)]
 
-        ch = self.get_welcome_channel(server)
-
-        if not self.settings[str(server.id)]["on"] or ch is None:
+        if not guild_settings["on"]:
             return
 
-        await ch.trigger_typing()
-
-        if server is None:
-            print("The server was None, so this was either a PM or an error."
-                  " The user was {}.".format(
-                      user.name))
+        member_event_channel = self.get_member_event_channel(guild)
+        if not member_event_channel:
             return
 
-        channel = self.get_welcome_channel(server)
-        if self.speak_permissions(server, channel):
-            await channel.send(embed=discord.Embed(
-                title="🕊️ Member Unbanned",
-                description=self.settings[str(
-                    server.id)]["unban_message"].format(user, server)
-            ))
+        embed=discord.Embed(title="🔨 Member Unbanned", description=user.name)
+        embed.set_footer('Unbanned')
+        if audit_log_permissions(guild):
+            unban_info = await guild.audit_logs(action=discord.AuditLogAction.unban, target=user).flatten()
+            unbanner = unban_info[0].user
+            embed.add_field(name="Unbanned by", Value= unbanner.name + " " + unbanner.mention)
         else:
-            print("Tried to send message to channel, but didn't have"
-                  " permission. User was {}.".format(user.name))
-        await self._log(guild.id, user, 'Unban')
+            embed.add_field(name="Unbanned by", value="Please enable access to AuditLogs to see this")
 
-    async def log_as_embed(self, user_id, guild_id):
-        query = "SELECT * FROM mod_log WHERE user_id = $1 AND guild_id = $2"
-        pool = self.bot.pool
-        results = await pool.fetch(query, user_id, guild_id)
+        await member_event_channel.send(embed=embed)
+    
+    async def on_message_delete(self, message):
+        self.checksettings(message.guild)
+        guild = message.guild
+        guild_settings = self.settings[str(guild.id)]
 
-        embed = discord.Embed(title='Mod Log for: ' + str(user_id))
+        if not guild_settings["message_on"]:
+            return
 
-        member = self.bot.get_user(user_id)
+        message_event_channel = self.get_message_event_channel(guild)
+        if not message_event_channel:
+            return
 
-        aliases = ""
-        if member:
-            aliases += member.name + '\n'
-        for result in results:
-            if result['user_name']:
-                if result['user_name'] not in aliases:
-                    aliases += result['user_name'] + '\n'
-        if not aliases:
+
+        embed = discord.Embed(title='📤 Message Deleted',
+                              colour=discord.Colour.red())
+        embed.set_author(name=message.author.name,
+                         icon_url=message.author.avatar_url)
+        embed.add_field(name='Message: ' + str(message.id),
+                        value=message.content, inline=False)
+        embed.add_field(name='Sent In:  ', value='Channel:  ' +
+                        message.channel.name + '  Channel ID:  ' + str(message.channel.id))
+        await ch.send(embed=embed)
+
+    def get_member_event_channel(self, guild: discord.Guild):
+        guild_settings = self.settings[str(guild.id)]
+        if "channel" in guild_settings:
+            return guild.get_channel(int(guild_settings["channel"]))
+        else:
             return None
-        actions = ""
-        timeconverter = time.UserFriendlyTime()
-        for result in results:
-            actions += result['action']
-            if result['reason']:
-                actions += ' - ' + result['reason']
-            if result['mod_name']:
-                actions += ' - By ' + result['mod_name']
-            actions += ' - ' + result['date'].strftime("%d-%m-%Y %H:%M:%S")
-            if actions:
-                actions += '\n'
 
-        embed.add_field(name='Aliases', value=aliases, inline=False)
-
-        if actions:
-            embed.add_field(name='Actions', value=actions, inline=False)
-
-        if member:
-            embed.add_field(name='Created', value=time.human_timedelta(
-                member.created_at), inline=False)
-
-        return embed
-
-    def get_welcome_channel(self, guild: discord.Guild):
-        return guild.get_channel(int(self.settings[str(guild.id)]["channel"]))
-
-    def get_info_channel(self, guild: discord.Guild):
-        return guild.get_channel(int(self.settings[str(guild.id)]["message_info_channel"]))
-
-    async def get_mod_channel(self, guild: discord.Guild):
-        query = "SELECT * FROM mod_config WHERE guild_id = $1"
-        results = await self.bot.pool.fetch(query, guild.id)
-        if results:
-            mod_channel_id = results[0]["mod_channel"]
-            return guild.get_channel(mod_channel_id)
-        return None
+    def get_message_event_channel(self, guild: discord.Guild):
+        guild_settings = self.settings[str(guild.id)]
+        if "message_info_channel" in guild_settings:
+            return guild.get_channel(int(guild_settings["message_info_channel"]))
+        else:
+            return None
 
     def speak_permissions(self, server: discord.Guild,
                           channel: discord.TextChannel=None):
@@ -551,6 +329,14 @@ class MemberAudit:
             channel = self.get_welcome_channel(server)
         member = server.get_member(self.bot.user.id)
         return member.permissions_in(channel).send_messages
+
+    def ban_permissions(self, guild):
+        member = guild.get_member(self.bot.user.id)
+        return member.guild_permissions.ban_members
+
+    def audit_log_permissions(self, guild):
+        member = guild.get_member(self.bot.user.id)
+        return member.guild_permissions.view_audit_log
 
 
 def check_folders():
