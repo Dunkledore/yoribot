@@ -28,7 +28,7 @@ class MemberAudit:
         self.invites = {}
 
         loop = asyncio.get_event_loop()
-        loop.run_until_comlete(self.cache_invites)
+        loop.run_until_complete(self.cache_invites)
         loop.close()
 
     async def cache_invites(self):
