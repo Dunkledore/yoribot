@@ -89,7 +89,7 @@ class MemberAudit:
         guild_settings = self.settings[str(guild.id)]
         on = guild_settings["message_on"]
 
-        if on #Turning off is easy no checks required
+        if on: #Turning off is easy no checks required
             on = False
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
