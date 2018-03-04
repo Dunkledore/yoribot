@@ -135,7 +135,7 @@ class MemberAudit:
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
                                 description ="I will now send member events to that channel"))
-        channel = self.get_welcome_channel(guild)
+        channel = self.get_member_event_channel(guild)
         await channel.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
                                 description ="Sending member events here"))
@@ -161,7 +161,7 @@ class MemberAudit:
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
                                 description ="I will now send message events to that channel"))
-        channel = self.get_member_event_channel(server)
+        channel = self.get_message_event_channel(guild)
         await channel.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
                                 description ="Sending message events here"))
@@ -177,7 +177,7 @@ class MemberAudit:
                 used_invite = i
                 self.invites[str(server.id)][i.code] = (i.uses, inviter)"""
 
-        self.checksettings(ctx.guild)
+        self.checksettings(member.guild)
         guild = member.guild
         guild_settings = self.settings[str(guild.id)]
 
@@ -189,7 +189,7 @@ class MemberAudit:
             return
 
         created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
-        if created < 30 or bannedin:
+        if created < 30:# or bannedin:
             colour = 0xdda453
         else:
             colour = 0x53dda4
@@ -205,7 +205,7 @@ class MemberAudit:
         embed.add_field(name="Used Invite", value=used_invite.code + " created by " +
                         used_invite.inviter.display_name if used_invite.inviter is not None else " Server" + "({} uses)".format(used_invite.uses))
         
-        if ban_permissions(guild):
+        if self.ban_permissions(guild):
             bannedin = ""
             for g in self.bot.guilds:
                 try:
@@ -214,15 +214,16 @@ class MemberAudit:
                         if member == banentry[1]:
                             bannedin += guild.name + '\n'
                 except Exception as e:  
+                    print(e)
             if bannedin:
                 embed.add_field(name='Banned In', value=bannedin)
         else:
             embed.add_field(name="No Ban Permissions", value="This member may be banned in other Yori servers. Please enable the ban permissions for yori to see this in future")
 
-        await channel.send(embed=embed)
+        await member_event_channel.send(embed=embed)
 
     async def member_leave(self, member: discord.Member):
-        self.checksettings(ctx.guild)
+        self.checksettings(member.guild)
         guild = member.guild
         guild_settings = self.settings[str(guild.id)]
 
@@ -253,11 +254,11 @@ class MemberAudit:
             return
 
         embed=discord.Embed(title="🔨 Member Banned", description=user.name)
-        embed.set_footer('Banned')
-        if audit_log_permissions(guild):
+        embed.set_footer(text='Banned')
+        if self.audit_log_permissions(guild):
             ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
             banner = ban_info[0].user
-            embed.add_field(name="Banned by", Value= banner.name + " " + banner.mention)
+            embed.add_field(name="Banned by", value= banner.name + " " + banner.mention)
         else:
             embed.add_field(name="Banned by", value="Please enable access to AuditLogs to see this")
 
@@ -276,11 +277,11 @@ class MemberAudit:
             return
 
         embed=discord.Embed(title="🔨 Member Unbanned", description=user.name)
-        embed.set_footer('Unbanned')
-        if audit_log_permissions(guild):
+        embed.set_footer(text='Unbanned')
+        if self.audit_log_permissions(guild):
             unban_info = await guild.audit_logs(action=discord.AuditLogAction.unban, target=user).flatten()
             unbanner = unban_info[0].user
-            embed.add_field(name="Unbanned by", Value= unbanner.name + " " + unbanner.mention)
+            embed.add_field(name="Unbanned by", value= unbanner.name + " " + unbanner.mention)
         else:
             embed.add_field(name="Unbanned by", value="Please enable access to AuditLogs to see this")
 
@@ -307,7 +308,7 @@ class MemberAudit:
                         value=message.content, inline=False)
         embed.add_field(name='Sent In:  ', value='Channel:  ' +
                         message.channel.name + '  Channel ID:  ' + str(message.channel.id))
-        await ch.send(embed=embed)
+        await message_event_channel.send(embed=embed)
 
     def get_member_event_channel(self, guild: discord.Guild):
         guild_settings = self.settings[str(guild.id)]
@@ -326,7 +327,7 @@ class MemberAudit:
     def speak_permissions(self, server: discord.Guild,
                           channel: discord.TextChannel=None):
         if not channel:
-            channel = self.get_welcome_channel(server)
+            channel = self.get_member_event_channel(server)
         member = server.get_member(self.bot.user.id)
         return member.permissions_in(channel).send_messages
 
@@ -359,6 +360,6 @@ def setup(bot: commands.Bot):
     bot.add_listener(n.member_join, "on_member_join")
     bot.add_listener(n.member_leave, "on_member_remove")
     bot.add_listener(n.member_ban, "on_member_ban")
-    bot.add_listener(n.hub_ban_audit, "on_member_ban")
+    #bot.add_listener(n.hub_ban_audit, "on_member_ban")
     bot.add_listener(n.member_unban, "on_member_unban")
     bot.add_cog(n)
