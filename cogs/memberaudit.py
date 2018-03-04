@@ -32,9 +32,11 @@ class MemberAudit:
         for g in self.bot.guilds:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
-
-            for i in g.invites():
-                self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
+            try:
+                for i in await g.invites():
+                    self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
+            except Exception as e:
+                print(e)
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
@@ -52,28 +54,28 @@ class MemberAudit:
         guild_settings = self.settings[str(guild.id)]
         on = guild_settings["on"]
 
-        if on: #Turning off is easy no checks required
+        if on:  # Turning off is easy no checks required
             on = False
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Membership events will now not be announced"))
+                                               title="✅ Success",
+                                               description="Membership events will now not be announced"))
         else:
-            if "channel" not in guild_settings: #No channel set ever
+            if "channel" not in guild_settings:  # No channel set ever
                 await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="Can't turn member events on since no member audit channel has been set. Please set one first."))
+                                                   title="⚠ Error",
+                                                   description="Can't turn member events on since no member audit channel has been set. Please set one first."))
                 return
-            elif not self.bot.get_channel(int(guild_settings["channel"])): #channel has been set but the bot cant find it. Most likely deleted
+            # channel has been set but the bot cant find it. Most likely deleted
+            elif not self.bot.get_channel(int(guild_settings["channel"])):
                 await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="Can't turn member events on since the member audit channel has been deleted. Please set one first"))
+                                                   title="⚠ Error",
+                                                   description="Can't turn member events on since the member audit channel has been deleted. Please set one first"))
                 return
             else:
                 await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Membership events will now be announced"))
+                                                   title="✅ Success",
+                                                   description="Membership events will now be announced"))
                 on = True
-
 
         self.settings[str(guild.id)]["on"] = on
         dataIO.save_json(self.settings_path, self.settings)
@@ -89,26 +91,27 @@ class MemberAudit:
         guild_settings = self.settings[str(guild.id)]
         on = guild_settings["message_on"]
 
-        if on: #Turning off is easy no checks required
+        if on:  # Turning off is easy no checks required
             on = False
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Message events will now not be announced"))
+                                               title="✅ Success",
+                                               description="Message events will now not be announced"))
         else:
-            if "message_info_channel" not in guild_settings: #No channel set ever
+            if "message_info_channel" not in guild_settings:  # No channel set ever
                 await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="Can't turn message events on since no message audit channel has been set. Please set one first"))
+                                                   title="⚠ Error",
+                                                   description="Can't turn message events on since no message audit channel has been set. Please set one first"))
                 return
-            elif not self.bot.get_channel(int(guild_settings["message_info_channel"])): #channel has been set but the bot cant find it. Most likely deleted
+            # channel has been set but the bot cant find it. Most likely deleted
+            elif not self.bot.get_channel(int(guild_settings["message_info_channel"])):
                 await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="Can't turn message events on since the message audit channel has been deleted. Please set one first"))
+                                                   title="⚠ Error",
+                                                   description="Can't turn message events on since the message audit channel has been deleted. Please set one first"))
                 return
             else:
                 await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Message events will now be announced"))
+                                                   title="✅ Success",
+                                                   description="Message events will now be announced"))
                 on = True
 
         self.settings[str(guild.id)]["message_on"] = on
@@ -126,19 +129,19 @@ class MemberAudit:
 
         if not self.speak_permissions(guild, channel):
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="I don't have permissions to talk in that channel."))
+                                               title="⚠ Error",
+                                               description="I don't have permissions to talk in that channel."))
             return
 
         self.settings[str(guild.id)]["channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="I will now send member events to that channel"))
+                                           title="✅ Success",
+                                           description="I will now send member events to that channel"))
         channel = self.get_member_event_channel(guild)
         await channel.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Sending member events here"))
+                                               title="✅ Success",
+                                               description="Sending member events here"))
 
     @commands.command()
     @commands.guild_only()
@@ -152,20 +155,19 @@ class MemberAudit:
 
         if not self.speak_permissions(guild, channel):
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ="I don't have permissions to talk in that channel."))
+                                               title="⚠ Error",
+                                               description="I don't have permissions to talk in that channel."))
             return
 
         self.settings[str(guild.id)]["channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="I will now send message events to that channel"))
+                                           title="✅ Success",
+                                           description="I will now send message events to that channel"))
         channel = self.get_message_event_channel(guild)
         await channel.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Sending message events here"))
-
+                                               title="✅ Success",
+                                               description="Sending message events here"))
 
     async def member_join(self, member: discord.Member):
         used_invite = None
@@ -188,13 +190,15 @@ class MemberAudit:
         if not member_event_channel:
             return
 
-        created = (datetime.datetime.utcnow() - member.created_at).total_seconds() // 60
-        if created < 30:# or bannedin:
+        created = (datetime.datetime.utcnow() -
+                   member.created_at).total_seconds() // 60
+        if created < 30:  # or bannedin:
             colour = 0xdda453
         else:
             colour = 0x53dda4
 
-        embed = discord.Embed(title="📥 Member Join", description=member.mention, colour=colour)
+        embed = discord.Embed(title="📥 Member Join",
+                              description=member.mention, colour=colour)
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text='Joined')
         embed.set_author(name=str(member), icon_url=member.avatar_url)
@@ -204,7 +208,7 @@ class MemberAudit:
             member.created_at), inline=False)
         embed.add_field(name="Used Invite", value=used_invite.code + " created by " +
                         used_invite.inviter.display_name if used_invite.inviter is not None else " Server" + "({} uses)".format(used_invite.uses))
-        
+
         if self.ban_permissions(guild):
             bannedin = ""
             for g in self.bot.guilds:
@@ -213,12 +217,13 @@ class MemberAudit:
                     for banentry in bans:
                         if member == banentry[1]:
                             bannedin += guild.name + '\n'
-                except Exception as e:  
+                except Exception as e:
                     print(e)
             if bannedin:
                 embed.add_field(name='Banned In', value=bannedin)
         else:
-            embed.add_field(name="No Ban Permissions", value="This member may be banned in other Yori servers. Please enable the ban permissions for yori to see this in future")
+            embed.add_field(name="No Ban Permissions",
+                            value="This member may be banned in other Yori servers. Please enable the ban permissions for yori to see this in future")
 
         await member_event_channel.send(embed=embed)
 
@@ -234,13 +239,11 @@ class MemberAudit:
         if not member_event_channel:
             return
 
-        embed=discord.Embed(
-                title="📤 Member Leave",
-                description=member.mention + member.name)
+        embed = discord.Embed(
+            title="📤 Member Leave",
+            description=member.mention + member.name)
         embed.set_footer(text='Left')
         await member_event_channel.send(embed=embed)
-
-
 
     async def member_ban(self, guild, user: discord.User):
         self.checksettings(guild)
@@ -253,17 +256,18 @@ class MemberAudit:
         if not member_event_channel:
             return
 
-        embed=discord.Embed(title="🔨 Member Banned", description=user.name)
+        embed = discord.Embed(title="🔨 Member Banned", description=user.name)
         embed.set_footer(text='Banned')
         if self.audit_log_permissions(guild):
             ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
             banner = ban_info[0].user
-            embed.add_field(name="Banned by", value= banner.name + " " + banner.mention)
+            embed.add_field(name="Banned by",
+                            value=banner.name + " " + banner.mention)
         else:
-            embed.add_field(name="Banned by", value="Please enable access to AuditLogs to see this")
+            embed.add_field(
+                name="Banned by", value="Please enable access to AuditLogs to see this")
 
         await member_event_channel.send(embed=embed)
-            
 
     async def member_unban(self, guild, user: discord.User):
         self.checksettings(guild)
@@ -276,17 +280,19 @@ class MemberAudit:
         if not member_event_channel:
             return
 
-        embed=discord.Embed(title="🔨 Member Unbanned", description=user.name)
+        embed = discord.Embed(title="🔨 Member Unbanned", description=user.name)
         embed.set_footer(text='Unbanned')
         if self.audit_log_permissions(guild):
             unban_info = await guild.audit_logs(action=discord.AuditLogAction.unban, target=user).flatten()
             unbanner = unban_info[0].user
-            embed.add_field(name="Unbanned by", value= unbanner.name + " " + unbanner.mention)
+            embed.add_field(name="Unbanned by",
+                            value=unbanner.name + " " + unbanner.mention)
         else:
-            embed.add_field(name="Unbanned by", value="Please enable access to AuditLogs to see this")
+            embed.add_field(
+                name="Unbanned by", value="Please enable access to AuditLogs to see this")
 
         await member_event_channel.send(embed=embed)
-    
+
     async def on_message_delete(self, message):
         self.checksettings(message.guild)
         guild = message.guild
@@ -298,7 +304,6 @@ class MemberAudit:
         message_event_channel = self.get_message_event_channel(guild)
         if not message_event_channel:
             return
-
 
         embed = discord.Embed(title='📤 Message Deleted',
                               colour=discord.Colour.red())
