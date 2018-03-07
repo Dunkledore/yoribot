@@ -26,7 +26,7 @@ class MemberAudit:
         self.settings = dataIO.load_json(self.settings_path)
         self.deletedmessages = MaxList(500)
         self.invites = {}
-        self.bot_bans = {} #used to find the user when the command ban was used
+
 
     async def cacheloop(self):
         while True:
@@ -278,19 +278,15 @@ class MemberAudit:
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
                 if banner == guild.me:
-                    await member_event_channel.send("I am the banner")
-                    if user.id in self.bot_bans[guild.id]:
-                        await member_event_channel.send("In the dict")
-                        actual_banner = guild.get_member(self.bot_bans[guild.id][user.id])
-                        if actual_banner:
-                            await member_event_channel.send("actual banner")
-                            banner = actual_banner
-                embed.add_field(name="Banned by",
-                                value=banner.name + " - " + banner.mention)
-                reason = ban_info.reason
-                if reason:
-                    embed.add_field(name="Reason",
-                                    value=reason)
+                    description = ban_info.reason
+                else:
+                    if ban_info.reason:
+                        description = "{} : {}".format(banner.name, ban_info.reason)
+                    else:
+                        description = "{} : {}".format(banner.name, "None Provided")
+                embed.add_field(name="Banned by : Reason",
+                                value=description)
+
 
 
             else:
