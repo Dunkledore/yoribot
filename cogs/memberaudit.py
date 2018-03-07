@@ -273,8 +273,9 @@ class MemberAudit:
             embed = discord.Embed(title="🔨 Member Banned", description=user.name)
             embed.set_footer(text='Banned')
             if self.audit_log_permissions(guild):
-                ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
-                banner = ban_info[0].user
+                bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
+                ban_info = discord.utils.get(bans_info, target=User)
+                banner = ban_info.user
                 embed.add_field(name="Banned by",
                                 value=banner.name + " " + banner.mention)
             else:
