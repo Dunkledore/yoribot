@@ -262,28 +262,25 @@ class MemberAudit:
             return
 
         member_event_channel = self.get_member_event_channel(guild)
+        await member_event_channel.send("Channel")
         if not member_event_channel:
             return
 
-        try:
 
-            embed = discord.Embed(title="🔨 Member Banned", description=user.name)
-            embed.set_footer(text='Banned')
-            if self.audit_log_permissions(guild):
-                ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
-                banner = ban_info[0].user
-                embed.add_field(name="Banned by",
-                                value=banner.name + " " + banner.mention)
-            else:
-                embed.add_field(
-                    name="Banned by", value="Please enable access to AuditLogs to see this")
 
-            await member_event_channel.send(embed=embed)
-        except Exception as e:
-            import traceback
-            stack = 4  # how many levels deep to trace back
-            traceback_text = "\n".join(traceback.format_exception(type(exc), exc, exc.__traceback__, stack))
-            await member_event_channel.send(traceback_text)
+        embed = discord.Embed(title="🔨 Member Banned", description=user.name)
+        embed.set_footer(text='Banned')
+        if self.audit_log_permissions(guild):
+            ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
+            banner = ban_info[0].user
+            embed.add_field(name="Banned by",
+                            value=banner.name + " " + banner.mention)
+        else:
+            embed.add_field(
+                name="Banned by", value="Please enable access to AuditLogs to see this")
+
+        await member_event_channel.send(embed=embed)
+
 
     async def member_unban(self, guild, user: discord.User):
         self.checksettings(guild)
