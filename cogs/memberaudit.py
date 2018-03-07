@@ -272,6 +272,7 @@ class MemberAudit:
         try:
 
             embed = discord.Embed(title="🔨 Member Banned", description=user.name)
+            embed.timestamp = datetime.datetime.utcnow()
             embed.set_footer(text='Banned')
             if self.audit_log_permissions(guild):
                 asyncio.sleep(1) #give the audit log time to populate
