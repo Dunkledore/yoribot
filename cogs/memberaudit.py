@@ -261,25 +261,27 @@ class MemberAudit:
         if not guild_settings["on"]:
             return
 
-        member_event_channel = self.get_member_event_channel(guild)
-        await member_event_channel.send("Channel")
-        if not member_event_channel:
-            return
 
+            member_event_channel = self.get_member_event_channel(guild)
+            if not member_event_channel:
+                return
 
+        try:
 
-        embed = discord.Embed(title="🔨 Member Banned", description=user.name)
-        embed.set_footer(text='Banned')
-        if self.audit_log_permissions(guild):
-            ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
-            banner = ban_info[0].user
-            embed.add_field(name="Banned by",
-                            value=banner.name + " " + banner.mention)
-        else:
-            embed.add_field(
-                name="Banned by", value="Please enable access to AuditLogs to see this")
+            embed = discord.Embed(title="🔨 Member Banned", description=user.name)
+            embed.set_footer(text='Banned')
+            if self.audit_log_permissions(guild):
+                ban_info = await guild.audit_logs(action=discord.AuditLogAction.ban, target=user).flatten()
+                banner = ban_info[0].user
+                embed.add_field(name="Banned by",
+                                value=banner.name + " " + banner.mention)
+            else:
+                embed.add_field(
+                    name="Banned by", value="Please enable access to AuditLogs to see this")
 
-        await member_event_channel.send(embed=embed)
+            await member_event_channel.send(embed=embed)
+        except Exception as e:
+            await member_event_channel.send(str(e))
 
 
     async def member_unban(self, guild, user: discord.User):
