@@ -278,9 +278,12 @@ class MemberAudit:
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
                 if banner == guild.me:
+                    await member_event_channel.send("I am the banner")
                     if user.id in self.bot_bans[guild.id]:
+                        await member_event_channel.send("In the dict")
                         actual_banner = guild.get_member(self.bot_bans[guild.id][user.id])
                         if actual_banner:
+                            await member_event_channel.send("actual banner")
                             banner = actual_banner
                 embed.add_field(name="Banned by",
                                 value=banner.name + " - " + banner.mention)

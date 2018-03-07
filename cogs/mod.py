@@ -370,7 +370,10 @@ class Mod:
         member_audit = self.bot.get_cog('MemberAudit')
         if ctx.guild.id not in member_audit.bot_bans:
             member_audit.bot_bans[ctx.guild.id] = {}
-        member_audit.bot_bans[ctx.guild.id][member.id] = ctx.author.id
+            if user:
+                member_audit.bot_bans[ctx.guild.id][user.id] = ctx.author.id
+            else:
+                member_audit.bot_bans[ctx.guild.id][member] = ctx.author.id
 
 
     @commands.command(no_pm=True)
