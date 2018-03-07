@@ -54,7 +54,7 @@ class MemberAudit:
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def memberaudittoggle(self, ctx: commands.Context):
+    async def membereventtoggle(self, ctx: commands.Context):
         """Turns member events on or off."""
 
         self.checksettings(ctx.guild)
@@ -91,7 +91,7 @@ class MemberAudit:
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def messageaudittoggle(self, ctx: commands.Context):
+    async def messageeventtoggle(self, ctx: commands.Context):
         """Turns message events on or off."""
 
         self.checksettings(ctx.guild)
@@ -128,7 +128,7 @@ class MemberAudit:
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def auditchannel(self, ctx: commands.Context,
+    async def membereventchannel(self, ctx: commands.Context,
                            channel: discord.TextChannel):
         """Sets the text channel to which the member announcements will be sent."""
 
@@ -154,7 +154,7 @@ class MemberAudit:
     @commands.command()
     @commands.guild_only()
     @checks.is_admin()
-    async def messageinfochannel(self, ctx: commands.Context,
+    async def messageeventchannel(self, ctx: commands.Context,
                                  channel: discord.TextChannel):
         """Sets the text channel to which the meessage announcements will be sent."""
 
