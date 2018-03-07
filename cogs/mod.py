@@ -367,6 +367,12 @@ class Mod:
                                 title = "🔨  " + name + " was Banned",
                                 description = choice(self.banmessages)))
 
+        member_audit = self.bot.get_cog('MemberAudit')
+        if ctx.guild.id not in member_audit.bot_bans:
+            member_audit.bot_bans[ctx.guild.id] = {}
+        member_audit.bot_bans[ctx.guild.id][member.id] = ctx.author.id
+
+
     @commands.command(no_pm=True)
     @checks.is_mod()
     async def massban(self, ctx, reason: ActionReason, *members: MemberID):
