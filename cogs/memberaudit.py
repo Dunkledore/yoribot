@@ -262,11 +262,11 @@ class MemberAudit:
             return
 
 
-            member_event_channel = self.get_member_event_channel(guild)
-            await member_event_channel.send("channel")
+        member_event_channel = self.get_member_event_channel(guild)
+        await member_event_channel.send("channel")
 
-            if not member_event_channel:
-                return
+        if not member_event_channel:
+            return
 
         try:
 
