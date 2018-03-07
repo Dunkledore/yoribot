@@ -277,7 +277,7 @@ class MemberAudit:
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
-                if banner = guild.me:
+                if banner == guild.me:
                     if user.id in bot_bans[guild.id]:
                         actual_banner = guild.get_member(bot_bans[guild.id][user.id])
                         if actual_banner:
