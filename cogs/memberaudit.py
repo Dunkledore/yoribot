@@ -167,7 +167,7 @@ class MemberAudit:
                                                description="I don't have permissions to talk in that channel."))
             return
 
-        self.settings[str(guild.id)]["channel"] = str(channel.id)
+        self.settings[str(guild.id)]["message_info_channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                            title="✅ Success",
