@@ -274,6 +274,7 @@ class MemberAudit:
             embed = discord.Embed(title="🔨 Member Banned", description=user.name)
             embed.set_footer(text='Banned')
             if self.audit_log_permissions(guild):
+                asyncio.sleep(1) #give the audit log time to populate
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
