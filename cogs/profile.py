@@ -166,7 +166,7 @@ class Rank:
         entries = {}
         counter = 1
         for member in ordered_guild_data_list:
-            user = self.bot.get_user(int(member[0]))
+            user = ctx.guild.get_member(int(member[0]))
             if not user:
                 continue
             text = "Guild XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
