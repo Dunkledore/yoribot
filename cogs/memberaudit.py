@@ -183,14 +183,6 @@ class MemberAudit:
         guild = member.guild
         guild_settings = self.settings[str(guild.id)]
 
-        used_invite = None
-        for i in await guild.invites():
-            if i.code not in self.invites[str(guild.id)]:
-                self.invites[str(guild.id)][i.code] = (i.uses, i.inviter)
-            uses, inviter = self.invites[str(guild.id)][i.code]
-            if i.uses < uses:
-                used_invite = i
-                self.invites[str(guild.id)][i.code] = (i.uses, inviter)
 
         if not guild_settings["on"]:
             return
@@ -198,6 +190,16 @@ class MemberAudit:
         member_event_channel = self.get_member_event_channel(guild)
         if not member_event_channel:
             return
+
+        used_invite = None
+        for i in await guild.invites():
+            await member_event_channel.send("checking invites")
+            if i.code not in self.invites[str(guild.id)]:
+                self.invites[str(guild.id)][i.code] = (i.uses, i.inviter)
+            uses, inviter = self.invites[str(guild.id)][i.code]
+            if i.uses < uses:
+                used_invite = i
+                self.invites[str(guild.id)][i.code] = (i.uses, inviter)
 
         created = (datetime.datetime.utcnow() -
                    member.created_at).total_seconds() // 60
@@ -216,8 +218,8 @@ class MemberAudit:
         embed.add_field(name='Joined', value=member.joined_at)
         embed.add_field(name='Created', value=time.human_timedelta(
             member.created_at), inline=False)
-        embed.add_field(name="Used Invite", value="{} created by {} ({} uses)".format(
-            used_invite.code, inviter, used_invite.uses))
+        #embed.add_field(name="Used Invite", value="{} created by {} ({} uses)".format(
+        #    used_invite.code, inviter, used_invite.uses))
 
         if self.ban_permissions(guild):
             bannedin = ""
