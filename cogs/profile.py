@@ -162,19 +162,21 @@ class Rank:
             guild_data_list.append([id, data])
 
         ordered_guild_data_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])))
-
-        entries = {}
+        caller_data = None
         counter = 1
         for member in ordered_guild_data_list:
             user = ctx.guild.get_member(int(member[0]))
             if not user:
                 continue
             text = "Guild XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
+            if user = ctx.author:
+                caller_data = str(counter) + ". " + user.name + "\n" + text
             entries[str(counter) + ". " + user.name] = text
             counter += 1
 
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         paginator.embed.title = "Guild Ranking for " + ctx.guild.name
+        paginator.embed.description = caller_data
         await paginator.paginate()
 
     @commands.command()
