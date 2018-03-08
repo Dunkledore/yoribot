@@ -162,6 +162,7 @@ class Rank:
             guild_data_list.append([id, data])
 
         ordered_guild_data_list = list(reversed(sorted(guild_data_list, key = lambda x: x[1][(str(ctx.guild.id))])))
+        entries = {}
         caller_data = None
         counter = 1
         for member in ordered_guild_data_list:
