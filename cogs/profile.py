@@ -171,14 +171,13 @@ class Rank:
                 continue
             text = "Guild XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
             if user == ctx.author:
-                caller_data = str(counter) + ". " + user.name + "\n" + text
+                caller_data = str(counter) + ". " + user.name + "\n" + text + "\n------------------"
             entries[str(counter) + ". " + user.name] = text
             counter += 1
 
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         paginator.embed.title = "Guild Ranking for " + ctx.guild.name
         paginator.embed.description = caller_data
-        await ctx.send(str(caller_data))
         await paginator.paginate()
 
     @commands.command()
