@@ -192,15 +192,17 @@ class MemberAudit:
             return
 
         used_invite = None
+        await member_event_channel.send("checking invites")
         for i in await guild.invites():
-            await member_event_channel.send("checking invites")
+            
             if i.code not in self.invites[str(guild.id)]:
                 self.invites[str(guild.id)][i.code] = (i.uses, i.inviter)
             uses, inviter = self.invites[str(guild.id)][i.code]
             if i.uses < uses:
                 used_invite = i
                 self.invites[str(guild.id)][i.code] = (i.uses, inviter)
-
+        await member_event_channel.send("done checking invites")
+        await member_event_channel.send("{}".format(used_invite is None))
         created = (datetime.datetime.utcnow() -
                    member.created_at).total_seconds() // 60
         if created < 30:  # or bannedin:
