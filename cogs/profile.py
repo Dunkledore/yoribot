@@ -171,7 +171,7 @@ class Rank:
                 continue
             text = "Guild XP: " + str(member[1][str(ctx.guild.id)]) + "\n" + "Global: " + str(member[1]["global"])
             if user == ctx.author:
-                caller_data = str(counter) + ". " + user.name + "\n" + text + "\n------------------"
+                caller_data = "**Position for: " + str(counter) + ". " + user.name + "\n" + text + "\n------------------"
             entries[str(counter) + ". " + user.name] = text
             counter += 1
 
