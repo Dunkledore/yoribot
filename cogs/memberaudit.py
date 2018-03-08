@@ -27,7 +27,6 @@ class MemberAudit:
         self.deletedmessages = MaxList(500)
         self.invites = {}
 
-
     async def cacheloop(self):
         while True:
             try:
@@ -130,7 +129,7 @@ class MemberAudit:
     @commands.guild_only()
     @checks.is_admin()
     async def membereventchannel(self, ctx: commands.Context,
-                           channel: discord.TextChannel):
+                                 channel: discord.TextChannel):
         """Sets the text channel to which the member announcements will be sent."""
 
         self.checksettings(ctx.guild)
@@ -156,7 +155,7 @@ class MemberAudit:
     @commands.guild_only()
     @checks.is_admin()
     async def messageeventchannel(self, ctx: commands.Context,
-                                 channel: discord.TextChannel):
+                                  channel: discord.TextChannel):
         """Sets the text channel to which the meessage announcements will be sent."""
 
         self.checksettings(ctx.guild)
@@ -179,7 +178,7 @@ class MemberAudit:
                                                description="Sending message events here"))
 
     async def member_join(self, member: discord.Member):
-        
+
         self.checksettings(member.guild)
         guild = member.guild
         guild_settings = self.settings[str(guild.id)]
@@ -207,6 +206,7 @@ class MemberAudit:
         else:
             colour = 0x53dda4
 
+        inviter = used_invite.inviter if used_invite.inviter else "Server"
         embed = discord.Embed(title="📥 Member Join",
                               description=member.mention, colour=colour)
         embed.timestamp = datetime.datetime.utcnow()
@@ -216,8 +216,8 @@ class MemberAudit:
         embed.add_field(name='Joined', value=member.joined_at)
         embed.add_field(name='Created', value=time.human_timedelta(
             member.created_at), inline=False)
-        embed.add_field(name="Used Invite", value=used_invite.code + " created by " +
-                        used_invite.inviter.display_name if used_invite.inviter is not None else " Server" + "({} uses)".format(used_invite.uses))
+        embed.add_field(name="Used Invite", value="{} created by {} ({} uses)".format(
+            used_invite.code, inviter, used_invite.uses))
 
         if self.ban_permissions(guild):
             bannedin = ""
@@ -262,7 +262,6 @@ class MemberAudit:
         if not guild_settings["on"]:
             return
 
-
         member_event_channel = self.get_member_event_channel(guild)
         await member_event_channel.send("channel")
 
@@ -271,11 +270,12 @@ class MemberAudit:
 
         try:
 
-            embed = discord.Embed(title="🔨 Member Banned", description=user.name)
+            embed = discord.Embed(title="🔨 Member Banned",
+                                  description=user.name)
             embed.timestamp = datetime.datetime.utcnow()
             embed.set_footer(text='Banned')
             if self.audit_log_permissions(guild):
-                asyncio.sleep(1) #give the audit log time to populate
+                asyncio.sleep(1)  # give the audit log time to populate
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
@@ -283,13 +283,13 @@ class MemberAudit:
                     description = ban_info.reason
                 else:
                     if ban_info.reason:
-                        description = "{} : {}".format(banner.name, ban_info.reason)
+                        description = "{} : {}".format(
+                            banner.name, ban_info.reason)
                     else:
-                        description = "{} : {}".format(banner.name, "None Provided")
+                        description = "{} : {}".format(
+                            banner.name, "None Provided")
                 embed.add_field(name="Banned by : Reason",
                                 value=description)
-
-
 
             else:
                 embed.add_field(
@@ -298,7 +298,6 @@ class MemberAudit:
             await member_event_channel.send(embed=embed)
         except Exception as e:
             await member_event_channel.send(str(e))
-
 
     async def member_unban(self, guild, user: discord.User):
         self.checksettings(guild)
