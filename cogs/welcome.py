@@ -73,7 +73,7 @@ class Welcome:
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def welcomeremove(self, ctx, name=None):
+	async def welcomeremove(self, ctx, *, name=None):
 		"""Removes a section from the welcome message - if the section title has more than one word use quotation marks around them."""
 
 		if name is None:
