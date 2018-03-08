@@ -178,6 +178,7 @@ class Rank:
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         paginator.embed.title = "Guild Ranking for " + ctx.guild.name
         paginator.embed.description = caller_data
+        await ctx.send(str(caller_data))
         await paginator.paginate()
 
     @commands.command()
