@@ -267,7 +267,7 @@ class MemberAudit:
         if not member_event_channel:
             return
 
-        embed = discord.Embed(
+        embed = discord.Embed(color= 0xFFA500,
             title="📤 Member Left",
             description=member.mention)
         embed.timestamp = datetime.datetime.utcnow()
@@ -293,7 +293,7 @@ class MemberAudit:
 
         try:
 
-            embed = discord.Embed(title="🔨 Member Banned",
+            embed = discord.Embed(color= 0xdf2a2a, title="🔨 Member Banned",
                                   description=user.name)
             embed.timestamp = datetime.datetime.utcnow()
             embed.set_footer(text='Banned')
@@ -306,14 +306,14 @@ class MemberAudit:
                     description = ban_info.reason
                 else:
                     if ban_info.reason:
-                        description = "{} : {}".format(
-                            banner.name, ban_info.reason)
+                        reasonbanned = "{}".format(
+                            ban_info.reason)
                     else:
-                        description = "{} : {}".format(
-                            banner.name, "None Provided")
-                embed.add_field(name="Banned by : Reason",
-                                value=description)
-
+                        reasonbanned = "No Reason Provided"
+                embed.add_field(name="Banned by:",
+                                value=banner.name)
+                embed.add_field(name="Reason:",
+                                value=reasonbanned)
             else:
                 embed.add_field(
                     name="Banned by", value="Please enable access to AuditLogs to see this")
