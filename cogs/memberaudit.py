@@ -38,8 +38,9 @@ class MemberAudit:
 
     async def cache_invites(self):
         first_run = True
-        channel = self.get_member_event_channel(g)
+        
         for g in self.bot.guilds:
+            channel = self.get_member_event_channel(g)
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
