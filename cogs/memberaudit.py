@@ -274,8 +274,6 @@ class MemberAudit:
         embed.set_footer(text='Left')
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.add_field(name='ID', value=member.id)
-        embed.add_field(name='Joined', value=member.joined_at)
-        embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
         await member_event_channel.send(embed=embed)
 
     async def member_ban(self, guild, user: discord.User):
@@ -294,9 +292,11 @@ class MemberAudit:
         try:
 
             embed = discord.Embed(color= 0xdf2a2a, title="🔨 Member Banned",
-                                  description=user.name)
+                                  description=member.mention)
             embed.timestamp = datetime.datetime.utcnow()
             embed.set_footer(text='Banned')
+            embed.set_author(name=str(member), icon_url=member.avatar_url)
+            embed.add_field(name='ID', value=member.id)
             if self.audit_log_permissions(guild):
                 asyncio.sleep(1)  # give the audit log time to populate
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
