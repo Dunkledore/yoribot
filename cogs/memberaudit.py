@@ -44,6 +44,12 @@ class MemberAudit:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
+                for j in self.invites[str(g.id)]:
+                    k = await g.invites()
+                    if j not in k:
+                        em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(j.code, j.inviter.name))
+                        await channel.send(embed=em)
+                        del self.invites[str(g.id)][j.code]
                 for i in await g.invites():
                     if i.code in self.invites[str(g.id)]:
                         uses, inviter = self.invites[str(g.id)][i.code]
