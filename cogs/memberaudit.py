@@ -274,6 +274,7 @@ class MemberAudit:
         embed.set_footer(text='Left')
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.add_field(name='ID', value=member.id)
+        embed.set_thumbnail(url= member.avatar_url)
         await member_event_channel.send(embed=embed)
 
     async def member_ban(self, guild, user: discord.User):
@@ -284,7 +285,6 @@ class MemberAudit:
             return
 
         member_event_channel = self.get_member_event_channel(guild)
-        await member_event_channel.send("channel")
 
         if not member_event_channel:
             return
