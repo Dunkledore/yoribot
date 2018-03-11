@@ -32,19 +32,26 @@ class MemberAudit:
             try:
                 await self.bot.wait_until_ready()
                 await self.cache_invites()
-                await asyncio.sleep(3600)
+                await asyncio.sleep(7200)
             except Exception as e:
                 print(e)
 
     async def cache_invites(self):
+        first_run = True
         for g in self.bot.guilds:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
                 for i in await g.invites():
+                    if i.code in self.invites[str(g.id)]:
+                        uses, inviter = self.invites[str(g.id)][i.code]
+                    elif not first_run:
+                        channel = self.get_member_event_channel(g)
+                        em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
+                        channel.send(embed=em)
                     self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
             except Exception as e:
-                print("Can't get invited from {}: {}".format(g, e))
+                print("Can't get invites from {}: {}".format(g, e))
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
