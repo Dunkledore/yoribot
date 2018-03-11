@@ -303,7 +303,7 @@ class MemberAudit:
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
                 if banner == guild.me:
-                    description = ban_info.reason
+                    reasonbanned = ban_info.reason
                 else:
                     if ban_info.reason:
                         reasonbanned = "{}".format(
