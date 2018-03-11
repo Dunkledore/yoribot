@@ -32,7 +32,7 @@ class MemberAudit:
             try:
                 await self.bot.wait_until_ready()
                 await self.cache_invites()
-                await asyncio.sleep(7200)
+                await asyncio.sleep(60)
             except Exception as e:
                 print(e)
 
