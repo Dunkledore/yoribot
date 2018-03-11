@@ -323,28 +323,37 @@ class MemberAudit:
             await member_event_channel.send(str(e))
 
     async def member_unban(self, guild, user: discord.User):
-        self.checksettings(guild)
-        guild_settings = self.settings[str(guild.id)]
+        server = guild
+        if str(server.id) not in self.settings:
+            self.settings[str(server.id)] = deepcopy(default_settings)
+            self.settings[str(server.id)]["channel"] = str(
+                server.text_channels[0].id)
+            dataIO.save_json(self.settings_path, self.settings)
 
-        if not guild_settings["on"]:
+        ch = self.get_welcome_channel(server)
+
+        if not self.settings[str(server.id)]["on"] or ch is None:
             return
 
-        member_event_channel = self.get_member_event_channel(guild)
-        if not member_event_channel:
+        await ch.trigger_typing()
+
+        if server is None:
+            print("The server was None, so this was either a PM or an error."
+                  " The user was {}.".format(
+                      user.name))
             return
 
-        embed = discord.Embed(title="🔨 Member Unbanned", description=user.name)
-        embed.set_footer(text='Unbanned')
-        if self.audit_log_permissions(guild):
-            unban_info = await guild.audit_logs(action=discord.AuditLogAction.unban, target=user).flatten()
-            unbanner = unban_info[0].user
-            embed.add_field(name="Unbanned by",
-                            value=unbanner.name + " " + unbanner.mention)
+        channel = self.get_welcome_channel(server)
+        if self.speak_permissions(server, channel):
+            await channel.send(embed=discord.Embed(
+                title="🕊️ Member Unbanned",
+                description=self.settings[str(
+                    server.id)]["unban_message"].format(user, server)
+            ))
         else:
-            embed.add_field(
-                name="Unbanned by", value="Please enable access to AuditLogs to see this")
-
-        await member_event_channel.send(embed=embed)
+            print("Tried to send message to channel, but didn't have"
+                  " permission. User was {}.".format(user.name))
+        await self._log(guild.id, user, 'Unban')
 
     async def on_message_delete(self, message):
         self.checksettings(message.guild)
