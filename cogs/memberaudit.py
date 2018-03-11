@@ -49,6 +49,7 @@ class MemberAudit:
             try:
                 for j in self.invites[str(g.id)]:
                     k = await g.invites()
+                    print(j)
                     found = False
                     for l in k:
                         if l.code != j.code:
