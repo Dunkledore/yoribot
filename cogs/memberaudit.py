@@ -52,7 +52,7 @@ class MemberAudit:
                     print(j)
                     found = False
                     for l in k:
-                        if l.code != j.code:
+                        if l.code != self.invites[str(g.id)][j].code:
                             continue
                         found = True
                     if not found:
