@@ -268,9 +268,14 @@ class MemberAudit:
             return
 
         embed = discord.Embed(
-            title="📤 Member Leave",
-            description=member.mention + member.name)
+            title="📤 Member Left",
+            description=member.mention)
+        embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text='Left')
+        embed.set_author(name=str(member), icon_url=member.avatar_url)
+        embed.add_field(name='ID', value=member.id)
+        embed.add_field(name='Joined', value=member.joined_at)
+        embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
         await member_event_channel.send(embed=embed)
 
     async def member_ban(self, guild, user: discord.User):
