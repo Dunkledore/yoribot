@@ -38,6 +38,7 @@ class MemberAudit:
 
     async def cache_invites(self):
         first_run = True
+        channel = self.get_member_event_channel(g)
         for g in self.bot.guilds:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
@@ -45,10 +46,12 @@ class MemberAudit:
                 for i in await g.invites():
                     if i.code in self.invites[str(g.id)]:
                         uses, inviter = self.invites[str(g.id)][i.code]
+                        if uses < i.uses:
+                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was used by a user to join this guild.".format(i.code, i.inviter.name))
+                            await channel.send(embed=em)
                     elif not first_run:
-                        channel = self.get_member_event_channel(g)
                         em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
-                        channel.send(embed=em)
+                        await channel.send(embed=em)
                     self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
@@ -198,16 +201,6 @@ class MemberAudit:
         if not member_event_channel:
             return
 
-        used_invite = None
-        for i in await guild.invites():
-            
-            if i.code not in self.invites[str(guild.id)]:
-                self.invites[str(guild.id)][i.code] = (i.uses, i.inviter)
-            uses, inviter = self.invites[str(guild.id)][i.code]
-            if i.uses < uses:
-                used_invite = i
-                self.invites[str(guild.id)][i.code] = (i.uses, inviter)
-        await member_event_channel.send("{}".format(used_invite is None))
         created = (datetime.datetime.utcnow() -
                    member.created_at).total_seconds() // 60
         if created < 30:  # or bannedin:
@@ -224,7 +217,6 @@ class MemberAudit:
         embed.add_field(name='ID', value=member.id)
         embed.add_field(name='Joined', value=member.joined_at)
         embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
-        embed.add_field(name="Used Invite", value= "{} created by {} ({} uses)".format(used_invite.code, inviter, used_invite.uses))
 
         if self.ban_permissions(guild):
             bannedin = ""
