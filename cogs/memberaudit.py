@@ -47,6 +47,7 @@ class MemberAudit:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
+                expiredinvs = []
                 for j in self.invites[str(g.id)]:
                     k = await g.invites()
                     found = False
@@ -57,7 +58,9 @@ class MemberAudit:
                     if not found:
                         em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name))
                         await channel.send(embed=em)
-                        del self.invites[str(g.id)][j]
+                        expiredinvs.append( self.invites[str(g.id)][j])
+                for x in expiredinvs:
+                    del self.invites[str(g.id)][x.code]
                 for i in await g.invites():
                     if i.code in self.invites[str(g.id)]:
                         inv = self.invites[str(g.id)][i.code]
