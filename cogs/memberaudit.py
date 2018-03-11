@@ -26,6 +26,7 @@ class MemberAudit:
         self.settings = dataIO.load_json(self.settings_path)
         self.deletedmessages = MaxList(500)
         self.invites = {}
+        self.cachefirst_run = True
 
     async def cacheloop(self):
         while True:
@@ -37,7 +38,7 @@ class MemberAudit:
                 print(e)
 
     async def cache_invites(self):
-        first_run = True
+        
         
         for g in self.bot.guilds:
             try:
@@ -67,13 +68,13 @@ class MemberAudit:
                         if inv.uses < i.uses:
                             em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was used by a user to join this guild.".format(i.code, i.inviter.name))
                             await channel.send(embed=em)
-                    elif not first_run:
+                    elif not self.cachefirst_run:
                         em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
                         await channel.send(embed=em)
                     self.invites[str(g.id)][i.code] = i
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
-
+        self.cachfirst_run = False
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
             self.settings[str(guild.id)] = deepcopy(default_settings)
