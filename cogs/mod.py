@@ -448,8 +448,9 @@ class Mod:
         await ctx.guild.unban(member.user, reason=reason)
         if member.reason:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🕊  " + str(member.user) + " was Unbanned",
-                                description = f'(ID: {member.user.id}), previously banned for {member.reason}.'))
+                                title = "🕊  " + str(member.user) + " was Unbanned"))
+            embed.add_field(name="ID:", value=member.user.id )
+            embed.add_field(name="Previously Banned For:", value=member.reason)
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "🕊  " + member.name + " was Unbanned",
