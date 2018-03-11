@@ -296,6 +296,7 @@ class MemberAudit:
             embed.set_footer(text='Banned')
             embed.set_author(name=str(user.name), icon_url=user.avatar_url)
             embed.add_field(name='ID', value=str(user.id))
+            embed.set_thumbnail(url= user.avatar_url)
             if self.audit_log_permissions(guild):
                 asyncio.sleep(1)  # give the audit log time to populate
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
