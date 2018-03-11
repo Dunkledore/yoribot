@@ -74,7 +74,8 @@ class MemberAudit:
                     self.invites[str(g.id)][i.code] = i
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
-        self.cachfirst_run = False
+        self.cachefirst_run = False
+
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
             self.settings[str(guild.id)] = deepcopy(default_settings)
