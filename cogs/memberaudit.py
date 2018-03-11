@@ -55,14 +55,14 @@ class MemberAudit:
                         del self.invites[str(g.id)][j]
                 for i in await g.invites():
                     if i.code in self.invites[str(g.id)]:
-                        uses, inviter = self.invites[str(g.id)][i.code]
-                        if uses < i.uses:
+                        inv = self.invites[str(g.id)][i.code]
+                        if inv.uses < i.uses:
                             em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was used by a user to join this guild.".format(i.code, i.inviter.name))
                             await channel.send(embed=em)
                     elif not first_run:
                         em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
                         await channel.send(embed=em)
-                    self.invites[str(g.id)][i.code] = (i.uses, i.inviter)
+                    self.invites[str(g.id)][i.code] = i
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
 
