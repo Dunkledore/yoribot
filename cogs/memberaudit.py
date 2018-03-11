@@ -40,7 +40,10 @@ class MemberAudit:
         first_run = True
         
         for g in self.bot.guilds:
-            channel = self.get_member_event_channel(g)
+            try:
+                channel = self.get_member_event_channel(g)
+            except Exception as e:
+                pass
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
