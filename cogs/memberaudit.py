@@ -209,7 +209,6 @@ class MemberAudit:
         else:
             colour = 0x53dda4
 
-        inviter = used_invite.inviter if used_invite.inviter else "Server"
         embed = discord.Embed(title="📥 Member Join",
                               description=member.mention, colour=colour)
         embed.timestamp = datetime.datetime.utcnow()
