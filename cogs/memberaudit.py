@@ -270,11 +270,10 @@ class MemberAudit:
 
         embed = discord.Embed(color= 0xFFA500,
             title="📤 Member Left",
-            description=member.mention)
+            description=member.mention + " **ID:** " + member.id)
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text='Left')
         embed.set_author(name=str(member), icon_url=member.avatar_url)
-        embed.add_field(name='ID', value=member.id)
         embed.set_thumbnail(url= member.avatar_url)
         await member_event_channel.send(embed=embed)
 
