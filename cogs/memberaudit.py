@@ -236,6 +236,7 @@ class MemberAudit:
         embed.add_field(name='ID', value=member.id)
         embed.add_field(name='Joined', value=member.joined_at)
         embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+        embed.set_thumbnail(url= member.avatar_url)
 
         if self.ban_permissions(guild):
             bannedin = ""
