@@ -236,6 +236,7 @@ class MemberAudit:
         embed.add_field(name='ID', value=member.id)
         embed.add_field(name='Joined', value=member.joined_at)
         embed.add_field(name='Created', value=time.human_timedelta(member.created_at), inline=False)
+        embed.set_thumbnail(url= member.avatar_url)
 
         if self.ban_permissions(guild):
             bannedin = ""
@@ -268,12 +269,13 @@ class MemberAudit:
             return
 
         embed = discord.Embed(color= 0xFFA500,
-            title="📤 Member Left",
-            description=member.mention)
+            title="📤 Member Left")
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text='Left')
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.add_field(name='ID', value=member.id)
+        embed.add_field(name='Member', value=member.mention)
+        embed.set_thumbnail(url= member.avatar_url)
         await member_event_channel.send(embed=embed)
 
     async def member_ban(self, guild, user: discord.User):
@@ -284,7 +286,6 @@ class MemberAudit:
             return
 
         member_event_channel = self.get_member_event_channel(guild)
-        await member_event_channel.send("channel")
 
         if not member_event_channel:
             return
@@ -296,6 +297,7 @@ class MemberAudit:
             embed.set_footer(text='Banned')
             embed.set_author(name=str(user.name), icon_url=user.avatar_url)
             embed.add_field(name='ID', value=str(user.id))
+            embed.set_thumbnail(url= user.avatar_url)
             if self.audit_log_permissions(guild):
                 asyncio.sleep(1)  # give the audit log time to populate
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
