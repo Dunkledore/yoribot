@@ -177,7 +177,7 @@ class RoleManager:
 
     @commands.command()
     @commands.guild_only()
-    async def iamnot(self, ctx, role):
+    async def iamnot(self, ctx, *, role):
         """Removes a self-assignable role from you."""
         if str(ctx.message.guild.id) not in self.settings:
             em = discord.Embed(color=ctx.message.author.color,
