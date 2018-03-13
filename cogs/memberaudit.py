@@ -301,6 +301,7 @@ class MemberAudit:
             embed.set_thumbnail(url= user.avatar_url)
             if self.audit_log_permissions(guild):
                 timestamp = datetime.datetime.utcnow()
+                await member_event_channel.send(timestamp.isoformat())
                 bans_info = None
                 ban_info = None
                 while True:
