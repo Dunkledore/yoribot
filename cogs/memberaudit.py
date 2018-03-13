@@ -307,8 +307,9 @@ class MemberAudit:
                     bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
                     ban_info = discord.utils.get(bans_info, target=user)
                     if ban_info:
-                        await member_event_channel.send(timestamp -  ban_info.created_at)
-                        break
+                        if (timestamp - ban_info.created_at) <= datetime.timedelta(minutes=1):
+                            await member_event_channel.send("ha")
+                            break
                     else:
                         asyncio.sleep(10)
                 banner = ban_info.user
