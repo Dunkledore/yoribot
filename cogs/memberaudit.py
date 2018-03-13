@@ -66,7 +66,8 @@ class MemberAudit:
                     if i.code in self.invites[str(g.id)]:
                         inv = self.invites[str(g.id)][i.code]
                         if inv.uses < i.uses:
-                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was used by a user to join this guild.".format(i.code, i.inviter.name))
+                            uses = i.uses - inv.uses
+                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(i.code, i.inviter.name, uses))
                             await channel.send(embed=em)
                     elif not self.cachefirst_run:
                         em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
@@ -299,7 +300,7 @@ class MemberAudit:
             embed.add_field(name='ID', value=str(user.id))
             embed.set_thumbnail(url= user.avatar_url)
             if self.audit_log_permissions(guild):
-                asyncio.sleep(1)  # give the audit log time to populate
+                asyncio.sleep(15)  # give the audit log time to populate
                 bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
                 ban_info = discord.utils.get(bans_info, target=user)
                 banner = ban_info.user
