@@ -242,7 +242,7 @@ class MemberAudit:
             bannedin = ""
             for g in self.bot.guilds:
                 try:
-                    bans = await guild.bans()
+                    bans = await g.bans()
                     for banentry in bans:
                         if member == banentry[1]:
                             bannedin += guild.name + '\n'
