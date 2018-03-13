@@ -300,9 +300,17 @@ class MemberAudit:
             embed.add_field(name='ID', value=str(user.id))
             embed.set_thumbnail(url= user.avatar_url)
             if self.audit_log_permissions(guild):
-                asyncio.sleep(15)  # give the audit log time to populate
-                bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
-                ban_info = discord.utils.get(bans_info, target=user)
+                timestamp = datetime.datetime.utcnow()
+                bans_info = None
+                ban_info = None
+                while True:
+                    bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
+                    ban_info = discord.utils.get(bans_info, target=user)
+                    if ban_info:
+                        await member_event_channel.send(ban_info.created_at.isoformat())
+                        break
+                    else:
+                        asyncio.sleep(10)
                 banner = ban_info.user
                 if banner == guild.me:
                     reasonbanned = ban_info.reason
