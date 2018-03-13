@@ -301,14 +301,13 @@ class MemberAudit:
             embed.set_thumbnail(url= user.avatar_url)
             if self.audit_log_permissions(guild):
                 timestamp = datetime.datetime.utcnow()
-                await member_event_channel.send(timestamp.isoformat())
                 bans_info = None
                 ban_info = None
                 while True:
                     bans_info = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
                     ban_info = discord.utils.get(bans_info, target=user)
                     if ban_info:
-                        await member_event_channel.send(ban_info.created_at.isoformat())
+                        await member_event_channel.send(ban_info.created_at - timestamp)
                         break
                     else:
                         asyncio.sleep(10)
