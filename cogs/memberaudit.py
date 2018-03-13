@@ -246,7 +246,7 @@ class MemberAudit:
                     bans = await guild.bans()
                     for banentry in bans:
                         if member == banentry[1]:
-                            bannedin += guild.name + '\n'
+                            bannedin += g.name + '\n'
                 except Exception as e:
                     print(e)
             if bannedin:
