@@ -308,10 +308,9 @@ class MemberAudit:
                     ban_info = discord.utils.get(bans_info, target=user)
                     if ban_info:
                         if (timestamp - ban_info.created_at) <= datetime.timedelta(minutes=1):
-                            await member_event_channel.send("ha")
                             break
                     else:
-                        asyncio.sleep(10)
+                        asyncio.sleep(1)
                 banner = ban_info.user
                 if banner == guild.me:
                     reasonbanned = ban_info.reason
