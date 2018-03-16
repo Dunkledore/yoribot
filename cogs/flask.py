@@ -8,8 +8,12 @@ class Flask:
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.app = None
+
+	@commands.command()
+	@checks.is_developer()
+	async def make_app(self, ctx):
 		self.app = Flask(__name__)
-		self.app.add_url_rule('/', 'index,', self.index)
 
 	@commands.command()
 	@checks.is_developer()
