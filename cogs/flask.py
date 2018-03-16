@@ -10,7 +10,7 @@ class Flask:
 		self.app = None
 
 	@commands.command()
-	@check.is_developer()
+	@checks.is_developer()
 	async def run_app(self, ctx):
 		app.run()
 
