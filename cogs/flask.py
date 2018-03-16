@@ -13,7 +13,7 @@ class Flask:
 	@commands.command()
 	@checks.is_developer()
 	async def run_app(self, ctx):
-		app.run()
+		self.app.run()
 
 
 	@commands.command()
@@ -21,25 +21,27 @@ class Flask:
 	async def build_app(self, ctx):
 		
 
-		self.app = Flask(__name__)
+		app = Flask(__name__)
 
-		@self.app.route('/form')
+		app.route('/form')
 		def my_form():
 		    return render_template('my-form.html')
 
-		@self.app.route('/')
+		app.route('/')
 		def index():
 			return render_template('index.html')
 
-		@self.app.route('/downloads')
+		app.route('/downloads')
 		def downloads():
 			return render_template('downloads.html')
 
-		@self.app.route('/', methods=['POST'])
+		app.route('/', methods=['POST'])
 		def my_form_post():
 		    text = request.form['text']
 		    processed_text = text.upper()
 		    return processed_text
+
+		self.app = app
 
 def setup(bot):
     bot.add_cog(Flask(bot))
