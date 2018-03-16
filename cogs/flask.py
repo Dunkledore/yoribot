@@ -1,4 +1,6 @@
-
+import discord 
+from discord.ext import commands
+from flask import Flask, request, render_template
 
 class Flask:
 	"""The Welcome Related Commands"""
@@ -16,7 +18,7 @@ class Flask:
 	@commands.command()
 	@checks.is_developer()
 	async def build_app(self, ctx):
-		from flask import Flask, request, render_template
+		
 
 		self.app = Flask(__name__)
 
