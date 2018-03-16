@@ -15,7 +15,7 @@ class Website:
 	@checks.is_developer()
 	async def run_app(self, ctx):
 		self.app.add_url_rule('/', 'index,', self.index)
-		self.app.run()
+		self.bot.loop.run_in_executor(None, self.app.run)
 
 
 	def index():
