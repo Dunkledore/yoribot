@@ -1,6 +1,7 @@
 import discord 
 from discord.ext import commands
 from flask import Flask, request, render_template
+from .utils import checks
 
 class Flask:
 	"""The Welcome Related Commands"""
