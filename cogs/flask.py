@@ -6,7 +6,7 @@ from .utils import checks
 class Website:
 	"""The Welcome Related Commands"""
 
-	def __init__(self, bot, app):
+	def __init__(self, bot):
 		self.bot = bot
 		self.app = Flask(__name__)
 
