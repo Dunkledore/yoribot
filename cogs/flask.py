@@ -8,7 +8,8 @@ class Flask:
 
 	def __init__(self, bot):
 		self.bot = bot
-		self.app = None
+		self.app = Flask(__name__)
+		self.app.add_url_rule('/', 'index,', self.index)
 
 	@commands.command()
 	@checks.is_developer()
@@ -16,17 +17,8 @@ class Flask:
 		self.app.run()
 
 
-	@commands.command()
-	@checks.is_developer()
-	async def build_app(self, ctx):
-		
-
-		self.app = Flask(__name__)
-
-		self.app.add_url_rule('/', 'index', index)
-
-		def index():
-			return render_template('index.html')
+	def index():
+		return render_template('index.html')
 
 def setup(bot):
     bot.add_cog(Flask(bot))
