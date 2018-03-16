@@ -7,4 +7,4 @@ def index():
 	return "test"
 
 
-app.run(port = 80)
+app.run(host = '50.88.155.128', port = 80)
