@@ -3,7 +3,7 @@
 class Flask:
 	"""The Welcome Related Commands"""
 
-	def __init__(self, bot: commands.Bot):
+	def __init__(self, bot):
 		self.bot = bot
 		self.app = None
 
