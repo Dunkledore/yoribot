@@ -20,7 +20,7 @@ class Website:
 		await self.bot.loop.run_in_executor(None, func)
 
 
-	def index():
+	def index(self):
 		return render_template('index.html')
 
 def setup(bot):
