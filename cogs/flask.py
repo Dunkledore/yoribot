@@ -133,7 +133,21 @@ class Website:
 			
 		@self.app.route('/')
 		async def index():
-			return await render_template('index.html')
+
+			guilds = len(self.bot.guilds)
+			members = sum(1 for _ in self.bot.get_all_members())
+			commands = len(self.bot.commands)
+
+			voice_channels = []
+	        text_channels = []
+	        for guild in self.bot.guilds:
+	            voice_channels.extend(guild.voice_channels)
+	            text_channels.extend(guild.text_channels)
+
+	        text = len(text_channels)
+	        voice = len(voice_channels)
+	        channels = text + voice
+			return await render_template('index.html', guilds=guilds, members=members, commands=commands, channels=channels)
 
 		@self.app.route('/commands')
 		async def commands():
