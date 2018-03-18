@@ -317,7 +317,8 @@ Navigation
 }
 
 .navbar.navbar-custom ul.nav.navbar-nav {
-	margin-top: 15px;
+	margin-top: 7px;
+	margin-bottom: 7px;
  	-webkit-transition: all .4s ease-in-out;
     -moz-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
