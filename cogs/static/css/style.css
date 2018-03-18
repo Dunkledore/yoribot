@@ -28,6 +28,13 @@ html {
    margin: 0 !important;
 }
 
+.light {
+	background-color: #D3D3D3;
+}
+
+.dark {
+	background-color: #A9A9A9;
+}
 .rounded-corners{
     border-radius: 10px;
 }
