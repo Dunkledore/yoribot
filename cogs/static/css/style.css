@@ -29,7 +29,8 @@ html {
 }
 
 .light {
-	background-color: #D3D3D3;
+	background-image: url('/static/img/backgrounds/white_wall_hash.png');
+  	background-color: #cccccc;
 }
 
 .dark {
