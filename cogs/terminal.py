@@ -112,8 +112,8 @@ class terminal:
         await ctx.send('Enter commands after {} to execute them.'
                        ' `exit()` or `quit` to exit.'.format(self.prefix.replace("`", "\\`")))
 
-    @commands.group()
-    @checks.is_developer(hidden=True)
+    @commands.group(hidden=True)
+    @checks.is_developer()
     async def cmdsettings(self, ctx):
         """Settings for terminal"""
         if ctx.invoked_subcommand is None:
