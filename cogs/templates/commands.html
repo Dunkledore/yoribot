@@ -10,23 +10,32 @@
 			
 			
 			<div class="row">
-					<div class="wow fadeInRight" data-wow-delay="0.3s">
-						{% for cog in cogs %}
-							<div class="box">
-								<h5>{{cog['name']}}</h5>
-								<p>{{cog['description']}}</p>
-							
-								{% for command in cog['commands'] %}
-									<div class="col-md-6 nopadding">
-										<h5>{{command['signature']}}</h5>
-										<p>{{command['description']}}</p>
-									</div>
-								{% endfor %}
-							</div>
-						{% endfor %}
+				<div class="wow fadeInRight" data-wow-delay="0.3s">
+					{% for cog in cogs %}
+						<div class="box">
+							<h5>{{cog['name']}}</h5>
+							<p>{{cog['description']}}</p>
+						
+							{% for command in cog['commands'] %}
+								<div class="col-md-6 nopadding">
+									<h5>{{command['signature']}}</h5>
+									<p>{{command['description']}}</p>
+								</div>
+							{% endfor %}
+						</div>
+					{% endfor %}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+						<div class="wow lightSpeedIn" data-wow-delay="0.1s">
+							<div class="cta-btn">
+							<a href="/commands_list" class="btn btn-skin btn-lg">Tabularized Commands</a>	
 						</div>
 					</div>
 				</div>
+			</div>
 
 	</section>
 {% endblock %}
