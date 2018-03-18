@@ -87,11 +87,11 @@ class Website:
 	@checks.is_developer()
 	async def run_app(self, ctx):
 
-		@app.errorhandler(404)
+		@self.app.errorhandler(404)
 		def page_not_found(e):
 			return render_template('404.html'), 404
 
-		@app.errorhandler(500)
+		@self.app.errorhandler(500)
 		def page_not_found(e):
 			return render_template('404.html'), 500
 
