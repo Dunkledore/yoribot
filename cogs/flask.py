@@ -28,6 +28,7 @@ class Website:
 		#self.app.add_url_rule('/', 'index,', self.index)
 		func = functools.partial(self.app.run, port=80)
 		await self.bot.loop.run_in_executor(None, func)
+		await ctx.send("running")
 
 
 
