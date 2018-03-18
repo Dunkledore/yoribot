@@ -95,7 +95,7 @@ class Website:
 				session['guilds'] = discord.get(API_BASE_URL + '/users/@me/guilds').json()
 				session['user'] = discord.get(API_BASE_URL + '/users/@me').json()
 				session['user_connections'] = discord.get(API_BASE_URL + '/users/@me/connections').json()
-				session['profile'] = self.fetch_profile(session['user']['id'])
+				session['profile'] = await self.fetch_profile(session['user']['id'])
 			return await render_template('profile.html')
 
 		@self.app.route('/callback')
@@ -171,7 +171,7 @@ class Website:
 
 		return display_commands
 
-	def fetch_profile(self, user_id):
+	async def fetch_profile(self, user_id):
 		query = "SELECT * FROM profile WHERE user_id = $1"
 		return await self.bot.pool.execute(query, user_id)
 
