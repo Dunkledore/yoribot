@@ -32,7 +32,7 @@ class Website:
 		
 		@self.app.route('/')
 		async def index():
-			return "page"
+			return await render_template('index.html')
 		
 		t = Thread(target=self.start_app)
 		t.start()
