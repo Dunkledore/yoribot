@@ -20,12 +20,16 @@ class Website:
 	@commands.command()
 	@checks.is_developer()
 	async def run_app(self, ctx):
-		self.app.add_url_rule('/', 'index,', self.index)
+		
+		@self.app.route('/')
+		async def index(self):
+			return "page"
+		
+		#self.app.add_url_rule('/', 'index,', self.index)
 		func = functools.partial(self.app.run, port=80)
 		await self.bot.loop.run_in_executor(None, func)
 
-	async def index(self):
-		return "page"
+
 
 def setup(bot):
     bot.add_cog(Website(bot))
