@@ -34,7 +34,7 @@ html {
 
 .developers {
 	background-image: url('/static/img/backgrounds/surface_background_dark_spots.png');
-	background-repeat: no-repeat,
+	background-repeat: no-repeat;
 	color: #DCDCDC;
 }
 
