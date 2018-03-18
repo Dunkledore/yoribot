@@ -8,7 +8,7 @@ from multiprocessing.pool import ThreadPool
 from . import config
 import functools
 from .utils import checks
-from thread import Thread
+from threading import Thread
 
 class Website:
 	"""The Welcome Related Commands"""
