@@ -96,6 +96,7 @@ class Website:
 		        session['user'] = discord.get(API_BASE_URL + '/users/@me').json()
 		        session['user_connections'] = discord.get(API_BASE_URL + '/users/@me/connections').json()
 		        session['profile'] = self.fetch_profile()
+			return await render_template('profile.html')
 
 		@self.app.route('/callback')
 		async def callback():
