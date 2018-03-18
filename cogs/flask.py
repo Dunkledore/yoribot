@@ -143,7 +143,7 @@ class Website:
 
 		await ctx.send("running")
 
-	def get_commands():
+	def get_commands(self):
 		def key(c):
 			return c.name
 
