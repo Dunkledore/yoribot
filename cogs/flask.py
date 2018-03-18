@@ -115,34 +115,6 @@ def setup(bot):
 
 
 
-def key(c):
-	return c.cog_name or '\u200bMisc'
-
-entries = sorted(ctx.bot.commands, key=key)
-display_commands = []
-
-# 0: (cog, desc, commands) (max len == 9)
-# 1: (cog, desc, commands) (max len == 9)
-# ...
-
-for cog, commands in itertools.groupby(entries, key=key):
-	non_hidden = [cmd for cmd in commands if not cmd.hidden]
-	non_hidden = sorted(non_hidden, key=lambda x: x.name)
-	if len(non_hidden) == 0:
-		continue
-
-	description = ctx.bot.get_cog(cog)
-	if description is not None:
-		description = inspect.getdoc(description) or None
-	detailed_commands = []
-
-	for command in non_hidden:
-		sig = (_command_signature(command))
-		desc = command.short_doc or "No help given"
-		detailed_commands.append({"signature" : sig, "description" : desc})
-
-
-	display_commands.append({"name" : cog, "description" : description, "commands" : detailed_commands})
 
 
 
