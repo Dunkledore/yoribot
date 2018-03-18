@@ -80,7 +80,8 @@ class Website:
 		
 	def start_app(self):
 		asyncio.set_event_loop(self.bot.loop)
-		self.app.run(host = '0.0.0.0', port=config.port)
+		print (config.port)
+		self.app.run(host ='0.0.0.0', port=config.port)
 
 
 	@commands.command(hidden=True)
