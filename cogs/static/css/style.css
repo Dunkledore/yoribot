@@ -28,9 +28,12 @@ html {
    margin: 0 !important;
 }
 
-.light {
-	background-image: url('/static/img/backgrounds/white_wall_hash.png');
-  	background-color: #cccccc;
+.hash {
+	background-image: url('/static/img/backgrounds/white_wall_hashx2.png');
+}
+
+.developers {
+	background-image: url('/static/img/backgrounds/surface_background_dark_spots.png');
 }
 
 .dark {
