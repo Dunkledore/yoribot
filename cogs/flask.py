@@ -31,7 +31,7 @@ class Website:
 
 		
 		@self.app.route('/')
-		async def index(self):
+		async def index():
 			return "page"
 		
 		t = Thread(target=self.start_app)
