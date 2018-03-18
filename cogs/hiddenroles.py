@@ -296,7 +296,7 @@ class Hiddenroles:
         await ctx.send(em=embedHR("green", f"Members of the role \"{rolename}\" now can't access"
                                            f" {ctx.message.channel_mentions[0].mention}."))
 
-    @hiddenrole.command(name="test")
+    @hiddenrole.command(name="test", hidden=True)
     @checks.is_developer()
     async def testing(self, ctx):
         """Sends test data to the developers."""
