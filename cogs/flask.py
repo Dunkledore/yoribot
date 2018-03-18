@@ -18,7 +18,7 @@ OAUTH2_REDIRECT_URI = 'http://50.88.148.201/callback'
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
 TOKEN_URL = API_BASE_URL + '/oauth2/token'
-app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
+
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
 
 
@@ -71,6 +71,7 @@ class Website:
 	def __init__(self, bot):
 		self.bot = bot
 		self.app = Quart(__name__)
+		app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
 
 
 		
