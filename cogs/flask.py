@@ -92,7 +92,7 @@ class Website:
 			if len(non_hidden) == 0:
 				continue
 
-			description = ctx.bot.get_cog(cog)
+			description = self.bot.get_cog(cog)
 			if description is not None:
 				description = inspect.getdoc(description) or None
 			detailed_commands = []
