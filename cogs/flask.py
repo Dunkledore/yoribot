@@ -5,7 +5,7 @@ from requests_oauthlib import OAuth2Session
 import os
 import asyncio
 from multiprocessing.pool import ThreadPool
-from .. import config
+from . import config
 import functools
 
 class Website:
