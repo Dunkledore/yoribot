@@ -172,7 +172,8 @@ class Website:
 
 	async def fetch_profile(self, user_id):
 		query = "SELECT * FROM profile WHERE user_id = $1"
-		return await self.bot.pool.fetch(query, int(user_id))[0]
+		results = await self.bot.pool.fetch(query, int(user_id))
+		return results[0]
 
 
 
