@@ -1,7 +1,11 @@
 import discord 
 from discord.ext import commands
-from flask import Flask, request, render_template
-from .utils import checks
+from quart import Quart, g, session, render_template, redirect, request
+from requests_oauthlib import OAuth2Session
+import os
+import asyncio
+from multiprocessing.pool import ThreadPool
+import ..config
 import functools
 
 class Website:
@@ -9,19 +13,19 @@ class Website:
 
 	def __init__(self, bot):
 		self.bot = bot
-		self.app = Flask(__name__)
+		self.app = Quart(__name__)
 
 		
 	@commands.command()
 	@checks.is_developer()
 	async def run_app(self, ctx):
-		self.app.add_url_rule('/', 'index,', self.index)
+		#self.app.add_url_rule('/', 'index,', self.index)
 		func = functools.partial(self.app.run, port=80)
 		await self.bot.loop.run_in_executor(None, func)
 
-
-	def index(self):
-		return render_template('index.html')
+	@self.app.route('/')
+	async def index(self):
+		return "page"
 
 def setup(bot):
     bot.add_cog(Website(bot))
