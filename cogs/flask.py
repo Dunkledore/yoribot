@@ -151,7 +151,7 @@ class Website:
 
 		display_commands = []
 		for command in entries:
-			display_commands.append({"signature" : _command_signature(command), "description" : commands.short_doc})
+			display_commands.append({"signature" : _command_signature(command), "description" : command.short_doc})
 
 		return display_commands
 
