@@ -170,7 +170,7 @@ class Website:
 
 		return display_commands
 
-	def fetch_profile():
+	def fetch_profile(self):
 		return {"age" : 20, "sexuality" : "Pan", "gender" : None, "region" : "South America", "fields" : [['Preferred name', 'Nick'], ['Specialty', 'Suicide Prevention'], ['Place of employment', 'National Suicide Hotline'], ['Is depressed', 'Very'], ['Height', '6\'3"']]  }
 
 
