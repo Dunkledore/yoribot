@@ -200,6 +200,10 @@ p.ultra {
 	color: #fff;
 }
 
+.footer {
+	background: black;
+}
+
 a {
     color: #666;
     -webkit-transition: all .2s ease-in-out;
