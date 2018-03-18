@@ -11,6 +11,31 @@ from .utils import checks
 from threading import Thread
 import itertools, inspect
 
+OAUTH2_CLIENT_ID =  config.client_id
+OAUTH2_CLIENT_SECRET = config.secret
+OAUTH2_REDIRECT_URI = 'http://50.88.148.201/callback'
+
+API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
+AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
+TOKEN_URL = API_BASE_URL + '/oauth2/token'
+app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
+
+
+def make_session(token=None, state=None, scope=None):
+    return OAuth2Session(
+        client_id=OAUTH2_CLIENT_ID,
+        token=token,
+        state=state,
+        scope=scope,
+        redirect_uri=OAUTH2_REDIRECT_URI,
+        auto_refresh_kwargs={
+            'client_id': OAUTH2_CLIENT_ID,
+            'client_secret': OAUTH2_CLIENT_SECRET,
+        },
+        auto_refresh_url=TOKEN_URL,
+        token_updater=token_updater)
+
 def _command_signature(cmd):
 	# this is modified from discord.py source
 	# which I wrote myself lmao
@@ -47,6 +72,7 @@ class Website:
 		self.bot = bot
 		self.app = Quart(__name__)
 
+
 		
 	def start_app(self):
 		loop = asyncio.new_event_loop()
@@ -58,8 +84,41 @@ class Website:
 	@checks.is_developer()
 	async def run_app(self, ctx):
 
+		@self.app.route('/me')
+		async def profile():
+		    if session.get('oauth2_token'):
+		        discord = make_session(token=session.get('oauth2_token'))
+		        session['guilds'] = discord.get(API_BASE_URL + '/users/@me/guilds').json()
+		        session['user'] = discord.get(API_BASE_URL + '/users/@me').json()
+		        session['user_connections'] = discord.get(API_BASE_URL + '/users/@me/connections').json()
+		        session['profile'] = self.fetch_profile()
 
-		
+		@self.app.route('/callback')
+		async def callback():
+		    if request.args.get('error'):
+		        return request.args['error']
+		    discord = make_session(state=session.get('oauth2_state'))
+		    token = discord.fetch_token(
+		        TOKEN_URL,
+		        client_secret=OAUTH2_CLIENT_SECRET,
+		        code=request.args.get('code'))
+		    session['oauth2_token'] = token
+		    return redirect('/me')
+
+		@self.app.route('/login')
+		async def login():
+		    scope = request.args.get(
+		        'scope',
+		        'identify connections guilds')
+		    discord = make_session(scope=scope.split(' '))
+		    authorization_url, state = discord.authorization_url(AUTHORIZATION_BASE_URL)
+		    session['oauth2_state'] = state
+		    return redirect(authorization_url)
+
+		@self.app.route('/about')
+		async def about():
+			return await render_template('about.html')
+			
 		@self.app.route('/')
 		async def index():
 			return await render_template('index.html')
@@ -106,6 +165,9 @@ class Website:
 			display_commands.append({"name" : cog, "description" : description, "commands" : detailed_commands})
 
 		return display_commands
+
+	def fetch_profile():
+		return {"age" : 20, "sexuality" : "Pan", "gender" : None, "region" : "South America", "fields" : [['Preferred name', 'Nick'], ['Specialty', 'Suicide Prevention'], ['Place of employment', 'National Suicide Hotline'], ['Is depressed', 'Very'], ['Height', '6\'3"']]  }
 
 
 
