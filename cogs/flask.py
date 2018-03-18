@@ -83,7 +83,7 @@ class Website:
 		self.app.run(host = '0.0.0.0', port=80)
 
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def run_app(self, ctx):
 
