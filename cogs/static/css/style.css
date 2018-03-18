@@ -277,7 +277,6 @@ Navigation
 
 
 .navbar.navbar-custom {
-	width: inherit;
 	margin: 0 auto;
 	padding-bottom:0;
 }
@@ -289,7 +288,7 @@ Navigation
     position: fixed; 
     top: 0; 
     z-index: 121;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
 	
 }
