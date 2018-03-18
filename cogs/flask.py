@@ -8,6 +8,7 @@ from multiprocessing.pool import ThreadPool
 from . import config
 import functools
 from .utils import checks
+from thread import Thread
 
 class Website:
 	"""The Welcome Related Commands"""
@@ -17,18 +18,22 @@ class Website:
 		self.app = Quart(__name__)
 
 		
+	def start_app(self):
+		self.app.run(port=80)
+
 	@commands.command()
 	@checks.is_developer()
 	async def run_app(self, ctx):
+
+
 		
 		@self.app.route('/')
 		async def index(self):
 			return "page"
 		
-		#self.app.add_url_rule('/', 'index,', self.index)
-		func = functools.partial(self.app.run, port=80)
-		loop = asyncio.get_event_loop()
-		await loop.run_in_executor(None, func)
+		t = Thread(target=self.start_app)
+		t.start()
+
 		await ctx.send("running")
 
 
