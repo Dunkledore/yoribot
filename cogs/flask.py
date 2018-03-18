@@ -13,7 +13,7 @@ import itertools, inspect
 
 OAUTH2_CLIENT_ID =  config.client_id
 OAUTH2_CLIENT_SECRET = config.secret
-OAUTH2_REDIRECT_URI = 'http://50.88.148.201/callback'
+OAUTH2_REDIRECT_URI = config.redirect
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
@@ -80,7 +80,7 @@ class Website:
 		
 	def start_app(self):
 		asyncio.set_event_loop(self.bot.loop)
-		self.app.run(host = '0.0.0.0', port=80)
+		self.app.run(host = '0.0.0.0', port=config.port)
 
 
 	@commands.command(hidden=True)
