@@ -105,7 +105,7 @@ class Website:
 
 			display_commands.append({"name" : cog, "description" : description, "commands" : detailed_commands})
 
-			return display_commands
+		return display_commands
 
 
 
