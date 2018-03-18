@@ -131,11 +131,30 @@ class Website:
 		async def commands():
 			cogs = self.get_cogs()
 			return await render_template('commands.html', cogs=cogs)
+
+		@self.app.route('/commands_list')
+		async def commands_list():
+			commands = self.get_commands()
+			return await render_template('commands_list.html', commands=commands)
+
 		
 		t = Thread(target=self.start_app)
 		t.start()
 
 		await ctx.send("running")
+
+	def get_commands():
+		def key(c):
+			return c.name
+
+		entries = sorted(self.bot.commands, key=key)
+
+		display_commands = []
+		for command in entries:
+			display_commands.append({"signature" : _command_signature(command), "description" : commands.short_doc})
+
+		return display_commands
+
 
 	def get_cogs(self):
 		
