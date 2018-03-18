@@ -95,7 +95,7 @@ class Website:
 				session['guilds'] = discord.get(API_BASE_URL + '/users/@me/guilds').json()
 				session['user'] = discord.get(API_BASE_URL + '/users/@me').json()
 				session['user_connections'] = discord.get(API_BASE_URL + '/users/@me/connections').json()
-				session['profile'] = self.fetch_profile()
+				session['profile'] = self.fetch_profile(session['user']['id'])
 			return await render_template('profile.html')
 
 		@self.app.route('/callback')
@@ -171,8 +171,9 @@ class Website:
 
 		return display_commands
 
-	def fetch_profile(self):
-		return {"age" : 20, "sexuality" : "Pan", "gender" : None, "region" : "South America", "fields" : [['Preferred name', 'Nick'], ['Specialty', 'Suicide Prevention'], ['Place of employment', 'National Suicide Hotline'], ['Is depressed', 'Very'], ['Height', '6\'3"']]  }
+	def fetch_profile(self, user_id):
+		query = "SELECT * FROM profile WHERE user_id = $1"
+		return await self.bot.pool.execute(query, user_id)
 
 
 
