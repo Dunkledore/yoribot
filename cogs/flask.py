@@ -139,14 +139,14 @@ class Website:
 			commands = len(self.bot.commands)
 
 			voice_channels = []
-	        text_channels = []
-	        for guild in self.bot.guilds:
-	            voice_channels.extend(guild.voice_channels)
-	            text_channels.extend(guild.text_channels)
+			text_channels = []
+			for guild in self.bot.guilds:
+				voice_channels.extend(guild.voice_channels)
+				text_channels.extend(guild.text_channels)
 
-	        text = len(text_channels)
-	        voice = len(voice_channels)
-	        channels = text + voice
+			text = len(text_channels)
+			voice = len(voice_channels)
+			channels = text + voice
 			return await render_template('index.html', guilds=guilds, members=members, commands=commands, channels=channels)
 
 		@self.app.route('/commands')
