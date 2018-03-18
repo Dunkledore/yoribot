@@ -21,7 +21,7 @@ class Website:
 	def start_app(self):
 		loop = asyncio.new_event_loop()
 		asyncio.set_event_loop(loop)
-		self.app.run(port=80)
+		self.app.run(host = '0.0.0.0', port=80)
 
 
 	@commands.command()
