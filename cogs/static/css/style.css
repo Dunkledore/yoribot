@@ -32,6 +32,7 @@ html {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    overflow-x:auto;
 }
 
 #commands td, #commands th {
