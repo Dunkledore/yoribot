@@ -21,6 +21,9 @@ TOKEN_URL = API_BASE_URL + '/oauth2/token'
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
 
+def token_updater(token):
+    session['oauth2_token'] = token
+
 
 def make_session(token=None, state=None, scope=None):
     return OAuth2Session(
