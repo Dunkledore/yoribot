@@ -37,10 +37,8 @@ html {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	color: #DCDCDC;
-}
+	background-color: #808080;
 
-.dark {
-	background-color: #A9A9A9;
 }
 
 .counters {
@@ -50,6 +48,7 @@ html {
 	color: #DCDCDC;
 	padding-top: 75px;
 	padding-bottom: 75px;
+	background-color: #808080;
 }
 .rounded-corners{
     border-radius: 10px;
