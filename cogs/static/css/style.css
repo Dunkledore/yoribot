@@ -28,6 +28,30 @@ html {
     border-radius: 10px;
 }
 
+#commands {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#commands td, #commands th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#commands tr:nth-child(even){background-color: #f2f2f2;}
+
+#commands tr:hover {background-color: #ddd;}
+
+#commands th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+
 input { background-color: transparent; border: 0px solid; height: 20px; width: 160px; color: #CCC; }
 
 
