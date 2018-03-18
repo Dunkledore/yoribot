@@ -39,6 +39,10 @@ html {
     border-radius: 10px;
 }
 
+.teal {
+	color: #3fbbc0;
+}
+
 #commands {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
