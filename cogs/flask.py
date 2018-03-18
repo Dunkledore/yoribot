@@ -66,7 +66,7 @@ class Website:
 
 		@self.app.route('/commands')
 		async def commands():
-			cogs = get_cogs()
+			cogs = self.get_cogs()
 			return await render_template('commands.html', cogs=cogs)
 		
 		t = Thread(target=self.start_app)
