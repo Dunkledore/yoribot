@@ -41,12 +41,12 @@ class MemberAudit:
                 pass
 
     async def cache_invites(self):
-        timestamp = datetime.datetime.utcnow()
-        try:
-            channel = self.get_member_event_channel(g)
-        except Exception as e:
-            pass
         for g in self.bot.guilds:
+            timestamp = datetime.datetime.utcnow()
+            try:
+                channel = self.get_member_event_channel(g)
+            except Exception as e:
+                return
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
@@ -77,8 +77,9 @@ class MemberAudit:
                     self.invites[str(g.id)][i.code] = i
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
+            await channel.send("cache loop for {} run took: {}.".format(g.name, str(timestamp - datetime.datetime.utcnow())))
         self.cachefirst_run = False
-        await channel.send("cache loop run took: {}.".format(str(timestamp - datetime.datetime.utcnow())))
+        
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
