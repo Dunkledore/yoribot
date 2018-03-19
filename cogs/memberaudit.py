@@ -46,7 +46,7 @@ class MemberAudit:
             try:
                 channel = self.get_member_event_channel(g)
             except Exception as e:
-                return
+                pass
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
