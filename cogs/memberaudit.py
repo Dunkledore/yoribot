@@ -77,7 +77,8 @@ class MemberAudit:
                     self.invites[str(g.id)][i.code] = i
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
-            await channel.send("cache loop for {} run took: {}.".format(g.name, str(timestamp - datetime.datetime.utcnow())))
+            if channel:
+                await channel.send("cache loop for {} run took: {}.".format(g.name, str(timestamp - datetime.datetime.utcnow())))
         self.cachefirst_run = False
         
 
