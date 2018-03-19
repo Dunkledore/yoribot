@@ -41,31 +41,31 @@ class MemberAudit:
                 pass
 
     async def cache_invites(self):
-        
-        
+        timestamp = datetime.datetime.utcnow()
+        try:
+            channel = self.get_member_event_channel(g)
+        except Exception as e:
+            pass
         for g in self.bot.guilds:
-            try:
-                channel = self.get_member_event_channel(g)
-            except Exception as e:
-                pass
+            
+            guild_invites = await g.invites()
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
                 expiredinvs = []
                 for j in self.invites[str(g.id)]:
-                    k = await g.invites()
                     found = False
-                    for l in k:
+                    for l in guild_invites:
                         if l.code != self.invites[str(g.id)][j].code:
                             continue
                         found = True
                     if not found:
                         em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name))
                         await channel.send(embed=em)
-                        expiredinvs.append( self.invites[str(g.id)][j])
+                        expiredinvs.append(self.invites[str(g.id)][j])
                 for x in expiredinvs:
                     del self.invites[str(g.id)][x.code]
-                for i in await g.invites():
+                for i in guild_invites:
                     if i.code in self.invites[str(g.id)]:
                         inv = self.invites[str(g.id)][i.code]
                         if inv.uses < i.uses:
@@ -79,6 +79,7 @@ class MemberAudit:
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
         self.cachefirst_run = False
+        await channel.send("cache loop run took: {}.".format(str(timestamp - datetime.utcnow()))
     
     def teardown(self, bot):
         self.unloaded = True
@@ -435,7 +436,7 @@ def setup(bot: commands.Bot):
     bot.add_listener(n.member_join, "on_member_join")
     bot.add_listener(n.member_leave, "on_member_remove")
     bot.add_listener(n.member_ban, "on_member_ban")
-    #bot.add_listener(n.hub_ban_audit, "on_member_ban")
+    # bot.add_listener(n.hub_ban_audit, "on_member_ban")
     bot.add_listener(n.member_unban, "on_member_unban")
     bot.add_cog(n)
     global task 
