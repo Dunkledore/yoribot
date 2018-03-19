@@ -42,7 +42,9 @@ class MemberAudit:
 
     async def cache_invites(self):
         for g in self.bot.guilds:
-            timestamp = datetime.datetime.utcnow()
+            guild_settings = self.settings[str(g.id)]
+            if not guild_settings["on"]:
+                continue
             try:
                 channel = self.get_member_event_channel(g)
             except Exception as e:
