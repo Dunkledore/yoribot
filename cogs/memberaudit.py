@@ -47,11 +47,10 @@ class MemberAudit:
         except Exception as e:
             pass
         for g in self.bot.guilds:
-            
-            guild_invites = await g.invites()
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
+                guild_invites = await g.invites()
                 expiredinvs = []
                 for j in self.invites[str(g.id)]:
                     found = False
