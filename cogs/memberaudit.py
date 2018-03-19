@@ -79,7 +79,7 @@ class MemberAudit:
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
         self.cachefirst_run = False
-        await channel.send("cache loop run took: {}.".format(str(timestamp - datetime.utcnow())))
+        await channel.send("cache loop run took: {}.".format(str(timestamp - datetime.datetime.utcnow())))
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
