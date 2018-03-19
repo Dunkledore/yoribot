@@ -65,7 +65,6 @@ class MemberAudit:
                 for x in expiredinvs:
                     del self.invites[str(g.id)][x.code]
                 for i in guild_invites:
-                    await channel.send(str(self.cachefirst_run))
                     if i.code in self.invites[str(g.id)]:
                         inv = self.invites[str(g.id)][i.code]
                         if inv.uses < i.uses:
