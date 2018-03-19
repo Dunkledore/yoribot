@@ -16,7 +16,7 @@ class Mail2Discord():
     def save_settings(self):
         dataIO.save_json("data/rolemanager/settings.json", self.settings)
 
-    @commands.command()
+    @commands.command(hidden=True)
     #@checks.is_guild_owner()
     @checks.is_developer()
     async def imapcreds(self, ctx):
@@ -50,7 +50,7 @@ class Mail2Discord():
             await ctx.db.execute(alterquery, ctx.guild.id, imap_creds)
         await ctx.author.send('Details Saved')
 
-    @commands.command()
+    @commands.command(hidden=True)
     @checks.is_admin()
     async def fetchmail(self, ctx):
         mails = await get_mails(ctx.guild.id)

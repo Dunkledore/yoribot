@@ -1,7 +1,7 @@
 from discord.ext import commands
 from .utils import db, checks, cache
 from .utils.paginator import Pages
-
+import discord
 from collections import defaultdict
 
 class LazyEntity:

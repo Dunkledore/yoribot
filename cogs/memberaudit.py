@@ -27,15 +27,18 @@ class MemberAudit:
         self.deletedmessages = MaxList(500)
         self.invites = {}
         self.cachefirst_run = True
+        self.unloaded = False
 
     async def cacheloop(self):
-        while True:
+        while not self.unloaded:
             try:
                 await self.bot.wait_until_ready()
                 await self.cache_invites()
                 await asyncio.sleep(60)
-            except Exception as e:
-                print(e)
+            except asyncio.CancelledError:
+                self.unloaded = True
+            except Exception:
+                pass
 
     async def cache_invites(self):
         
@@ -76,6 +79,9 @@ class MemberAudit:
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
         self.cachefirst_run = False
+    
+    def teardown(self, bot):
+        self.unloaded = True
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
@@ -420,6 +426,7 @@ def check_files():
         print("Creating data/membership/settings.json...")
         dataIO.save_json(f, {})
 
+task = None
 
 def setup(bot: commands.Bot):
     check_folders()
@@ -431,4 +438,8 @@ def setup(bot: commands.Bot):
     #bot.add_listener(n.hub_ban_audit, "on_member_ban")
     bot.add_listener(n.member_unban, "on_member_unban")
     bot.add_cog(n)
-    bot.loop.create_task(n.cacheloop())
+    global task 
+    task = bot.loop.create_task(n.cacheloop())
+
+def teardown(bot: commands.Bot):
+    task.cancel()
