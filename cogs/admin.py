@@ -350,7 +350,8 @@ class Admin:
             fp = io.BytesIO(fmt.encode('utf-8'))
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "⚠ Error",
-                                description ='Too many results...', file=discord.File(fp, 'results.txt')))
+                                description ='Too many results...'))
+            await ctx.send(file=discord.File(fp, 'results.txt'))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
