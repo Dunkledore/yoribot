@@ -8,6 +8,8 @@ import os
 
 
 class Weather:
+    """Get the weather"""
+
     def __init__(self, bot):
         self.bot = bot
         self.settings_file = 'data/weather/weather.json'

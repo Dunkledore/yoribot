@@ -18,6 +18,7 @@ JSON_PATH = DATA_PATH + "regexen.json"
 
 
 class Censor:
+    """Add regexes to automatically deleted unwanted messages"""
 
     # Data format:
     # {

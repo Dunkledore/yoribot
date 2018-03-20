@@ -250,6 +250,7 @@ class Playlists:
 		await self.send_list(ctx)
 
 class Music:
+	"""A music player with an emoji controlled UI"""
 
 	def __init__(self,bot):
 		self.bot = bot

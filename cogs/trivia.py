@@ -21,6 +21,8 @@ TriviaLine = namedtuple("TriviaLine", "question answers")
 
 
 class Trivia:
+    """Play a game of trivia"""
+
     def __init__(self, bot):
         self.bot = bot
         self.trivia_sessions = []
