@@ -18,6 +18,7 @@ import sys
 from .utils.cooldown import Cooldown
 
 class Rank:
+    """Use Rank to add roles to people when they reach a certain XP"""
 
     def __init__(self, bot : commands.Bot):
         self.bot = bot

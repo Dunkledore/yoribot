@@ -68,9 +68,9 @@ class SocialMedia:
 					api = self.get_api(creds)
 					me = api.me()
 					if not result["last_tweet"]:
-						tweets = api.user_timeline(id=me.id,count=20)
+						tweets = api.user_timeline(id=me.id,count=20, tweet_mode='extended')
 					else:
-						tweets = api.user_timeline(id=me.id,since_id=result["last_tweet"])
+						tweets = api.user_timeline(id=me.id, since_id=result["last_tweet"], tweet_mode='extended')
 
 					tweet_id = result["last_tweet"]
 					for tweet in reversed(tweets):
