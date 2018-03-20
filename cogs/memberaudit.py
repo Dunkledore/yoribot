@@ -71,10 +71,10 @@ class MemberAudit:
                         inv = self.invites[str(g.id)][i.code]
                         if inv.uses < i.uses:
                             uses = i.uses - inv.uses
-                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(i.code, i.inviter.name, uses))
+                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(i.code, i.inviter.name if i.inviter else "Server Widget", uses))
                             await channel.send(embed=em)
                     elif not self.cachefirst_run:
-                        em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
+                        em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name if i.inviter else "Server Widget"))
                         await channel.send(embed=em)
                     self.invites[str(g.id)][i.code] = i
             except Exception as e:
