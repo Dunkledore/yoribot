@@ -41,9 +41,10 @@ class MemberAudit:
                 pass
 
     async def cache_invites(self):
-        
-        
         for g in self.bot.guilds:
+            guild_settings = self.settings[str(g.id)]
+            if not guild_settings["on"]:
+                continue
             try:
                 channel = self.get_member_event_channel(g)
             except Exception as e:
@@ -51,21 +52,21 @@ class MemberAudit:
             if str(g.id) not in self.invites:
                 self.invites[str(g.id)] = {}
             try:
+                guild_invites = await g.invites()
                 expiredinvs = []
                 for j in self.invites[str(g.id)]:
-                    k = await g.invites()
                     found = False
-                    for l in k:
+                    for l in guild_invites:
                         if l.code != self.invites[str(g.id)][j].code:
                             continue
                         found = True
                     if not found:
-                        em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name))
+                        em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name if self.invites[str(g.id)][j].inviter else "Server Widget"))
                         await channel.send(embed=em)
-                        expiredinvs.append( self.invites[str(g.id)][j])
+                        expiredinvs.append(self.invites[str(g.id)][j])
                 for x in expiredinvs:
                     del self.invites[str(g.id)][x.code]
-                for i in await g.invites():
+                for i in guild_invites:
                     if i.code in self.invites[str(g.id)]:
                         inv = self.invites[str(g.id)][i.code]
                         if inv.uses < i.uses:
@@ -79,9 +80,7 @@ class MemberAudit:
             except Exception as e:
                 print("Can't get invites from {}: {}".format(g, e))
         self.cachefirst_run = False
-    
-    def teardown(self, bot):
-        self.unloaded = True
+        
 
     def checksettings(self, guild):
         if str(guild.id) not in self.settings:
@@ -435,7 +434,7 @@ def setup(bot: commands.Bot):
     bot.add_listener(n.member_join, "on_member_join")
     bot.add_listener(n.member_leave, "on_member_remove")
     bot.add_listener(n.member_ban, "on_member_ban")
-    #bot.add_listener(n.hub_ban_audit, "on_member_ban")
+    # bot.add_listener(n.hub_ban_audit, "on_member_ban")
     bot.add_listener(n.member_unban, "on_member_unban")
     bot.add_cog(n)
     global task 
