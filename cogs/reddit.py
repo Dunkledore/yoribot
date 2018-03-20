@@ -15,6 +15,7 @@ import uuid
 
 
 class Reddit:
+    """Browse Reddit Posts"""
     def __init__(self, bot):
         self.bot = bot
         self.settings_file = 'data/reddit/reddit.json'
