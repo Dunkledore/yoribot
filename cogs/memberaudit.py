@@ -59,7 +59,7 @@ class MemberAudit:
                             continue
                         found = True
                     if not found:
-                        em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name))
+                        em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name if self.invites[str(g.id)][j].inviter else "Server Widget"))
                         await channel.send(embed=em)
                         expiredinvs.append(self.invites[str(g.id)][j])
                 for x in expiredinvs:
