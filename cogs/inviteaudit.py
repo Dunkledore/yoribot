@@ -37,46 +37,47 @@ class InviteAudit(object):
 
     async def cache_invites(self):
         for g in self.bot.guilds:
-            guild_settings = self.settings[str(g.id)]
-            if not guild_settings["on"]:
-                continue
-            try:
-                channel = self.get_invite_event_channel(g)
-            except Exception as e:
-                pass
-            if str(g.id) not in self.invites:
-                self.invites[str(g.id)] = {}
-            try:
-                guild_invites = await g.invites()
-                expiredinvs = []
-                for j in self.invites[str(g.id)]:
-                    found = False
-                    for l in guild_invites:
-                        if l.code != self.invites[str(g.id)][j].code:
-                            continue
-                        found = True
-                    if not found:
-                        em = discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(
-                            self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name if self.invites[str(g.id)][j].inviter else "Server Widget"))
-                        await channel.send(embed=em)
-                        expiredinvs.append(self.invites[str(g.id)][j])
-                for x in expiredinvs:
-                    del self.invites[str(g.id)][x.code]
-                for i in guild_invites:
-                    if i.code in self.invites[str(g.id)]:
-                        inv = self.invites[str(g.id)][i.code]
-                        if inv.uses < i.uses:
-                            uses = i.uses - inv.uses
-                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(
-                                i.code, i.inviter.name if i.inviter else "Server Widget", uses))
+            if g.id in self.settings:
+                guild_settings = self.settings[str(g.id)]
+                if not guild_settings["on"]:
+                    continue
+                try:
+                    channel = self.get_invite_event_channel(g)
+                except Exception as e:
+                    pass
+                if str(g.id) not in self.invites:
+                    self.invites[str(g.id)] = {}
+                try:
+                    guild_invites = await g.invites()
+                    expiredinvs = []
+                    for j in self.invites[str(g.id)]:
+                        found = False
+                        for l in guild_invites:
+                            if l.code != self.invites[str(g.id)][j].code:
+                                continue
+                            found = True
+                        if not found:
+                            em = discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(
+                                self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name if self.invites[str(g.id)][j].inviter else "Server Widget"))
                             await channel.send(embed=em)
-                    elif not self.cachefirst_run:
-                        em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(
-                            i.code, i.inviter.name if i.inviter else "Server Widget"))
-                        await channel.send(embed=em)
-                    self.invites[str(g.id)][i.code] = i
-            except Exception as e:
-                print("Can't get invites from {}: {}".format(g, e))
+                            expiredinvs.append(self.invites[str(g.id)][j])
+                    for x in expiredinvs:
+                        del self.invites[str(g.id)][x.code]
+                    for i in guild_invites:
+                        if i.code in self.invites[str(g.id)]:
+                            inv = self.invites[str(g.id)][i.code]
+                            if inv.uses < i.uses:
+                                uses = i.uses - inv.uses
+                                em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(
+                                    i.code, i.inviter.name if i.inviter else "Server Widget", uses))
+                                await channel.send(embed=em)
+                        elif not self.cachefirst_run:
+                            em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(
+                                i.code, i.inviter.name if i.inviter else "Server Widget"))
+                            await channel.send(embed=em)
+                        self.invites[str(g.id)][i.code] = i
+                except Exception as e:
+                    print("Can't get invites from {}: {}".format(g, e))
         self.cachefirst_run = False
 
     def checksettings(self, guild):
