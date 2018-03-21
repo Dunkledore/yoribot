@@ -173,3 +173,16 @@ def check_files():
     if not dataIO.is_valid_json(f):
         print("Creating data/invites/settings.json...")
         dataIO.save_json(f, {})
+
+task = None
+
+def setup(bot: commands.Bot):
+    check_folders()
+    check_files()
+    n = InviteAudit(bot)
+    bot.add_cog(n)
+    global task 
+    task = bot.loop.create_task(n.cacheloop())
+
+def teardown(bot: commands.Bot):
+    task.cancel()
