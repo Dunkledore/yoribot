@@ -362,6 +362,8 @@ class MemberAudit:
         await member_event_channel.send(embed=embed)
 
     async def on_message_delete(self, message):
+        if message.channel.is_nsfw():
+            return
         self.checksettings(message.guild)
         guild = message.guild
         guild_settings = self.settings[str(guild.id)]
