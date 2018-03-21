@@ -41,14 +41,11 @@ class InviteAudit(object):
                 guild_settings = self.settings[str(g.id)]
                 if not guild_settings["on"]:
                     continue
-                try:
-                    channel = self.get_invite_event_channel(g)
-                except Exception as e:
-                    pass
                 if str(g.id) not in self.invites:
                     self.invites[str(g.id)] = {}
                 try:
                     guild_invites = await g.invites()
+                    channel = self.get_invite_event_channel(g)
                     expiredinvs = []
                     for j in self.invites[str(g.id)]:
                         found = False
