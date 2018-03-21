@@ -25,61 +25,6 @@ class MemberAudit:
         self.settings_path = "data/membership/settings.json"
         self.settings = dataIO.load_json(self.settings_path)
         self.deletedmessages = MaxList(500)
-        self.invites = {}
-        self.cachefirst_run = True
-        self.unloaded = False
-
-    async def cacheloop(self):
-        while not self.unloaded:
-            try:
-                await self.bot.wait_until_ready()
-                await self.cache_invites()
-                await asyncio.sleep(60)
-            except asyncio.CancelledError:
-                self.unloaded = True
-            except Exception:
-                pass
-
-    async def cache_invites(self):
-        for g in self.bot.guilds:
-            guild_settings = self.settings[str(g.id)]
-            if not guild_settings["on"]:
-                continue
-            try:
-                channel = self.get_member_event_channel(g)
-            except Exception as e:
-                pass
-            if str(g.id) not in self.invites:
-                self.invites[str(g.id)] = {}
-            try:
-                guild_invites = await g.invites()
-                expiredinvs = []
-                for j in self.invites[str(g.id)]:
-                    found = False
-                    for l in guild_invites:
-                        if l.code != self.invites[str(g.id)][j].code:
-                            continue
-                        found = True
-                    if not found:
-                        em=discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name if self.invites[str(g.id)][j].inviter else "Server Widget"))
-                        await channel.send(embed=em)
-                        expiredinvs.append(self.invites[str(g.id)][j])
-                for x in expiredinvs:
-                    del self.invites[str(g.id)][x.code]
-                for i in guild_invites:
-                    if i.code in self.invites[str(g.id)]:
-                        inv = self.invites[str(g.id)][i.code]
-                        if inv.uses < i.uses:
-                            uses = i.uses - inv.uses
-                            em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(i.code, i.inviter.name, uses))
-                            await channel.send(embed=em)
-                    elif not self.cachefirst_run:
-                        em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(i.code, i.inviter.name))
-                        await channel.send(embed=em)
-                    self.invites[str(g.id)][i.code] = i
-            except Exception as e:
-                print("Can't get invites from {}: {}".format(g, e))
-        self.cachefirst_run = False
         
 
     def checksettings(self, guild):
@@ -362,6 +307,8 @@ class MemberAudit:
         await member_event_channel.send(embed=embed)
 
     async def on_message_delete(self, message):
+        if message.channel.is_nsfw():
+            return
         self.checksettings(message.guild)
         guild = message.guild
         guild_settings = self.settings[str(guild.id)]
@@ -425,8 +372,6 @@ def check_files():
         print("Creating data/membership/settings.json...")
         dataIO.save_json(f, {})
 
-task = None
-
 def setup(bot: commands.Bot):
     check_folders()
     check_files()
@@ -437,8 +382,4 @@ def setup(bot: commands.Bot):
     # bot.add_listener(n.hub_ban_audit, "on_member_ban")
     bot.add_listener(n.member_unban, "on_member_unban")
     bot.add_cog(n)
-    global task 
-    task = bot.loop.create_task(n.cacheloop())
-
-def teardown(bot: commands.Bot):
-    task.cancel()
+    
