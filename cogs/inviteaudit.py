@@ -37,7 +37,7 @@ class InviteAudit(object):
 
     async def cache_invites(self):
         for g in self.bot.guilds:
-            if g.id in self.settings:
+            if str(g.id) in self.settings:
                 guild_settings = self.settings[str(g.id)]
                 if not guild_settings["on"]:
                     continue
