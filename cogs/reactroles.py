@@ -155,13 +155,13 @@ Gave a total of {g} roles."""
     
     # Commands
     @commands.group(name="roles", pass_context=True, no_pm=True, invoke_without_command=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles(self, ctx):
         """Roles giving configuration"""
         await self.bot.send_cmd_help(ctx)
 
     @_roles.command(name="linklist", pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles_link_list(self, ctx):
         """Lists all reaction links in the current server"""
         message = ctx.message
@@ -180,7 +180,7 @@ Gave a total of {g} roles."""
         await ctx.send(embed=embed)
 
     @_roles.command(name="unlink", pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles_unlink(self, ctx, name: str):
         """Remove a link of messages by its name"""
         message = ctx.message
@@ -198,7 +198,7 @@ Gave a total of {g} roles."""
         await ctx.send(response)
 
     @_roles.command(name="link", pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles_link(self, ctx, name: str, *linked_messages):
         """Link messages together to allow only one role from those messages to be given to a member
         name is the name of the link; used to make removal easier
@@ -251,7 +251,7 @@ Gave a total of {g} roles."""
         await ctx.send(response)
     
     @_roles.command(name="add", pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles_add(self, ctx, message_id, channel: discord.Channel, emoji, *, role: discord.Role):
         """Add a role on a message
         `message_id` must be found in `channel`
@@ -295,7 +295,7 @@ Gave a total of {g} roles."""
         await ctx.send( response)
     
     @_roles.command(name="remove", pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles_remove(self, ctx, message_id, channel: discord.Channel, *, role: discord.Role):
         """Remove a role from a message
         `message_id` must be found in `channel` and be bound to `role`"""
@@ -329,7 +329,7 @@ Gave a total of {g} roles."""
                 await self.bot.edit_message(answer, self.REACTION_CLEAN_DONE.format(count))
     
     @_roles.command(name="check", pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.is_mod()
     async def _roles_check(self, ctx, message_id, channel: discord.Channel):
         """Goes through all reactions of a message and gives the roles accordingly
         This does NOT work with messages in a link"""
