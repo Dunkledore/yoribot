@@ -12,7 +12,7 @@ class ReactRoles:
 
 	@commands.command()
 	@checks.is_admin()
-	async def add_react_role(self, ctx, message_id, role : discord.Role):
+	async def add_react_role(self, ctx, message_id: int, role : discord.Role):
 
 		
 		reaction_request_message = await ctx.send("Please react to this message with the desired Emoji for that role")
