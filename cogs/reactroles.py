@@ -158,6 +158,7 @@ Gave a total of {g} roles."""
     @checks.is_mod()
     async def _roles(self, ctx):
         """Roles giving configuration"""
+        if ctx.invoked_subcommand is None:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, command='roles')
 
