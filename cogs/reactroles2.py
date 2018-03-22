@@ -164,7 +164,7 @@ class ReactRoles:
 			if hasattr(emoji, 'id'):
 				compare_emoji = emoji.id
 			else:
-				compare_emoji = str(emoji)
+				compare_emoji = emoji.name
 
 			await hook.send(compare_emoji)
 
