@@ -109,7 +109,7 @@ class ReactRoles:
 		await ctx.send(embed=embed)
 
 		def check(m):
-			return (m.author = ctx.author) and (m.channel = ctx.channel)
+			return (m.author == ctx.author) and (m.channel == ctx.channel)
 		
 		try:
 			choice = await self.bot.wait_for('message', check=check, timeout=120.0)
