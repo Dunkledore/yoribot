@@ -178,6 +178,7 @@ class ReactRoles:
 
 		stats = self.bot.get_cog('Stats')
 		hook = await stats.webhook()
+		await hook.send("waat")
 
 		try:
 			if emoji.is_custom_emoji():
