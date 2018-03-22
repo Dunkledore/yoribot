@@ -71,7 +71,8 @@ class ReactRoles:
 				await hook.send("got guild")
 				await hook.send(str(user_id))
 				member = guild.get_member(user_id)
-				await hook.send("got member")
+				await hook.send(user_id)
+				await hook.send(str(user))
 				if member:
 					role = discord.utils.get(guild.roles, id=results["role_id"])
 					await hook.send("got role")
