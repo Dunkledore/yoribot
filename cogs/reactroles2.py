@@ -33,7 +33,7 @@ class ReactRoles:
 	async def view_react_roles(self, ctx):
 
 		query = "SELECT * FROM reactroles WHERE guild_id = $1"
-		results = await self.bot.fetch(query, ctx.guild.id)
+		results = await self.bot.pool.fetch(query, ctx.guild.id)
 		results = list(results)
 
 		react_role_dict = {}
