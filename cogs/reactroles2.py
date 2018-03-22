@@ -5,6 +5,9 @@ import itertools
 import operator
 import traceback
 
+
+#create table reactroles (id SERIAL, message_id bigint, role_id bigint, emoji_id text, guild_id bigint)
+
 class ReactRoles:
 
 	def __init__(self, bot):
@@ -22,7 +25,10 @@ class ReactRoles:
 			def react_check(reaction, user):
 				return (reaction.message.id == reaction_request_message.id and user == ctx.author)
 			
-			reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
+			try:
+				reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
+			except Exception as e:
+				return
 
 			emoji = reaction.emoji
 			emoji_from_bot = self.bot.get_emoji(emoji.id)
@@ -35,11 +41,6 @@ class ReactRoles:
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, message_id, role.id, str(emoji.id) or str(emoji) , ctx.guild.id)
 		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
-
-	@commands.command()
-	@checks.is_admin()
-	async def remove_react_role(self, ctx, messgae_id: int, role):
-		pass
 
 
 	@commands.command()
@@ -72,6 +73,69 @@ class ReactRoles:
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
 		await ctx.send(embed=embed)
+
+	@commands.command()
+	@checks.is_admin()
+	async def delete_react_role(self, ctx):
+
+		query = "SELECT * FROM reactroles WHERE guild_id = $1"
+		results = await self.bot.pool.fetch(query, ctx.guild.id)
+		results = list(results)
+
+		react_role_dict = {}
+		for key, items in itertools.groupby(results, operator.itemgetter('message_id')):
+			react_role_dict[key] = list(items)
+
+		counter = 1
+		delete_temp = []
+		embed = discord.Embed(title="Reaction Roles for {}".format(ctx.guild), description = "Reply with the number of the ReactRole you would like to remove")
+		for message_id, reactroles in react_role_dict.items():
+			items_string = ""
+			for reactrole in reactroles:
+				emoji = self.bot.get_emoji(int(reactrole['emoji_id']))
+				if emoji:
+					emoji_string = "<{}:{}:{}>".format("", emoji.name, emoji.id)
+				else:
+					emoji_string = "EMOJI NOT FOUND"
+				role = discord.utils.get(ctx.guild.roles, id=reactrole["role_id"])
+				if role:
+					role = role.mention
+				else:
+					role = "Role not found role ID: {}".format(reactrole["role_id"])
+				items_string += "{}. Reaction {} for role {}\n".format(counter, emoji_string, role)
+				delete_temp.append(reactrole)
+			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
+
+		await ctx.send(embed=embed)
+
+		def check(m):
+			return (m.author = ctx.author) and (m.channel = ctx.channel)
+		
+		try:
+			choice = await self.bot.wait_for('message', check=check, timeout=120.0)
+		except Exception as e:
+			return
+
+		try:
+			chosen_delete = delete_temp[choice-1]
+		except Exception as e:
+			embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ='Invalid response... closing...')
+            await ctx.send(embed=embed)
+            return
+
+        message_id = chosen_delete["message_id"]
+        role_id = chosen_delete["role_id"]
+
+        query = "DELETE FROM reactroles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
+        await self.bot.pool.execute(query, message_id, role_id)
+        embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ='ReactRole Removed')
+        await ctx.send(embed=embed)
+
+
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
