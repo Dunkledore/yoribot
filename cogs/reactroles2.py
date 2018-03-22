@@ -26,7 +26,7 @@ class ReactRoles:
 
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES $1, $2"
-		await self.bot.pool.execute(query, message_id, rold.id, str(emoji.id) or , ctx.guild.id)
+		await self.bot.pool.execute(query, message_id, rold.id, str(emoji.id) or str(emoji) , ctx.guild.id)
 		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
 
 	@commands.command()
