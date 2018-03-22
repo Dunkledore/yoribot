@@ -158,13 +158,12 @@ class ReactRoles:
 		await hook.send(emoji)
 		await hook.send(isinstance(emoji, str))
 		await hook.send(type(emoji))
-		if isinstance(emoji, str):
-			compare_emoji = emoji
-		else:
+		if hasattr(emoji, id):
 			compare_emoji = emoji.id
+		else:
+			compare_emoji = str(emoji)
 
 		await hook.send(compare_emoji)
-		await hook.send(emoji.id)
 
 		query = "SELECT * FROM reactroles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
