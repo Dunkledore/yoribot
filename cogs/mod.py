@@ -211,11 +211,6 @@ class Mod:
         dataIO.save_json(self.location, self.json)
 
     @commands.command()
-    async def temp_status(self, ctx):
-        await self.bot.change_presence(activity=discord.Game(name="yoribot.com"))
-        await ctx.send("done")
-
-    @commands.command()
     @commands.guild_only()
     @checks.is_admin()
     async def antilinktoggle(self, ctx):
