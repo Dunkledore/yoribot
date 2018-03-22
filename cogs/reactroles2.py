@@ -44,7 +44,7 @@ class ReactRoles:
 		for message_id, reactroles in react_role_dict.items():
 			items_string = ""
 			for reactrole in reactroles:
-				items_string += "Reaction {} for role {}".format(reactrole['emoji_id'], react_role['role_id'])
+				items_string += "Reaction {} for role {}".format(reactrole['emoji_id'], reactrole['role_id'])
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
 		await ctx.send(embed)
