@@ -69,7 +69,7 @@ class ReactRoles:
 
 
 def setup(bot):
-	cog = ReactRole(bot)
+	cog = ReactRoles(bot)
 	bot.add_cog(cog)
 
 
