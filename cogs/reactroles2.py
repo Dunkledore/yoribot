@@ -104,6 +104,7 @@ class ReactRoles:
 					role = "Role not found role ID: {}".format(reactrole["role_id"])
 				items_string += "{}. Reaction {} for role {}\n".format(counter, emoji_string, role)
 				delete_temp.append(reactrole)
+				counter += 1
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
 		await ctx.send(embed=embed)
@@ -121,7 +122,7 @@ class ReactRoles:
 		except Exception as e:
 			embed=discord.Embed(color=ctx.message.author.color,
 								title = "⚠ Error",
-								description ='Invalid response... closing...')
+								description ='Invalid response... closing... ' + str(e))
 			await ctx.send(embed=embed)
 			return
 
