@@ -68,12 +68,11 @@ class ReactRoles:
 						if role:
 							await member.add_roles(role)
 		except Exception as error:
-
 			e = discord.Embed(title='React Error', colour=0xcc3366)
 			exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
 			e.description = f'```py\n{exc}\n```'
-			hook = self.bot.get_cog('Stats')
-			hook = await hook.webhook()
+			stats = self.bot.get_cog('Stats')
+			hook = await stats.webhook()
 			await hook.send(embed=e)
 
 
