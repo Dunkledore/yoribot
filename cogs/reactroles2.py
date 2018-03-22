@@ -179,7 +179,7 @@ class ReactRoles:
 	
 	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
 
-		if emoji.is_custom_emoji()
+		if emoji.is_custom_emoji():
 			compare_emoji = emoji.id
 		else:
 			compare_emoji = emoji.name
