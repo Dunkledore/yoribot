@@ -156,7 +156,7 @@ class ReactRoles:
 		hook = await stats.webhook()
 
 		await hook.send(emoji)
-
+		await hook.send(isinstance(emoji, str))
 		if isinstance(emoji, str):
 			compare_emoji = emoji
 		else:
