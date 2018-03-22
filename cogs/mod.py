@@ -213,6 +213,7 @@ class Mod:
     @commands.command()
     async def temp_status():
         await self.bot.change_presence(activity=discord.Game(name="yoribot.com"))
+        await ctx.send("done")
 
     @commands.command()
     @commands.guild_only()
