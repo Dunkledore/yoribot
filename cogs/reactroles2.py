@@ -74,8 +74,10 @@ class ReactRoles:
 				await hook.send("got member")
 				if member:
 					role = discord.utils.get(guild.roles, id=results["role_id"])
+					await hook.send("got role")
 					if role:
 						await member.add_roles(role)
+						await hook.send("gave role")
 			
 
 
