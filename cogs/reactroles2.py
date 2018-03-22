@@ -22,7 +22,7 @@ class ReactRoles:
 		
 		reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
 
-			emoji = reaction.emoji
+		emoji = reaction.emoji
 
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES $1, $2"
