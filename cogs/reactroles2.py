@@ -39,6 +39,7 @@ class ReactRoles:
 	@commands.commadn()
 	@check.is_admin()
 	async def remove_react_role(self, ctx, messgae_id: int, role):
+		pass
 
 
 	@commands.command()
