@@ -154,7 +154,7 @@ class ReactRoles:
 
 
 		if emoji.is_custom_emoji():
-			compare_emoji = emoji.id
+			compare_emoji = str(emoji.id)
 		else:
 			compare_emoji = emoji.name
 
@@ -182,7 +182,7 @@ class ReactRoles:
 
 		try:
 			if emoji.is_custom_emoji():
-				compare_emoji = emoji.id
+				compare_emoji = str(emoji.id)
 			else:
 				compare_emoji = emoji.name
 
