@@ -153,7 +153,7 @@ class ReactRoles:
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
 		if isinstance(emoji, str):
-			compare_emoji = emoji:
+			compare_emoji = emoji
 		else:
 			compare_emoji = emoji.id
 
@@ -175,7 +175,7 @@ class ReactRoles:
 	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
 
 		if isinstance(emoji, str):
-			compare_emoji = emoji:
+			compare_emoji = emoji
 		else:
 			compare_emoji = emoji.id
 
