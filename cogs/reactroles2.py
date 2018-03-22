@@ -160,8 +160,8 @@ class ReactRoles:
 			await hook.send(emoji)
 			await hook.send(isinstance(emoji, str))
 			await hook.send(type(emoji))
-			await hook.send(is_custom_emoji())
-			if is_custom_emoji():
+			await hook.send(emoji.is_custom_emoji())
+			if emoji.is_custom_emoji():
 				compare_emoji = emoji.id
 			else:
 				compare_emoji = emoji.name
