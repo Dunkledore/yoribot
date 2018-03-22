@@ -15,10 +15,10 @@ class ReactRoles:
 	async def add_react_role(self, ctx, message_id, role : discord.Role):
 
 		
-		reaction_requst_message = await ctx.send("Please react to this message with the desired Emoji for that role")
+		reaction_reqeust_message = await ctx.send("Please react to this message with the desired Emoji for that role")
 
 		def react_check(reaction, user):
-			return (reaction.message.id == reaction_reqeust_message.id and user == ctx.author)
+			return (reaction.message.id == reaction_request_message.id and user == ctx.author)
 		
 		reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
 
