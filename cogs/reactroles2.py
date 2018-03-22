@@ -45,7 +45,8 @@ class ReactRoles:
 		for message_id, reactroles in react_role_dict.items():
 			items_string = ""
 			for reactrole in reactroles:
-				items_string += "Reaction {} for role {}".format(reactrole['emoji_id'], reactrole['role_id'])
+				emoji = self.bot.get_emoji(reactrole['emoji_id'])
+				items_string += "Reaction {} for role {}".format(emoji, reactrole['role_id'])
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
 		await ctx.send(embed=embed)
@@ -61,26 +62,14 @@ class ReactRoles:
 		if not results:
 			return
 
-		await hook.send("got results")
-
 		for result in results:
-			await hook.send(str(result))
 			if (str(emoji.id or emoji)) == result['emoji_id']:
-				await hook.send("it equaled")
 				guild = self.bot.get_guild(result['guild_id'])
-				await hook.send(str(guild))
-				await hook.send("got guild")
-				await hook.send(str(user_id))
 				member = guild.get_member(user_id)
-				await hook.send(user_id)
-				await hook.send(str(member))
 				if member:
-					await hook.send("got member")
 					role = discord.utils.get(guild.roles, id=result["role_id"])
-					await hook.send("got role")
 					if role:
 						await member.add_roles(role)
-						await hook.send("gave role")
 			
 
 
