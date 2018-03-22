@@ -153,7 +153,7 @@ class ReactRoles:
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
 		stats = self.bot.get_cog("Stats")
-		hook = stats.webhook()
+		hook = await stats.webhook()
 
 		await hook.send(emoji)
 
