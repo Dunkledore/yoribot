@@ -120,20 +120,20 @@ class ReactRoles:
 			chosen_delete = delete_temp[choice-1]
 		except Exception as e:
 			embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ='Invalid response... closing...')
-            await ctx.send(embed=embed)
-            return
+								title = "⚠ Error",
+								description ='Invalid response... closing...')
+			await ctx.send(embed=embed)
+			return
 
-        message_id = chosen_delete["message_id"]
-        role_id = chosen_delete["role_id"]
+		message_id = chosen_delete["message_id"]
+		role_id = chosen_delete["role_id"]
 
-        query = "DELETE FROM reactroles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
-        await self.bot.pool.execute(query, message_id, role_id)
-        embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ='ReactRole Removed')
-        await ctx.send(embed=embed)
+		query = "DELETE FROM reactroles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
+		await self.bot.pool.execute(query, message_id, role_id)
+		embed=discord.Embed(color=ctx.message.author.color,
+								title = "✅ Success",
+								description ='ReactRole Removed')
+		await ctx.send(embed=embed)
 
 
 
