@@ -68,11 +68,14 @@ class ReactRoles:
 		for message_id, reactroles in react_role_dict.items():
 			items_string = ""
 			for reactrole in reactroles:
-				emoji = self.bot.get_emoji(int(reactrole['emoji_id']))
-				if emoji:
-					emoji_string = "<{}:{}:{}>".format("a" if emoji.animated else "", emoji.name, emoji.id)
-				else:
-					emoji_string = "EMOJI NOT FOUND"
+				try:
+					emoji = self.bot.get_emoji(int(reactrole['emoji_id']))
+					if emoji:
+						emoji_string = "<{}:{}:{}>".format("a" if emoji.animated else "", emoji.name, emoji.id)
+					else:
+						emoji_string = "EMOJI NOT FOUND"
+				except ValueError as e:
+					emoji_string = reactrole['emoji_id']
 				role = discord.utils.get(ctx.guild.roles, id=reactrole["role_id"])
 				if role:
 					role = role.mention
