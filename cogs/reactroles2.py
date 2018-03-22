@@ -68,7 +68,7 @@ class ReactRoles:
 			if (str(emoji.id or emoji)) == result['emoji_id']:
 				await hook.send("it equaled")
 				guild = self.bot.get_guild(result['guild_id'])
-				await hooj.send(str(guild))
+				await hook.send(str(guild))
 				await hook.send("got guild")
 				await hook.send(str(user_id))
 				member = guild.get_member(user_id)
