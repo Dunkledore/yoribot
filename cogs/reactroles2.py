@@ -15,15 +15,22 @@ class ReactRoles:
 	@checks.is_admin()
 	async def add_react_role(self, ctx, message_id: int, role : discord.Role):
 
-		
-		reaction_request_message = await ctx.send("Please react to this message with the desired Emoji for that role")
+		got_emoji = False
+		while not got_emoji:
+			reaction_request_message = await ctx.send("Please react to this message with the desired Emoji for that role")
 
-		def react_check(reaction, user):
-			return (reaction.message.id == reaction_request_message.id and user == ctx.author)
-		
-		reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
+			def react_check(reaction, user):
+				return (reaction.message.id == reaction_request_message.id and user == ctx.author)
+			
+			reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
 
-		emoji = reaction.emoji
+			emoji = reaction.emoji
+			emoji_from_bot self.bot.get_emoji(emoji.id or None):
+			if not emoji_from_bot:
+				await ctx.send("I can't find that emoji in any of the servers I'm in")
+			else:
+				got_emoji = True
+
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, message_id, role.id, str(emoji.id) or str(emoji) , ctx.guild.id)
