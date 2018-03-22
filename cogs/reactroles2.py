@@ -174,7 +174,7 @@ class ReactRoles:
 						await member.add_roles(role)
 
 	
-	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
+	async def on_raw_reaction_remove(self, emoji, message_id, channel_id, user_id):
 
 		stats = self.bot.get_cog('Stats')
 		hook = await stats.webhook()
