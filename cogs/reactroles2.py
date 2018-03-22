@@ -52,28 +52,28 @@ class ReactRoles:
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
-		try:
-			query = "SELECT * FROM reactroles WHERE message_id = $1"
-			results = await self.bot.pool.fetch(query, message_id)
+		stats = self.bot.get_cog('Stats')
+		hook = await stats.webhook()
 
-			if not results:
-				return
+		query = "SELECT * FROM reactroles WHERE message_id = $1"
+		results = await self.bot.pool.fetch(query, message_id)
 
-			for result in results:
-				if (emoji.id or str(emoji)) == result['emoji_id']:
-					guild = self.bot.get_guild(result['guild_id'])
-					member = guild.get_member("user_id")
-					if member:
-						role = discord.utils.get(guild.roles, id=results["role_id"])
-						if role:
-							await member.add_roles(role)
-		except Exception as error:
-			e = discord.Embed(title='React Error', colour=0xcc3366)
-			exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
-			e.description = f'```py\n{exc}\n```'
-			stats = self.bot.get_cog('Stats')
-			hook = await stats.webhook()
-			await hook.send(embed=e)
+		if not results:
+			return
+
+		await hook.send("got results")
+
+		for result in results:
+			if (emoji.id or str(emoji)) == result['emoji_id']:
+				guild = self.bot.get_guild(result['guild_id'])
+				member = guild.get_member("user_id")
+				await hook.send("got member")
+				if member:
+					role = discord.utils.get(guild.roles, id=results["role_id"])
+					if role:
+						await member.add_roles(role)
+			
+
 
 
 def setup(bot):
