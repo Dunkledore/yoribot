@@ -30,7 +30,7 @@ class ReactRoles:
 		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
 
 	@commands.command()
-	@check.is_admin()
+	@checks.is_admin()
 	async def view_react_roles(self, ctx):
 
 		query = "SELECT * FROM reactroles WHERE guild_id = $1"
