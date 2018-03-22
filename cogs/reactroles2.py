@@ -6,7 +6,7 @@ import operator
 
 class ReactRoles:
 
-	def __intit__(bot):
+	def __intit__(self, bot):
 		self.bot = bot
 
 
