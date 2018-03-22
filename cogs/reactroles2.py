@@ -152,46 +152,37 @@ class ReactRoles:
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
-		stats = self.bot.get_cog("Stats")
-		hook = await stats.webhook()
 
-		try:
+		if emoji.is_custom_emoji():
+			compare_emoji = emoji.id
+		else:
+			compare_emoji = emoji.name
 
-			await hook.send(emoji)
-			await hook.send(isinstance(emoji, str))
-			await hook.send(type(emoji))
-			await hook.send(emoji.is_custom_emoji())
-			if emoji.is_custom_emoji():
-				compare_emoji = emoji.id
-			else:
-				compare_emoji = emoji.name
+		await hook.send(compare_emoji)
 
-			await hook.send(compare_emoji)
+		query = "SELECT * FROM reactroles WHERE message_id = $1"
+		results = await self.bot.pool.fetch(query, message_id)
 
-			query = "SELECT * FROM reactroles WHERE message_id = $1"
-			results = await self.bot.pool.fetch(query, message_id)
+		if not results:
+			return
 
-			if not results:
-				return
+		for result in results:
+			await hook.send(result['emoji_id'])
+			if compare_emoji == result['emoji_id']:
+				guild = self.bot.get_guild(result['guild_id'])
+				member = guild.get_member(user_id)
+				if member:
+					role = discord.utils.get(guild.roles, id=result["role_id"])
+					if role:
+						await member.add_roles(role)
 
-			for result in results:
-				await hook.send(result['emoji_id'])
-				if compare_emoji == result['emoji_id']:
-					guild = self.bot.get_guild(result['guild_id'])
-					member = guild.get_member(user_id)
-					if member:
-						role = discord.utils.get(guild.roles, id=result["role_id"])
-						if role:
-							await member.add_roles(role)
-		except Exception as e:
-			await hook.send(str(e))
 	
 	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
 
-		if isinstance(emoji, str):
-			compare_emoji = emoji
-		else:
+		if emoji.is_custom_emoji()
 			compare_emoji = emoji.id
+		else:
+			compare_emoji = emoji.name
 
 		query = "SELECT * FROM reactroles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
