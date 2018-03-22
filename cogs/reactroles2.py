@@ -3,6 +3,7 @@ from discord.ext import commands
 from .utils import checks
 import itertools
 import operator
+import traceback
 
 class ReactRoles:
 
@@ -51,20 +52,30 @@ class ReactRoles:
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
-		query = "SELECT * FROM reactroles WHERE message_id = $1"
-		results = await self.bot.pool.fetch(query, message_id)
+		try:
+			query = "SELECT * FROM reactroles WHERE message_id = $1"
+			results = await self.bot.pool.fetch(query, message_id)
 
-		if not results:
-			return
+			if not results:
+				return
 
-		for result in results:
-			if (emoji.id or str(emoji)) == result['emoji_id']:
-				guild = self.bot.get_guild(result['guild_id'])
-				member = guild.get_member("user_id")
-				if member:
-					role = discord.utils.get(guild.roles, id=results["role_id"])
-					if role:
-						await member.add_roles(role)
+			for result in results:
+				if (emoji.id or str(emoji)) == result['emoji_id']:
+					guild = self.bot.get_guild(result['guild_id'])
+					member = guild.get_member("user_id")
+					if member:
+						role = discord.utils.get(guild.roles, id=results["role_id"])
+						if role:
+							await member.add_roles(role)
+		except Exception as error:
+
+			e = discord.Embed(title='React Error', colour=0xcc3366)
+			exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
+	        e.description = f'```py\n{exc}\n```'
+	        e.timestamp = datetime.datetime.utcnow()
+	        hook = self.bot.get_cog('Stats')
+	        hook = await hook.webhook()
+	        await hook.send(embed=e)
 
 
 def setup(bot):
