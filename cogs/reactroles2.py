@@ -47,7 +47,7 @@ class ReactRoles:
 				items_string += "Reaction {} for role {}".format(reactrole['emoji_id'], reactrole['role_id'])
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
-		await ctx.send(embed)
+		await ctx.send(embed=embed)
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
