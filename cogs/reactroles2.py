@@ -71,11 +71,11 @@ class ReactRoles:
 
 			e = discord.Embed(title='React Error', colour=0xcc3366)
 			exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
-	        e.description = f'```py\n{exc}\n```'
-	        e.timestamp = datetime.datetime.utcnow()
-	        hook = self.bot.get_cog('Stats')
-	        hook = await hook.webhook()
-	        await hook.send(embed=e)
+			e.description = f'```py\n{exc}\n```'
+			e.timestamp = datetime.datetime.utcnow()
+			hook = self.bot.get_cog('Stats')
+			hook = await hook.webhook()
+			await hook.send(embed=e)
 
 
 def setup(bot):
