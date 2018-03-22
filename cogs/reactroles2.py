@@ -25,7 +25,7 @@ class ReactRoles:
 			reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
 
 			emoji = reaction.emoji
-			emoji_from_bot = self.bot.get_emoji(emoji.id or None):
+			emoji_from_bot = self.bot.get_emoji(emoji.id):
 			if not emoji_from_bot:
 				await ctx.send("I can't find that emoji in any of the servers I'm in")
 			else:
