@@ -31,7 +31,7 @@ class ReactRoles:
 				return
 
 			emoji = reaction.emoji
-			if isinstance(emoji, basestring):
+			if isinstance(emoji, str):
 				emoji_to_insert = emoji
 			else:
 				emoji_from_bot = self.bot.get_emoji(emoji.id)
