@@ -33,13 +33,18 @@ class ReactRoles:
 			emoji = reaction.emoji
 			if isinstance(emoji, str):
 				emoji_to_insert = emoji
+				got_emoji = True
 			else:
 				emoji_from_bot = self.bot.get_emoji(emoji.id)
 				if not emoji_from_bot:
-					await ctx.send("I can't find that emoji in any of the servers I'm in")
+					embed=discord.Embed(color=ctx.message.author.color,
+                                title = "⚠ Error",
+                                description ="I can't find emoji in any of the servers I'm in")
+					await ctx.send(embed=embed)
 					return
 				else:
 					emoji_to_insert = str(emoji.id)
+					got_emoji = True
 
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
