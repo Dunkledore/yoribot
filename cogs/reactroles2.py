@@ -152,6 +152,11 @@ class ReactRoles:
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
+		if isinstance(emoji, str):
+			compare_emoji = emoji:
+		else:
+			compare_emoji = emoji.id
+
 		query = "SELECT * FROM reactroles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
 
@@ -159,7 +164,7 @@ class ReactRoles:
 			return
 
 		for result in results:
-			if (str(emoji.id or emoji)) == result['emoji_id']:
+			if compare_emoji == result['emoji_id']:
 				guild = self.bot.get_guild(result['guild_id'])
 				member = guild.get_member(user_id)
 				if member:
@@ -169,6 +174,11 @@ class ReactRoles:
 	
 	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
 
+		if isinstance(emoji, str):
+			compare_emoji = emoji:
+		else:
+			compare_emoji = emoji.id
+
 		query = "SELECT * FROM reactroles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
 
@@ -176,7 +186,7 @@ class ReactRoles:
 			return
 
 		for result in results:
-			if (str(emoji.id or emoji)) == result['emoji_id']:
+			if compare_emoji == result['emoji_id']:
 				guild = self.bot.get_guild(result['guild_id'])
 				member = guild.get_member(user_id)
 				if member:
