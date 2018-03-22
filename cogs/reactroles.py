@@ -252,7 +252,7 @@ Gave a total of {g} roles."""
     
     @_roles.command(name="add", pass_context=True, no_pm=True)
     @checks.is_mod()
-    async def _roles_add(self, ctx, message_id, channel: discord.Channel, emoji, *, role: discord.Role):
+    async def _roles_add(self, ctx, message_id, channel: discord.TextChannel, emoji, *, role: discord.Role):
         """Add a role on a message
         `message_id` must be found in `channel`
         `emoji` can either be a Unicode emoji or a server emote
@@ -296,7 +296,7 @@ Gave a total of {g} roles."""
     
     @_roles.command(name="remove", pass_context=True, no_pm=True)
     @checks.is_mod()
-    async def _roles_remove(self, ctx, message_id, channel: discord.Channel, *, role: discord.Role):
+    async def _roles_remove(self, ctx, message_id, channel: discord.TextChannel, *, role: discord.Role):
         """Remove a role from a message
         `message_id` must be found in `channel` and be bound to `role`"""
         server = channel.server
@@ -330,7 +330,7 @@ Gave a total of {g} roles."""
     
     @_roles.command(name="check", pass_context=True, no_pm=True)
     @checks.is_mod()
-    async def _roles_check(self, ctx, message_id, channel: discord.Channel):
+    async def _roles_check(self, ctx, message_id, channel: discord.TextChannel):
         """Goes through all reactions of a message and gives the roles accordingly
         This does NOT work with messages in a link"""
         server = channel.server
