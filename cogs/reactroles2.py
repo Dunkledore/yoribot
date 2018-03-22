@@ -36,6 +36,11 @@ class ReactRoles:
 		await self.bot.pool.execute(query, message_id, role.id, str(emoji.id) or str(emoji) , ctx.guild.id)
 		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
 
+	@commands.commadn()
+	@check.is_admin()
+	async def remove_react_role(self, ctx, messgae_id: int, role):
+
+
 	@commands.command()
 	@checks.is_admin()
 	async def view_react_roles(self, ctx):
@@ -53,15 +58,16 @@ class ReactRoles:
 			items_string = ""
 			for reactrole in reactroles:
 				emoji = self.bot.get_emoji(int(reactrole['emoji_id']))
-				items_string += "Reaction {} for role {}".format(emoji, reactrole['role_id'])
+				if emoji:
+					emoji_string = "<{}:{}:{}>".format((a if emoji.animated else ""), emoji.name, emoji.id)
+				else:
+					emoji_string = "EMOJI NOT FOUND"
+				items_string += "Reaction {} for role {}".format(emoji_string, reactrole['role_id'])
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
 		await ctx.send(embed=embed)
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
-
-		stats = self.bot.get_cog('Stats')
-		hook = await stats.webhook()
 
 		query = "SELECT * FROM reactroles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
@@ -77,7 +83,24 @@ class ReactRoles:
 					role = discord.utils.get(guild.roles, id=result["role_id"])
 					if role:
 						await member.add_roles(role)
-			
+	
+	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
+
+		query = "SELECT * FROM reactroles WHERE message_id = $1"
+		results = await self.bot.pool.fetch(query, message_id)
+
+		if not results:
+			return
+
+		for result in results:
+			if (str(emoji.id or emoji)) == result['emoji_id']:
+				guild = self.bot.get_guild(result['guild_id'])
+				member = guild.get_member(user_id)
+				if member:
+					role = discord.utils.get(guild.roles, id=result["role_id"])
+					if role:
+						await member.remove_roles(role)
+
 
 
 
