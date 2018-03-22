@@ -36,7 +36,7 @@ class ReactRoles:
 		await self.bot.pool.execute(query, message_id, role.id, str(emoji.id) or str(emoji) , ctx.guild.id)
 		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
 
-	@commands.commadn()
+	@commands.command()
 	@check.is_admin()
 	async def remove_react_role(self, ctx, messgae_id: int, role):
 		pass
