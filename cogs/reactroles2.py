@@ -165,7 +165,6 @@ class ReactRoles:
 			return
 
 		for result in results:
-			await hook.send(result['emoji_id'])
 			if compare_emoji == result['emoji_id']:
 				guild = self.bot.get_guild(result['guild_id'])
 				member = guild.get_member(user_id)
