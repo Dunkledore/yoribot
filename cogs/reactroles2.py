@@ -68,7 +68,7 @@ class ReactRoles:
 					role = role.mention
 				else:
 					role = "Role not found role ID: {}".format(reactrole["role_id"])
-				items_string += "Reaction {} for role {}".format(emoji_string, reactrole['role_id'])
+				items_string += "Reaction {} for role {}\n".format(emoji_string, role)
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
 		await ctx.send(embed=embed)
