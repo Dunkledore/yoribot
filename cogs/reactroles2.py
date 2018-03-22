@@ -63,6 +63,11 @@ class ReactRoles:
 					emoji_string = "<{}:{}:{}>".format("", emoji.name, emoji.id)
 				else:
 					emoji_string = "EMOJI NOT FOUND"
+				role = discord.utils.get(ctx.guild.roles, id=reactrole["role_id"])
+				if role:
+					role = role.mention
+				else:
+					role = "Role not found role ID: {}".format(reactrole["role_id"])
 				items_string += "Reaction {} for role {}".format(emoji_string, reactrole['role_id'])
 			embed.add_field(name="Roles for message id: {}".format(message_id), value=items_string)
 
