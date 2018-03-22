@@ -66,7 +66,9 @@ class ReactRoles:
 		for result in results:
 			if (emoji.id or str(emoji)) == result['emoji_id']:
 				guild = self.bot.get_guild(result['guild_id'])
-				member = guild.get_member("user_id")
+				await hook.send("got guild")
+				await hook.send(user_id)
+				member = guild.get_member(user_id)
 				await hook.send("got member")
 				if member:
 					role = discord.utils.get(guild.roles, id=results["role_id"])
