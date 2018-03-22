@@ -118,7 +118,7 @@ class ReactRoles:
 			return
 
 		try:
-			chosen_delete = delete_temp[choice-1]
+			chosen_delete = delete_temp[int(choice.content)-1]
 		except Exception as e:
 			embed=discord.Embed(color=ctx.message.author.color,
 								title = "⚠ Error",
