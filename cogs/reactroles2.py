@@ -164,6 +164,7 @@ class ReactRoles:
 			compare_emoji = emoji.id
 
 		await hook.send(compare_emoji)
+		await hook.send(emoji.id)
 
 		query = "SELECT * FROM reactroles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
