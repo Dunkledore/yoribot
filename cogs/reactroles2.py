@@ -37,7 +37,7 @@ class ReactRoles:
 		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
 
 	@commands.command()
-	@check.is_admin()
+	@checks.is_admin()
 	async def remove_react_role(self, ctx, messgae_id: int, role):
 		pass
 
