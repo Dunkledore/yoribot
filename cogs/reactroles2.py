@@ -176,25 +176,31 @@ class ReactRoles:
 	
 	async def on_raw_reaction_remove(emoji, message_id, channel_id, user_id):
 
-		if emoji.is_custom_emoji():
-			compare_emoji = emoji.id
-		else:
-			compare_emoji = emoji.name
+		stats = self.bot.get_cog('Stats')
+		hook = await stats.webhook()
 
-		query = "SELECT * FROM reactroles WHERE message_id = $1"
-		results = await self.bot.pool.fetch(query, message_id)
+		try:
+			if emoji.is_custom_emoji():
+				compare_emoji = emoji.id
+			else:
+				compare_emoji = emoji.name
 
-		if not results:
-			return
+			query = "SELECT * FROM reactroles WHERE message_id = $1"
+			results = await self.bot.pool.fetch(query, message_id)
 
-		for result in results:
-			if compare_emoji == result['emoji_id']:
-				guild = self.bot.get_guild(result['guild_id'])
-				member = guild.get_member(user_id)
-				if member:
-					role = discord.utils.get(guild.roles, id=result["role_id"])
-					if role:
-						await member.remove_roles(role)
+			if not results:
+				return
+
+			for result in results:
+				if compare_emoji == result['emoji_id']:
+					guild = self.bot.get_guild(result['guild_id'])
+					member = guild.get_member(user_id)
+					if member:
+						role = discord.utils.get(guild.roles, id=result["role_id"])
+						if role:
+							await member.remove_roles(role)
+		except Exception as e:
+			await hook.send(str(e))
 
 
 
