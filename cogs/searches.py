@@ -66,7 +66,7 @@ class Searches:
         """Gets a random cat picture."""
         await self.get_meow(ctx)
 
-    async def get_meow(self, ctx: commands.Context):.
+    async def get_meow(self, ctx: commands.Context):
         
 
         async with aiohttp.ClientSession() as session:
