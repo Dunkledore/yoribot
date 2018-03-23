@@ -380,7 +380,7 @@ class HelpPaginator(Pages):
                     continue
                 if not hasattr(description, 'catagory'):
                     continue
-                if description.catagory != "catagory":
+                if description.catagory != catagory:
                     continue
                 description = inspect.getdoc(description) or discord.Embed.Empty
             else:
