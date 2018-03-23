@@ -404,7 +404,7 @@ class MusicPlayer:
             self.vchannel = author.voice.channel
         else:
             self.vchannel = None
-            
+
         if self.vchannel:
             self.statuslog.info("Connecting to voice")
             try:
@@ -473,7 +473,7 @@ class MusicPlayer:
         # Initial datapacks
         datapacks = [
             ("Now playing", "---", False),
-            ("Queue", "```{}```".format(''.join(queue_display)), False),
+            ("Queue", "```{}```".format(''.join(queue_display or "Empty")), False),
             ("Songs left in queue", "---", True),
             ("Volume", "{}%".format(self.volume), True),
             ("Status", "```---```", False)
@@ -569,7 +569,7 @@ class MusicPlayer:
             if songname:
                 queue_display.append("{}: {}\n".format(str(i + 1), songname))
 
-        self.queuelog.info(''.join(queue_display))
+        self.queuelog.info(''.join(queue_display or "Empty"))
         self.queuelenlog.info(str(len(self.queue)))
 
     async def vplay(self):
