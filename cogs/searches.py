@@ -27,7 +27,7 @@ class Searches:
           '(youtube|youtu|youtube-nocookie)\.(com|be)/'
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
         self.url_dog = "https://random.dog/woof.json"
-        self.url_cat = "https://random.cat/meow"
+        self.url_cat = "https://aws.random.cat/meow"
         self.numbs = {
             1: "1\U000020E3",
             2: "2\U000020E3",
