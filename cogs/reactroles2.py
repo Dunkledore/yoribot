@@ -22,7 +22,10 @@ class ReactRoles:
 
 		got_emoji = False
 		while not got_emoji:
-			reaction_request_message = await ctx.send("Please react to this message with the desired Emoji for that role")
+			embed=discord.Embed(color=ctx.message.author.color,
+                                title = "❕ Notice",
+                                description ='React to this message with the desired emoji for {}'.format(role.mention))
+			await ctx.send(embed=embed)
 
 			def react_check(reaction, user):
 				return (reaction.message.id == reaction_request_message.id and user == ctx.author)
@@ -41,7 +44,7 @@ class ReactRoles:
 				if not emoji_from_bot:
 					embed=discord.Embed(color=ctx.message.author.color,
                                 title = "⚠ Error",
-                                description ="I can't find emoji in any of the servers I'm in")
+                                description ="I can't find emoji in any of the guilds I'm in")
 					await ctx.send(embed=embed)
 					return
 				else:
@@ -51,7 +54,10 @@ class ReactRoles:
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, message_id, role.id, emoji_to_insert, ctx.guild.id)
-		await ctx.send("Emoji set to {} for {}".format(emoji, role.name))
+		embed=discord.Embed(color=ctx.message.author.color,
+                                title = "✅ Success",
+                                description ="Emoji set to {} for {}".format(emoji, role.name))
+		await ctx.send(embed=embed)
 
 
 	@commands.command()
