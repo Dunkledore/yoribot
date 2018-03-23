@@ -9,6 +9,7 @@ import traceback
 #create table reactroles (id SERIAL, message_id bigint, role_id bigint, emoji_id text, guild_id bigint)
 
 class ReactRoles:
+	"""Use message reactions to manage selfroles"""
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -17,6 +18,7 @@ class ReactRoles:
 	@commands.command()
 	@checks.is_admin()
 	async def add_react_role(self, ctx, message_id: int, role : discord.Role):
+		"""Add a ReactRole. Provide the message ID of the message to be reacted to and the role of the one you want to grant"""
 
 		got_emoji = False
 		while not got_emoji:
@@ -55,6 +57,7 @@ class ReactRoles:
 	@commands.command()
 	@checks.is_admin()
 	async def view_react_roles(self, ctx):
+		"""See all active ReactRoles"""
 
 		query = "SELECT * FROM reactroles WHERE guild_id = $1"
 		results = await self.bot.pool.fetch(query, ctx.guild.id)
@@ -89,6 +92,7 @@ class ReactRoles:
 	@commands.command()
 	@checks.is_admin()
 	async def delete_react_role(self, ctx):
+		"""Delete a ReactRole"""
 
 		query = "SELECT * FROM reactroles WHERE guild_id = $1"
 		results = await self.bot.pool.fetch(query, ctx.guild.id)
@@ -104,11 +108,14 @@ class ReactRoles:
 		for message_id, reactroles in react_role_dict.items():
 			items_string = ""
 			for reactrole in reactroles:
-				emoji = self.bot.get_emoji(int(reactrole['emoji_id']))
-				if emoji:
-					emoji_string = "<{}:{}:{}>".format("", emoji.name, emoji.id)
-				else:
-					emoji_string = "EMOJI NOT FOUND"
+				try:
+					emoji = self.bot.get_emoji(int(reactrole['emoji_id']))
+					if emoji:
+						emoji_string = "<{}:{}:{}>".format("a" if emoji.animated else "", emoji.name, emoji.id)
+					else:
+						emoji_string = "EMOJI NOT FOUND"
+				except ValueError as e:
+					emoji_string = reactrole['emoji_id']
 				role = discord.utils.get(ctx.guild.roles, id=reactrole["role_id"])
 				if role:
 					role = role.mention
