@@ -73,7 +73,6 @@ class Searches:
             async with session.get(self.url_cat) as response:
                 text = await response.text()
                 json_text = json.loads(text)
-                await ctx.send(json_text)
                 img = json_text["file"].replace("\\/","/")
                 if img.endswith(".mp4"):
                     await self.get_meow(ctx)
@@ -93,12 +92,15 @@ class Searches:
 
     async def get_woof(self, ctx: commands.Context):
         
-        async with aiohttp.get(self.url_dog) as response:
-            img = json.loads(await response.text())["url"]
-            if img.endswith(".mp4"):
-                await self.get_woof(ctx)
-                return
-                
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.url_dog) as response:
+                text = await response.text()
+                json_text = json.loads(text)
+                img = json_text["url"].replace("\\/","/")
+                if img.endswith(".mp4"):
+                    await self.get_woof(ctx)
+                    return
+
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name="Random dog picture", icon_url="http://bit.ly/2jotVFo")
             em.set_image(url=img)
