@@ -25,7 +25,7 @@ class ReactRoles:
 			embed=discord.Embed(color=ctx.message.author.color,
                                 title = "❕ Notice",
                                 description ='React to this message with the desired emoji for {}'.format(role.mention))
-			await ctx.send(embed=embed)
+			reaction_request_message = await ctx.send(embed=embed)
 
 			def react_check(reaction, user):
 				return (reaction.message.id == reaction_request_message.id and user == ctx.author)
