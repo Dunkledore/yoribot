@@ -115,6 +115,7 @@ class Mod:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = 'Moderation'
 
         # guild_id: set(user_id)
         self._recently_kicked = defaultdict(set)
