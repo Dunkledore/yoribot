@@ -459,7 +459,16 @@ class MusicPlayer:
         # Initial queue display
         queue_display = []
         for i in range(self.queue_display):
-            queue_display.append("{}: ---\n".format(str(i + 1)))
+            try:
+                if len(self.queue[i][1]) > 40:
+                    songname = self.queue[i][1][:37] + "..."
+                else:
+                    songname = self.queue[i][1]
+            except IndexError:
+                pass
+                songname = None
+            if songname:
+                queue_display.append("{}: {}\n".format(str(i + 1), songname))
 
         # Initial datapacks
         datapacks = [
