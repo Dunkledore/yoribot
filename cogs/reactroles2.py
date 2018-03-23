@@ -147,7 +147,7 @@ class ReactRoles:
 		except Exception as e:
 			embed=discord.Embed(color=ctx.message.author.color,
 								title = "⚠ Error",
-								description ='Invalid response... closing... ' + str(e))
+								description ='Invalid response... closing... ')
 			await ctx.send(embed=embed)
 			return
 
