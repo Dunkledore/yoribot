@@ -252,7 +252,7 @@ class Config:
 
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
-                                description = "Now Ignoring" + entities))
+                                description = "Now Ignoring" + str(entities)))
 
     @commands.command()
     @checks.is_mod()
