@@ -356,7 +356,7 @@ class HelpPaginator(Pages):
         return self
 
     @classmethod
-    async def from_bot(cls, ctx):
+    async def from_catagory(cls, ctx, catagory):
         def key(c):
             return c.cog_name or '\u200bMisc'
 
@@ -375,10 +375,22 @@ class HelpPaginator(Pages):
                 continue
 
             description = ctx.bot.get_cog(cog)
-            if description is None:
-                description = discord.Embed.Empty
-            else:
+            if catagory != 'all':
+                if description is None:
+                    continue
+                if not hasattr(description, 'catagory'):
+                    continue
+                if description.catagory != "catagory":
+                    continue
                 description = inspect.getdoc(description) or discord.Embed.Empty
+            else:
+                if description is None:
+                    description = discord.Embed.Empty
+                else:
+                    description = inspect.getdoc(description) or discord.Embed.Empty
+
+                
+            description = inspect.getdoc(description) or discord.Embed.Empty
 
             nested_pages.extend((cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
 

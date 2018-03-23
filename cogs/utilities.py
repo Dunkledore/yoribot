@@ -39,9 +39,14 @@ class Utilities:
     async def _help(self, ctx, *, command: str = None):
         """Shows help about a command or the bot"""
 
+        if commnad is None:
+            #send basic groups
+
+        cog_groups = ['Moderation', 'Adminstration']
+        
         try:
-            if command is None:
-                p = await HelpPaginator.from_bot(ctx)
+            if command in cog_groups:
+                p = await HelpPaginator.from_catagory(ctx, )
             else:
                 entity = self.bot.get_cog(command) or self.bot.get_command(command)
 
