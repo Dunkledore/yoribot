@@ -71,7 +71,10 @@ class Searches:
 
         async with aiohttp.ClientSession() as session:
             async with session.get(self.url_cat) as response:
-                img = json.loads(await response.text())["file"].replace("\\/","/")
+            	text = await response.text()
+            	json_text = json.load(text)
+            	await ctx.send(json_text)
+                img = json_text["file"].replace("\\/","/")
                 if img.endswith(".mp4"):
                     await self.get_meow(ctx)
                     return
