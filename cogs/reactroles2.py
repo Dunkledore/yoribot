@@ -15,7 +15,7 @@ class ReactRoles:
 		self.bot = bot
 
 
-	@commands.command()
+	@commands.command(aliases=['add_react_roles'])
 	@checks.is_admin()
 	async def add_react_role(self, ctx, message_id: int, role : discord.Role):
 		"""Add a ReactRole. Provide the message ID of the message to be reacted to and the role of the one you want to grant"""
@@ -60,7 +60,7 @@ class ReactRoles:
 		await ctx.send(embed=embed)
 
 
-	@commands.command()
+	@commands.command(aliases=['view_react_role'])
 	@checks.is_admin()
 	async def view_react_roles(self, ctx):
 		"""See all active ReactRoles"""
@@ -95,7 +95,7 @@ class ReactRoles:
 
 		await ctx.send(embed=embed)
 
-	@commands.command()
+	@commands.command(aliases=['delete_react_roles'])
 	@checks.is_admin()
 	async def delete_react_role(self, ctx):
 		"""Delete a ReactRole"""
