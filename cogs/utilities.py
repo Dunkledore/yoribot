@@ -39,7 +39,8 @@ class Utilities:
     async def _help(self, ctx, *, command: str = None):
         """Shows help about a command or the bot"""
 
-        if commnad is None:
+        if command is None:
+            pass
             #send basic groups
 
         cog_groups = ['Moderation', 'Adminstration']
