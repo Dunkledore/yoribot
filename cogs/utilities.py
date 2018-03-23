@@ -47,7 +47,7 @@ class Utilities:
         
         try:
             if command in cog_groups:
-                p = await HelpPaginator.from_catagory(ctx, )
+                p = await HelpPaginator.from_catagory(ctx, command)
             else:
                 entity = self.bot.get_cog(command) or self.bot.get_command(command)
 
