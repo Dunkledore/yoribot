@@ -39,6 +39,7 @@ class Searches:
             8: "8\U000020E3",
             9: "9\U000020E3",
         }
+        self.catagory = "Personal Utility"
 
     @commands.command(name='youtube')
     @commands.guild_only()

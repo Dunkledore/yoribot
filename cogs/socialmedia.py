@@ -21,6 +21,7 @@ class SocialMedia:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 		self.api_cache = []
+		self.catagory = "Guild Management"
 
 	def get_api(self, creds):
 		for api in self.api_cache:

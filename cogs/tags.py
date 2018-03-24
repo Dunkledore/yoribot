@@ -119,6 +119,7 @@ class Tags:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Perosnal Utility"
 
     async def __error(self, ctx, error):
         if isinstance(error, (UnavailableTagCommand, UnableToUseBox)):

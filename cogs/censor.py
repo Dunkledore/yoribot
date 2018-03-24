@@ -33,6 +33,7 @@ class Censor:
         self.bot = bot
         self.regexen = dataIO.load_json(JSON_PATH)
         self.recache = {}
+        self.catagory = "Guild Management"
         bot.loop.create_task(self.compile_regexen())
 
     def _re_present(self, obj):

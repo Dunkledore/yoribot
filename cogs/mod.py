@@ -59,6 +59,7 @@ class ModConfig:
         self.broadcast_channel_id = record['broadcast_channel']
         self.mention_count = record['mention_count']
         self.safe_mention_channel_ids = set(record['safe_mention_channel_ids'] or [])
+        self.catagory = "Guild Management"
         return self
 
     @property

@@ -34,6 +34,7 @@ class Pokedex:
     def __init__(self, bot):
         self.bot = bot
         self.version = "2.4.02"
+        self.catagory = "3rd Party Integration"
 
     @commands.command(aliases=["dex"])
     async def pokedex(self, ctx, *, pokemon: str):

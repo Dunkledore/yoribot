@@ -12,6 +12,7 @@ class Weather:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Personal Utility"
         self.settings_file = 'data/weather/weather.json'
         self.settings = dataIO.load_json(self.settings_file)
         self.countries = {

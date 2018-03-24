@@ -13,6 +13,7 @@ class ReactRoles:
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.catagory = "Guild Management"
 
 
 	@commands.command(aliases=['add_react_roles'])

@@ -25,6 +25,7 @@ class MemberAudit:
         self.settings_path = "data/membership/settings.json"
         self.settings = dataIO.load_json(self.settings_path)
         self.deletedmessages = MaxList(500)
+        self.catagory = "Guild Management"
         
 
     def checksettings(self, guild):

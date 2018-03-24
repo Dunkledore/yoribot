@@ -13,6 +13,7 @@ class Away:
 	def __init__(self,bot):
 	
 		self.awaydata={}	
+		self.catagory = "Personal Utility"
 		
 	def make_away(self,user,awaymessage):
 	#create an entry in memory for said user including their id and message
