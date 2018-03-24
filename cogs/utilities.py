@@ -44,14 +44,15 @@ class Utilities:
             embed = discord.Embed(Title=discord.Embed.Empty, description=discord.Embed.Empty)
             embed.add_field(name="Catagories", value='3rd Party Integration \nPersonal Utility \nGuild Management \nGames \nCross Guild Function')
             embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
+            embed.set_footer(text="For user a list of all commands use [p]help all")
             await ctx.send(embed=embed)
             return
 
 
-        cog_groups = ['3rd Party Integration', 'Personal Utility', 'Guild Management', 'Games', 'Cross Guild Function']
+        cog_groups = ['3rd party integration', 'personal utility', 'guild management', 'games', 'cross guild function', 'all']
         try:
-            if command in cog_groups:
-                p = await HelpPaginator.from_catagory(ctx, command)
+            if command.lower() in cog_groups:
+                p = await HelpPaginator.from_catagory(ctx, command.lower())
             else:
                 entity = self.bot.get_cog(command) or self.bot.get_command(command)
 
