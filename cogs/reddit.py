@@ -30,6 +30,7 @@ class Reddit:
         self.tokenExpires = False
         self.tasks = []
         self.modes = ["top", "rising", "new", "random", "controversial", "hot"]
+        self.catagory = "3rd Party Integration"
 
     async def _ensureAuth(self, ctx):
         if not self.token or self.tokenExpires < datetime.utcnow():

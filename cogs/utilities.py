@@ -29,6 +29,7 @@ class Utilities:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Perosnal Utility"
         bot.remove_command('help')
 
     async def __error(self, ctx, error):
@@ -40,10 +41,12 @@ class Utilities:
         """Shows help about a command or the bot"""
 
         if command is None:
-            pass
+            embed = discord.Embed(Title="Yori Bot help", description=discord.Embed.Empty)
+            embed.add_field(name="Catagories", value='3rd Party Integration \nPersonal Utility \nGuild Management \nGames \nCross Guild Function')
+            await ctx.send(embed=embed)
             #send basic groups
 
-        cog_groups = ['Moderation', 'Adminstration']
+        cog_groups = ['3rd Party Integration', 'Personal Utility', 'Guild Management', 'Games', 'Cross Guild Function']
         
         try:
             if command in cog_groups:

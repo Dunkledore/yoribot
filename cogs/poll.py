@@ -10,6 +10,7 @@ class Polls:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Guild Management"
 
     @commands.command()
     @commands.guild_only()

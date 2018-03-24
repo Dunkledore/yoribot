@@ -29,6 +29,7 @@ class Trivia:
         self.file_path = "data/trivia/settings.json"
         settings = dataIO.load_json(self.file_path)
         self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
+        self.catagory = "Games"
 
     @commands.group()
     @commands.guild_only()

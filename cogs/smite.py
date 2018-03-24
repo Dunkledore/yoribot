@@ -22,6 +22,7 @@ class Smite:
         self.settings = dataIO.load_json(self.settings_path)
         self.url_pc = 'http://api.smitegame.com/smiteapi.svc'
         self.header = {"User-Agent": "flapjackcogs/1.0"}
+        self.catagory = "3rd Party Integration"
 
     @commands.command()
     @checks.is_owner()

@@ -14,6 +14,7 @@ class Ratings:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Games"
 
     @commands.command()
     async def sparkles(self, ctx, user):

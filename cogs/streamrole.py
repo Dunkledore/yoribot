@@ -58,6 +58,7 @@ class StreamRole:
         streamsettings = dataIO.load_json("data/streamrole/streamsettings.json")
         self.streamsettings = defaultdict(dict, streamsettings)
         self.messages_cache = defaultdict(list)
+        self.catagory = "Guild Management"
 
     @commands.group(pass_context=True, no_pm=True, name="streamroleset")
     @checks.is_admin()

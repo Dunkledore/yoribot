@@ -64,6 +64,7 @@ class Comics:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "3rd Party Integration"
 
     @commands.command(aliases=['funnyx', 'fx'])
     async def xkcd(self, ctx):

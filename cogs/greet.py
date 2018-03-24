@@ -12,6 +12,7 @@ class SpecialRoles:
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.catagory = "Guild Management"
 
 
     ###################### GREET #########################
