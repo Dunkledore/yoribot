@@ -50,7 +50,7 @@ class Utilities:
             cogs = []
             import itertools
             for cog, commands in itertools.groupby(entries, key=key):
-                if cog not in nested_pages:
+                if cog not in cogs:
                     cogs.append(cog)
             cog_string = ""
             for cog in cogs:
