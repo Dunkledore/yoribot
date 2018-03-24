@@ -48,8 +48,6 @@ class Utilities:
 
 
         cog_groups = ['3rd Party Integration', 'Personal Utility', 'Guild Management', 'Games', 'Cross Guild Function']
-        await ctx.send(command)
-        await ctx.send(command in cog_groups)
         try:
             if command in cog_groups:
                 p = await HelpPaginator.from_catagory(ctx, command)
