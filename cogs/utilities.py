@@ -56,10 +56,10 @@ class Utilities:
             for cog in cogs:
                 cog_string += cog + "\n"
 
-            embed = discord.Embed(Title=discord.Embed.Empty, description=discord.Embed.Empty)
+            embed = discord.Embed(Title=discord.Embed.Empty, description="Here is a full list of catagories. Use `*help <category_name>` for more info on a specific category. For example. `*help Mod` for moderation specific commands ")
             embed.add_field(name="Catagories", value=cog_string)
             embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-            embed.set_footer(text="For a list of all commands use [p]help all")
+            embed.set_footer(text="For a list of all commands use *help all")
             await ctx.send(embed=embed)
             return
 
