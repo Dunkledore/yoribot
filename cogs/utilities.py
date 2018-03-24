@@ -41,8 +41,9 @@ class Utilities:
         """Shows help about a command or the bot"""
 
         if command is None:
-            embed = discord.Embed(Title="Yori Bot help", description=discord.Embed.Empty)
+            embed = discord.Embed(Title=discord.Embed.Empty, description=discord.Embed.Empty)
             embed.add_field(name="Catagories", value='3rd Party Integration \nPersonal Utility \nGuild Management \nGames \nCross Guild Function')
+            embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
             await ctx.send(embed=embed)
             return
 
