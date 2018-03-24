@@ -49,7 +49,7 @@ class Utilities:
             entries = sorted(ctx.bot.commands, key=key)
             cogs = []
             import itertools
-            for cog, commands in itertools.groupby(entries, key=key):
+            for cog, cmds in itertools.groupby(entries, key=key):
                 if cog not in cogs:
                     cogs.append(cog)
 
@@ -59,9 +59,7 @@ class Utilities:
             #embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
             #embed.set_footer(text="For a list of all commands use *help all")
             p = Pages(ctx, entries=cogs, per_page=15)
-            p.embed.description = "Full list of catagories. Use `*help <category_name>` for more info on a specific category. For example. `*help Mod` for moderation specific commands"
             p.embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-            p.embed.set_footer(text="For a list of all commands use *help all")
             await p.paginate()
             return
 
