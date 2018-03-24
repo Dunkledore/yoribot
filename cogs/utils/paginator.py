@@ -389,9 +389,6 @@ class HelpPaginator(Pages):
                 else:
                     description = inspect.getdoc(description) or discord.Embed.Empty
 
-                
-            description = inspect.getdoc(description) or discord.Embed.Empty
-
             nested_pages.extend((cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
 
         self = cls(ctx, nested_pages, per_page=1) # this forces the pagination session
