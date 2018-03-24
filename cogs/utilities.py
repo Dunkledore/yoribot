@@ -44,10 +44,12 @@ class Utilities:
             embed = discord.Embed(Title="Yori Bot help", description=discord.Embed.Empty)
             embed.add_field(name="Catagories", value='3rd Party Integration \nPersonal Utility \nGuild Management \nGames \nCross Guild Function')
             await ctx.send(embed=embed)
-            #send basic groups
+            return
+
 
         cog_groups = ['3rd Party Integration', 'Personal Utility', 'Guild Management', 'Games', 'Cross Guild Function']
-        
+        await ctx.send(command)
+        await ctx.send(command in cog_groups)
         try:
             if command in cog_groups:
                 p = await HelpPaginator.from_catagory(ctx, command)
