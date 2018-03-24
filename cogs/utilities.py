@@ -1,6 +1,6 @@
 from discord.ext import commands
 from .utils import checks, formats
-from .utils.paginator import HelpPaginator, CannotPaginate
+from .utils.paginator import HelpPaginator, CannotPaginate, Pages
 import discord
 from collections import OrderedDict, deque, Counter
 import os, datetime
@@ -52,17 +52,14 @@ class Utilities:
             for cog, commands in itertools.groupby(entries, key=key):
                 if cog not in cogs:
                     cogs.append(cog)
-            cog_string = ""
-            for cog in cogs:
-                cog_string += cog + "\n"
 
-            embed = discord.Embed(Title=discord.Embed.Empty, description="Here is a full list of catagories. Use `*help <category_name>` for more info on a specific category. For example. `*help Mod` for moderation specific commands ")
-            embed.add_field(name="Catagories", value=cog_string[:len(cog_string)//2-1])
-            embed.add_field(name=discord.Embed.Empty, value=cog_string[len(cog_string)//2-1:])
+            #embed = discord.Embed(Title=discord.Embed.Empty, description="Here is a full list of catagories. Use `*help <category_name>` for more info on a specific category. For example. `*help Mod` for moderation specific commands ")
+            #embed.add_field(name="Catagories", value=cog_string)
 
-            embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-            embed.set_footer(text="For a list of all commands use *help all")
-            await ctx.send(embed=embed)
+            #embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
+            #embed.set_footer(text="For a list of all commands use *help all")
+            p = Pages(ctx, entries=cogs, per_page=10)
+            await p.paginate()
             return
 
 
