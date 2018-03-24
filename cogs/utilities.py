@@ -47,13 +47,13 @@ class Utilities:
                 return c.cog_name or '\u200bMisc'
 
             entries = sorted(ctx.bot.commands, key=key)
-            nested_pages = []
+            cogs = []
             import itertools
             for cog, commands in itertools.groupby(entries, key=key):
                 if cog not in nested_pages:
-                    nested_pages.append(cog)
+                    cogs.append(cog)
             cog_string = ""
-            for cog in nested_page:
+            for cog in cogs:
                 cog_string += cog + "\n"
 
             embed = discord.Embed(Title=discord.Embed.Empty, description=discord.Embed.Empty)
