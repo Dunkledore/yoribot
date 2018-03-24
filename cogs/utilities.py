@@ -44,7 +44,7 @@ class Utilities:
             embed = discord.Embed(Title=discord.Embed.Empty, description=discord.Embed.Empty)
             embed.add_field(name="Catagories", value='3rd Party Integration \nPersonal Utility \nGuild Management \nGames \nCross Guild Function')
             embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
-            embed.set_footer(text="For user a list of all commands use [p]help all")
+            embed.set_footer(text="For a list of all commands use [p]help all")
             await ctx.send(embed=embed)
             return
 
