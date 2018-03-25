@@ -51,7 +51,7 @@ class Utilities:
             import itertools
             for cog, cmds in itertools.groupby(entries, key=key):
                 if cog not in cogs:
-                    if cog not in ["Admin", "YoriBot", "terminal"]:
+                    if cog not in ["Admin", "YoriBot", "terminal", "Website"]:
                         cogs.append(cog)
 
             p = FirstHelpPaginator(ctx, entries=cogs, per_page=15)
