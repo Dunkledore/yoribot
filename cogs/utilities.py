@@ -64,7 +64,7 @@ class Utilities:
             return
 
         try:
-            if command.lower() ="all":
+            if command.lower() == "all":
                 p = await HelpPaginator.from_bot(ctx)
             else:
                 entity = self.bot.get_cog(command) or self.bot.get_command(command)
