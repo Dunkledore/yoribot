@@ -489,7 +489,7 @@ class FirstHelpPaginator(Pages):
     async def numbered_page(self):
 
         to_delete = []
-        to_delete.append(await self.channel.send('What command group do you want to go to?'))
+        to_delete.append(await self.channel.send('Which command group do you want to go to?'))
 
         def message_check(m):
             return m.author == self.author and \
