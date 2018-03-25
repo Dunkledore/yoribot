@@ -461,11 +461,11 @@ class FirstHelpPaginator(Pages):
     def __init__(self, ctx, entries, *, per_page=4):
         super().__init__(ctx, entries=entries, per_page=per_page)
 
-            self.reaction_emojis = [
-            ('\N{BLACK LEFT-POINTING TRIANGLE}', self.previous_page),
-            ('\N{BLACK RIGHT-POINTING TRIANGLE}', self.next_page),
-            ('\N{INPUT SYMBOL FOR NUMBERS}', self.numbered_page ),
-            ('\N{BLACK SQUARE FOR STOP}', self.stop_pages),
+        self.reaction_emojis = [
+        ('\N{BLACK LEFT-POINTING TRIANGLE}', self.previous_page),
+        ('\N{BLACK RIGHT-POINTING TRIANGLE}', self.next_page),
+        ('\N{INPUT SYMBOL FOR NUMBERS}', self.numbered_page ),
+        ('\N{BLACK SQUARE FOR STOP}', self.stop_pages),
         ]
 
     async def numbered_page(self):
