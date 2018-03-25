@@ -372,26 +372,26 @@ class HelpPaginator(Pages):
         self.total = sum(len(o) for _, _, o in nested_pages)
         return self
 
-        @classmethod
-        async def from_command(cls, ctx, command):
-            try:
-                entries = sorted(command.commands, key=lambda c: c.name)
-            except AttributeError:
-                entries = []
-            else:
-                entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+    @classmethod
+    async def from_command(cls, ctx, command):
+        try:
+            entries = sorted(command.commands, key=lambda c: c.name)
+        except AttributeError:
+            entries = []
+        else:
+            entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
 
-            self = cls(ctx, entries)
-            self.title = command.signature
+        self = cls(ctx, entries)
+        self.title = command.signature
 
-            if command.description:
-                self.description = f'{command.description}\n\n{command.help}'
-            else:
-                self.description = command.help or 'No help given.'
+        if command.description:
+            self.description = f'{command.description}\n\n{command.help}'
+        else:
+            self.description = command.help or 'No help given.'
 
-            self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
-            await ctx.release()
-            return self
+        self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
+        await ctx.release()
+        return self
 
     def get_bot_page(self, page):
         cog, description, commands = self.entries[page - 1]
