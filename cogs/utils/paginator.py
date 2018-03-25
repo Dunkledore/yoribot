@@ -471,7 +471,6 @@ class FirstHelpPaginator(Pages):
 
     async def numbered_page(self):
 
-
         to_delete = []
         to_delete.append(await self.channel.send('What page do you want to go to?'))
 
@@ -490,7 +489,7 @@ class FirstHelpPaginator(Pages):
             if page != 0 and page <= len(self.entries)-1:
                 await self.ctx.invoke(self.bot.get_command("help"),command=self.entries[page - 1])
             else:
-                to_delete.append(await self.channel.send(f'Invalid page given. ({page}/{self.maximum_pages})'))
+                to_delete.append(await self.channel.send(f'Invalid page given. (1/{len(self.entries)-1})'))
                 await asyncio.sleep(5)
 
         try:
