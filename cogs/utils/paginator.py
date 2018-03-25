@@ -455,3 +455,44 @@ class HelpPaginator(Pages):
             await self.show_current_page()
 
         self.bot.loop.create_task(go_back_to_current_page())
+
+class FirstHelpPaginator(Pages):
+
+    def __init__(self, ctx, entries, *, per_page=4):
+        super().__init__(ctx, entries=entries, per_page=per_page)
+
+            self.reaction_emojis = [
+            ('\N{BLACK LEFT-POINTING TRIANGLE}', self.previous_page),
+            ('\N{BLACK RIGHT-POINTING TRIANGLE}', self.next_page),
+            ('\N{INPUT SYMBOL FOR NUMBERS}', self.numbered_page ),
+            ('\N{BLACK SQUARE FOR STOP}', self.stop_pages),
+        ]
+
+    async def numbered_page(self):
+
+
+        to_delete = []
+        to_delete.append(await self.channel.send('What page do you want to go to?'))
+
+        def message_check(m):
+            return m.author == self.author and \
+                   self.channel == m.channel and \
+                   m.content.isdigit()
+
+        try:
+            msg = await self.bot.wait_for('message', check=message_check, timeout=30.0)
+        except asyncio.TimeoutError:
+            to_delete.append(await self.channel.send('Took too long.'))
+            await asyncio.sleep(5)
+        else:
+            page = int(msg.content)
+            if page != 0 and page <= len(self.cogs)-1:
+                await ctx.invoke(ctx.get_command("help"),command=self.entries[page + 1])
+            else:
+                to_delete.append(await self.channel.send(f'Invalid page given. ({page}/{self.maximum_pages})'))
+                await asyncio.sleep(5)
+
+        try:
+            await self.channel.delete_messages(to_delete)
+        except Exception:
+            pass
