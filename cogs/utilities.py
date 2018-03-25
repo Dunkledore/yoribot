@@ -1,6 +1,6 @@
 from discord.ext import commands
 from .utils import checks, formats
-from .utils.paginator import HelpPaginator, CannotPaginate, Pages
+from .utils.paginator import HelpPaginator, CannotPaginate, Pages, FirstHelpPaginator
 import discord
 from collections import OrderedDict, deque, Counter
 import os, datetime
@@ -58,7 +58,7 @@ class Utilities:
 
             #embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
             #embed.set_footer(text="For a list of all commands use *help all")
-            p = Pages(ctx, entries=cogs, per_page=15)
+            p = FirstHelpPaginator(ctx, entries=cogs, per_page=15)
             p.embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
             await p.paginate()
             return
