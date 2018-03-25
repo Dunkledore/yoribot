@@ -63,11 +63,9 @@ class Utilities:
             await p.paginate()
             return
 
-
-        cog_groups = ['3rd party integration', 'personal utility', 'guild management', 'games', 'cross guild function', 'all']
         try:
-            if command.lower() in cog_groups:
-                p = await HelpPaginator.from_catagory(ctx, command.lower())
+            if command.lower() ="all":
+                p = await HelpPaginator.from_bot(ctx)
             else:
                 entity = self.bot.get_cog(command) or self.bot.get_command(command)
 
