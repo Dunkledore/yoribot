@@ -335,28 +335,45 @@ class HelpPaginator(Pages):
         return self
 
     @classmethod
-    async def from_command(cls, ctx, command):
-        try:
-            entries = sorted(command.commands, key=lambda c: c.name)
-        except AttributeError:
-            entries = []
-        else:
-            entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+    async def from_bot(cls, ctx):
+        def key(c):
+            return c.cog_name or '\u200bMisc'
 
-        self = cls(ctx, entries)
-        self.title = command.signature
+        entries = sorted(ctx.bot.commands, key=key)
+        nested_pages = []
+        per_page = 9
 
-        if command.description:
-            self.description = f'{command.description}\n\n{command.help}'
-        else:
-            self.description = command.help or 'No help given.'
+        # 0: (cog, desc, commands) (max len == 9)
+        # 1: (cog, desc, commands) (max len == 9)
+        # ...
 
+        for cog, commands in itertools.groupby(entries, key=key):
+            plausible = [cmd for cmd in commands if (await _can_run(cmd, ctx)) and not cmd.hidden]
+            if len(plausible) == 0:
+                continue
+
+            description = ctx.bot.get_cog(cog)
+            if description is None:
+                description = discord.Embed.Empty
+            else:
+                description = inspect.getdoc(description) or discord.Embed.Empty
+
+            nested_pages.extend((cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
+
+        self = cls(ctx, nested_pages, per_page=1) # this forces the pagination session
         self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
         await ctx.release()
+
+        # swap the get_page implementation with one that supports our style of pagination
+        self.get_page = self.get_bot_page
+        self._is_bot = True
+
+        # replace the actual total
+        self.total = sum(len(o) for _, _, o in nested_pages)
         return self
 
     @classmethod
-    async def from_bot(cls, ctx):
+    async def from_catagory(cls, ctx, catagory):
         def key(c):
             return c.cog_name or '\u200bMisc'
 
@@ -375,10 +392,19 @@ class HelpPaginator(Pages):
                 continue
 
             description = ctx.bot.get_cog(cog)
-            if description is None:
-                description = discord.Embed.Empty
-            else:
+            if catagory != 'all':
+                if description is None:
+                    continue
+                if not hasattr(description, 'catagory'):
+                    continue
+                if description.catagory.lower() != catagory:
+                    continue
                 description = inspect.getdoc(description) or discord.Embed.Empty
+            else:
+                if description is None:
+                    description = discord.Embed.Empty
+                else:
+                    description = inspect.getdoc(description) or discord.Embed.Empty
 
             nested_pages.extend((cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
 
@@ -446,3 +472,48 @@ class HelpPaginator(Pages):
             await self.show_current_page()
 
         self.bot.loop.create_task(go_back_to_current_page())
+
+class FirstHelpPaginator(Pages):
+
+    def __init__(self, ctx, entries, *, per_page=4):
+        super().__init__(ctx, entries=entries, per_page=per_page)
+
+        self.reaction_emojis = [
+        ('\N{BLACK LEFT-POINTING TRIANGLE}', self.previous_page),
+        ('\N{BLACK RIGHT-POINTING TRIANGLE}', self.next_page),
+        ('\N{INPUT SYMBOL FOR NUMBERS}', self.numbered_page ),
+        ('\N{BLACK SQUARE FOR STOP}', self.stop_pages),
+        ]
+        self.ctx = ctx
+
+    async def numbered_page(self):
+
+        to_delete = []
+        to_delete.append(await self.channel.send('Which command group do you want to go to?'))
+
+        def message_check(m):
+            return m.author == self.author and \
+                   self.channel == m.channel and \
+                   m.content.isdigit()
+
+        try:
+            msg = await self.bot.wait_for('message', check=message_check, timeout=30.0)
+        except asyncio.TimeoutError:
+            to_delete.append(await self.channel.send('Took too long.'))
+            await asyncio.sleep(5)
+        else:
+            to_delete.append(msg)
+            to_delete.append(self.message)
+
+            page = int(msg.content)
+            if page != 0 and page <= len(self.entries)-1:
+                await self.ctx.invoke(self.bot.get_command("help"),command=self.entries[page - 1])
+                self.paginating = False
+            else:
+                to_delete.append(await self.channel.send(f'Invalid page given. (1/{len(self.entries)-1})'))
+                await asyncio.sleep(5)
+
+        try:
+            await self.channel.delete_messages(to_delete)
+        except Exception:
+            pass

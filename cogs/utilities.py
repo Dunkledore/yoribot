@@ -1,6 +1,6 @@
 from discord.ext import commands
 from .utils import checks, formats
-from .utils.paginator import HelpPaginator, CannotPaginate
+from .utils.paginator import HelpPaginator, CannotPaginate, Pages, FirstHelpPaginator
 import discord
 from collections import OrderedDict, deque, Counter
 import os, datetime
@@ -29,6 +29,7 @@ class Utilities:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Perosnal Utility"
         bot.remove_command('help')
 
     async def __error(self, ctx, error):
@@ -39,8 +40,27 @@ class Utilities:
     async def _help(self, ctx, *, command: str = None):
         """Shows help about a command or the bot"""
 
+        
+
+        if command is None:
+            def key(c):
+                return c.cog_name or '\u200bMisc'
+
+            entries = sorted(ctx.bot.commands, key=key)
+            cogs = []
+            import itertools
+            for cog, cmds in itertools.groupby(entries, key=key):
+                if cog not in cogs:
+                    if cog not in ["Admin", "YoriBot", "terminal", "Website"]:
+                        cogs.append(cog)
+
+            p = FirstHelpPaginator(ctx, entries=cogs, per_page=15)
+            p.embed.set_author(name="Yori Bot Help", icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
+            await p.paginate()
+            return
+
         try:
-            if command is None:
+            if command.lower() == "all":
                 p = await HelpPaginator.from_bot(ctx)
             else:
                 entity = self.bot.get_cog(command) or self.bot.get_command(command)

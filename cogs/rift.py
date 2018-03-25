@@ -34,6 +34,7 @@ class Rift:
         self.ready = False
         self.mutedUsers = {}
         self.message_cache = MaxList(300)
+        self.catagory = "Cross Guild Function"
 
     async def load_settings(self):
         await self.bot.wait_until_ready()

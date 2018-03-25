@@ -59,6 +59,7 @@ class ModConfig:
         self.broadcast_channel_id = record['broadcast_channel']
         self.mention_count = record['mention_count']
         self.safe_mention_channel_ids = set(record['safe_mention_channel_ids'] or [])
+        self.catagory = "Guild Management"
         return self
 
     @property
@@ -115,6 +116,7 @@ class Mod:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = 'Moderation'
 
         # guild_id: set(user_id)
         self._recently_kicked = defaultdict(set)

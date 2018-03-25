@@ -27,7 +27,7 @@ class Searches:
           '(youtube|youtu|youtube-nocookie)\.(com|be)/'
           '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
         self.url_dog = "https://random.dog/woof.json"
-        self.url_cat = "https://random.cat/meow"
+        self.url_cat = "https://aws.random.cat/meow"
         self.numbs = {
             1: "1\U000020E3",
             2: "2\U000020E3",
@@ -39,6 +39,7 @@ class Searches:
             8: "8\U000020E3",
             9: "9\U000020E3",
         }
+        self.catagory = "Personal Utility"
 
     @commands.command(name='youtube')
     @commands.guild_only()
@@ -69,11 +70,14 @@ class Searches:
     async def get_meow(self, ctx: commands.Context):
         
 
-        async with aiohttp.get(self.url_cat) as response:
-            img = json.loads(await response.text())["file"].replace("\\/","/")
-            if img.endswith(".mp4"):
-                await self.get_meow(ctx)
-                return
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.url_cat) as response:
+                text = await response.text()
+                json_text = json.loads(text)
+                img = json_text["file"].replace("\\/","/")
+                if img.endswith(".mp4"):
+                    await self.get_meow(ctx)
+                    return
 
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name="Random cat picture", icon_url="http://bit.ly/2AH8Byg")
@@ -89,12 +93,15 @@ class Searches:
 
     async def get_woof(self, ctx: commands.Context):
         
-        async with aiohttp.get(self.url_dog) as response:
-            img = json.loads(await response.text())["url"]
-            if img.endswith(".mp4"):
-                await self.get_woof(ctx)
-                return
-                
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.url_dog) as response:
+                text = await response.text()
+                json_text = json.loads(text)
+                img = json_text["url"].replace("\\/","/")
+                if img.endswith(".mp4"):
+                    await self.get_woof(ctx)
+                    return
+
             em = discord.Embed(color=ctx.message.author.color, description=" ")
             em.set_author(name="Random dog picture", icon_url="http://bit.ly/2jotVFo")
             em.set_image(url=img)

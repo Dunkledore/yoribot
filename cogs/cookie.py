@@ -39,6 +39,7 @@ class Cookie:
         self.bot = bot
         self.file_path = "data/cookie/cookie.json"
         self.system = dataIO.load_json(self.file_path)
+        self.catagory = "Games"
 
     @commands.command()
     @commands.guild_only()

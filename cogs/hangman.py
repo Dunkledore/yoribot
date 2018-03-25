@@ -48,6 +48,7 @@ class Game:
 				self.failed_letters = []
 				self.guessed_letters = []
 				self.fails = 0
+				self.catagory = "Games"
 
 	def guess_letter(self, letter):
 			# No matter what, add this to guessed letters so we only have to do one check if a letter was already guessed

@@ -64,6 +64,7 @@ class Blizzard:
         }
         self.expired_embed = discord.Embed(title="This menu has exipred due "
                                            "to ina*btivity.")
+        self.catagory = "3rd Party Integration"
 
     async def show_menu(self, ctx, message, messages, page):
         if message:

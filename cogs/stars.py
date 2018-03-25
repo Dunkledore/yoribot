@@ -100,6 +100,7 @@ class Stars:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Guild Management"
 
         # cache message objects to save Discord some HTTP requests.
         self._message_cache = {}

@@ -66,6 +66,7 @@ class FFXIV:
             "notices": "https://na.finalfantasyxiv.com/lodestone/news/category/1",
             "status": "https://na.finalfantasyxiv.com/lodestone/news/category/4"
         }
+        self.category = "3rd Party Integration"
 
     def save_settings(self):
         dataIO.save_json("data/ffxiv/settings.json", self.settings)

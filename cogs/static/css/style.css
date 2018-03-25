@@ -23,9 +23,21 @@ html {
 	font-size: 50em;
 }
 
+.codeblocks {
+	border-radius: 4px;
+	border: 1px solid #ccc;
+	background-color: #f5f5f5;
+	color: #444;
+	padding: 9.5px;
+}
+
 .nopadding {
    padding: 0 !important;
    margin: 0 !important;
+}
+
+.developer-img {
+	border-radius: 5%;
 }
 
 .hash {

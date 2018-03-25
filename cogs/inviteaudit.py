@@ -46,6 +46,8 @@ class InviteAudit(object):
                 try:
                     guild_invites = await g.invites()
                     channel = self.get_invite_event_channel(g)
+                    if not channel:
+                        continue
                     expiredinvs = []
                     for j in self.invites[str(g.id)]:
                         found = False
