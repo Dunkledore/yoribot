@@ -335,24 +335,41 @@ class HelpPaginator(Pages):
         return self
 
     @classmethod
-    async def from_command(cls, ctx, command):
-        try:
-            entries = sorted(command.commands, key=lambda c: c.name)
-        except AttributeError:
-            entries = []
-        else:
-            entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+    async def from_bot(cls, ctx):
+        def key(c):
+            return c.cog_name or '\u200bMisc'
 
-        self = cls(ctx, entries)
-        self.title = command.signature
+        entries = sorted(ctx.bot.commands, key=key)
+        nested_pages = []
+        per_page = 9
 
-        if command.description:
-            self.description = f'{command.description}\n\n{command.help}'
-        else:
-            self.description = command.help or 'No help given.'
+        # 0: (cog, desc, commands) (max len == 9)
+        # 1: (cog, desc, commands) (max len == 9)
+        # ...
 
+        for cog, commands in itertools.groupby(entries, key=key):
+            plausible = [cmd for cmd in commands if (await _can_run(cmd, ctx)) and not cmd.hidden]
+            if len(plausible) == 0:
+                continue
+
+            description = ctx.bot.get_cog(cog)
+            if description is None:
+                description = discord.Embed.Empty
+            else:
+                description = inspect.getdoc(description) or discord.Embed.Empty
+
+            nested_pages.extend((cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
+
+        self = cls(ctx, nested_pages, per_page=1) # this forces the pagination session
         self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
         await ctx.release()
+
+        # swap the get_page implementation with one that supports our style of pagination
+        self.get_page = self.get_bot_page
+        self._is_bot = True
+
+        # replace the actual total
+        self.total = sum(len(o) for _, _, o in nested_pages)
         return self
 
     @classmethod
