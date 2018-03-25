@@ -1,0 +1,51 @@
+{% set active_page = 'tutorials'%}
+{% extends "layout.html" %}
+{% block content %}
+
+<section id="content1" class="home-section">
+	<div class="container">
+		<div class="row text-center heading">
+			<h1>Tutorials</h1>
+		</div>
+		<div class="row">
+			<h2>Getting Started</h2>
+			For simplicity, we will assume the commands prefix of * for these tutorials. If you have a different prefix replace the * at the start of a command with the prefix you use. 
+			<h3>Permissions</h3>
+			<div class="col-xs-12">Guild Owner - This role has the highet power and will be able to execute all commands. Nothing is required for this apart from you being the owner of the guild. Steps required for this:
+			</div>
+			<div class="col-xs-3 codeblocks text-center">
+			Be the guild owner
+			</div>
+			<div class="col-xs-9">
+			</div>
+			<div class="col-xs-12">
+				Adminis - This role has access to almost all of the commands except a very select few where account details are involved. Steps required for this:
+			</div>
+			<div class="col-xs-8 col-xs-offset-2">
+				<pre class="text-center">
+					<code>
+						Have the administrator permission in the guild
+					</code>
+				</pre>
+			</div>
+			<div class="col-xs-12">
+				Mods - This role has access to all of the moderation commands in the server. This role must be set. Steps required for this:
+			</div>
+			<div class="col-xs-8 col-xs-offset-2">
+				<pre class="text-center">
+					<code>
+						*modrole @role
+					</code>
+				</pre>
+			</div>
+		</div>
+			<p>Greeter/SpecialRoles/Tweeter - These are roles which grant access to very specific function. See each relevant section for more information.</p>
+			<p>
+				These roles work on an inheritcance basis. So Each role automatically has all the functionality as the roles below it.
+			</p>
+		</div>
+	</div>
+</section>
+
+
+{% endblock %}
