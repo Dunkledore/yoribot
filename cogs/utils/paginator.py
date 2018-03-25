@@ -485,6 +485,8 @@ class FirstHelpPaginator(Pages):
             to_delete.append(await self.channel.send('Took too long.'))
             await asyncio.sleep(5)
         else:
+            to_delete.append(msg)
+            to_delete.append(self.message)
             page = int(msg.content)
             if page != 0 and page <= len(self.entries)-1:
                 await self.ctx.invoke(self.bot.get_command("help"),command=self.entries[page - 1])
