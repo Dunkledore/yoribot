@@ -488,7 +488,7 @@ class FirstHelpPaginator(Pages):
         else:
             page = int(msg.content)
             if page != 0 and page <= len(self.entries)-1:
-                await self.ctx.invoke(ctx.get_command("help"),command=self.entries[page + 1])
+                await self.ctx.invoke(self.ctx.get_command("help"),command=self.entries[page + 1])
             else:
                 to_delete.append(await self.channel.send(f'Invalid page given. ({page}/{self.maximum_pages})'))
                 await asyncio.sleep(5)
