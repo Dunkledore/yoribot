@@ -69,6 +69,7 @@ class Playlists:
 		self.context=None
 		self.statuslog = logging.getLogger("{}.{}.status".format(__name__, 0))
 		self.silently_deleted=False
+		self.catagory = "Personal Utility"
 		
 	async def create_playlist(self,userID,name):
 		query = "INSERT INTO playlists (userid,name) VALUES ($1,$2);"
@@ -255,6 +256,7 @@ class Music:
 	def __init__(self,bot):
 		self.bot = bot
 		self.counter={}
+		self.catagory = "Personal Utility"
 
 	async def has_majority(self, reaction):
 		listeners = len(reaction.message.guild.voice_client.channel.members)

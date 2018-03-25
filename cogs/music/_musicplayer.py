@@ -400,7 +400,11 @@ class MusicPlayer:
         self.logger.debug("Setting up voice")
 
         # Create voice client
-        self.vchannel = author.voice.channel
+        if author.voice:
+            self.vchannel = author.voice.channel
+        else:
+            self.vchannel = None
+
         if self.vchannel:
             self.statuslog.info("Connecting to voice")
             try:
@@ -455,12 +459,21 @@ class MusicPlayer:
         # Initial queue display
         queue_display = []
         for i in range(self.queue_display):
-            queue_display.append("{}: ---\n".format(str(i + 1)))
+            try:
+                if len(self.queue[i][1]) > 40:
+                    songname = self.queue[i][1][:37] + "..."
+                else:
+                    songname = self.queue[i][1]
+            except IndexError:
+                pass
+                songname = None
+            if songname:
+                queue_display.append("{}: {}\n".format(str(i + 1), songname))
 
         # Initial datapacks
         datapacks = [
             ("Now playing", "---", False),
-            ("Queue", "```{}```".format(''.join(queue_display)), False),
+            ("Queue", "```{}```".format(''.join(queue_display or "Empty")), False),
             ("Songs left in queue", "---", True),
             ("Volume", "{}%".format(self.volume), True),
             ("Status", "```---```", False)
@@ -556,7 +569,7 @@ class MusicPlayer:
             if songname:
                 queue_display.append("{}: {}\n".format(str(i + 1), songname))
 
-        self.queuelog.info(''.join(queue_display))
+        self.queuelog.info(''.join(queue_display or "Empty"))
         self.queuelenlog.info(str(len(self.queue)))
 
     async def vplay(self):

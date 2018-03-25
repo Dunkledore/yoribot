@@ -16,6 +16,7 @@ class Embed:
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.catagory = "Guild Management"
     
     @commands.command()
     @commands.guild_only()

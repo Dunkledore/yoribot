@@ -11,6 +11,7 @@ class RoleManager:
     def __init__(self, bot):
         self.bot = bot
         self.settings = dataIO.load_json("data/rolemanager/settings.json")
+        self.settings = "Guild Management"
 
     # Gets the group a role belongs to
     async def _roleinfo(self, message, role: str):

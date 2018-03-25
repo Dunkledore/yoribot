@@ -29,6 +29,7 @@ class Stats:
     def __init__(self, bot):
         self.bot = bot
         self.process = psutil.Process()
+        self.catagory = "Personal Utility"
 
     async def on_command(self, ctx):
         command = ctx.command.qualified_name

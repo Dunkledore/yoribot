@@ -21,6 +21,7 @@ class SocialMedia:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 		self.api_cache = []
+		self.catagory = "Guild Management"
 
 	def get_api(self, creds):
 		for api in self.api_cache:
@@ -283,10 +284,10 @@ class SocialMedia:
 							with open(filename, 'wb') as image:
 								for chunk in request:
 									image.write(chunk)
-					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author.name, None, filename)
+					await self.sendtweet(reaction.message.guild, reaction.message.clean_content + ' - ' + reaction.message.author.name, None, filename)
 					return
 
-				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + '-' + reaction.message.author.name)
+				await self.sendtweet(reaction.message.guild, reaction.message.clean_content + ' - ' + reaction.message.author.name)
 
 		
 

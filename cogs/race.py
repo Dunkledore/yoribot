@@ -36,6 +36,7 @@ class Racer:
         self.position = 80
         self.placed = False
         self.current = Racer.track + self.animal
+        self.catagory = "Games"
 
     def field(self):
         field = ":carrot: **{}** :flag_black:  [{}]".format(self.current, self.user)

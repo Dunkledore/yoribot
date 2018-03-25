@@ -27,6 +27,7 @@ class AnimeList:
         self.bot = bot
         self.file_path = "data/animelist/credentials.json"
         self.credentials = dataIO.load_json(self.file_path)
+        self.catagory = "3rd Party Integration"
 
     @commands.command(hidden=True)
     @checks.is_owner()

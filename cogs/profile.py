@@ -27,6 +27,7 @@ class Rank:
         self.ranks = None
         self.cooldowns = {}
         self.rank_settings = dataIO.load_json("data/rank/rank_settings.json")
+        self.catagory = "Personal Utility"
 
     def save_message_data(self):
         dataIO.save_json("data/rank/message_data.json", self.message_data)

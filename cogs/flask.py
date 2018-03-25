@@ -96,6 +96,10 @@ class Website:
 		def page_not_found(e):
 			return render_template('404.html'), 500
 
+		@self.app.route('/tutorials')
+		def tutorials():
+			return render_template('tutorials.html')
+
 		@self.app.route('/me')
 		async def profile():
 			if session.get('oauth2_token'):

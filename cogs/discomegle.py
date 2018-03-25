@@ -20,6 +20,7 @@ class Discomegle:
         self.pool = {} # queue of users.id -> user channel
         self.link = {} # userid -> {target id, target user channel}
         self.colour = 0xAAAAAA
+        self.catagory = "Cross Guild Function"
 
     @commands.command()
     @commands.guild_only()

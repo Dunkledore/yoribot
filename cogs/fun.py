@@ -62,6 +62,7 @@ class Fun:
         self.feelings = "data/fun/feelings.json"
         self.system = dataIO.load_json(self.feelings)
         self.stopwatches = {}
+        self.catagory = "Games"
 
     def save_emotes(self):
         dataIO.save_json(self.feelings, self.system)

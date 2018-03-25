@@ -152,6 +152,7 @@ class Config:
 
     def __init__(self, bot):
         self.bot = bot
+        self.catagory = "Guild Management"
 
     async def is_plonked(self, guild_id, member_id, *, channel_id=None, connection=None, check_bypass=True):
         if check_bypass:
@@ -252,7 +253,7 @@ class Config:
 
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                 title = "✅ Success",
-                                description = "Now Ignoring" + entities))
+                                description = "Now Ignoring" + str(entities)))
 
     @commands.command()
     @checks.is_mod()
