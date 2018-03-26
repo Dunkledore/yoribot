@@ -35,11 +35,11 @@ class Ratings:
         url = 'https://www.lovecalculator.com/love.php?name1={}&name2={}'.format(x.replace(" ", "+"), y.replace(" ", "+"))
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
-            soupObject = BeautifulSoup(await response.text(), "html.parser")
-            try:
-                description = soupObject.find('div', attrs={'class': 'result score'}).get_text().strip()
-            except:
-                description = 'Dr. Love is busy right now'
+                soupObject = BeautifulSoup(await response.text(), "html.parser")
+                try:
+                    description = soupObject.find('div', attrs={'class': 'result score'}).get_text().strip()
+                except:
+                    description = 'Dr. Love is busy right now'
 
         try:
             z = description[:2]
