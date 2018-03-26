@@ -128,12 +128,12 @@ class StreamRole:
             if streamer_role is None:
                 return
             # is streaming
-            if (after.game is not None and
-                    after.game.type == 1 and
+            if (after.activity is not None and
+                    after.activity.type == 1 and
                     streamer_role not in after.roles):
                 await after.add_roles(streamer_role)
             # is not
-            elif ((after.game is None or after.game.type != 1) and
+            elif ((after.activity is None or after.activity.type != 1) and
                   streamer_role in after.roles):
                 await after.remove_roles(streamer_role)
     @commands.command()
