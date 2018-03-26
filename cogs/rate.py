@@ -33,7 +33,8 @@ class Ratings:
         y = loved.display_name
 
         url = 'https://www.lovecalculator.com/love.php?name1={}&name2={}'.format(x.replace(" ", "+"), y.replace(" ", "+"))
-        async with aiohttp.get(url) as response:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
             soupObject = BeautifulSoup(await response.text(), "html.parser")
             try:
                 description = soupObject.find('div', attrs={'class': 'result score'}).get_text().strip()
