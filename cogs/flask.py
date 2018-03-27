@@ -101,9 +101,9 @@ class Website:
 		def tutorials():
 			return render_template('tutorials.html')
 
-		@self.app.route("/guildstats/<id>"):
+		@self.app.route("/guildstats/<id>")
 		async def guildstats(guild_id):
-			
+
 			guild = self.bot.get_guild(int(id))
 			member_by_status = Counter(str(m.status) for m in guild.members)
 			online = member_by_status['online']
