@@ -101,7 +101,7 @@ class Website:
 		def tutorials():
 			return render_template('tutorials.html')
 
-		@self.app.route("/guildstats/<id>")
+		@self.app.route("/guildstats/<guild_id>")
 		async def guildstats(guild_id):
 
 			guild = self.bot.get_guild(int(id))
