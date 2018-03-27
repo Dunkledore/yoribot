@@ -104,7 +104,7 @@ class Website:
 		@self.app.route("/guildstats/<guild_id>")
 		async def guildstats(guild_id):
 
-			guild = self.bot.get_guild(int(id))
+			guild = self.bot.get_guild(int(guild_id))
 			member_by_status = Counter(str(m.status) for m in guild.members)
 			online = member_by_status['online']
 			idle = member_by_status["idle"]
