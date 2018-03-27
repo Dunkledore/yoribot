@@ -10,7 +10,7 @@ import functools
 from .utils import checks
 from threading import Thread
 import itertools, inspect
-from collection import Counter
+from collections import Counter
 
 OAUTH2_CLIENT_ID =  config.client_id
 OAUTH2_CLIENT_SECRET = config.secret
