@@ -10,6 +10,7 @@ import functools
 from .utils import checks
 from threading import Thread
 import itertools, inspect
+from collection import Counter
 
 OAUTH2_CLIENT_ID =  config.client_id
 OAUTH2_CLIENT_SECRET = config.secret
@@ -99,6 +100,20 @@ class Website:
 		@self.app.route('/tutorials')
 		def tutorials():
 			return render_template('tutorials.html')
+
+		@self.app.route("/guildstats/<id>"):
+		async def guildstats(guild_id):
+			
+			guild = self.bot.get_guild(int(id))
+			member_by_status = Counter(str(m.status) for m in guild.members)
+			online = member_by_status['online']
+			idle = member_by_status["idle"]
+			dnd = member_by_status["dnd"]
+			offline = member_by_status["offline"]
+			total = guild.member_count
+
+			return await render_template('stats.html', name=guild.name, online=online, idle=idle, dnd=dnd, offline=offline, total=total)
+
 
 		@self.app.route('/me')
 		async def profile():
