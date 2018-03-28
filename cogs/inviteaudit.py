@@ -4,6 +4,7 @@ import asyncio
 import discord
 import datetime
 from discord.ext import commands
+import logging
 from .utils.maxlist import MaxList
 from .utils.dataIO import dataIO
 from .utils import checks, time, chat_formatting as cf
@@ -23,6 +24,7 @@ class InviteAudit(object):
         self.cache_path = "data/invites/cache.json"
         self.invites = dataIO.load_json(self.cache_path)
         self.cachefirst_run = True
+        self.logger = logging.getLogger(__name__)
         self.unloaded = False
 
     async def cacheloop(self):
@@ -34,7 +36,7 @@ class InviteAudit(object):
             except asyncio.CancelledError:
                 self.unloaded = True
             except Exception:
-                pass
+                self.logger.exception("Error in cache loop")
 
     async def cache_invites(self):
         for g in self.bot.guilds:
