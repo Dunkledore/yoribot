@@ -20,7 +20,8 @@ class InviteAudit(object):
         self.bot = bot
         self.settings_path = "data/invites/settings.json"
         self.settings = dataIO.load_json(self.settings_path)
-        self.invites = {}
+        self.cache_path = "data/invites/cache.json"
+        self.invites = dataIO.load_json(self.cache_path)
         self.cachefirst_run = True
         self.unloaded = False
 
@@ -42,41 +43,46 @@ class InviteAudit(object):
                 if not guild_settings["on"]:
                     continue
                 if str(g.id) not in self.invites:
-                    self.invites[str(g.id)] = {}
+                    self.invites[str(g.id)] = {"first_run": True, "data": {}}
                 try:
                     guild_invites = await g.invites()
                     channel = self.get_invite_event_channel(g)
                     if not channel:
                         continue
                     expiredinvs = []
-                    for j in self.invites[str(g.id)]:
+                    for j in self.invites[str(g.id)]["data"]:
                         found = False
                         for l in guild_invites:
-                            if l.code != self.invites[str(g.id)][j].code:
+                            if l.code != self.invites[str(g.id)]["data"][j].code:
                                 continue
                             found = True
                         if not found:
-                            em = discord.Embed(title="📤 Invite expired or deleted", description="{} created by {} has expired or was deleted.".format(
-                                self.invites[str(g.id)][j].code, self.invites[str(g.id)][j].inviter.name if self.invites[str(g.id)][j].inviter else "Server Widget"))
+                            code = self.invites[str(g.id)]["data"][j].code
+                            inviterName = self.invites[str(g.id)]["data"][j].inviter.name if self.invites[str(
+                                g.id)]["data"][j].inviter else "Server Widget"
+                            em = discord.Embed(title="📤 Invite expired or deleted",
+                                               description=f"{code} created by {inviterName} has expired or was deleted.")
                             await channel.send(embed=em)
-                            expiredinvs.append(self.invites[str(g.id)][j])
+                            expiredinvs.append(
+                                self.invites[str(g.id)]["data"][j])
                     for x in expiredinvs:
-                        del self.invites[str(g.id)][x.code]
+                        del self.invites[str(g.id)]["data"][x.code]
                     for i in guild_invites:
-                        if i.code in self.invites[str(g.id)]:
-                            inv = self.invites[str(g.id)][i.code]
+                        inviterName = i.inviter.name if i.inviter else "Server Widget"
+                        if i.code in self.invites[str(g.id)]["data"]:
+                            inv = self.invites[str(g.id)]["data"][i.code]
                             if inv.uses < i.uses:
                                 uses = i.uses - inv.uses
-                                em = discord.Embed(title="ℹ️ Invite Used", description="{} created by {} was recently used {} time(s) by user(s) to join this guild.".format(
-                                    i.code, i.inviter.name if i.inviter else "Server Widget", uses))
+                                em = discord.Embed(title="ℹ️ Invite Used",
+                                                   description=f"{i.code} created by {inviterName} was recently used {uses} time(s) by user(s) to join this guild.")
                                 await channel.send(embed=em)
-                        elif not self.cachefirst_run:
-                            em = discord.Embed(title="📥 New Invite", description="{} created by {}".format(
-                                i.code, i.inviter.name if i.inviter else "Server Widget"))
+                        elif not self.invites[str(g.id)]["first_run"]:
+                            em = discord.Embed(title="📥 New Invite", description=f"{i.code} created by {inviterName}")
                             await channel.send(embed=em)
-                        self.invites[str(g.id)][i.code] = i
+                        self.invites[str(g.id)]["data"][i.code] = i
                 except Exception as e:
                     print("Can't get invites from {}: {}".format(g, e))
+        dataIO.save_json(self.cache_path, self.invites)
         self.cachefirst_run = False
 
     def checksettings(self, guild):
@@ -173,16 +179,23 @@ def check_files():
     if not dataIO.is_valid_json(f):
         print("Creating data/invites/settings.json...")
         dataIO.save_json(f, {})
+    f2 = "data/invites/cache.json"
+    if not dataIO.is_valid_json(f2):
+        print("Creating data/invites/cache.json")
+        dataIO.save_json(f2, {})
+
 
 task = None
+
 
 def setup(bot: commands.Bot):
     check_folders()
     check_files()
     n = InviteAudit(bot)
     bot.add_cog(n)
-    global task 
+    global task
     task = bot.loop.create_task(n.cacheloop())
+
 
 def teardown(bot: commands.Bot):
     task.cancel()
