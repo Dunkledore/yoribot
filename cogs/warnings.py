@@ -82,7 +82,7 @@ class Warnings:
 
         insertquery = "INSERT INTO warnings (guild_id, mod_id, user_id, reason, warning) VALUES ($1, $2, $3, $4, $5)"
 
-        await ctx.db.execute(insertquery, ctx.guild.id, , ctx.author.id, member.id, reason, True)
+        await ctx.db.execute(insertquery, ctx.guild.id, ctx.author.id, member.id, reason, True)
         await ctx.send(embed=self.bot.sucess("Warning Added"))
 
         query = "SELECT * FROM warnconfig WHERE guild_id = $1"
