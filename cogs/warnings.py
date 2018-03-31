@@ -150,7 +150,7 @@ class Warnings:
             embed.add_field(name="Notes", value="None")
 
 
-        await ctx.send(embed)
+        await ctx.send(embed=embed)
 
 
 
