@@ -159,6 +159,25 @@ class YoriBot(commands.AutoShardedBot):
         await self.session.close()
 
 
+    def success(self, description):
+        embed=discord.Embed(color=0x2ecc71,
+                                title = "✅ Success",
+                                description =description)
+        return embed
+
+    def notice(self, description):
+        embed=discord.Embed(color=0xe67e22,
+                                title = "❕ Notice",
+                                description = description)
+        return embed
+
+    def error(self, description):
+        embed=discord.Embed(color=0xe74c3c,
+                                title = "⚠ Error",
+                                description =description)
+        return embed
+
+
         
     def run(self):
         super().run(config.token, reconnect=True)
