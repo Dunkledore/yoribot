@@ -4,6 +4,9 @@ from discord.ext import commands
 
 from .utils import checks
 
+ #create table warnconfig (id SERIAL, guild_id BIGINT, muted_count INT,  muted_role BIGINT, banned_count INT, report_channel INT)
+ #create table warnings(id SERIAL, guild_id BIGINT, mod_id BIGINT, user_id BIGINT, reason TEXT, warning bool, date timestamp default current_timestamp)
+
 class Warnings:
 
     """A warning system with automatic banning and muting """
