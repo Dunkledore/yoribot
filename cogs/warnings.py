@@ -22,7 +22,7 @@ class Warnings:
         """Set the amount of warnings before a muted role will be given to a user"""
 
         insertquery = "INSERT INTO warnconfig (guild_id, muted_count) VALUES ($1, $2)"
-        alterquery = "UPDATE greet SET muted_count = $2 WHERE guild_id = $1"
+        alterquery = "UPDATE warnconfig SET muted_count = $2 WHERE guild_id = $1"
 
         try:
             await ctx.db.execute(insertquery, ctx.guild.id, number)
@@ -37,7 +37,7 @@ class Warnings:
         """Set the role to be given to a user upon an automatic muting"""
 
         insertquery = "INSERT INTO warnconfig (guild_id, muted_role) VALUES ($1, $2)"
-        alterquery = "UPDATE greet SET muted_role = $2 WHERE guild_id = $1"
+        alterquery = "UPDATE warnconfig SET muted_role = $2 WHERE guild_id = $1"
 
         try:
             await ctx.db.execute(insertquery, ctx.guild.id, role.id)
@@ -54,7 +54,7 @@ class Warnings:
         """Set the amount of warnings before a user will be banned"""
 
         insertquery = "INSERT INTO warnconfig (guild_id, banned_count) VALUES ($1, $2)"
-        alterquery = "UPDATE greet SET banned_count = $2 WHERE guild_id = $1"
+        alterquery = "UPDATE warnconfig SET banned_count = $2 WHERE guild_id = $1"
 
         try:
             await ctx.db.execute(insertquery, ctx.guild.id, number)
@@ -69,7 +69,7 @@ class Warnings:
         """Set the channel user reoprts should be sent to for approval"""
 
         insertquery = "INSERT INTO warnconfig (guild_id, report_channel) VALUES ($1, $2)"
-        alterquery = "UPDATE greet SET report_channel = $2 WHERE guild_id = $1"
+        alterquery = "UPDATE warnconfig SET report_channel = $2 WHERE guild_id = $1"
 
         try:
             await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
