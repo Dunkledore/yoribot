@@ -142,7 +142,8 @@ class Warnings:
             else:
                 notes += "{} - {} - {}\n".format(result["date"], mod, result["reason"])
 
-        embed = discord.Embed(description="Logs for {}".format(member.mention), title=discord.Embed.Empty)
+        embed = discord.Embed(description=discord.Embed.Empty, title=discord.Embed.Empty)
+        em.set_author(name="Logs for {}".format(member.mention), icon_url="http://bit.ly/2rnwE4T")
 
         if warnings:
             embed.add_field(name="Warnings", value=warnings)
