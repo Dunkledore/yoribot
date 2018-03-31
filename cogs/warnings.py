@@ -132,10 +132,15 @@ class Warnings:
         notes = ""
 
         for result in results:
-            if result["warning"]:
-                warnings += "{} - {} - {}\n".format(result["date"], result["mod_id"], result["reason"])
+            mod = ctx.guild.get_member(result["mod_id"])
+            if mod: 
+                mod = mod.mention
             else:
-                notes += "{} - {} - {}\n".format(result["date"], result["mod_id"], result["reason"])
+                mod = "User with ID: {}".format(result["mod_id"])
+            if result["warning"]:
+                warnings += "{} - {} - {}\n".format(result["date"], mod, result["reason"])
+            else:
+                notes += "{} - {} - {}\n".format(result["date"], mod, result["reason"])
 
         embed = discord.Embed(title="Logs for {}".format(member.mention), description=discord.Embed.Empty)
 
