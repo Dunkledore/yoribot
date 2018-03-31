@@ -93,7 +93,7 @@ class Warnings:
         settings = await ctx.db.fetchrow(query, ctx.guild.id)
 
         query = "SELECT count(*) FROM warnings WHERE guild_id = $1 AND user_id = $2 and warning = $3"
-        warning_count = await ctx.db.fetchval(query, query, ctx.guild.id, member.id, True)
+        warning_count = await ctx.db.fetchval(query, ctx.guild.id, member.id, True)
 
         if settings["muted_role"]:
             if settings["muted_count"]:
