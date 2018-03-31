@@ -96,8 +96,8 @@ class Warnings:
             if settings["muted_count"]:
                 if warning_count >= settings["muted_count"]:
                     role = discord.Utils.get(ctx.guild.roles, id=settings["muted_role"])
-                        if role:
-                            await member.add_roles(role)
+                    if role:
+                        await member.add_roles(role)
 
         if settings["banned_count"]:
             if warning_count >= settings["banned_count"]:
