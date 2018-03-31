@@ -28,7 +28,7 @@ class Warnings:
             await ctx.db.execute(insertquery, ctx.guild.id, number)
         except asyncpg.UniqueViolationError:
             await ctx.db.execute(alterquery, ctx.guild.id, number)
-        await ctx.send(embed=self.bot.sucess("Muted Count Set"))
+        await ctx.send(embed=self.bot.success("Muted Count Set"))
 
     @commands.command()
     @commands.guild_only()
@@ -43,7 +43,7 @@ class Warnings:
             await ctx.db.execute(insertquery, ctx.guild.id, role.id)
         except asyncpg.UniqueViolationError:
             await ctx.db.execute(alterquery, ctx.guild.id, role.id)
-        await ctx.send(embed=self.bot.sucess("Muted Role Set"))
+        await ctx.send(embed=self.bot.success("Muted Role Set"))
 
 
 
@@ -60,7 +60,7 @@ class Warnings:
             await ctx.db.execute(insertquery, ctx.guild.id, number)
         except asyncpg.UniqueViolationError:
             await ctx.db.execute(alterquery, ctx.guild.id, number)
-        await ctx.send(embed=self.bot.sucess("Banned Count Set"))
+        await ctx.send(embed=self.bot.success("Banned Count Set"))
 
     @commands.command()
     @commands.guild_only()
@@ -75,7 +75,7 @@ class Warnings:
             await ctx.db.execute(insertquery, ctx.guild.id, channel.id)
         except asyncpg.UniqueViolationError:
             await ctx.db.execute(alterquery, ctx.guild.id, channel.id)
-        await ctx.send(embed=self.bot.sucess("Report Channel Set"))
+        await ctx.send(embed=self.bot.success("Report Channel Set"))
 
     @commands.command()
     @commands.guild_only()
@@ -86,7 +86,7 @@ class Warnings:
         insertquery = "INSERT INTO warnings (guild_id, mod_id, user_id, reason, warning) VALUES ($1, $2, $3, $4, $5)"
 
         await ctx.db.execute(insertquery, ctx.guild.id, ctx.author.id, member.id, reason, True)
-        await ctx.send(embed=self.bot.sucess("Warning Added"))
+        await ctx.send(embed=self.bot.success("Warning Added"))
 
         query = "SELECT * FROM warnconfig WHERE guild_id = $1"
 
@@ -116,7 +116,7 @@ class Warnings:
         insertquery = "INSERT INTO warnings (guild_id, mod_id, user_id, reason, warning) VALUES ($1, $2, $3, $4, $5)"
 
         await ctx.db.execute(insertquery, ctx.guild.id, ctx.author.id, member.id, reason, False)
-        await ctx.send(embed=self.bot.sucess("Note Added"))
+        await ctx.send(embed=self.bot.success("Note Added"))
 
     @commands.command()
     @commands.guild_only()
@@ -129,7 +129,7 @@ class Warnings:
         results = await ctx.db.fetch(query, ctx.guild.id, member.id)
 
         warnings = ""
-        note = ""
+        notes = ""
 
         for result in results:
             if result["warning"]:
