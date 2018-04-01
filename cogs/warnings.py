@@ -162,6 +162,7 @@ class Warnings:
         try:
 
             if reaction.emoji != '\U0000274c':
+                await hook.send("return1")
                 return
 
             query = "SELECT * FROM warnconfig WHERE guild_id = $1"
@@ -169,12 +170,15 @@ class Warnings:
             settings = await self.bot.pool.fetchrow(query, reaction.message.guild.id)
 
             if not settings:
+                await hook.send("return2")
                 return
 
             if not settings["report_channel"]:
+                await hook.send("return3")
                 return
             channel = self.bot.get_channel(settings["report_channel"])
             if not channel:
+                await hook.send("return4")
                 return
 
             time = datetime.datetime.now()
