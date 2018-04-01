@@ -1,6 +1,7 @@
 import asyncpg
 import discord
 from discord.ext import commands
+import datetime
 
 from .utils import checks
 
@@ -152,6 +153,85 @@ class Warnings:
             embed.add_field(name="Notes", value=notes)
 
         await ctx.send(embed=embed)
+
+    async def on_reaction_add(self, reaction, user):
+
+        if reaction.emoji != '\U0000274c':
+            return
+
+        query = "SELECT * FROM warnconfig WHERE guild_id = $1"
+
+        settings = await self.bot.pool.fetchrow(query, reaction.message.guild)
+
+        if not settings:
+            return
+
+        if not settings["report_channel"]:
+            return
+        channel = self.bot.get_channel(settings["report_channel"])
+        if not channel:
+            return
+
+        time = datetime.datetime.now()
+        embed = discrd.Embed(title="New User Report", description=discord.Embed.Empty)
+        embed.add_field(name="Reported by", value=user.mention)
+        embed.add_field(name="Reported user", value=reaction.message.author.mention)
+        embed.add_field(name="Reported content", value=reaction.message.content)
+        embed.add_field(name="Time", value=time)
+        embed.set_footer(text="User the reaction to approve, deny or note the report")
+        message = await ctx.send(embed=embed)
+
+
+        cross = "\N{NEGATIVE SQUARED CROSS MARK}"
+        tick = "\N{WHITE HEAVY CHECK MARK}"
+        note = "\N{SPRIAL NOTE PAD}"
+        await message.add_reaction(tick)
+        await message.add_reaction(cross)
+        await message.add_reaction(note)
+
+
+        def check(reaction, user):
+            return message.id == reaction.message.id and reaction in ["\N{NEGATIVE SQUARED CROSS MARK}","\N{WHITE HEAVY CHECK MARK}","\N{SPRIAL NOTE PAD}"]
+
+        reaction2, user2 = self.bot.wait_for("reaction_add", check=check)
+
+
+        if reacion.emoji == cross:
+            return
+
+        if reacion.emoji == tick:
+            warning = True
+
+        if reaction.emoji == note:
+            warning = False
+
+
+
+        insertquery = "INSERT INTO warnings (guild_id, mod_id, user_id, reason, warning) VALUES ($1, $2, $3, $4, $5)"
+
+        await self.bot.pool.execute(insertquery, reaction.message.guild.id, user2.id, reaction.message.author.id, reaction.message.content, warning)
+        await channel.send(embed=self.bot.success("Warning Added"))
+
+        query = "SELECT count(*) FROM warnings WHERE guild_id = $1 AND user_id = $2 and warning = $3"
+        warning_count = await self.bot.pool.fetchval(query, reaction.message.guild.id, reaction.message.author.id, True)
+
+        if settings["muted_role"]:
+            if settings["muted_count"]:
+                if warning_count >= settings["muted_count"]:
+                    role = discord.utils.get(reaction.message.guild.roles, id=settings["muted_role"])
+                    if role:
+                        await reaction.message.author.add_roles(role)
+
+        if settings["banned_count"]:
+            if warning_count >= settings["banned_count"]:
+                await reaction.message.author.ban(reason="Automatic Ban see Warning log")
+
+
+
+
+
+
+
 
 
 
