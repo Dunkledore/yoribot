@@ -191,7 +191,7 @@ class Warnings:
 
 
         def check(reaction, user):
-            return message.id == reaction.message.id and reaction in ["\N{NEGATIVE SQUARED CROSS MARK}","\N{WHITE HEAVY CHECK MARK}","\N{SPRIAL NOTE PAD}"]
+            return message.id == reaction.message.id and reaction in ["\N{NEGATIVE SQUARED CROSS MARK}","\N{WHITE HEAVY CHECK MARK}","\N{Spiral Note Pad}"]
 
         reaction2, user2 = self.bot.wait_for("reaction_add", check=check)
 
