@@ -184,7 +184,7 @@ class Warnings:
 
         cross = "\N{NEGATIVE SQUARED CROSS MARK}"
         tick = "\N{WHITE HEAVY CHECK MARK}"
-        note = "\N{SPRIAL NOTE PAD}"
+        note = "\N{Spiral Note Pad}"
         await message.add_reaction(tick)
         await message.add_reaction(cross)
         await message.add_reaction(note)
