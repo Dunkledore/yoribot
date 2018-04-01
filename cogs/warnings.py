@@ -161,7 +161,7 @@ class Warnings:
 
         query = "SELECT * FROM warnconfig WHERE guild_id = $1"
 
-        settings = await self.bot.pool.fetchrow(query, reaction.message.guild)
+        settings = await self.bot.pool.fetchrow(query, reaction.message.guild.id)
 
         if not settings:
             return
