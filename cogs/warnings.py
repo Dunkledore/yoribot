@@ -81,7 +81,7 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.is_mod()
-    async def warn(self, ctx, member: discord.Member, reason):
+    async def warn(self, ctx, member: discord.Member, *,reason):
         """Apply a warning to a user"""
 
         insertquery = "INSERT INTO warnings (guild_id, mod_id, user_id, reason, warning) VALUES ($1, $2, $3, $4, $5)"
@@ -111,7 +111,7 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.is_mod()
-    async def note(self, ctx, member: discord.Member, reason):
+    async def note(self, ctx, member: discord.Member, *,reason):
         """Apply a note to a user - Does not count towards their warning count"""
 
         insertquery = "INSERT INTO warnings (guild_id, mod_id, user_id, reason, warning) VALUES ($1, $2, $3, $4, $5)"
