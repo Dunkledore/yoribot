@@ -76,7 +76,7 @@ class Website:
 		self.bot = bot
 		self.app = Quart(__name__)
 		self.app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
-		self.run_app()
+		self.run_app(None)
 
 
 		
