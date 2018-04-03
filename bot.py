@@ -40,6 +40,8 @@ initial_extensions = (
     'cogs.discomegle',
     'cogs.embed',
     'cogs.ffxiv',
+    'cogs.filter',
+    'cogs.flask',
     'cogs.fun',
     'cogs.greet',
     'cogs.hangman',
