@@ -54,7 +54,7 @@ initial_extensions = (
     'cogs.profile',
     'cogs.race',
     'cogs.rate',
-    'cogs.reactroles.py',
+    'cogs.reactroles',
     'cogs.reminder',
     'cogs.reddit',
     'cogs.rift',
