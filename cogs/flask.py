@@ -76,6 +76,7 @@ class Website:
 		self.bot = bot
 		self.app = Quart(__name__)
 		self.app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
+		self.run_app()
 
 
 		
@@ -85,8 +86,8 @@ class Website:
 		self.app.run(host ='0.0.0.0', port=config.port)
 
 
-	@commands.command(hidden=True)
-	@checks.is_developer()
+	#@commands.command(hidden=True)
+	#@checks.is_developer()
 	async def run_app(self, ctx):
 
 		@self.app.errorhandler(404)
@@ -183,7 +184,7 @@ class Website:
 		t = Thread(target=self.start_app)
 		t.start()
 
-		await ctx.send("running")
+		#await ctx.send("running")
 
 	def get_commands(self):
 		def key(c):
