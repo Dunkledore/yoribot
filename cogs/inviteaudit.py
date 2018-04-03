@@ -80,8 +80,8 @@ class InviteAudit(object):
                             await channel.send(embed=em)
                         self.invites[str(g.id)][i.code] = i
                     self.guild_first_runs[str(g.id)] = False
-                except Exception as e:
-                    print("Can't get invites from {}: {}".format(g, e))
+                except Exception:
+                    self.logger.exception("Caching error: ")
         self.cachefirst_run = False
 
     def checksettings(self, guild):
@@ -185,6 +185,7 @@ def setup(bot: commands.Bot):
     check_folders()
     check_files()
     n = InviteAudit(bot)
+    bot.add_listener(n.member_join, "on_member_join")
     bot.add_cog(n)
     global task 
     task = bot.loop.create_task(n.cacheloop())
