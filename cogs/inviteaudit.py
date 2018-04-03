@@ -99,7 +99,10 @@ class InviteAudit(object):
         guild = ctx.message.guild
         guild_settings = self.settings[str(guild.id)]
         on = guild_settings["on"]
-
+        if not self.invite_permissions(guild):
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                               title="⚠ Error",
+                                               description="I don't have permissions to view invites in this server. Please enable the 'Manage Server' permission to enable this feature."))
         if on:
             on = False
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
@@ -141,7 +144,10 @@ class InviteAudit(object):
                                                title="⚠ Error",
                                                description="I don't have permissions to talk in that channel."))
             return
-
+        elif not self.invite_permissions(guild):
+            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                               title="⚠ Error",
+                                               description="I don't have permissions to view invites in this server. Please enable the 'Manage Server' permission to enable this feature."))
         self.settings[str(guild.id)]["channel"] = str(channel.id)
         dataIO.save_json(self.settings_path, self.settings)
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
@@ -159,12 +165,15 @@ class InviteAudit(object):
         else:
             return None
 
-    def speak_permissions(self, server: discord.Guild,
+    def speak_permissions(self, guild: discord.Guild,
                           channel: discord.TextChannel=None):
         if not channel:
-            channel = self.get_invite_event_channel(server)
-        member = server.get_member(self.bot.user.id)
+            channel = self.get_invite_event_channel(guild)
+        member = guild.get_member(self.bot.user.id)
         return member.permissions_in(channel).send_messages
+    def invite_permissions(self, guild: discord.Guild):
+        member = guild.get_member(self.bot.user.id)
+        return member.guild_permissions.manage_guild
 
 
 def check_folders():
