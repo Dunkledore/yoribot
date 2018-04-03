@@ -76,7 +76,7 @@ class Website:
 		self.bot = bot
 		self.app = Quart(__name__)
 		self.app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
-		self.bot.loop.create_task(self.run_app(None))
+		self.bot.loop.run_until_complete(self.run_app(None))
 
 
 		
