@@ -127,19 +127,19 @@ class Fun:
         if outcome is True:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                                title="You win {}!"
-                                               "".format(author.mention),
+                                               "".format(author.name),
                                                description="Yori picked {}"
                                                "".format(red_choice.value)))
         elif outcome is False:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                                title="You lost {}!"
-                                               "".format(author.mention),
+                                               "".format(author.name),
                                                description="Yori picked {}"
                                                "".format(red_choice.value)))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
                                                title="{} it was a tie!"
-                                               "".format(author.mention),
+                                               "".format(author.name),
                                                description="Yori picked {} too."
                                                "".format(red_choice.value)))
 
