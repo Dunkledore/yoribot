@@ -420,7 +420,7 @@ class HelpPaginator(Pages):
             self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
 
         if self.maximum_pages:
-            self.embed.set_author(name="Yori Bot Help - Use the Reaction Emojis to Navigate", icon_url="http://img.lgbtdis.co/image/h0RD")
+            self.embed.set_author(name="Yori Bot Help - Use the Reaction Emojis to Navigate", icon_url="http://img.lgbtdis.co/images/2018/04/04/d8e468c6e46d4da14c98d3ab3b4cdfd0.th.png")
 
         if not self.paginating:
             return await self.channel.send(embed=self.embed)
