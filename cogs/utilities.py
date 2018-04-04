@@ -55,7 +55,7 @@ class Utilities:
                         cogs.append(cog)
 
             p = FirstHelpPaginator(ctx, entries=cogs, per_page=15)
-            p.embed.set_author(name="Yori Bot Help", icon_url="http://img.lgbtdis.co/image/h0RD")
+            p.embed.set_author(name="Yori Bot Help", icon_url="http://img.lgbtdis.co/images/2018/04/04/d8e468c6e46d4da14c98d3ab3b4cdfd0.th.png")
             await p.paginate()
             return
 
