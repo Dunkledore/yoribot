@@ -54,7 +54,7 @@ class UI:
         embed.set_author(
             name="Yori",
             url="https://yoribot.com/",
-            icon_url="http://yoribot.com/wp-content/uploads/2017/11/yoriicon.png")
+            icon_url="http://img.lgbtdis.co/image/h0RD")
 
         for pack in self.datapacks:
             embed.add_field(
