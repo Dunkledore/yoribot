@@ -76,7 +76,7 @@ class Fun:
                                            title="(ʘ言ʘ╬)  This is a Riot!    (╬ Ò ‸ Ó)",
                                            description=text))
 
-    @fun.command()
+    @commands.command()
     async def thot(self, ctx, user):
         """Determines if a user is a thot or not"""
         await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
