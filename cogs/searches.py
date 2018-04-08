@@ -256,13 +256,13 @@ class Searches:
             url += "request=appdetails"
             url += "&"
             url += "appid=" + str(appid)
-
-            async with aiohttp.get(url) as r:
-                data = await r.json()
-            if "error" not in data.keys():
-                return data
-            else:
-                return None
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    data = await r.json()
+                if "error" not in data.keys():
+                    return data
+                else:
+                    return None
 
         # result refiner process
         async def refineResults(result):
@@ -441,38 +441,39 @@ class Searches:
         url = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/"
         # we will store our stuff in here
         result = []
-        async with aiohttp.get(url) as r:
-            data = await r.json()
-        if "error" not in data.keys():
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.json()
+            if "error" not in data.keys():
 
-            # check for romanian numbers
-            testR = re.compile('\s[vVxX](\W|$)').search(game)
-            if testR is not None:
-                game = game[:testR.start() + 1] + '\s' + game[testR.start() + 1:]
+                # check for romanian numbers
+                testR = re.compile('\s[vVxX](\W|$)').search(game)
+                if testR is not None:
+                    game = game[:testR.start() + 1] + '\s' + game[testR.start() + 1:]
 
-            # create regexp for matching
-            test = re.compile('.*' + '.*'.join(game.split()) + '.*', re.I)
+                # create regexp for matching
+                test = re.compile('.*' + '.*'.join(game.split()) + '.*', re.I)
 
-            # Build the data into a nice table and send
-            for d in data['applist']['apps']:
-                if test.search(d['name'].lower()) is not None:
-                    result.append({
-                        "appid": d['appid'],
-                        "name": d['name']
-                    })
-            if len(result) == 0:
-                return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ='There are no games like that one :\'('))
-            elif len(result) == 1 or result[0]['name'] == game:
-                await ctx.send("http://store.steampowered.com/app/" +
-                                   str(result[0]['appid']))
+                # Build the data into a nice table and send
+                for d in data['applist']['apps']:
+                    if test.search(d['name'].lower()) is not None:
+                        result.append({
+                            "appid": d['appid'],
+                            "name": d['name']
+                        })
+                if len(result) == 0:
+                    return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                    title = "⚠ Error",
+                                    description ='There are no games like that one :\'('))
+                elif len(result) == 1 or result[0]['name'] == game:
+                    await ctx.send("http://store.steampowered.com/app/" +
+                                       str(result[0]['appid']))
+                else:
+                    await refineResults(result)
             else:
-                await refineResults(result)
-        else:
-            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description =data["error"]))
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                    title = "⚠ Error",
+                                    description =data["error"]))
 
 def setup(bot):
     n = Searches(bot)
