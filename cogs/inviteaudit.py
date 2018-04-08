@@ -175,6 +175,34 @@ class InviteAudit(object):
         member = guild.get_member(self.bot.user.id)
         return member.guild_permissions.manage_guild
 
+    async def member_join(self, member: discord.Member):
+        self.checksettings(member.guild)
+        guild = member.guild
+        guild_settings = self.settings[str(guild.id)]
+
+        if not guild_settings["on"]:
+            return
+
+        invite_event_channel = self.get_invite_event_channel(guild)
+        if not invite_event_channel:
+            return
+        
+        invite = None
+        found = False
+        while not found:
+            invites = await guild.invites()
+            for i in invites:
+                inv = self.invites[str(guild.id)][i.code]
+                if inv.uses < i.uses:
+                    found = True
+                    invite = i
+                    break
+        inviterName = invite.inviter.name if invite.inviter else "Server Widget"
+        embed = discord.Embed(title="ℹ️ Invite Used", description=f'{member.mention} joined using invite `{i.code}` created by {inviterName}')
+        embed.timestamp = datetime.datetime.utcnow()
+
+        await invite_event_channel.send(embed=embed)
+
 
 def check_folders():
     if not os.path.exists("data/invites"):
@@ -194,7 +222,7 @@ def setup(bot: commands.Bot):
     check_folders()
     check_files()
     n = InviteAudit(bot)
-    #bot.add_listener(n.member_join, "on_member_join")
+    bot.add_listener(n.member_join, "on_member_join")
     bot.add_cog(n)
     global task 
     task = bot.loop.create_task(n.cacheloop())
