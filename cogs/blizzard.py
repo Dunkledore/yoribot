@@ -621,7 +621,6 @@ class Blizzard:
                                 title = "⚠ Error",
                                 description ="Error finding WoW token prices."))
 
-
 def check_folders():
     folder = "data/blizzard"
     if not os.path.exists(folder):
@@ -634,7 +633,6 @@ def check_files():
     if not dataIO.is_valid_json("data/blizzard/settings.json"):
         print("Creating default blizzard settings.json...")
         dataIO.save_json("data/blizzard/settings.json", default)
-
 
 def setup(bot):
     try:
