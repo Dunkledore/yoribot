@@ -198,7 +198,7 @@ class InviteAudit(object):
                     invite = i
                     break
         inviterName = invite.inviter.name if invite.inviter else "Server Widget"
-        embed = discord.Embed(title="ℹ️ Invite Used", description=f'{member.mention} joined using invite `{i.code}` created by {inviterName}')
+        embed = discord.Embed(title="ℹ️ Invite Used", description=f'{member.mention} (id: {member.id}) joined using invite `{i.code}` created by {inviterName}')
         embed.timestamp = datetime.datetime.utcnow()
 
         await invite_event_channel.send(embed=embed)
