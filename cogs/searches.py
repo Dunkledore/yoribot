@@ -149,30 +149,13 @@ class Searches:
         user = ctx.message.author
         page = randint(1,6)
         link = "http://fortunecookieapi.herokuapp.com/v1/fortunes?limit=&skip=&page={}".format(page)
-        async with aiohttp.get(link) as m:
-            result = await m.json()
-            message = choice(result)
-            fortune = discord.Embed(colour=user.colour)
-            fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
-            await ctx.send(embed=fortune)
-
-    @commands.command()
-    async def xmasclock(self,ctx):
-        """Display days left 'til xmas"""
-
-        now = datetime.datetime.now()
-        today = date(now.year, now.month, now.day)
-
-        year = now.year
-        if (now.month == 12 and now.day > 25):
-            year = now.year + 1
-
-        xmasday = date(year, 12, 25)
-
-        delta = xmasday - today
-
-        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = str(delta.days) + " days left until Xmas!"))
+        async with aiohttp.ClientSession() as session:
+            async with session.get(link) as m:
+                result = await m.json()
+                message = choice(result)
+                fortune = discord.Embed(colour=user.colour)
+                fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
+                await ctx.send(embed=fortune)
 
     @commands.command()
     @commands.guild_only()
