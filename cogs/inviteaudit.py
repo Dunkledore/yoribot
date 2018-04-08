@@ -69,13 +69,13 @@ class InviteAudit(object):
                         del self.invites[str(g.id)][x.code]
                     for i in guild_invites:
                         inviterName = i.inviter.name if i.inviter else "Server Widget"
-                        if i.code in self.invites[str(g.id)]:
+                        '''if i.code in self.invites[str(g.id)]:
                             inv = self.invites[str(g.id)][i.code]
                             if inv.uses < i.uses:
                                 uses = i.uses - inv.uses
                                 em = discord.Embed(title="ℹ️ Invite Used", description=f"{i.code} created by {inviterName} was recently used {uses} time(s) by user(s) to join this guild.")
-                                await channel.send(embed=em)
-                        elif not self.guild_first_runs[str(g.id)]:
+                                await channel.send(embed=em)'''
+                        if not self.guild_first_runs[str(g.id)]:
                             em = discord.Embed(title="📥 New Invite", description=f"{i.code} created by {inviterName}")
                             await channel.send(embed=em)
                         self.invites[str(g.id)][i.code] = i
@@ -196,6 +196,7 @@ class InviteAudit(object):
                 if inv.uses < i.uses:
                     found = True
                     invite = i
+                    self.invites[str(guild.id)][i.code] = i
                     break
         inviterName = invite.inviter.name if invite.inviter else "Server Widget"
         embed = discord.Embed(title="ℹ️ Invite Used", description=f'{member.mention} (id: {member.id}) joined using invite `{i.code}` created by {inviterName}')
