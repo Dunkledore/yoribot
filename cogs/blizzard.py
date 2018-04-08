@@ -507,7 +507,7 @@ class Blizzard:
         tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'div']
         attr = {'div': 'class'}
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.url, headers=self.patch_header) as response:
+            async with session.get(url, headers=self.patch_header) as response:
                 dirty = await response.text()
             clean = bleach.clean(dirty, tags=tags, attributes=attr, strip=True)
             soup = BeautifulSoup(clean, "html.parser")
