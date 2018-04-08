@@ -506,59 +506,60 @@ class Blizzard:
                        self.abbr[game]])
         tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'div']
         attr = {'div': 'class'}
-        async with aiohttp.get(url, headers=self.patch_header) as response:
-            dirty = await response.text()
-        clean = bleach.clean(dirty, tags=tags, attributes=attr, strip=True)
-        soup = BeautifulSoup(clean, "html.parser")
-        # Preserving this list structure, in case we ever want to switch to
-        # scraping the actual game websites for multiple notes
-        notes = soup.find_all('div', class_="patch-notes-interior")
-        note_list = []
-        for note in notes:
-            # Format each patch note into an array of messages using Paginator
-            pager = formatter.Paginator(prefix='```markdown', suffix='```', max_size=1000)
-            # Custom headers for sucky patch notes that have none
-            if game == "starcraft2":
-                text = "STARCRAFT 2 PATCH NOTES"
-                pager.add_line(text + '\n' + '='*len(text))
-            elif game == "warcraft":
-                text = "WORLD OF WARCRAFT PATCH NOTES"
-                pager.add_line(text + '\n' + '='*len(text))
-            elif game == "hearthstone":
-                # Convert first paragraph to h1
-                note.p.name = 'h1'
-            elif game == "overwatch":
-                pass
-            elif game == "diablo3":
-                text = "DIABLO 3 PATCH NOTES"
-                pager.add_line(text + '\n' + '='*len(text))
-            elif game == "hots":
-                text = "HEROES OF THE STORM PATCH NOTES"
-                pager.add_line(text + '\n' + '='*len(text))
-
-            for child in note.children:
-                if child.name == 'h1':
-                    # This is a patch notes title, with date.
-                    text = child.get_text()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.url, headers=self.patch_header) as response:
+                dirty = await response.text()
+            clean = bleach.clean(dirty, tags=tags, attributes=attr, strip=True)
+            soup = BeautifulSoup(clean, "html.parser")
+            # Preserving this list structure, in case we ever want to switch to
+            # scraping the actual game websites for multiple notes
+            notes = soup.find_all('div', class_="patch-notes-interior")
+            note_list = []
+            for note in notes:
+                # Format each patch note into an array of messages using Paginator
+                pager = formatter.Paginator(prefix='```markdown', suffix='```', max_size=1000)
+                # Custom headers for sucky patch notes that have none
+                if game == "starcraft2":
+                    text = "STARCRAFT 2 PATCH NOTES"
                     pager.add_line(text + '\n' + '='*len(text))
-                elif str(child.name).startswith('h'):
-                    # Thid is a patch notes section heading.
-                    text = child.get_text()
-                    pager.add_line('\n' + text + '\n' + '-'*len(text))
-                elif child.name == 'p':
-                    # This is a plain paragraph of patch notes.
-                    text = child.get_text()
-                    if text.strip():
-                        text = '> ' + text if len(text) < 80 else text
-                        pager.add_line('\n' + text)
-                elif child.name == 'li':
-                    # A list is about to follow.
-                    pager.add_line('')
-                    self.walk_list(child, pager, -1)
-                else:
-                    # Space reserved for future cases of "something else"
+                elif game == "warcraft":
+                    text = "WORLD OF WARCRAFT PATCH NOTES"
+                    pager.add_line(text + '\n' + '='*len(text))
+                elif game == "hearthstone":
+                    # Convert first paragraph to h1
+                    note.p.name = 'h1'
+                elif game == "overwatch":
                     pass
-            note_list.append(pager.pages)
+                elif game == "diablo3":
+                    text = "DIABLO 3 PATCH NOTES"
+                    pager.add_line(text + '\n' + '='*len(text))
+                elif game == "hots":
+                    text = "HEROES OF THE STORM PATCH NOTES"
+                    pager.add_line(text + '\n' + '='*len(text))
+
+                for child in note.children:
+                    if child.name == 'h1':
+                        # This is a patch notes title, with date.
+                        text = child.get_text()
+                        pager.add_line(text + '\n' + '='*len(text))
+                    elif str(child.name).startswith('h'):
+                        # Thid is a patch notes section heading.
+                        text = child.get_text()
+                        pager.add_line('\n' + text + '\n' + '-'*len(text))
+                    elif child.name == 'p':
+                        # This is a plain paragraph of patch notes.
+                        text = child.get_text()
+                        if text.strip():
+                            text = '> ' + text if len(text) < 80 else text
+                            pager.add_line('\n' + text)
+                    elif child.name == 'li':
+                        # A list is about to follow.
+                        pager.add_line('')
+                        self.walk_list(child, pager, -1)
+                    else:
+                        # Space reserved for future cases of "something else"
+                        pass
+                note_list.append(pager.pages)
 
         if self.settings.setdefault('notes_format', 'paged') == 'paged':
             result = await self._info_menu(ctx, note_list[0],
@@ -621,6 +622,7 @@ class Blizzard:
                                 title = "⚠ Error",
                                 description ="Error finding WoW token prices."))
 
+
 def check_folders():
     folder = "data/blizzard"
     if not os.path.exists(folder):
@@ -633,6 +635,7 @@ def check_files():
     if not dataIO.is_valid_json("data/blizzard/settings.json"):
         print("Creating default blizzard settings.json...")
         dataIO.save_json("data/blizzard/settings.json", default)
+
 
 def setup(bot):
     try:
