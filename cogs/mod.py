@@ -454,7 +454,7 @@ class Mod:
                                 description = f'(ID: {member.user.id}), previously banned for {member.reason}.'))
         else:
             await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🕊  " + member.name + " was Unbanned",
+                                title = "🕊  " + user.name + " was Unbanned",
                                 description = choice(self.unbanmessages)))
 
     @commands.command(no_pm=True)
