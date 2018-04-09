@@ -8,6 +8,7 @@ import textwrap
 from contextlib import redirect_stdout
 import io
 from .utils import checks
+from .utils.paginator import FieldPages
 
 # to expose to the eval command
 import datetime
@@ -62,13 +63,15 @@ class Admin:
     @checks.is_developer()
     async def guilds(self, ctx):
         """List of guilds the bot is in"""
-        string = "List of  guilds the bot is in: \n"
+        entries = {}
+        counter = 1
         for guild in self.bot.guilds:
-            string += "**ID: **"+ str(guild.id) + " **Name: **" + guild.name + " " + "**Owner: **" +guild.owner.name + "\n"
+            string = "**ID:** "+ str(guild.id) + " **Owner:** " +guild.owner.name + "\n"
+            entries[f'{str(counter)}. {guild.name}'] = string
 
-        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "🖧 Servers the Bot is In:",
-                                description = string))
+        paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
+        paginator.embed.title = "🖧 Servers the Bot is In:"
+        await paginator.paginate()
 
     @commands.command(hidden=True)
     @checks.is_admin()
