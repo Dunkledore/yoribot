@@ -56,7 +56,8 @@ class Rank:
             if  rank["xp_required"] == xp:
                 role = discord.utils.get(guild.roles, id=rank["role_id"])
                 await member.add_roles(role)
-                await message.channel.send("Congratulations {} you now have the rank of {}".format(member.name, role.name))
+                await message.channel.send(embed=discord.Embed(color=ctx.message.author.color,
+                                description ="Congratulations {} you now have the rank of {}".format(member.name, role.name)))
                 if str(guild.id) in self.rank_settings:
                     if self.rank_settings[str(guild.id)]:
                         ordered = guild_ranks
