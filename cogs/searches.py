@@ -149,58 +149,13 @@ class Searches:
         user = ctx.message.author
         page = randint(1,6)
         link = "http://fortunecookieapi.herokuapp.com/v1/fortunes?limit=&skip=&page={}".format(page)
-        async with aiohttp.get(link) as m:
-            result = await m.json()
-            message = choice(result)
-            fortune = discord.Embed(colour=user.colour)
-            fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
-            await ctx.send(embed=fortune)
-
-    @commands.command()
-    async def typeracer(self, ctx, user: str):
-        """Get user stats from typeracer"""
-        api = 'http://data.typeracer.com/users?id=tr:{}'.format(user)
-        async with aiohttp.request("GET", api) as r:
-            if r.status == 200:
-                result = await r.json()
-
-                random_colour = int("0x%06x" % random.randint(0, 0xFFFFFF), 16)
-
-                last_scores = '\n'.join(str(int(x)) for x in result['tstats']['recentScores'])
-
-                embed = discord.Embed(colour=random_colour, description= " ", url='http://play.typeracer.com/')
-                embed.set_author(name=result['name'])
-                embed.add_field(name='Country', value=':flag_{}:'.format(result['country']))
-                embed.add_field(name='Level', value=result['tstats']['level'])
-                embed.add_field(name='Wins', value=result['tstats']['gamesWon'])
-                embed.add_field(name='Recent WPM', value=str(result['tstats']['recentAvgWpm']))
-                embed.add_field(name='Average WPM', value=str(result['tstats']['wpm']))
-                embed.add_field(name='Best WPM', value=str(result['tstats']['bestGameWpm']))
-                embed.add_field(name='Recent scores', value=last_scores)
-                embed.set_footer(text='typeracer.com')
-                await ctx.send(embed=embed)
-            else:
-                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ='`Unable to retieve stats for user {}`'.format(user)))
-
-    @commands.command()
-    async def xmasclock(self,ctx):
-        """Display days left 'til xmas"""
-
-        now = datetime.datetime.now()
-        today = date(now.year, now.month, now.day)
-
-        year = now.year
-        if (now.month == 12 and now.day > 25):
-            year = now.year + 1
-
-        xmasday = date(year, 12, 25)
-
-        delta = xmasday - today
-
-        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = str(delta.days) + " days left until Xmas!"))
+        async with aiohttp.ClientSession() as session:
+            async with session.get(link) as m:
+                result = await m.json()
+                message = choice(result)
+                fortune = discord.Embed(colour=user.colour)
+                fortune.add_field(name="{}'s Fortune!".format(user.display_name),value="{}".format(message["message"]))
+                await ctx.send(embed=fortune)
 
     @commands.command()
     @commands.guild_only()
@@ -301,13 +256,13 @@ class Searches:
             url += "request=appdetails"
             url += "&"
             url += "appid=" + str(appid)
-
-            async with aiohttp.get(url) as r:
-                data = await r.json()
-            if "error" not in data.keys():
-                return data
-            else:
-                return None
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    data = await r.json()
+                if "error" not in data.keys():
+                    return data
+                else:
+                    return None
 
         # result refiner process
         async def refineResults(result):
@@ -486,38 +441,39 @@ class Searches:
         url = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/"
         # we will store our stuff in here
         result = []
-        async with aiohttp.get(url) as r:
-            data = await r.json()
-        if "error" not in data.keys():
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.json()
+            if "error" not in data.keys():
 
-            # check for romanian numbers
-            testR = re.compile('\s[vVxX](\W|$)').search(game)
-            if testR is not None:
-                game = game[:testR.start() + 1] + '\s' + game[testR.start() + 1:]
+                # check for romanian numbers
+                testR = re.compile('\s[vVxX](\W|$)').search(game)
+                if testR is not None:
+                    game = game[:testR.start() + 1] + '\s' + game[testR.start() + 1:]
 
-            # create regexp for matching
-            test = re.compile('.*' + '.*'.join(game.split()) + '.*', re.I)
+                # create regexp for matching
+                test = re.compile('.*' + '.*'.join(game.split()) + '.*', re.I)
 
-            # Build the data into a nice table and send
-            for d in data['applist']['apps']:
-                if test.search(d['name'].lower()) is not None:
-                    result.append({
-                        "appid": d['appid'],
-                        "name": d['name']
-                    })
-            if len(result) == 0:
-                return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description ='There are no games like that one :\'('))
-            elif len(result) == 1 or result[0]['name'] == game:
-                await ctx.send("http://store.steampowered.com/app/" +
-                                   str(result[0]['appid']))
+                # Build the data into a nice table and send
+                for d in data['applist']['apps']:
+                    if test.search(d['name'].lower()) is not None:
+                        result.append({
+                            "appid": d['appid'],
+                            "name": d['name']
+                        })
+                if len(result) == 0:
+                    return await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                    title = "⚠ Error",
+                                    description ='There are no games like that one :\'('))
+                elif len(result) == 1 or result[0]['name'] == game:
+                    await ctx.send("http://store.steampowered.com/app/" +
+                                       str(result[0]['appid']))
+                else:
+                    await refineResults(result)
             else:
-                await refineResults(result)
-        else:
-            await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "⚠ Error",
-                                description =data["error"]))
+                await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                    title = "⚠ Error",
+                                    description =data["error"]))
 
 def setup(bot):
     n = Searches(bot)

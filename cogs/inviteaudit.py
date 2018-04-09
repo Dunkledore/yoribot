@@ -70,11 +70,11 @@ class InviteAudit(object):
                     for i in guild_invites:
                         inviterName = i.inviter.name if i.inviter else "Server Widget"
                         if i.code in self.invites[str(g.id)]:
-                            inv = self.invites[str(g.id)][i.code]
+                            '''inv = self.invites[str(g.id)][i.code]
                             if inv.uses < i.uses:
                                 uses = i.uses - inv.uses
                                 em = discord.Embed(title="ℹ️ Invite Used", description=f"{i.code} created by {inviterName} was recently used {uses} time(s) by user(s) to join this guild.")
-                                await channel.send(embed=em)
+                                await channel.send(embed=em)'''
                         elif not self.guild_first_runs[str(g.id)]:
                             em = discord.Embed(title="📥 New Invite", description=f"{i.code} created by {inviterName}")
                             await channel.send(embed=em)
@@ -175,6 +175,35 @@ class InviteAudit(object):
         member = guild.get_member(self.bot.user.id)
         return member.guild_permissions.manage_guild
 
+    async def member_join(self, member: discord.Member):
+        self.checksettings(member.guild)
+        guild = member.guild
+        guild_settings = self.settings[str(guild.id)]
+
+        if not guild_settings["on"]:
+            return
+
+        invite_event_channel = self.get_invite_event_channel(guild)
+        if not invite_event_channel:
+            return
+        
+        invite = None
+        found = False
+        while not found:
+            invites = await guild.invites()
+            for i in invites:
+                inv = self.invites[str(guild.id)][i.code]
+                if inv.uses < i.uses:
+                    found = True
+                    invite = i
+                    self.invites[str(guild.id)][i.code] = i
+                    break
+        inviterName = invite.inviter.name if invite.inviter else "Server Widget"
+        embed = discord.Embed(title="ℹ️ Invite Used", description=f'{member.mention} (id: {member.id}) joined using invite `{i.code}` created by {inviterName}')
+        embed.timestamp = datetime.datetime.utcnow()
+
+        await invite_event_channel.send(embed=embed)
+
 
 def check_folders():
     if not os.path.exists("data/invites"):
@@ -194,7 +223,7 @@ def setup(bot: commands.Bot):
     check_folders()
     check_files()
     n = InviteAudit(bot)
-    #bot.add_listener(n.member_join, "on_member_join")
+    bot.add_listener(n.member_join, "on_member_join")
     bot.add_cog(n)
     global task 
     task = bot.loop.create_task(n.cacheloop())
