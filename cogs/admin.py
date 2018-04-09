@@ -86,19 +86,6 @@ class Admin:
                                 title = "✅ Success",
                                 description = 'Role set'))
 
-    
-    @commands.command(hidden=True)
-    @checks.is_owner()
-    async def messageowners(self, ctx, *, message):
-        """Send a message to all server owners the bot is in"""
-
-        for guild in self.bot.guilds:
-            await guild.owner.send(message)
-
-        await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
-                                title = "✅ Success",
-                                description ="Messages Delivered"))
-
     @commands.command(hidden=True)
     @checks.is_developer()
     async def load(self, ctx, *, module):
