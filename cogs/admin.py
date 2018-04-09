@@ -68,6 +68,7 @@ class Admin:
         for guild in self.bot.guilds:
             string = "**ID:** "+ str(guild.id) + " **Owner:** " +guild.owner.name + "\n"
             entries[f'{str(counter)}. {guild.name}'] = string
+            counter+= 1
 
         paginator = FieldPages(ctx, entries=list(entries.items()), per_page=5)
         paginator.embed.title = "🖧 Servers the Bot is In:"
