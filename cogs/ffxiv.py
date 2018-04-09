@@ -110,12 +110,13 @@ class FFXIV:
                 return {}
             else:
                 url += "/" + urlencode(str(kwargs["id_"]))
-        async with aiohttp.get(url) as r:
-            try:
-                d = await r.json()
-                return d
-            except:
-                return {"__ERROR__": "Invalid JSON or no response"}
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                try:
+                    d = await r.json()
+                    return d
+                except:
+                    return {"__ERROR__": "Invalid JSON or no response"}
 
     def getlongname(self, shortname):
         d = {"PLD": "Paladin", "WAR": "Warrior", "DRK": "Dark Knight", "GLA": "Gladiator",
@@ -227,9 +228,10 @@ class FFXIV:
 
     async def collectnews(self):
         url = "http://xivdb.com/assets/lodestone.json"
-        async with aiohttp.ClientSession().get(url) as r:
-            d = await r.json()
-            return d
+        async with aiohttp.ClientSession() as session:
+            async with session.ClientSession().get(url) as r:
+                d = await r.json()
+                return d
 
     async def update_news(self, ctx):
         if ctx is not None:
@@ -382,39 +384,40 @@ class FFXIV:
     async def status(self, ctx, server=None):
         """Displays FFXIV server status."""
         url = "http://na.finalfantasyxiv.com/lodestone/worldstatus/"
-        async with aiohttp.get(url) as r:
-            soup = BeautifulSoup(await r.text(), 'html.parser')
-            st = {}
-            if soup.find(class_="maintenance__text"):
-                await self.embed(ctx, "FFXIV Server Status",
-                                 "**Lodestone is down for maintenance.**\n This usually means the servers are ***OFFLINE***.",
-                                 "red")
-                return
-            for s in soup.find_all(class_="item-list__worldstatus"):
-                st[s.h3.text.strip()] = 1 if s.find("p").text.find("Online") != -1 else 0
-            if not server:
-                if len([0 for x in st.keys() if st[x] == 0]) == 0:
-                    await self.embed(ctx, "FFXIV Server Status", "**All servers are currently *ONLINE***", "green")
-                elif len([0 for x in st.keys() if st[x] == 1]) == 0:
-                    await self.embed(ctx, "FFXIV Server Status", "**All servers are currently *OFFLINE***", "red")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                soup = BeautifulSoup(await r.text(), 'html.parser')
+                st = {}
+                if soup.find(class_="maintenance__text"):
+                    await self.embed(ctx, "FFXIV Server Status",
+                                     "**Lodestone is down for maintenance.**\n This usually means the servers are ***OFFLINE***.",
+                                     "red")
+                    return
+                for s in soup.find_all(class_="item-list__worldstatus"):
+                    st[s.h3.text.strip()] = 1 if s.find("p").text.find("Online") != -1 else 0
+                if not server:
+                    if len([0 for x in st.keys() if st[x] == 0]) == 0:
+                        await self.embed(ctx, "FFXIV Server Status", "**All servers are currently *ONLINE***", "green")
+                    elif len([0 for x in st.keys() if st[x] == 1]) == 0:
+                        await self.embed(ctx, "FFXIV Server Status", "**All servers are currently *OFFLINE***", "red")
+                    else:
+                        text = "Some servers are currently offline (**online**, ~~offline~~):\n\n"
+                        for dc in self.servers.keys():
+                            text += "***{}***:\n".format(dc)
+                            for s in self.servers[dc]:
+                                if st[s] == 1:
+                                    text += "**" + s + "**, "
+                                else:
+                                    text += "~~" + s + "~~, "
+                            text = text[:-2] + "\n\n"
+                        await self.embed(ctx, "FFXIV Server Status", text, "yellow")
                 else:
-                    text = "Some servers are currently offline (**online**, ~~offline~~):\n\n"
-                    for dc in self.servers.keys():
-                        text += "***{}***:\n".format(dc)
-                        for s in self.servers[dc]:
-                            if st[s] == 1:
-                                text += "**" + s + "**, "
-                            else:
-                                text += "~~" + s + "~~, "
-                        text = text[:-2] + "\n\n"
-                    await self.embed(ctx, "FFXIV Server Status", text, "yellow")
-            else:
-                server = server.title()
-                if self.getDC(server) == "":
-                    await self.embed(ctx, "FFXIV Server Status", "That server doesn't exist.", "red")
-                else:
-                    d = "**" + server + "** is currently " + ("**ONLINE**" if st[server] == 1 else "**ONLINE**")
-                    await self.embed(ctx, "FFXIV Server Status", d, "green" if st[server] == 1 else "red")
+                    server = server.title()
+                    if self.getDC(server) == "":
+                        await self.embed(ctx, "FFXIV Server Status", "That server doesn't exist.", "red")
+                    else:
+                        d = "**" + server + "** is currently " + ("**ONLINE**" if st[server] == 1 else "**ONLINE**")
+                        await self.embed(ctx, "FFXIV Server Status", d, "green" if st[server] == 1 else "red")
 
     @ffxiv.command()
     async def iam(self, ctx, server, firstname, lastname):
@@ -644,140 +647,142 @@ class FFXIV:
             for char in text:
                 w += font.getsize(char)[0]
             _write_text(text, max_x - w, init_y, font, fill)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(cdata["avatar"]) as r:
+                image = await r.content.read()
+            with open("data/ffxiv/profiles/{}.tmp.png".format(uid), "wb") as f:
+                f.write(image)
 
-        async with aiohttp.get(cdata["avatar"]) as r:
-            image = await r.content.read()
-        with open("data/ffxiv/profiles/{}.tmp.png".format(uid), "wb") as f:
-            f.write(image)
+            result = Image.new("RGBA", (400, 300), (255, 255, 255, 0))
+            process = Image.new("RGBA", (400, 300), (255, 255, 255, 0))
+            # process_text = Image.new("RGBA", (400,300),(255,255,255,0))
+            fg_image = Image.open("data/ffxiv/profilebg.png").convert("RGBA")
+            char_image = Image.open("data/ffxiv/profiles/{}.tmp.png".format(uid)).convert("RGBA")
 
-        result = Image.new("RGBA", (400, 300), (255, 255, 255, 0))
-        process = Image.new("RGBA", (400, 300), (255, 255, 255, 0))
-        # process_text = Image.new("RGBA", (400,300),(255,255,255,0))
-        fg_image = Image.open("data/ffxiv/profilebg.png").convert("RGBA")
-        char_image = Image.open("data/ffxiv/profiles/{}.tmp.png".format(uid)).convert("RGBA")
+            char_image = char_image.resize((90, 90), Image.ANTIALIAS)
+            result.paste(char_image, (4, 7))
+            result = Image.alpha_composite(result, fg_image)
+            draw = ImageDraw.Draw(process)
 
-        char_image = char_image.resize((90, 90), Image.ANTIALIAS)
-        result.paste(char_image, (4, 7))
-        result = Image.alpha_composite(result, fg_image)
-        draw = ImageDraw.Draw(process)
+            # guardian
+            guardianpath = "data/ffxiv/images/" + cdata["data"]["guardian"]["name"].replace(" ", "_").replace(",",
+                                                                                                              "_") + ".png"
+            if not os.path.exists(guardianpath):
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(cdata["data"]["guardian"]["icon"]) as r:
+                        gimg = await r.content.read()
+                    with open(guardianpath, "wb") as f:
+                        f.write(gimg)
+            guardian_image = Image.open(guardianpath).convert("RGBA")
+            process.paste(guardian_image, (33, 145))
 
-        # guardian
-        guardianpath = "data/ffxiv/images/" + cdata["data"]["guardian"]["name"].replace(" ", "_").replace(",",
-                                                                                                          "_") + ".png"
-        if not os.path.exists(guardianpath):
-            async with aiohttp.get(cdata["data"]["guardian"]["icon"]) as r:
-                gimg = await r.content.read()
-            with open(guardianpath, "wb") as f:
-                f.write(gimg)
-        guardian_image = Image.open(guardianpath).convert("RGBA")
-        process.paste(guardian_image, (33, 145))
+            # current class/job
+            process.paste(Image.open(
+                "data/ffxiv/images/" + cdata["data"]["active_class"]["role"]["name"].lower().replace(" ",
+                                                                                                     "") + ".png").convert(
+                "RGBA"), (315, 95))
 
-        # current class/job
-        process.paste(Image.open(
-            "data/ffxiv/images/" + cdata["data"]["active_class"]["role"]["name"].lower().replace(" ",
-                                                                                                 "") + ".png").convert(
-            "RGBA"), (315, 95))
+            # progress
+            _progressbar(205, 118, 102, 5, (0, 0, 0, 255), (20, 140, 40, 255),
+                         int(cdata["data"]["active_class"]["progress"]["exp"]["percent"]))
 
-        # progress
-        _progressbar(205, 118, 102, 5, (0, 0, 0, 255), (20, 140, 40, 255),
-                     int(cdata["data"]["active_class"]["progress"]["exp"]["percent"]))
+            # minions, mounts:
+            _progressbar(205, 139, 102, 18, (0, 0, 0, 255), (20, 140, 40, 255), int(cdata["extras"]["mounts"]["percent"]))
+            _progressbar(205, 163, 102, 18, (0, 0, 0, 255), (20, 140, 40, 255), int(cdata["extras"]["minions"]["percent"]))
 
-        # minions, mounts:
-        _progressbar(205, 139, 102, 18, (0, 0, 0, 255), (20, 140, 40, 255), int(cdata["extras"]["mounts"]["percent"]))
-        _progressbar(205, 163, 102, 18, (0, 0, 0, 255), (20, 140, 40, 255), int(cdata["extras"]["minions"]["percent"]))
+            # gc
+            if cdata["data"]["grand_company"]:
+                gcpath = "data/ffxiv/images/" + cdata["data"]["grand_company"]["rank"].replace(" ", "_") + ".png"
+                if not os.path.exists(gcpath):
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(cdata["data"]["grand_company"]["icon"]) as r:
+                            gcimg = await r.content.read()
+                        with open(gcpath, "wb") as f:
+                            f.write(gcimg)
+                    gc_image = Image.open(gcpath).convert("RGBA")
+                    process.paste(gc_image, (312, 35))
 
-        # gc
-        if cdata["data"]["grand_company"]:
-            gcpath = "data/ffxiv/images/" + cdata["data"]["grand_company"]["rank"].replace(" ", "_") + ".png"
-            if not os.path.exists(gcpath):
-                async with aiohttp.get(cdata["data"]["grand_company"]["icon"]) as r:
-                    gcimg = await r.content.read()
-                with open(gcpath, "wb") as f:
-                    f.write(gcimg)
-            gc_image = Image.open(gcpath).convert("RGBA")
-            process.paste(gc_image, (312, 35))
+                # job levels
+                jl = {}
+                for job in cdata["data"]["classjobs"].keys():
+                    jl[cdata["data"]["classjobs"][job]["data"]["name"].lower().replace(" ", "")] = \
+                        cdata["data"]["classjobs"][job]["level"]
 
-        # job levels
-        jl = {}
-        for job in cdata["data"]["classjobs"].keys():
-            jl[cdata["data"]["classjobs"][job]["data"]["name"].lower().replace(" ", "")] = \
-                cdata["data"]["classjobs"][job]["level"]
+                # job icons
+                icon_pos = [16, 192]
+                for c in ["gladiator", "pugilist", "marauder", "lancer", "archer", "rogue", "conjurer", "thaumaturge",
+                          "arcanist", "darkknight", "astrologian", "machinist", "samurai", "redmage"]:
+                    if c in jl.keys() and jl[c] > 0:
+                        process.paste(Image.open("data/ffxiv/images/{}.png".format(c)).convert("RGBA"), tuple(icon_pos))
+                    icon_pos[0] += 26
+                icon_pos = [46, 240]
+                for c in ["carpenter", "blacksmith", "armorer", "goldsmith", "leatherworker", "weaver", "alchemist",
+                          "culinarian", "miner", "botanist", "fisher"]:
+                    if jl[c] > 0:
+                        process.paste(Image.open("data/ffxiv/images/{}.png".format(c)).convert("RGBA"), tuple(icon_pos))
+                    icon_pos[0] += 28
 
-        # job icons
-        icon_pos = [16, 192]
-        for c in ["gladiator", "pugilist", "marauder", "lancer", "archer", "rogue", "conjurer", "thaumaturge",
-                  "arcanist", "darkknight", "astrologian", "machinist", "samurai", "redmage"]:
-            if c in jl.keys() and jl[c] > 0:
-                process.paste(Image.open("data/ffxiv/images/{}.png".format(c)).convert("RGBA"), tuple(icon_pos))
-            icon_pos[0] += 26
-        icon_pos = [46, 240]
-        for c in ["carpenter", "blacksmith", "armorer", "goldsmith", "leatherworker", "weaver", "alchemist",
-                  "culinarian", "miner", "botanist", "fisher"]:
-            if jl[c] > 0:
-                process.paste(Image.open("data/ffxiv/images/{}.png".format(c)).convert("RGBA"), tuple(icon_pos))
-            icon_pos[0] += 28
+                result = Image.alpha_composite(result, process)
 
-        result = Image.alpha_composite(result, process)
+                draw = ImageDraw.Draw(result)
+                # TEXT AFTER THIS
+                # name, title
+                name_color = (0, 0, 0, 255)
+                black_color = (0, 0, 0, 255)
+                charname = cdata["name"]
+                if not cdata["data"]["title"]:
+                    _write_text(cdata["name"], 110, 36 if len(charname) < 15 else (38 if len(charname) < 18 else 39),
+                                name_fnt if len(charname) < 15 else (
+                                    name_small_fnt if len(charname) < 18 else name_verysmall_fnt), name_color)
+                else:
+                    _write_text(cdata["name"], 110, 28 if len(charname) < 15 else (30 if len(charname) < 18 else 31),
+                                name_fnt if len(charname) < 15 else (
+                                    name_small_fnt if len(charname) < 18 else name_verysmall_fnt), name_color)
+                    _write_text(cdata["data"]["title"], 130, 56, title_fnt, name_color)
 
-        draw = ImageDraw.Draw(result)
-        # TEXT AFTER THIS
-        # name, title
-        name_color = (0, 0, 0, 255)
-        black_color = (0, 0, 0, 255)
-        charname = cdata["name"]
-        if not cdata["data"]["title"]:
-            _write_text(cdata["name"], 110, 36 if len(charname) < 15 else (38 if len(charname) < 18 else 39),
-                        name_fnt if len(charname) < 15 else (
-                            name_small_fnt if len(charname) < 18 else name_verysmall_fnt), name_color)
-        else:
-            _write_text(cdata["name"], 110, 28 if len(charname) < 15 else (30 if len(charname) < 18 else 31),
-                        name_fnt if len(charname) < 15 else (
-                            name_small_fnt if len(charname) < 18 else name_verysmall_fnt), name_color)
-            _write_text(cdata["data"]["title"], 130, 56, title_fnt, name_color)
+                # Job levels
+                text_pos = [17, 216]
+                for c in ["gladiator", "pugilist", "marauder", "lancer", "archer", "rogue", "conjurer", "thaumaturge",
+                          "arcanist", "darkknight", "astrologian", "machinist", "samurai", "redmage"]:
+                    if c in jl.keys() and jl[c] > 0:
+                        _center_text(str(jl[c]), text_pos[0], text_pos[1], 26, 16, level_fnt, black_color)
+                    text_pos[0] += 26
+                text_pos = [46, 264]
+                for c in ["carpenter", "blacksmith", "armorer", "goldsmith", "leatherworker", "weaver", "alchemist",
+                          "culinarian", "miner", "botanist", "fisher"]:
+                    if jl[c] > 0:
+                        _center_text(str(jl[c]), text_pos[0], text_pos[1], 28, 12, level_fnt, black_color)
+                    text_pos[0] += 28
 
-        # Job levels
-        text_pos = [17, 216]
-        for c in ["gladiator", "pugilist", "marauder", "lancer", "archer", "rogue", "conjurer", "thaumaturge",
-                  "arcanist", "darkknight", "astrologian", "machinist", "samurai", "redmage"]:
-            if c in jl.keys() and jl[c] > 0:
-                _center_text(str(jl[c]), text_pos[0], text_pos[1], 26, 16, level_fnt, black_color)
-            text_pos[0] += 26
-        text_pos = [46, 264]
-        for c in ["carpenter", "blacksmith", "armorer", "goldsmith", "leatherworker", "weaver", "alchemist",
-                  "culinarian", "miner", "botanist", "fisher"]:
-            if jl[c] > 0:
-                _center_text(str(jl[c]), text_pos[0], text_pos[1], 28, 12, level_fnt, black_color)
-            text_pos[0] += 28
+                # Current job
+                _right_text("LEVEL " + str(cdata["data"]["active_class"]["progress"]["level"]) + " " +
+                            cdata["data"]["active_class"]["role"]["name"].upper(), 307, 95, current_level_fnt, black_color)
 
-        # Current job
-        _right_text("LEVEL " + str(cdata["data"]["active_class"]["progress"]["level"]) + " " +
-                    cdata["data"]["active_class"]["role"]["name"].upper(), 307, 95, current_level_fnt, black_color)
+                # minions, mounts
+                mpc = [str(cdata["extras"]["mounts"]["obtained"]), str(cdata["extras"]["mounts"]["total"]),
+                       str(cdata["extras"]["minions"]["obtained"]), str(cdata["extras"]["minions"]["total"])]
+                _right_text("Mounts ", 205, 139, minion_fnt, black_color)
+                _right_text("Minions ", 205, 163, minion_fnt, black_color)
+                _center_text(mpc[0] + " / " + mpc[1], 210, 139, 100, 16, minionamt_fnt, (255, 255, 255, 255))
+                _center_text(mpc[2] + " / " + mpc[3], 210, 163, 100, 16, minionamt_fnt, (255, 255, 255, 255))
 
-        # minions, mounts
-        mpc = [str(cdata["extras"]["mounts"]["obtained"]), str(cdata["extras"]["mounts"]["total"]),
-               str(cdata["extras"]["minions"]["obtained"]), str(cdata["extras"]["minions"]["total"])]
-        _right_text("Mounts ", 205, 139, minion_fnt, black_color)
-        _right_text("Minions ", 205, 163, minion_fnt, black_color)
-        _center_text(mpc[0] + " / " + mpc[1], 210, 139, 100, 16, minionamt_fnt, (255, 255, 255, 255))
-        _center_text(mpc[2] + " / " + mpc[3], 210, 163, 100, 16, minionamt_fnt, (255, 255, 255, 255))
+                # lodestone id
+                _right_text("Lodestone ID: " + str(cdata["lodestone_id"]), 344, 16, id_fnt, black_color)
 
-        # lodestone id
-        _right_text("Lodestone ID: " + str(cdata["lodestone_id"]), 344, 16, id_fnt, black_color)
+                # server
+                _write_text(cdata["server"] + " ({})".format(self.getDC(cdata["server"])), 95, 15, server_fnt, black_color)
 
-        # server
-        _write_text(cdata["server"] + " ({})".format(self.getDC(cdata["server"])), 95, 15, server_fnt, black_color)
+                # race
+                _center_text(cdata["data"]["race"], 6, 104, 87, 15, race_fnt, black_color)
+                _center_text(cdata["data"]["clan"].split(" ")[0], 6, 120, 87, 15, race_fnt, black_color)
 
-        # race
-        _center_text(cdata["data"]["race"], 6, 104, 87, 15, race_fnt, black_color)
-        _center_text(cdata["data"]["clan"].split(" ")[0], 6, 120, 87, 15, race_fnt, black_color)
+                # END
+                result.save("data/ffxiv/profiles/{}.png".format(uid), "PNG", quality=100)
 
-        # END
-        result.save("data/ffxiv/profiles/{}.png".format(uid), "PNG", quality=100)
-
-        try:
-            os.remove("data/ffxiv/profiles/{}.tmp.png".format(uid))
-        except:
-            pass
+                try:
+                    os.remove("data/ffxiv/profiles/{}.tmp.png".format(uid))
+                except:
+                    pass
 
     async def draw_recipe(self, rdata):
         title_fnt = ImageFont.truetype(font_bold_file, 16)
@@ -861,101 +866,103 @@ class FFXIV:
             _write_text("x{}".format(rdata["craft_quantity"]), 52, 51, mb_fnt, (255, 255, 255, 255))
 
         # Item icon
-        async with aiohttp.get(rdata["item"]["icon"]) as r:
-            itemicon = await r.content.read()
-        with open("data/ffxiv/{}.tmp0.jpg".format(rdata["id"]), "wb") as f:
-            f.write(itemicon)
-        process.paste(Image.alpha_composite(
-            Image.open("data/ffxiv/{}.tmp0.jpg".format(rdata["id"])).convert("RGBA").resize((40, 40), Image.ANTIALIAS),
-            border_image), (16, 14))
-
-        # class
-        process.paste(Image.open("data/ffxiv/images/{}_2.png".format(rdata["classjob"]["icon"])).convert("RGBA"),
-                      (6, 66))
-        lvtext = "Level {} ".format(rdata["level_view"])
-        _write_text(lvtext, 38, 70, level_fnt, level_color)
-        if rdata["stars"] > 0:
-            starpos = 38 + level_fnt.getsize(lvtext)[0]
-            stimage = Image.open("data/ffxiv/images/recipe_star.png").convert("RGBA")
-            for i in range(rdata["stars"]):
-                process.paste(stimage, (starpos, 70))
-                starpos += 13
-
-        # materials
-        num_mat = 0
-        num_crys = 0
-        for i in range(len(rdata["tree"])):
-            imgpos = None
-            if rdata["tree"][i]["category_name"] == "Crystal":
-                imgpos = (41 + 99 * num_crys, 94)
-                textpos = (36 + 99 * num_crys, 100)
-                _right_text(str(rdata["tree"][i]["quantity"]), textpos[0], textpos[1], itemamt_fnt,
-                            (255, 255, 255, 255))
-                num_crys += 1
-            else:
-                imgpos = (41 if num_mat < 3 else 229, 163 + 45 * (num_mat % 3))
-                textpos = (36 if num_mat < 3 else 224, 169 + 45 * (num_mat % 3))
-                namepos = (85 if num_mat < 3 else 274, 175 + 45 * (num_mat % 3))
-                _right_text(str(rdata["tree"][i]["quantity"]), textpos[0], textpos[1], itemamt_fnt,
-                            (255, 255, 255, 255))
-                namelines = _fit_text(rdata["tree"][i]["name"], 100, itemname_fnt)
-                k = 0
-                for line in namelines:
-                    _write_text(line, namepos[0], namepos[1] - (len(namelines) - 1) * 7 + 14 * k, itemname_fnt,
-                                qcolors[rdata["tree"][i]["color"]])
-                    k += 1
-                num_mat += 1
-            async with aiohttp.get(rdata["tree"][i]["icon"]) as r:
-                imgicon = await r.content.read()
-            with open("data/ffxiv/{}.tmp{}.jpg".format(rdata["id"], i + 1), "wb") as f:
-                f.write(imgicon)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(rdata["item"]["icon"]) as r:
+                itemicon = await r.content.read()
+            with open("data/ffxiv/{}.tmp0.jpg".format(rdata["id"]), "wb") as f:
+                f.write(itemicon)
             process.paste(Image.alpha_composite(
-                Image.open("data/ffxiv/{}.tmp{}.jpg".format(rdata["id"], i + 1)).convert("RGBA").resize((40, 40),
-                                                                                                        Image.ANTIALIAS),
-                border_image), imgpos)
-        if num_crys == 1:
-            process.paste(border_image, (140, 94))
-        if num_mat < 6:
-            for i in range(num_mat, 6):
-                process.paste(border_image, (41 if i < 3 else 229, 163 + 45 * (i % 3)))
+                Image.open("data/ffxiv/{}.tmp0.jpg".format(rdata["id"])).convert("RGBA").resize((40, 40), Image.ANTIALIAS),
+                border_image), (16, 14))
 
-        ypos = 70
-        # Spec
-        if rdata["is_specialization_required"] == 1:
-            _right_text("Specialist Recipe", 390, ypos, level_fnt, level_color)
-            ypos += 14
+            # class
+            process.paste(Image.open("data/ffxiv/images/{}_2.png".format(rdata["classjob"]["icon"])).convert("RGBA"),
+                          (6, 66))
+            lvtext = "Level {} ".format(rdata["level_view"])
+            _write_text(lvtext, 38, 70, level_fnt, level_color)
+            if rdata["stars"] > 0:
+                starpos = 38 + level_fnt.getsize(lvtext)[0]
+                stimage = Image.open("data/ffxiv/images/recipe_star.png").convert("RGBA")
+                for i in range(rdata["stars"]):
+                    process.paste(stimage, (starpos, 70))
+                    starpos += 13
 
-        # required stats
-        if rdata["required_control"] > 0:
-            _right_text("Minimum Control: {}".format(rdata["required_control"]), 390, ypos, level_fnt, level_color)
-            ypos += 14
-        if rdata["required_craftsmanship"] > 0:
-            _right_text("Minimum Craftsmanship: {}".format(rdata["required_craftsmanship"]), 390, ypos, level_fnt,
-                        level_color)
-            ypos += 14
+            # materials
+            num_mat = 0
+            num_crys = 0
+            for i in range(len(rdata["tree"])):
+                imgpos = None
+                if rdata["tree"][i]["category_name"] == "Crystal":
+                    imgpos = (41 + 99 * num_crys, 94)
+                    textpos = (36 + 99 * num_crys, 100)
+                    _right_text(str(rdata["tree"][i]["quantity"]), textpos[0], textpos[1], itemamt_fnt,
+                                (255, 255, 255, 255))
+                    num_crys += 1
+                else:
+                    imgpos = (41 if num_mat < 3 else 229, 163 + 45 * (num_mat % 3))
+                    textpos = (36 if num_mat < 3 else 224, 169 + 45 * (num_mat % 3))
+                    namepos = (85 if num_mat < 3 else 274, 175 + 45 * (num_mat % 3))
+                    _right_text(str(rdata["tree"][i]["quantity"]), textpos[0], textpos[1], itemamt_fnt,
+                                (255, 255, 255, 255))
+                    namelines = _fit_text(rdata["tree"][i]["name"], 100, itemname_fnt)
+                    k = 0
+                    for line in namelines:
+                        _write_text(line, namepos[0], namepos[1] - (len(namelines) - 1) * 7 + 14 * k, itemname_fnt,
+                                    qcolors[rdata["tree"][i]["color"]])
+                        k += 1
+                    num_mat += 1
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(rdata["tree"][i]["icon"]) as r:
+                        imgicon = await r.content.read()
+                    with open("data/ffxiv/{}.tmp{}.jpg".format(rdata["id"], i + 1), "wb") as f:
+                        f.write(imgicon)
+                    process.paste(Image.alpha_composite(
+                        Image.open("data/ffxiv/{}.tmp{}.jpg".format(rdata["id"], i + 1)).convert("RGBA").resize((40, 40),
+                                                                                                                Image.ANTIALIAS),
+                        border_image), imgpos)
+                if num_crys == 1:
+                    process.paste(border_image, (140, 94))
+                if num_mat < 6:
+                    for i in range(num_mat, 6):
+                        process.paste(border_image, (41 if i < 3 else 229, 163 + 45 * (i % 3)))
 
-        # Element
-        if rdata["element_name"] != "Aspect: None":
-            _right_text(rdata["element_name"], 390, ypos, level_fnt, level_color)
-            ypos += 14
+                ypos = 70
+                # Spec
+                if rdata["is_specialization_required"] == 1:
+                    _right_text("Specialist Recipe", 390, ypos, level_fnt, level_color)
+                    ypos += 14
 
-        # QS
-        if rdata["can_quick_synth"] == 0:
-            _right_text("Quick Synthesis unavailable", 390, ypos, level_fnt, level_color)
-            ypos += 14
+                # required stats
+                if rdata["required_control"] > 0:
+                    _right_text("Minimum Control: {}".format(rdata["required_control"]), 390, ypos, level_fnt, level_color)
+                    ypos += 14
+                if rdata["required_craftsmanship"] > 0:
+                    _right_text("Minimum Craftsmanship: {}".format(rdata["required_craftsmanship"]), 390, ypos, level_fnt,
+                                level_color)
+                    ypos += 14
 
-        # master book
-        if rdata["masterbook"]:
-            _right_text(rdata["masterbook"]["name"], 388, 50, mb_fnt, (255, 255, 255, 255))
+                # Element
+                if rdata["element_name"] != "Aspect: None":
+                    _right_text(rdata["element_name"], 390, ypos, level_fnt, level_color)
+                    ypos += 14
 
-        result = Image.alpha_composite(result, process)
-        result.save("data/ffxiv/{}.tmp.png".format(rdata["id"]), "PNG", quality=100)
+                # QS
+                if rdata["can_quick_synth"] == 0:
+                    _right_text("Quick Synthesis unavailable", 390, ypos, level_fnt, level_color)
+                    ypos += 14
 
-        for i in range(1 + num_mat + num_crys):
-            try:
-                os.remove("data/ffxiv/{}.tmp{}.jpg".format(rdata["id"], i))
-            except:
-                pass
+                # master book
+                if rdata["masterbook"]:
+                    _right_text(rdata["masterbook"]["name"], 388, 50, mb_fnt, (255, 255, 255, 255))
+
+                result = Image.alpha_composite(result, process)
+                result.save("data/ffxiv/{}.tmp.png".format(rdata["id"]), "PNG", quality=100)
+
+                for i in range(1 + num_mat + num_crys):
+                    try:
+                        os.remove("data/ffxiv/{}.tmp{}.jpg".format(rdata["id"], i))
+                    except:
+                        pass
 
     @commands.group(invoke_without_command=True)
     async def fflogs(self, ctx):
@@ -977,12 +984,13 @@ class FFXIV:
         if args is not None and len(args) > 0:
             for a in args.keys():
                 url += "&" + str(a) + "=" + str(args[a])
-        async with aiohttp.get(url) as r:
-            try:
-                d = await r.json()
-                return d
-            except:
-                return {"__ERROR__": "Invalid JSON or no response."}
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                try:
+                    d = await r.json()
+                    return d
+                except:
+                    return {"__ERROR__": "Invalid JSON or no response."}
 
     @fflogs.command()
     async def setkey(self, ctx, key):
