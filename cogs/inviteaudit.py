@@ -32,7 +32,7 @@ class InviteAudit(object):
             try:
                 await self.bot.wait_until_ready()
                 await self.cache_invites()
-                await asyncio.sleep(60)
+                await asyncio.sleep(15)
             except asyncio.CancelledError:
                 self.unloaded = True
             except Exception:
