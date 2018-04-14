@@ -1,6 +1,6 @@
 
-import disord
-from disord.ext import commands
+import discord
+from discord.ext import commands
 
 
 def bankmanagerembed(message):
