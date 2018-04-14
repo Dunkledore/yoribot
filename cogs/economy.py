@@ -211,7 +211,7 @@ class Shop():
 
 	@commands.command()
 	@commands.guild_only()
-	@check.is_admin()
+	@checks.is_admin()
 	async def interactiveshop(self, ctx):
 		"""Shows the interactive version of the shop. Users can buy items with emoji reactions"""
 		pass
