@@ -1,4 +1,7 @@
 
+import disord
+from disord.ext import commands
+
 
 def bankmanagerembed(message):
 	embed = discord.Embed(description=message)
@@ -24,7 +27,7 @@ class Economy():
 
 	#Note change_amount can be negative here
 	async def changebalance(self, user_id, guild_id, change_amount):
-		query = "UPDATE bank SET balance = balance + 1 WHERE user_id = $1 and guild_id = $2"
+		query = "UPDATE bank SET balance = balance + $3 WHERE user_id = $1 and guild_id = $2"
 		alterquery = "INSERT INTO bank (user_id, guild_id, balance) VALUES ($1,$2,$3)"
 
 		await self.bot.pool.execute(query, user_id, guild_id, change_amount)
@@ -41,7 +44,7 @@ class Economy():
 	@commands.guild_only()
 	@checks.is_admin()
 	async def setdroprate(self, ctx, drop_rate : int):
-		"""Sets the rate at which the bot will randomly drop random amounts of currency. Minimum is 600 seconds and must be in 10 minute intervals. 0 for no drops. Default is 0"""
+		"""Sets the rate at which the bot will randomly drop random amounts of currency. Minimum is 600 seconds and must be in 10 minute intervals. 0 for no drops. Default is 0. Drop counter begins after collection and in the channel with the most recent message after the timer is up"""
 		if drop_rate < 600:
 			await ctx.send(embed=bankmanagerembed("I can't just be dropping currency like that please request a time greater than 600 seconds."))
 			return
@@ -81,7 +84,7 @@ class Economy():
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(updatequery, per_second, ctx.guild.id)
 
-		if max > 10000:
+		if max > 100000:
 			await ctx.send(embed=bankmanagerembed("I will attempt to drop a random amount of currency between {} amd {} but {} is a large amount so don't blame me if someone's bank breaks".format(min, max, max)))
 		else:
 			await ctx.send(embed=bankmanagerembed("I will drop a random amount of currency between {} and {}".format(min, max))) 
@@ -164,6 +167,7 @@ class Economy():
 	@commands.guild_only()
 	async def richlist(self, ctx, number=10):
 		"""Shows the top rich people in the guild"""
+		pass
 
 
 
@@ -181,45 +185,56 @@ class Shop():
 	@checks.is_admin()
 	async def additem(self, ctx, item_name, item_value, quantity=None):
 		"""Adds an item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
+		pass
 
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def removeitem(self, ctx, item_name, quantity=None):
 		"""Removes an item from the shop. Quantity defaults to all. If item is left in the out of stock list then it will appear in owned items"""
+		pass
 
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def addroleitem(self, ctx, role = discord.Role, item_value, quantity=None):
 		"""Adds a role item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
+		pass
 
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def removeroleitem(self, ctx, role = discord.Role, quantity=None):
 		"""Remove a role item to a shop. Quantity defaults to all. If item is left in the out of stock list then it will appear in owned items"""
+		pass
 
 	@commands.command()
 	@commands.guild_only()
 	@check.is_admin()
 	async def interactiveshop(self, ctx):
 		"""Shows the interactive version of the shop. Users can buy items with emoji reactions"""
+		pass
 
 	#User shop commands
 	@commands.command()
 	@commands.guild_only()
 	async def buy(self, ctx, item):
 		"""Buys an item from the shop"""
+		pass
 
 	@commands.command()
 	@commands.guild_only()
 	async def sell(self, ctx, item, person_buying : discord.Member):
 		"""Sells an item to another member. They must accept the transaction"""
+		pass
 
 	@commands.command()
 	@commands.guild_only()
 	async def owneditems(self, ctx):
 		"""Shows all of the items you own."""
+		pass
 
-	async def on_reaction_add(reaction):
+
+def setup(bot):
+	cog = Economy(bot)
+	bot.add_cog(cog)
