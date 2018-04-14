@@ -197,14 +197,14 @@ class Shop():
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def addroleitem(self, ctx, role = discord.Role, item_value, quantity=None):
+	async def addroleitem(self, ctx, role : discord.Role, item_value, quantity=None):
 		"""Adds a role item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
 		pass
 
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def removeroleitem(self, ctx, role = discord.Role, quantity=None):
+	async def removeroleitem(self, ctx, role : discord.Role, quantity=None):
 		"""Remove a role item to a shop. Quantity defaults to all. If item is left in the out of stock list then it will appear in owned items"""
 		pass
 
