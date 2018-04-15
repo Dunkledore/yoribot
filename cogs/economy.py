@@ -46,7 +46,7 @@ class Economy():
 
 	@commands.command()
 	@commands.guild_only()
-	@commands.is_admin()
+	@checks.is_admin()
 	async def economyconfig(self, ctx):
 		"""Show all Economy setting for your guild"""
 
@@ -77,7 +77,7 @@ class Economy():
 
 	@commands.command()
 	@commands.guild_only()
-	@commands.is_admin()
+	@checks.is_admin()
 	async def adddropchannel(self, ctx, channel: discord.TextChannel):
 		"""Add a channel to the list of channels that drops can happen"""
 
@@ -103,7 +103,7 @@ class Economy():
 
 	@commands.command()
 	@commands.guild_only()
-	@commands.is_admin()
+	@checks.is_admin()
 	async def removeropchannel(self, ctx, channel: discord.TextChannel):
 		"""Delete a channel to the list of channels that drops can happen"""
 
