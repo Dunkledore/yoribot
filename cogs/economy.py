@@ -66,7 +66,7 @@ class Economy():
 			drop_channels + channel.mention if channel else "Deleted" + "\n"
 
 		embed.add_field(name="Drop channels", value=drop_channels or "None")
-		emebd.add_field(name="Drop Rate", value=results["drop_rate"])
+		embed.add_field(name="Drop Rate", value=results["drop_rate"])
 		embed.add_field(name="Minimum Drop", value=results["drop_amount_min"])
 		embed.add_filed(name="Maximum Drop", value=results["drop_amount_max"])
 		embed.add_field(name="Currency", value=results["currency"])
