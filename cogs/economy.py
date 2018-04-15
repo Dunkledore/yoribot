@@ -186,7 +186,7 @@ class Economy():
 			return
 
 		insertquery = "INSERT INTO economy_config (guild_id, currency) VALUES ($1, $2)"
-		updatequery = "UPDATE bank SET currency = $1 WHERE guild_id = $2"
+		updatequery = "UPDATE economy_config SET currency = $1 WHERE guild_id = $2"
 
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, currency)
