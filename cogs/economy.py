@@ -160,12 +160,12 @@ class Economy():
 			return
 
 		insertquery = "INSERT INTO economy_config (guild_id, drop_amount_min, drop_amount_max) VALUES ($1, $2, $3)"
-		updatequery = "UPDATE economy_config SET drop_amount_min = $1, drop_amount_max = $2 WHERE guild_id = $2"
+		updatequery = "UPDATE economy_config SET drop_amount_min = $1, drop_amount_max = $2 WHERE guild_id = $3"
 
 		try:
-			await ctx.db.execute(insertquery, ctx.guild.id, per_second)
+			await ctx.db.execute(insertquery, ctx.guild.id, min, max)
 		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(updatequery, per_second, ctx.guild.id)
+			await ctx.db.execute(updatequery, min, max, ctx.guild.id)
 
 		if max > 100000:
 			await ctx.send(embed=bankmanagerembed("I will attempt to drop a random amount of currency between {} amd {} but {} is a large amount so don't blame me if someone's bank breaks".format(min, max, max)))
