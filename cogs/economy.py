@@ -6,12 +6,12 @@ from .utils import checks
 
 def bankmanagerembed(message):
 	embed = discord.Embed(description=message)
-	embed.set_author(name="The bank manager of YoirBank says...", icon_url=ctx.me.avatar_url)
+	embed.set_author(name="The bank manager of YoirBank says...", icon_url="https://cdn.discordapp.com/avatars/383345609169567754/3e4c77ce5861b6d76306442f2a1499ec.webp?size=1024")
 	return embed
 
 def shopmanagerembed(message):
 	embed = discord.Embed(description=message)
-	embed.set_author(name="The shop clerk at YoriShop says...", icon_url=ctx.me.avatar_url)
+	embed.set_author(name="The shop clerk at YoriShop says...", icon_url="https://cdn.discordapp.com/avatars/383345609169567754/3e4c77ce5861b6d76306442f2a1499ec.webp?size=1024")
 	return embed
 
 
