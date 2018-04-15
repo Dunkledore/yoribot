@@ -154,8 +154,9 @@ class Economy():
 		if min < 1:
 			await ctx.send(embed=bankmanagerembed("I can't drop currency less than 1"))
 			return
-		if max >= min:
+		if max <= min:
 			await ctx.send(embed=bankmanagerembed("The minimum amount must be less than the maximum amount"))
+			return
 
 		insertquery = "INSERT INTO economy_config (guild_id, drop_amount_min, drop_amount_max) VALUES ($1, $2, $3)"
 		updatequery = "UPDATE economy_config SET drop_amount_min = $1, drop_amount_max = $2 WHERE guild_id = $2"
