@@ -61,9 +61,9 @@ class Economy():
 		embed = discord.Embed(title="Settings for {}".format(ctx.guild.name))
 		
 		drop_channels = ""
-		for channel_id in drop_channels:
+		for channel_id in results["channels"]:
 			channel = self.bot.get_channel(channel_id)
-			drop_channels + channel.mention if channel else "Deleted" + "\n"
+			drop_channels = drop_channels + channel.mention if channel else "Deleted" + "\n"
 
 		embed.add_field(name="Drop channels", value=drop_channels or "None", inline=False)
 		embed.add_field(name="Drop Rate", value=results["drop_rate"], inline=False)
