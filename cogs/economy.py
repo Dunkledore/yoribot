@@ -16,7 +16,7 @@ def shopmanagerembed(message):
 	return embed
 
 
-#create table economy_config (guild_id BIGINT unique, drop_rate INT, minimum_drop INT, maximum_drop INT, channels BIGINT[], currency TEXT)
+#create table economy_config (guild_id BIGINT unique, drop_rate INT, drop_amount_min INT, drop_amount_max INT, channels BIGINT[], currency TEXT)
 class Economy():
 	"""Commands related to bank accounts"""
 	def __init__(self, bot):
@@ -58,7 +58,7 @@ class Economy():
 			await ctx.send(embed=self.bot.error("No Economy settings set"))
 			return
 
-		embed = discord.Emebd(title="Settings for {}".format(ctx.guild.name))
+		embed = discord.Embed(title="Settings for {}".format(ctx.guild.name))
 		
 		drop_channels = ""
 		for channel_id in drop_channels:
