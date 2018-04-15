@@ -65,11 +65,11 @@ class Economy():
 			channel = self.bot.get_channel(channel_id)
 			drop_channels + channel.mention if channel else "Deleted" + "\n"
 
-		embed.add_field(name="Drop channels", value=drop_channels or "None")
-		embed.add_field(name="Drop Rate", value=results["drop_rate"])
-		embed.add_field(name="Minimum Drop", value=results["drop_amount_min"])
-		embed.add_field(name="Maximum Drop", value=results["drop_amount_max"])
-		embed.add_field(name="Currency", value=results["currency"])
+		embed.add_field(name="Drop channels", value=drop_channels or "None", inline=False)
+		embed.add_field(name="Drop Rate", value=results["drop_rate"], inline=False)
+		embed.add_field(name="Minimum Drop", value=results["drop_amount_min"], inline=False)
+		embed.add_field(name="Maximum Drop", value=results["drop_amount_max"], inline=False)
+		embed.add_field(name="Currency", value=results["currency"], inline=False)
 
 		await ctx.send(embed=embed)
 
