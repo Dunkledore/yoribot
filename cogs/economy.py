@@ -15,6 +15,7 @@ def shopmanagerembed(message):
 	return embed
 
 
+#create table economy_config (guild_id BIGINT unique, drop_rate INT, minimum_drop INT, maximum_drop INT, channels BIGINT[], currency TEXT)
 class Economy():
 	"""Commands related to bank accounts"""
 	def __init__(self, bot):
@@ -40,19 +41,97 @@ class Economy():
 		await self.bot.pool.execute(query, user_id, guild_id, new_balance)
 
 
+	
+	#Commands
+
+	@commands.command()
+	@commands.guild_only()
+	@commands.is_admin()
+	async def economyconfig(self, ctx):
+		"""Show all Economy setting for your guild"""
+
+		query = "SELECT * FROM economy_config WHERE guild_id = $1"
+		results = await ctx.db.fetchrow(query, ctx.guild.id)
+
+		if not results:
+			await ctx.send(embed=self.bot.error("No Economy settings set"))
+
+		embed = discord.Emebd(title="Settings for {}".format(ctx.guild.name))
+		
+		drop_channels = ""
+		for channel_id in drop_channels:
+			channel = self.bot.get_channel(channel_id)
+			drop_channels + channel.mention if channel else "Deleted" + "\n"
+
+		embed.add_field(name="Drop channels", value=drop_channels or "None")
+		emebd.add_field(name="Drop Rate", value=results["drop_rate"])
+		embed.add_field(name="Minimum Drop", value=results["drop_amount_min"])
+		embed.add_filed(name="Maximum Drop", value=results["drop_amount_max"])
+		embed.add_field(name="Currency", value=results["currency"])
+
+		await ctx.send(embed=embed)
+
+
+
+
+
+	@commands.command()
+	@commands.guild_only()
+	@commands.is_admin()
+	async def adddropchannel(self, ctx, channel: discord.TextChannel):
+		"""Add a channel to the list of channels that drops can happen"""
+
+		query = "SELECT * FROM economy_config WHERE guild_id = $1"
+		results = await ctx.db.fetchrow(query, ctx.guild.id)
+
+		if not results:
+			query = "INSERT INTO economy_config (channels) VALUES $1"
+			await ctx.db.execute(query, [channel.id])
+			await ctx.send(embed=self.bot.success("Channel added"))
+
+		if results["channels"]:
+			channels = results["channels"]
+			channels.append(channel.id)
+		else:
+			channels = [channel.id]
+
+		query = "UPDATE economy_config SET channels = $1 WHERE guild_id = $2"
+		await ctx.db.execute(query, channels, ctx.guild.id)
+		await ctx.send(embed=self.bot.success("Channel Added"))
+
+
+
+	@commands.command()
+	@commands.guild_only()
+	@commands.is_admin()
+	async def removeropchannel(self, ctx, channel: discord.TextChannel):
+		"""Delete a channel to the list of channels that drops can happen"""
+
+		query = "SELECT * FROM economy_config WHERE guild_id = $1"
+		results = await ctx.db.fetchrow(query, ctx.guild.id)
+
+		if not results:
+			await ctx.send(embed=self.bot.error("You don't have any channels"))
+			return
+		if not results["channels"]:
+			await ctx.send(embed=self.bot.error("You don't have any channels"))
+			return
+		if channel.id not in results["channels"]:
+			await ctx.send(embed=self.bot.error("This is not a drop channel"))
+			return
+
+		channels = results["channels"]
+		channels.remove(channe.id)
+		await ctx.send(embed=self.bot.success("Channel removed"))
+
 	#Admin section of commands
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def setdroprate(self, ctx, drop_rate : int):
-		"""Sets the rate at which the bot will randomly drop random amounts of currency. Minimum is 600 seconds and must be in 10 minute intervals. 0 for no drops. Default is 0. Drop counter begins after collection and in the channel with the most recent message after the timer is up"""
+		"""Sets the rate at which the bot will randomly drop random amounts of currency. 0 for no drops. Default is 0. Drop counter begins after collection"""
 		if drop_rate < 600:
 			await ctx.send(embed=bankmanagerembed("I can't just be dropping currency like that please request a time greater than 600 seconds."))
-			return
-
-		if drop_rate % 60 != 0:
-			round_down_time = drop_rate - drop_rate % 60
-			await ctx.send(embed=bankmanagerembed("I do my dropping currecny round every 10 minutes. Try asking me again with {}".format(round_down_time)))
 			return
 
 		insertquery = "INSERT INTO economy_config (guild_id, drop_rate) VALUES ($1, $2)"
