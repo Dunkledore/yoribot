@@ -191,7 +191,7 @@ class Economy():
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, currency)
 		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(updatequery, currency, currency)
+			await ctx.db.execute(updatequery, currency, ctx.guild.id)
 
 		await ctx.send(embed=bankmanagerembed("I have set your currency to {}".format(currency)))
 
