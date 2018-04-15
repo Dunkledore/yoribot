@@ -6,12 +6,12 @@ from .utils import checks
 
 def bankmanagerembed(message):
 	embed = discord.Embed(description=message)
-	em.set_author(name="The bank manager of YoirBank says...", icon_url=ctx.me.avatar_url)
+	embed.set_author(name="The bank manager of YoirBank says...", icon_url=ctx.me.avatar_url)
 	return embed
 
 def shopmanagerembed(message):
 	embed = discord.Embed(description=message)
-	em.set_author(name="The shop clerk at YoriShop says...", icon_url=ctx.me.avatar_url)
+	embed.set_author(name="The shop clerk at YoriShop says...", icon_url=ctx.me.avatar_url)
 	return embed
 
 
@@ -55,6 +55,7 @@ class Economy():
 
 		if not results:
 			await ctx.send(embed=self.bot.error("No Economy settings set"))
+			return
 
 		embed = discord.Emebd(title="Settings for {}".format(ctx.guild.name))
 		
