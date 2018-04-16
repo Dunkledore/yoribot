@@ -342,7 +342,7 @@ class Economy():
 class Shop():
 	"""Shop related commands"""
 
-	def __init__(bot):
+	def __init__(self, bot):
 		self.bot = bot
 
 	
