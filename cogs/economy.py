@@ -2,7 +2,8 @@
 import discord
 from discord.ext import commands
 import asyncpg
-
+import random
+import traceback
 from .utils import checks
 
 def bankmanagerembed(message):
@@ -24,19 +25,57 @@ class Economy():
 	"""Commands related to bank accounts"""
 	def __init__(self, bot):
 		self.bot = bot
-		#self.bot.loop.create_task()
+		self.config_cache = {}
+		self.bot.loop.create_task(self.drop_loop())
+		self.pick_emoji = "👌"
+
+	async def update_cache(self):
+		query = "SELECT * FROM economy_config"
+		configs = self.bot.db.fetch(query)
+		for guild_config in configs:
+			self.config_cache[guild_config["guild_id"]] = guild_config
+
 
 	async def drop_loop(self):
 		await self.bot.wait_until_ready()
-		query = "SELECT * FROM economy_config"
-		guild_configs = self.bot.db.fetch(query)
+		await self.update_cache()
 
-		for guild_config in guild_configs:
-			self.bot.loop.create_task(guild_config)
+		for guild_id, config in self.config_cache.items()
+			self.bot.loop.create_task(self.guild_drop_loop(guild_id))
+
+	async def guild_drop_loop(self, guild_id):
+		while True:
+			try:
+				config = self.config_cache[guild_id]
+				await asyncio.sleep(config["drop_rate"])
+				config = self.config_cache[guild_id]
+				channel_id = random.choice(config["channels"])
+				channel = self.bot.get_channel(channel_id)
+				if channel is None:
+					pass
+				drop_amount = random.randint(config["drop_amount_min"], config["drop_amount_max"])
+				currency = config["currency"]
+				msg = await channel.send(embed=bankmanagerembed("{}{} are waiting to be claimed use click the {} to claim").format(drop_amount, currency, self.pick_emoji))
+				msg.add_reaction(self.pick_emoji)
+
+				def check(reaction, user):
+					return (reaction.emoji == self.pick_emoji and reaction.message.id == msg.id)
+
+				reaction, user = await self.bot.wait_for("reaction_add", check=check)
+
+				await self.changebalance(user.id, guild_id, drop_amount)
+				await msg.edit(embed=bankmanagerembed("{}{} was claimed by {}".format(drop_amount, currency. user.mention)), delete_after=5.0)
+			except Exception as error:
+				stats_cog = self.bot.get_cog("Stats")
+				hook = await stats_cog.webhook()
+				exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
+				e = discord.Embed(title='Drop loop error', colour=0xcc3366)
+				e.description = f'```py\n{exc}\n```'
+				await hook.send(embed=e)
+
+			
 
 
-	async def guild_drop_loop(self, guild_config):
-		pass
 
 
 	#Utility functions
@@ -47,10 +86,14 @@ class Economy():
 
 	#Note change_amount can be negative here
 	async def changebalance(self, user_id, guild_id, change_amount):
-		query = "UPDATE bank SET balance = balance + $3 WHERE user_id = $1 and guild_id = $2"
-		alterquery = "INSERT INTO bank (user_id, guild_id, balance) VALUES ($1,$2,$3)"
 
-		await self.bot.pool.execute(query, user_id, guild_id, change_amount)
+		query = "INSERT INTO bank (user_id, guild_id, balance) VALUES ($1,$2,$3)"
+		alterquery = "UPDATE bank SET balance = balance + $3 WHERE user_id = $1 and guild_id = $2"
+
+		try:	
+			await self.bot.pool.execute(query, user_id, guild_id, change_amount)
+		except asyncpg.UniqueViolationError:
+			await self.bot.poo.execute(query, user_id, guild_id, change_amount)
 
 	async def setbalance(self, user_id, guild_id, new_balance):
 		
@@ -73,6 +116,7 @@ class Economy():
 	@commands.guild_only()
 	@checks.is_admin()
 	async def _setbalance(self, ctx, user: discord.Member, balance: int):
+		"""Set the balance of a user's bank account"""
 		await self.setbalance(user.id, ctx.guild.id, balance)
 		await ctx.send(embed=self.bot.success("New balance set"))
 
@@ -105,9 +149,6 @@ class Economy():
 		await ctx.send(embed=embed)
 
 
-
-
-
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
@@ -131,6 +172,7 @@ class Economy():
 		query = "UPDATE economy_config SET channels = $1 WHERE guild_id = $2"
 		await ctx.db.execute(query, channels, ctx.guild.id)
 		await ctx.send(embed=self.bot.success("Channel Added"))
+		await self.update_cache()
 
 
 
@@ -156,6 +198,7 @@ class Economy():
 		channels = results["channels"]
 		channels.remove(channe.id)
 		await ctx.send(embed=self.bot.success("Channel removed"))
+		await self.update_cache()
 
 	#Admin section of commands
 	@commands.command()
@@ -175,7 +218,8 @@ class Economy():
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(updatequery, drop_rate, ctx.guild.id)
 
-		await ctx.send(embed=bankmanagerembed("I will drop currency every {} seconds".format(drop_rate))) 
+		await ctx.send(embed=bankmanagerembed("I will drop currency every {} seconds".format(drop_rate)))
+		await self.update_cache()
 
 	@commands.command()
 	@commands.guild_only()
@@ -201,7 +245,8 @@ class Economy():
 		if max > 100000:
 			await ctx.send(embed=bankmanagerembed("I will attempt to drop a random amount of currency between {} amd {} but {} is a large amount so don't blame me if someone's bank breaks".format(min, max, max)))
 		else:
-			await ctx.send(embed=bankmanagerembed("I will drop a random amount of currency between {} and {}".format(min, max))) 
+			await ctx.send(embed=bankmanagerembed("I will drop a random amount of currency between {} and {}".format(min, max)))
+		await self.update_cache() 
 
 
 
@@ -225,6 +270,7 @@ class Economy():
 			await ctx.db.execute(updatequery, currency, ctx.guild.id)
 
 		await ctx.send(embed=bankmanagerembed("I have set your currency to {}".format(currency)))
+		await self.update_cache()
 
 
 
