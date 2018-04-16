@@ -372,7 +372,7 @@ class Shop():
 		"""Removes an item from the shop. Remainder defaults to removing item from shop. Set to 0 to keep in the out of stock list"""
 
 		if not remainder:
-			query = "DELETE FROM shop WHERE item_name = $1 and guild_id = $20"
+			query = "DELETE FROM shop WHERE item_name = $1 and guild_id = $2"
 			await ctx.db.execute(query, item_name, ctx.guild.id)
 			await ctx.send(embed=self.bot.success("Item co completely removed from the shop"))
 		else:
