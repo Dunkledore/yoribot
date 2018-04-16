@@ -342,9 +342,8 @@ class Economy():
 class Shop():
 	"""Shop related commands"""
 
-	def __init__(bot, economy):
+	def __init__(bot):
 		self.bot = bot
-		self.economy = economy
 
 	
 	#Admin related commands
@@ -425,4 +424,6 @@ class Shop():
 
 def setup(bot):
 	cog = Economy(bot)
+	bot.add_cog(cog)
+	cog = Shop(bot)
 	bot.add_cog(cog)
