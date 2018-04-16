@@ -71,7 +71,7 @@ class Economy():
 				await msg.add_reaction(self.pick_emoji)
 
 				def check(reaction, user):
-					return (reaction.emoji == self.pick_emoji and reaction.message.id == msg.id)
+					return (reaction.emoji == self.pick_emoji and reaction.message.id == msg.id and not user.bot)
 
 				reaction, user = await self.bot.wait_for("reaction_add", check=check)
 
