@@ -24,7 +24,7 @@ class Economy():
 	"""Commands related to bank accounts"""
 	def __init__(self, bot):
 		self.bot = bot
-		self.bot.loop.create_task()
+		#self.bot.loop.create_task()
 
 	async def drop_loop(self):
 		await self.bot.wait_until_ready()
