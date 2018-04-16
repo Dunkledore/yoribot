@@ -53,8 +53,9 @@ class Economy():
 		await self.bot.pool.execute(query, user_id, guild_id, change_amount)
 
 	async def setbalance(self, user_id, guild_id, new_balance):
-		query = "UPDATE bank SET balance = $3 WHERE user_id = $1 and guild_id = $2"
-		alterquery = "INSERT INTO bank (user_id, guild_id, balance) VALUES ($1,$2,$3)"
+		
+		query = "INSERT INTO bank (user_id, guild_id, balance) VALUES ($1,$2,$3)"
+		alterquery = "UPDATE bank SET balance = $3 WHERE user_id = $1 and guild_id = $2"
 
 		await self.bot.pool.execute(query, user_id, guild_id, new_balance)
 
