@@ -211,7 +211,7 @@ class Economy():
 			return
 
 		insertquery = "INSERT INTO economy_config (guild_id, drop_rate) VALUES ($1, $2)"
-		updatequery = "UPDATE economy_config SET per_second = $1 WHERE guild_id = $2"
+		updatequery = "UPDATE economy_config SET drop_rate = $1 WHERE guild_id = $2"
 
 		try:
 			await ctx.db.execute(insertquery, ctx.guild.id, drop_rate)
