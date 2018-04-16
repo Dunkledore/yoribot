@@ -103,7 +103,7 @@ class Economy():
 		try:	
 			await self.bot.pool.execute(query, user_id, guild_id, change_amount)
 		except asyncpg.UniqueViolationError:
-			await self.bot.poo.execute(query, user_id, guild_id, change_amount)
+			await self.bot.pool.execute(query, user_id, guild_id, change_amount)
 
 	async def setbalance(self, user_id, guild_id, new_balance):
 		
