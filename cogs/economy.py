@@ -41,7 +41,7 @@ class Economy():
 
 	#Utility functions
 	async def getbalance(self, user_id, guild_id):
-		query = "SELECT balance FROM bank WHERE user_id = $1 AND guild_id = 2"
+		query = "SELECT balance FROM bank WHERE user_id = $1 AND guild_id = $2"
 		balance = await self.bot.pool.fetchval(query, user_id, guild_id)
 		return balance or 0
 
