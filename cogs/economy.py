@@ -40,7 +40,7 @@ class Economy():
 		await self.bot.wait_until_ready()
 		await self.update_cache()
 
-		for guild_id, config in self.config_cache.items()
+		for guild_id, config in self.config_cache.items():
 			self.bot.loop.create_task(self.guild_drop_loop(guild_id))
 
 	async def guild_drop_loop(self, guild_id):
