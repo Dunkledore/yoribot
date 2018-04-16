@@ -377,7 +377,7 @@ class Shop():
 			await ctx.send(embed=self.bot.success("Item co completely removed from the shop"))
 		else:
 			query = "UPDATE shop SET quantity = $1 WHERE item_name = $2 and guild_id = $3"
-			await ctx.db.execute(query, remainder, ctx.guild.id)
+			await ctx.db.execute(query, int(remainder), item_name, ctx.guild.id)
 			await ctx.send(embed=self.bot.success("Item quantity set to {}".format(remainder)))
 
 
