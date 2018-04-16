@@ -21,6 +21,9 @@ def shopmanagerembed(message):
 
 #create table economy_config (guild_id BIGINT unique, drop_rate INT, drop_amount_min INT, drop_amount_max INT, channels BIGINT[], currency TEXT)
 #create table bank (user_id BIGINT, guild_id BIGINT, balance INT, PRIMARY KEY (user_id, guild_id))
+#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT)
+#create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
+
 
 
 class Economy():
@@ -29,7 +32,7 @@ class Economy():
 		self.bot = bot
 		self.config_cache = {}
 		self.bot.loop.create_task(self.drop_loop())
-		self.pick_emoji = "👌"
+		self.pick_emoji = "☑"
 
 	async def update_cache(self):
 		query = "SELECT * FROM economy_config"
@@ -334,6 +337,9 @@ class Economy():
 
 
 
+#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT)
+
+
 class Shop():
 	"""Shop related commands"""
 
@@ -349,6 +355,10 @@ class Shop():
 	async def additem(self, ctx, item_name, item_value, quantity=None):
 		"""Adds an item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
 		pass
+
+
+		
+
 
 	@commands.command()
 	@commands.guild_only()
