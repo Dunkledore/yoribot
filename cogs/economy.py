@@ -297,7 +297,8 @@ class Economy():
 		choice = await self.bot.wait_for('message', check=check, timeout=30.0)
 
 		if choice.content in ["yes","Yes"]:
-			#empty banks
+			query = "DELETE FROM bank WHERE guild_id = $1"
+			await ctx.db.exectue(query, ctx.guild.id)
 			await ctx.send(embed=bankmanagerembed("I have emptied everyone's bank account"))
 		else:
 			await ctx.send(embed=bankmanagerembed("I will not empty everyone's bank account"))
