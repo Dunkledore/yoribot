@@ -46,17 +46,27 @@ class Economy():
 			self.bot.loop.create_task(self.guild_drop_loop(guild_id))
 
 	async def guild_drop_loop(self, guild_id):
+		stats_cog = self.bot.get_cog("Stats")
+		hook = await stats_cog.webhook()
 		while True:
 			try:
 				config = self.config_cache[guild_id]
+				await hook.send("got config")
 				await asyncio.sleep(config["drop_rate"])
+				await hook.send("slept")
 				config = self.config_cache[guild_id]
+				await hook.send("got config")
 				channel_id = random.choice(config["channels"])
+				await hook.send("got channel_id")
 				channel = self.bot.get_channel(channel_id)
+				await hook.send("got channel")
 				if channel is None:
+					await hook.send("channel was none")
 					pass
 				drop_amount = random.randint(config["drop_amount_min"], config["drop_amount_max"])
+				await hook.send("got amount")
 				currency = config["currency"]
+				await hook.send("got currency")
 				msg = await channel.send(embed=bankmanagerembed("{}{} are waiting to be claimed use click the {} to claim").format(drop_amount, currency, self.pick_emoji))
 				msg.add_reaction(self.pick_emoji)
 
@@ -68,8 +78,6 @@ class Economy():
 				await self.changebalance(user.id, guild_id, drop_amount)
 				await msg.edit(embed=bankmanagerembed("{}{} was claimed by {}".format(drop_amount, currency. user.mention)), delete_after=5.0)
 			except Exception as error:
-				stats_cog = self.bot.get_cog("Stats")
-				hook = await stats_cog.webhook()
 				exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
 				e = discord.Embed(title='Drop loop error', colour=0xcc3366)
 				e.description = f'```py\n{exc}\n```'
