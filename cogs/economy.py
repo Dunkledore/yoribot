@@ -17,15 +17,32 @@ def shopmanagerembed(message):
 
 
 #create table economy_config (guild_id BIGINT unique, drop_rate INT, drop_amount_min INT, drop_amount_max INT, channels BIGINT[], currency TEXT)
+#create table bank (user_id BIGINT, guild_id BIGINT, balance INT, PRIMARY KEY (user_id, guild_id))
+
+
 class Economy():
 	"""Commands related to bank accounts"""
 	def __init__(self, bot):
 		self.bot = bot
+		self.bot.loop.create_task()
+
+	async def drop_loop(self):
+		await self.bot.wait_until_ready()
+		query = "SELECT * FROM economy_config"
+		guild_configs = self.bot.db.fetch(query)
+
+		for guild_config in guild_configs:
+			self.bot.loop.create_task(guild_config)
+
+
+	async def guild_drop_loop(self, guild_config):
+		pass
+
 
 	#Utility functions
 	async def getbalance(self, user_id, guild_id):
 		query = "SELECT balance FROM bank WHERE user_id = $1 AND guild_id = 2"
-		balance = await self.bot.pool.fetchval(query, user_id, guild_only)
+		balance = await self.bot.pool.fetchval(query, user_id, guild_id)
 		return balance or 0
 
 	#Note change_amount can be negative here
