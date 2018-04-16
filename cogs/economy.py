@@ -31,7 +31,7 @@ class Economy():
 
 	async def update_cache(self):
 		query = "SELECT * FROM economy_config"
-		configs = self.bot.pool.fetch(query)
+		configs = await self.bot.pool.fetch(query)
 		for guild_config in configs:
 			self.config_cache[guild_config["guild_id"]] = guild_config
 
