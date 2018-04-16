@@ -350,7 +350,7 @@ class Shop():
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def additem(self, ctx, item_name, item_value : int, quantity=-1 : int):
+	async def additem(self, ctx, item_name, item_value : int, quantity: int =-1 ):
 		"""Adds an item to a shop. Quantity defaults to unlimted(-1). Items will say out of stock until removed"""
 
 		query = "INSERT INTO shop (item_name, role, guild_id, cost, quantity) VALUES ($1, $2, $3, $4, $5)"
