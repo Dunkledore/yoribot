@@ -5,6 +5,8 @@ import asyncpg
 import random
 import traceback
 from .utils import checks
+import asyncio
+
 
 def bankmanagerembed(message):
 	embed = discord.Embed(description=message)
