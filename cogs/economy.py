@@ -64,7 +64,13 @@ class Economy():
 
 
 	
-	#Commands
+	#Admin Commands
+	@commands.command(name="setbalance")
+	@commands.guild_only()
+	@checks.is_admin()
+	async def _setbalance(self, ctx, user: discord.Member, balance):
+		await setbalance(user.id, ctx.guild.id, balance)
+		await ctx.send(embed=self.bot.success("New balance set"))
 
 	@commands.command()
 	@commands.guild_only()
