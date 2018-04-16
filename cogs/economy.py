@@ -336,9 +336,8 @@ class Economy():
 		pass
 
 
-
-#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT)
-
+#create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
+#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, PRIMARY KEY (item_name, guild_id))
 
 class Shop():
 	"""Shop related commands"""
@@ -352,20 +351,36 @@ class Shop():
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def additem(self, ctx, item_name, item_value, quantity=None):
-		"""Adds an item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
-		pass
+	async def additem(self, ctx, item_name, item_value, quantity=-1):
+		"""Adds an item to a shop. Quantity defaults to unlimted(-1). Items will say out of stock until removed"""
+
+		query = "INSERT INTO shop (item_name, role, guild_id, cost, quantity) VALUES ($1, $2, $3, $4, $5)"
+		alterquery = "UPDATE shop SET quantity = quantity + $1 WHERE item_name = $2 and guild_id =$3"
 
 
-		
+		try:
+			await ctx.db.execute(query, item_name, False, ctx.guild.id, item_value, quantity or -1)
+		except asyncpg.UniqueViolationError:
+			await ctx.db.execute(alterquery, quantity, item_name, ctx.guild.id)
+
+		await ctx.send(embed=self.bot.success("Item added. If you use an interactive shop you will need to use interactiveshop to update it"))
 
 
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def removeitem(self, ctx, item_name, quantity=None):
-		"""Removes an item from the shop. Quantity defaults to all. If item is left in the out of stock list then it will appear in owned items"""
-		pass
+	async def setitemnumber(self, ctx, item_name, remainder=None):
+		"""Removes an item from the shop. Remainder defaults to removing item from shop. Set to 0 to keep in the out of stock list"""
+
+		if not remainder:
+			query = "DELETE FROM shop WHERE item_name = $1 and guild_id = $20"
+			await ctx.db.execute(query, item_name, ctx.guild.id)
+			await ctx.send(embed=self.bot.success("Item co completely removed from the shop"))
+		else:
+			query = "UPDATE shop SET quantity = $1 WHERE item_name = $2 and guild_id = $3"
+			await ctx.db.execute(query, remainder, ctx.guild.id)
+			await ctx.send(embed=self.bot.success("Item quantity set to {}".format(remainder)))
+
 
 	@commands.command()
 	@commands.guild_only()
