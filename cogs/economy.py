@@ -51,22 +51,14 @@ class Economy():
 		while True:
 			try:
 				config = self.config_cache[guild_id]
-				await hook.send("got config")
 				await asyncio.sleep(config["drop_rate"])
-				await hook.send("slept")
 				config = self.config_cache[guild_id]
-				await hook.send("got config")
 				channel_id = random.choice(config["channels"])
-				await hook.send("got channel_id")
 				channel = self.bot.get_channel(channel_id)
-				await hook.send("got channel")
 				if channel is None:
-					await hook.send("channel was none")
 					pass
 				drop_amount = random.randint(config["drop_amount_min"], config["drop_amount_max"])
-				await hook.send("got amount")
 				currency = config["currency"]
-				await hook.send("got currency")
 				msg = await channel.send(embed=bankmanagerembed("{}{} are waiting to be claimed use click the {} to claim".format(drop_amount, currency, self.pick_emoji)))
 				await msg.add_reaction(self.pick_emoji)
 
