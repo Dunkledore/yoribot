@@ -206,8 +206,8 @@ class Economy():
 	@checks.is_admin()
 	async def setdroprate(self, ctx, drop_rate : int):
 		"""Sets the rate at which the bot will randomly drop random amounts of currency. 0 for no drops. Default is 0. Drop counter begins after collection"""
-		if drop_rate < 600:
-			await ctx.send(embed=bankmanagerembed("I can't just be dropping currency like that please request a time greater than 600 seconds."))
+		if drop_rate < 10:
+			await ctx.send(embed=bankmanagerembed("I can't just be dropping currency like that please request a time greater than 10 seconds."))
 			return
 
 		insertquery = "INSERT INTO economy_config (guild_id, drop_rate) VALUES ($1, $2)"
