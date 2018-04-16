@@ -58,6 +58,10 @@ class Economy():
 
 		await self.bot.pool.execute(query, user_id, guild_id, new_balance)
 
+	async def getcurrency(self, guild_id):
+		query = "SELECT currency FROM economy_config WHERE guild_id = $1"
+		return await self.bot.pool.fetchval(query, guild_id)
+
 
 	
 	#Commands
