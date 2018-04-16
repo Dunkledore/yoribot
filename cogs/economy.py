@@ -76,7 +76,7 @@ class Economy():
 				reaction, user = await self.bot.wait_for("reaction_add", check=check)
 
 				await self.changebalance(user.id, guild_id, drop_amount)
-				await msg.edit(embed=bankmanagerembed("{}{} was claimed by {}".format(drop_amount, currency. user.mention)), delete_after=5.0)
+				await msg.edit(embed=bankmanagerembed("{}{} was claimed by {}".format(drop_amount, currency, user.mention)), delete_after=5.0)
 			except Exception as error:
 				exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=False))
 				e = discord.Embed(title='Drop loop error', colour=0xcc3366)
