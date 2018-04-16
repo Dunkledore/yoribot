@@ -67,7 +67,7 @@ class Economy():
 				await hook.send("got amount")
 				currency = config["currency"]
 				await hook.send("got currency")
-				msg = await channel.send(embed=bankmanagerembed("{}{} are waiting to be claimed use click the {} to claim").format(drop_amount, currency, self.pick_emoji))
+				msg = await channel.send(embed=bankmanagerembed("{}{} are waiting to be claimed use click the {} to claim".format(drop_amount, currency, self.pick_emoji)))
 				msg.add_reaction(self.pick_emoji)
 
 				def check(reaction, user):
