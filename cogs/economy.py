@@ -298,7 +298,7 @@ class Economy():
 
 		if choice.content in ["yes","Yes"]:
 			query = "DELETE FROM bank WHERE guild_id = $1"
-			await ctx.db.exectue(query, ctx.guild.id)
+			await ctx.db.execute(query, ctx.guild.id)
 			await ctx.send(embed=bankmanagerembed("I have emptied everyone's bank account"))
 		else:
 			await ctx.send(embed=bankmanagerembed("I will not empty everyone's bank account"))
