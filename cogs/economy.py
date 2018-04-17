@@ -457,7 +457,7 @@ class Shop():
 			text = "```{}```".format(table.render())
 			embed.add_field(name="Role items" if roles else "Shop items", value=text)
 			msg = await ctx.send(embed=embed)
-			query = "UPDATE shop SET message_id = $1 AND message_reaction = $2 WHERE id = $3"
+			query = "UPDATE shop SET message_id = $1, message_reaction = $2 WHERE id = $3"
 			counter = 1
 			for item in items:
 				await ctx.db.execute(query, msg.id, counter, item["id"])
