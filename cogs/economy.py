@@ -434,7 +434,7 @@ class Shop():
 		roletable.set_columns(headers)
 		shop_roles = []
 		for item in items:
-			role = discord.utils.get(ctx.guild.roles, id=item["item_name"])
+			role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 			if role:
 				shop_roles.append([role.name, item["cost"], item["quantity"]])
 			else:
