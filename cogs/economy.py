@@ -434,7 +434,6 @@ class Shop():
 		shop_roles = []
 		for item in items:
 			role = discord.utils.get(ctx.guild.roles, id=item["item_name"])
-			        for rank in ranks:
             if role:
                 shop_roles.append([role.name, item["cost"], item["quantity"]])
             else:
