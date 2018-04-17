@@ -460,7 +460,7 @@ class Shop():
 		msg = await ctx.send(embed=embed)
 
 		for x in range(1, counter):
-			await msg.add_reaction(x + self.closing_keycap)
+			await msg.add_reaction(str(x) + self.closing_keycap)
 
 
 
