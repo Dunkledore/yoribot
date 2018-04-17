@@ -444,7 +444,23 @@ class Shop():
 		roletext = "```{}```".format(roletable.render())
 		embed.add_field(name="Role items", value=roletext)
 
+		
+
+		items = await ctx.db.fetch(query, ctx.guild.id, False)
+		itemstable = TabularData()
+		headers = ["Item", "Cost", "Remaining Stock"]
+		itemstable.set_columns(headers)
+		shop_items = []
+		for item in items:
+			shop_items.append([item["item_name"], item["cost"],item["quantity"]])
+		shop_items.sort(key=lambda x: x[1])
+		itemstable.add_rows(shop_items)
+		itemtext = "```{}```".format(roletable.render())
+		embed.add_field(name="Items", value=itemtext)
+
 		await ctx.send(embed=embed)
+
+
 
 
 		
