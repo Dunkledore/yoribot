@@ -34,6 +34,8 @@ class Economy():
 		self.bot.loop.create_task(self.drop_loop())
 		self.pick_emoji = "☑"
 
+	
+
 	async def update_cache(self):
 		query = "SELECT * FROM economy_config"
 		configs = await self.bot.pool.fetch(query)
@@ -344,6 +346,7 @@ class Shop():
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.closing_keycap = "\u20e3"
 
 	
 	#Admin related commands
@@ -418,7 +421,48 @@ class Shop():
 	@checks.is_admin()
 	async def interactiveshop(self, ctx):
 		"""Shows the interactive version of the shop. Users can buy items with emoji reactions"""
-		pass
+		query = "SELECT * FROM shop WHERE guild_id = $1 and Role = $2"
+		items = await ctx.db.fetch(query, ctx.guild.id, True)
+
+		embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name))
+		roletable = TabularData()
+		headers = ["Number", "Role", "Cost"]
+		roletable.set_columns(headers)
+		shop_roles = []
+		counter = 0
+		for item in items:
+			role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
+			if role:
+				shop_roles.append([str(counter), role.name, item["cost"]])
+			else:
+				shop_roles.append([str(counter), item["item_name"], item["cost"]])
+			counter += 1
+		shop_roles.sort(key=lambda x: x[1])
+		roletable.add_rows(shop_roles)
+		roletext = "```{}```".format(roletable.render())
+		embed.add_field(name="Role items", value=roletext)
+
+		
+
+		items = await ctx.db.fetch(query, ctx.guild.id, False)
+		itemstable = TabularData()
+		headers = ["Number", "Item", "Cost"]
+		itemstable.set_columns(headers)
+		shop_items = []
+		for item in items:
+			shop_items.append([counter, item["item_name"], item["cost"]])
+			counter += 1
+		shop_items.sort(key=lambda x: x[1])
+		itemstable.add_rows(shop_items)
+		itemtext = "```{}```".format(itemstable.render())
+		embed.add_field(name="Items", value=itemtext)
+
+		msg = await ctx.send(embed=embed)
+
+		for x in range(1, counter):
+			await msg.add_reaction(x + self.closing_keycap)
+
+
 
 	@commands.command()
 	@commands.guild_only()
