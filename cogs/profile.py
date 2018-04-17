@@ -2,7 +2,7 @@ from .utils import db, checks, formats, cache
 from .utils.paginator import Pages
 from .utils.dataIO import dataIO
 from discord.ext import commands
-from .utils.formats import TabularData, Plural
+from .utils.formats import TabularData
 from .utils.paginator import FieldPages
 import json
 import re

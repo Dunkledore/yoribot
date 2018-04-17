@@ -6,6 +6,7 @@ import random
 import traceback
 from .utils import checks
 import asyncio
+from .utils.formats import TabularData
 
 
 def bankmanagerembed(message):
@@ -418,6 +419,35 @@ class Shop():
 	async def interactiveshop(self, ctx):
 		"""Shows the interactive version of the shop. Users can buy items with emoji reactions"""
 		pass
+
+	@commands.command()
+	@commands.guild_only()
+	async def shop(self, ctx):
+		"""Shows the shop"""
+
+		query = "SELECT * FROM shop WHERE guild_id = $1 and Role = $2"
+		items = ctx.db.fetch(query, ctx.guild.id, True)
+
+		embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name))
+		roletable = TabularData()
+		headers = ["Role", "Cost", "Remaning Stock"]
+		shop_roles = []
+		for item in items:
+			role = discord.utils.get(ctx.guild.roles, id=item["item_name"])
+			        for rank in ranks:
+            if role:
+                shop_roles.append([role.name, item["cost"], item["quantity"]])
+            else:
+                shop_roles.append(["@deleted_role - " + item["item_name"]], item["cost"],item["quantity"]) 
+         shop_roles.sort(key=lambda x: x[1])
+         roletable.add_rows(shop_roles)
+         roletext = "```{}```".format(roletable.render())
+         embed.add_field(name="Role items", value=roletext)
+
+         await ctx.send(embed=embed)
+
+
+		
 
 	#User shop commands
 	@commands.command()
