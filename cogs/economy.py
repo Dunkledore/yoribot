@@ -429,7 +429,7 @@ class Shop():
 		headers = ["Number", "Role", "Cost"]
 		roletable.set_columns(headers)
 		shop_roles = []
-		counter = 0
+		counter = 1
 		for item in items:
 			role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 			if role:
