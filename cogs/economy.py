@@ -427,6 +427,8 @@ class Shop():
 
 		async def send_items(ctx, items, first, roles):
 
+			items.sort(key=lambda x: x["cost"])
+
 			embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name) if first else "")
 			if len(items) >=9:
 				to_send_later = items[9:]
@@ -450,7 +452,7 @@ class Shop():
 					shop_items.append([str(counter), item["item_name"], item["cost"]])
 				counter += 1
 
-			shop_items.sort(key=lambda x: x[1])
+			
 			table.add_rows(shop_items)
 			text = "```{}```".format(table.render())
 			embed.add_field(name="Role items" if roles else "Shop items", value=text)
