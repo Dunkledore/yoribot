@@ -431,6 +431,7 @@ class Shop():
 		embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name))
 		roletable = TabularData()
 		headers = ["Role", "Cost", "Remaning Stock"]
+		roletable.set_columns(headers)
 		shop_roles = []
 		for item in items:
 			role = discord.utils.get(ctx.guild.roles, id=item["item_name"])
