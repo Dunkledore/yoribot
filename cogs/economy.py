@@ -461,7 +461,7 @@ class Shop():
 			counter = 1
 			for item in items:
 				await ctx.db.execute(query, msg.id, counter, item["id"])
-
+				counter += 1
 
 			for x in range(1, counter):
 				await msg.add_reaction(str(x) + self.closing_keycap)
