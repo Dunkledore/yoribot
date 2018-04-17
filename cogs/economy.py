@@ -339,7 +339,7 @@ class Economy():
 
 
 #create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
-#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, PRIMARY KEY (item_name, guild_id))
+#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, PRIMARY KEY (item_name, guild_id), message_id, message_reaction)
 
 class Shop():
 	"""Shop related commands"""
@@ -422,45 +422,49 @@ class Shop():
 	async def interactiveshop(self, ctx):
 		"""Shows the interactive version of the shop. Users can buy items with emoji reactions"""
 		query = "SELECT * FROM shop WHERE guild_id = $1 and Role = $2"
-		items = await ctx.db.fetch(query, ctx.guild.id, True)
+		role_items = await ctx.db.fetch(query, ctx.guild.id, True)
+		shop_items = await ctx.db.fetch(query, ctx.guild.id, False)
 
-		embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name))
-		roletable = TabularData()
-		headers = ["Number", "Role", "Cost"]
-		roletable.set_columns(headers)
-		shop_roles = []
-		counter = 1
-		for item in items:
-			role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
-			if role:
-				shop_roles.append([str(counter), role.name, item["cost"]])
+		async def send_items(ctx, items, first, roles):
+
+			embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name) if first else "")
+			if len(items) >=9:
+				to_send_later = items[9:]
+				items = items[:8]
 			else:
-				shop_roles.append([str(counter), item["item_name"], item["cost"]])
-			counter += 1
-		shop_roles.sort(key=lambda x: x[1])
-		roletable.add_rows(shop_roles)
-		roletext = "```{}```".format(roletable.render())
-		embed.add_field(name="Role items", value=roletext)
+				to_send_later = None
 
-		
+			table = TabularData()
+			headers = ["Number", "Role" if roles else "Item", "Cost"]
+			table.set_columns(headers)
+			shop_items = []
+			counter = 1
+			for item in items:
+				if roles:
+					role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
+					if role:
+						shop_items.append([str(counter), role.name, item["cost"]])
+					else:
+						shop_itmes.append([str(counter), item["item_name"], item["cost"]])
+				else:
+					shop_items.append([str(counter), item["item_name"], item["cost"]])
+				counter += 1
 
-		items = await ctx.db.fetch(query, ctx.guild.id, False)
-		itemstable = TabularData()
-		headers = ["Number", "Item", "Cost"]
-		itemstable.set_columns(headers)
-		shop_items = []
-		for item in items:
-			shop_items.append([counter, item["item_name"], item["cost"]])
-			counter += 1
-		shop_items.sort(key=lambda x: x[1])
-		itemstable.add_rows(shop_items)
-		itemtext = "```{}```".format(itemstable.render())
-		embed.add_field(name="Items", value=itemtext)
+			shop_items.sort(key=lambda x: x[1])
+			table.add_rows(shop_items)
+			text = "```{}```".format(table.render())
+			embed.add_field(name="Role items", value=text)
+			msg = await ctx.send(embed=embed)
 
-		msg = await ctx.send(embed=embed)
+			for x in range(1, counter):
+				await msg.add_reaction(str(x) + self.closing_keycap)
 
-		for x in range(1, counter):
-			await msg.add_reaction(str(x) + self.closing_keycap)
+			if to_send_later:
+				await send_items(ctx, to_send_later, False, roles)
+
+		await send_items(ctx, role_items, True, True)
+		await send_items(ctx, shop_items, False, False)
+
 
 
 
