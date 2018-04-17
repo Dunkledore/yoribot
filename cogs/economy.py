@@ -376,7 +376,7 @@ class Shop():
 		try:
 			await ctx.db.execute(query, str(role.id), True, ctx.guild.id, item_value, quantity)
 		except asyncpg.UniqueViolationError:
-			await ctx.db.execute(alterquery, quantity, role.id, ctx.guild.id)
+			await ctx.db.execute(alterquery, quantity, str(role.id), ctx.guild.id)
 
 		await ctx.send(embed=self.bot.success("Role Item added. If you use an interactive shop you will need to use interactiveshop to update it"))
 
@@ -408,7 +408,7 @@ class Shop():
 			await ctx.send(embed=self.bot.success("Role Item completely removed from the shop"))
 		else:
 			query = "UPDATE shop set quantity = $1 WHERE item_name = $2 and guild_id = $3"
-			await ctx.db.execute(query, int(remainder), role.id, ctx.guild.id)
+			await ctx.db.execute(query, int(remainder), str(role.id), ctx.guild.id)
 			await ctx.send(embed=self.bot.success("Role Item quantity set to {}".format(remainder)))
 
 
