@@ -438,7 +438,7 @@ class Shop():
 			if role:
 				shop_roles.append([role.name, item["cost"], item["quantity"]])
 			else:
-				shop_roles.append(["@deleted_role\nID:" + item["item_name"], item["cost"],item["quantity"]]) 
+				shop_roles.append([item["item_name"], item["cost"],item["quantity"]]) 
 		shop_roles.sort(key=lambda x: x[1])
 		roletable.add_rows(shop_roles)
 		roletext = "```{}```".format(roletable.render())
