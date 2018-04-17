@@ -378,6 +378,8 @@ class Shop():
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, quantity, role.id, ctx.guild.id)
 
+		await ctx.send(embed=self.bot.success("Role Item added. If you use an interactive shop you will need to use interactiveshop to update it"))
+
 
 	@commands.command()
 	@commands.guild_only()
