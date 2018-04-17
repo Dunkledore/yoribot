@@ -374,7 +374,7 @@ class Shop():
 		alterquery = "UPDATE shop SET quantity = quantity + $1 WHERE item_name = $2 and guild_id = $3"
 
 		try:
-			await ctx.db.execute(query, role.id, True, ctx.guild.id, item_value, quantity)
+			await ctx.db.execute(query, str(role.id), True, ctx.guild.id, item_value, quantity)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, quantity, role.id, ctx.guild.id)
 
@@ -402,7 +402,7 @@ class Shop():
 		"""Remove a role item to a shop. Quantity defaults to all. If item is left in the out of stock list then it will appear in owned items"""
 		if not remainder:
 			query = "DELETE FROM shop WHERE item_name = $1 and guild_id = $2"
-			await ctx.db.execute(query, role.id, ctx.guild.id)
+			await ctx.db.execute(query, str(role.id), ctx.guild.id)
 			await ctx.send(embed=self.bot.success("Role Item completely removed from the shop"))
 		else:
 			query = "UPDATE shop set quantity = $1 WHERE item_name = $2 and guild_id = $3"
