@@ -339,7 +339,7 @@ class Economy():
 
 
 #create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
-#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, PRIMARY KEY (item_name, guild_id), message_id, message_reaction)
+#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, message_id BIGINT, message_reaction INT PRIMARY KEY (item_name, guild_id))
 
 class Shop():
 	"""Shop related commands"""
@@ -457,6 +457,11 @@ class Shop():
 			text = "```{}```".format(table.render())
 			embed.add_field(name="Role items" if roles else "Shop items", value=text)
 			msg = await ctx.send(embed=embed)
+			query = "UPDATE shop SET message_id = $1 AND message_reaction = $2 WHERE id = $3"
+			counter = 1
+			for item in items:
+				await ctx.db.execute(query, msg.id, counter, item["id"])
+
 
 			for x in range(1, counter):
 				await msg.add_reaction(str(x) + self.closing_keycap)
