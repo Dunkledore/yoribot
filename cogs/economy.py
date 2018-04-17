@@ -426,7 +426,7 @@ class Shop():
 		"""Shows the shop"""
 
 		query = "SELECT * FROM shop WHERE guild_id = $1 and Role = $2"
-		items = ctx.db.fetch(query, ctx.guild.id, True)
+		items = await ctx.db.fetch(query, ctx.guild.id, True)
 
 		embed = discord.Embed(title="Shop items for {}".format(ctx.guild.name))
 		roletable = TabularData()
