@@ -23,8 +23,7 @@ def shopmanagerembed(message):
 #create table bank (user_id BIGINT, guild_id BIGINT, balance INT, PRIMARY KEY (user_id, guild_id))
 #create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT)
 #create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
-
-
+		
 
 class Economy():
 	"""Commands related to bank accounts"""
@@ -354,15 +353,30 @@ class Shop():
 		"""Adds an item to a shop. Quantity defaults to unlimted(-1). Items will say out of stock until removed"""
 
 		query = "INSERT INTO shop (item_name, role, guild_id, cost, quantity) VALUES ($1, $2, $3, $4, $5)"
-		alterquery = "UPDATE shop SET quantity = quantity + $1 WHERE item_name = $2 and guild_id =$3"
+		alterquery = "UPDATE shop SET quantity = quantity + $1 WHERE item_name = $2 and guild_id = $3"
 
 
 		try:
-			await ctx.db.execute(query, item_name, False, ctx.guild.id, item_value, quantity or -1)
+			await ctx.db.execute(query, item_name, False, ctx.guild.id, item_value, quantity)
 		except asyncpg.UniqueViolationError:
 			await ctx.db.execute(alterquery, quantity, item_name, ctx.guild.id)
 
 		await ctx.send(embed=self.bot.success("Item added. If you use an interactive shop you will need to use interactiveshop to update it"))
+
+
+	@commands.command()
+	@commands.guild_only()
+	@checks.is_admin()
+	async def addroleitem(self, ctx, role : discord.Role, item_value : int, quantity: int =-1):
+		"""Adds a role item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
+
+		query = "INSERT INTO shop (item_name, role, guild_id, cost, quantity) VALUES ($1, $2, $3, $4, $5)"
+		alterquery = "UPDATE shop SET quantity = quantity + $1 WHERE item_name = $2 and guild_id = $3"
+
+		try:
+			await ctx.db.execute(query, role.id, True, ctx.guild.id, item_value, quantity)
+		except asyncpg.UniqueViolationError:
+			await ctx.db.execute(alterquery, quantity, role.id, ctx.guild.id)
 
 
 	@commands.command()
@@ -374,7 +388,7 @@ class Shop():
 		if not remainder:
 			query = "DELETE FROM shop WHERE item_name = $1 and guild_id = $2"
 			await ctx.db.execute(query, item_name, ctx.guild.id)
-			await ctx.send(embed=self.bot.success("Item co completely removed from the shop"))
+			await ctx.send(embed=self.bot.success("Item completely removed from the shop"))
 		else:
 			query = "UPDATE shop SET quantity = $1 WHERE item_name = $2 and guild_id = $3"
 			await ctx.db.execute(query, int(remainder), item_name, ctx.guild.id)
@@ -384,16 +398,17 @@ class Shop():
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def addroleitem(self, ctx, role : discord.Role, item_value, quantity=None):
-		"""Adds a role item to a shop. Quantity defaults to unlimted. Items will say out of stock until removed"""
-		pass
-
-	@commands.command()
-	@commands.guild_only()
-	@checks.is_admin()
-	async def removeroleitem(self, ctx, role : discord.Role, quantity=None):
+	async def setroleitemnumber(self, ctx, role : discord.Role, remainder=None):
 		"""Remove a role item to a shop. Quantity defaults to all. If item is left in the out of stock list then it will appear in owned items"""
-		pass
+		if not remainder:
+			query = "DELETE FROM shop WHERE item_name = $1 and guild_id = $2"
+			await ctx.db.execute(query, role.id, ctx.guild.id)
+			await ctx.send(embed=self.bot.success("Role Item completely removed from the shop"))
+		else:
+			query = "UPDATE shop set quantity = $1 WHERE item_name = $2 and guild_id = $3"
+			await ctx.db.execute(query, int(remainder), role.id, ctx.guild.id)
+			await ctx.send(embed=self.bot.success("Role Item quantity set to {}".format(remainder)))
+
 
 	@commands.command()
 	@commands.guild_only()
