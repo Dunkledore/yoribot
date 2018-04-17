@@ -453,7 +453,7 @@ class Shop():
 			shop_items.sort(key=lambda x: x[1])
 			table.add_rows(shop_items)
 			text = "```{}```".format(table.render())
-			embed.add_field(name="Role items", value=text)
+			embed.add_field(name="Role items" if roles else "Shop items", value=text)
 			msg = await ctx.send(embed=embed)
 
 			for x in range(1, counter):
