@@ -526,15 +526,16 @@ class Shop():
 	async def buy(self, ctx, item):
 		"""Buys an item from the shop"""
 		query = "SELECT * FROM shop WHERE guild_id = $1 AND item_name = $2"
-		item = await ctx.db.fetchrow(query, ctx.guild.id, item)
+		db_item = await ctx.db.fetchrow(query, ctx.guild.id, item)
 		role = None
-		if not item:
+		if not db_item:
 			role = discord.utils.get(ctx.guild.roles, name=item)
 			if role:
-				item = await ctx.db.fetchrow(query, ctx.guild.id, str(role.id))
-			if not item:
+				db_item = await ctx.db.fetchrow(query, ctx.guild.id, str(role.id))
+			if not db_item:
 				await ctx.send(embed=self.bot.error("This is not a valid item"))
 				return
+		item = db_item
 
 		query = "SELECT * FROM bank WHERE guild_id = $1 AND user_id = $2"
 		account = await ctx.db.fetchrow(query, ctx.guild.id, ctx.author.id)
