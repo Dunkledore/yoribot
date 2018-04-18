@@ -56,7 +56,8 @@ class Economy():
 		while True:
 			try:
 				config = self.config_cache[guild_id]
-				await asyncio.sleep(config["drop_rate"])
+				drop_rate = config["drop_rate"]
+				await asyncio.sleep(random.randint(int(0.75*drop_rate),int(1.25*drop_rate)))
 				config = self.config_cache[guild_id]
 				channel_id = random.choice(config["channels"])
 				channel = self.bot.get_channel(channel_id)
