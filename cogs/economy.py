@@ -612,7 +612,7 @@ class Shop():
 				await ctx.send(embed=self.bot.error("This is not a valid item"))
 				return
 
-		query = "SELECT * FROM shop_purchases WHERE guild_id = $1 AND item_id = $2 AND user_id = $3"
+		query = "SELECT * FROM shop_purchases WHERE (guild_id = $1 AND item_id = $2) AND user_id = $3"
 		purchase = await ctx.db.fetchrow(ctx.guild.id, db_item["id"], ctx.author.id)
 		if not purchase:
 			await ctx.send(embed=self.bot.error("You do not own that item"))
