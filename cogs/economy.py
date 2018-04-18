@@ -576,10 +576,8 @@ class Shop():
 			embed.description = "This user doesn't have any purchases"
 			await ctx.send(embed=embed)
 			return
-		items = dict(items)
-		item_ids = []
-		for k,v in items.items():
-			item_ids.append(v)
+		for item in items
+			item_ids.append(item["item_id"])
 
 		query = "SELECT * FROM shop WHERE item_id IN $1 AND guild_id = $2"
 		items = dict(await ctx.db.fetch(query, item_ids, ctx.guild.id))
