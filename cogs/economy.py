@@ -624,7 +624,7 @@ class Shop():
 			await ctx.send(embed=self.bot.error("{} doesn't have enough to buy this.".format(person_buying.mention)))
 			return
 
-		msg = await ctx.send(embed=self.bot.notice("{}, {} wishes to sell {} to you for {}. Click {} to accept".format(person_buying.mention, ctx.author.mention, item, self.pick_emoji)))
+		msg = await ctx.send(embed=self.bot.notice("{}, {} wishes to sell {} to you for {}. Click {} to accept".format(person_buying.mention, ctx.author.mention, item, cost, self.pick_emoji)))
 		await msg.add_reaction(self.pick_emoji)
 		def check(reaction, user):
 			return (emoji == self.pick_emoji) and (reaction.message.id == msg.id) and (user.id == person_buying.id)
