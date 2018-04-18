@@ -642,7 +642,7 @@ class Profile:
 
     @commands.command()
     @commands.guild_only()
-    async def profileremove(self, ctx, name=None):
+    async def profileremove(self, ctx, *, name=None):
         """Removes an embed field from the profile message"""
 
         if name is None:
