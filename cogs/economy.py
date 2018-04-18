@@ -679,7 +679,10 @@ class Shop():
 			new_balance = balance - item["cost"]
 			query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
 			await self.bot.pool.execute(query, item["id"], user_id, guild.id)
-			role = discord.utils.get(guild.roles, id=int(item["item_name"]))
+			try:
+				role = discord.utils.get(guild.roles, id=int(item["item_name"]))
+			except Exception as e:
+				role = None
 			if role and user:
 				await user.add_roles(role)
 			if item["cost"] != 0:
