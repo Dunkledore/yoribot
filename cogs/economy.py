@@ -570,7 +570,7 @@ class Shop():
 
 		query = "SELECT item_id FROM shop_purchases WHERE user_id = $1 and guild_id = $2"
 		embed = discord.Embed(title="Shop purchases for {}".format(user.name), description="")
-		items = await ctx.db.execute(query, user.id, ctx.guild.id)
+		items = await ctx.db.fetch(query, user.id, ctx.guild.id)
 		if not items:
 			embed.description = "This user doesn't have any purchases"
 			await ctx.send(embed=embed)
