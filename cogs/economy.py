@@ -618,7 +618,7 @@ class Shop():
 			await ctx.send(embed=self.bot.error("You do not own that item"))
 			return
 		query = "SELECT balance FROM bank WHERE user_id = $1 AND guild_id = $2"
-		balance = await ctx.fetchval(query, person_buying.id, ctx.guild.id) or 0
+		balance = await ctx.db.fetchval(query, person_buying.id, ctx.guild.id) or 0
 		if balance < cost:
 			await ctx.send(embed=self.bot.error("{} doesn't have enough to buy this.".format(person_buying.mention)))
 			return
