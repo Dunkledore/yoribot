@@ -606,6 +606,9 @@ class Shop():
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
+		if user_id == self.bot.user.id:
+			return
+
 		cog = self.bot.get_cog("Stats")
 		hook = await cog.webhook()
 		await hook.send("got reaction")
@@ -614,9 +617,13 @@ class Shop():
 			if emoji not in [str(x) + self.closing_keycap for x in range(1,10)]:
 				return
 
+			await hook.send("in list")
+
 			channel = self.bot.get_channel(channel_id)
 			if not channel or not channel.guild:
 				return
+
+			await hook.send("got channel")
 
 			guild = channel.guild
 			message_reaction = emoji[0]
@@ -624,6 +631,8 @@ class Shop():
 			item = await self.bot.pool.fetchrow(query, guild.id, message_reaction, message_id)
 			if not item:
 				return
+
+			await hook.send("got item")
 
 			query = "SELECT * FROM bank WHERE guild_id = $1 AND user_id = $2"
 			user = self.bot.get_user(user_id)
