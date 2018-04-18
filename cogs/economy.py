@@ -579,7 +579,7 @@ class Shop():
 		for item in items:
 			item_ids.append(item["item_id"])
 
-		query = "SELECT * FROM shop WHERE id == any($1::int[]) AND guild_id = $2"
+		query = "SELECT * FROM shop WHERE id = any($1::int[]) AND guild_id = $2"
 		items = dict(await ctx.db.fetch(query, item_ids, ctx.guild.id))
 		for item in items:
 			if item["role"]:
