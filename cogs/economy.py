@@ -575,7 +575,7 @@ class Shop():
 			embed.description = "This user doesn't have any purchases"
 			await ctx.send(embed=embed)
 			return
-		items = dict(await ctx.db.fetch(query, user.id, ctx.guild.id))
+		items = dict(items)
 		item_ids = []
 		for k,v in items.items():
 			item_ids.append(v)
