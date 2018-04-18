@@ -637,7 +637,7 @@ class Shop():
 			await hook.send("got item")
 
 			query = "SELECT * FROM bank WHERE guild_id = $1 AND user_id = $2"
-			user = self.bot.get_user(user_id)
+			user = guild.get_member(user_id)
 			account = await self.bot.pool.fetchrow(query, guild.id, user_id)
 			if not account:
 				balance = 0
