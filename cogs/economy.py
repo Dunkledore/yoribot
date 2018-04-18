@@ -651,6 +651,8 @@ class Shop():
 			except asyncpg.UniqueViolationError:
 				await self.bot.pool.execute(alterquery, ctx.author.id, ctx.guild.id, -cost)
 
+		await ctx.send(embed=self.bot.success("Item sold"))
+
 
 
 
