@@ -595,12 +595,9 @@ class Shop():
 
 		await ctx.send(embed=embed)
 
-
-
-
 	@commands.command()
 	@commands.guild_only()
-	async def sell(self, ctx, item, , cost, person_buying : discord.Member):
+	async def sell(self, ctx, item, cost, person_buying : discord.Member):
 		"""Sells an item to another member. They must accept the transaction."""
 		
 		query = "SELECT * FROM shop WHERE guild_id = $1 AND item_name = $2"
