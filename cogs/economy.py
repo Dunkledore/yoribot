@@ -630,8 +630,9 @@ class Shop():
 			return (emoji == self.pick_emoji) and (reaction.message.id == msg.id) and (user.id == person_buying.id)
 
 		try:
-			await self.bot.wait_for("reaction_add", check=check, timeout = 60.0)
+			await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
 		except Exception as e:
+			await ctx.send(e)
 			await msg.remove_reaction(self.pick_emoji, ctx.me)
 			return
 
