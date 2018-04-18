@@ -600,9 +600,50 @@ class Shop():
 
 	@commands.command()
 	@commands.guild_only()
-	async def sell(self, ctx, item, person_buying : discord.Member):
-		"""Sells an item to another member. They must accept the transaction"""
-		pass
+	async def sell(self, ctx, item, , cost, person_buying : discord.Member):
+		"""Sells an item to another member. They must accept the transaction."""
+		
+		query = "SELECT * FROM shop WHERE guild_id = $1 AND item_name = $2"
+		db_item = await ctx.db.fetchrow(query, ctx.guild.id, item)
+		if not db_item:
+			role = discord.utils.get(guild.roles, name=item)
+			if not role:
+				await ctx.send(embed=self.bot.error("This is not a valid item"))
+				return
+			db_item = await ctx.db.fetchrow(query, ctx.guild.id, role.id)
+			if not db_item:
+				await ctx.send(embed=self.bot.error("This is not a valid item"))
+				return
+
+		query = "SELECT * FROM shop_purchases WHERE guild_id = $1 AND item_id = $2 AND user_id = $3"
+		purchase = await ctx.db.fetchrow(ctx.guild.id, db_item["id"], ctx.author.id)
+		if not purchase:
+			await ctx.send(embed=self.bot.error("You do not own that item"))
+			return
+		query = "SELECT balance FROM bank WHERE user_id = $1 AND guild_id = $2"
+		balance = await ctx.fetchval(query, person_buying.id, ctx.guild.id) or 0
+		if balance < cost:
+			await ctx.send(embed=self.bot.error("{} doesn't have enough to buy this.".format(person_buying.mention)))
+			return
+
+		query = "DELETE FROM shop_purchases WHERE id IN (SELECT id FROM shop_purchases WHERE item_id = $1 AND user_id = $2 LIMIT 1)"
+		await ctd.db.execute(query, db_item["id"], ctx.author.id)
+		query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
+		await ctx.db.pool.execute(query, db_item["id"], person_buying.id, ctx.guild.id)
+		if cost != 0:
+			query = "UPDATE bank SET balance = $1 WHERE user_id = $2 and guild_id = $3"
+			await ctx.db.execute(query, balance-cost, person_buying.id, ctx.guild.id)
+			query = "INSERT INTO bank (user_id, guild_id, balance) VALUES ($1,$2,$3)"
+			alterquery = "UPDATE bank SET balance = balance + $3 WHERE user_id = $1 and guild_id = $2"
+
+			try:	
+				await self.bot.pool.execute(query, ctx.author.id, ctx.guild.id, cost)
+			except asyncpg.UniqueViolationError:
+				await self.bot.pool.execute(alterquery, ctx.author.id, ctx.guild.id, -cost)
+
+
+
+
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
