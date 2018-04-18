@@ -627,7 +627,7 @@ class Shop():
 		msg = await ctx.send(embed=self.bot.notice("{}, {} wishes to sell {} to you for {}. Click {} to accept".format(person_buying.mention, ctx.author.mention, item, cost, self.pick_emoji)))
 		await msg.add_reaction(self.pick_emoji)
 		def check(reaction, user):
-			return (emoji == self.pick_emoji) and (reaction.message.id == msg.id) and (user.id == person_buying.id)
+			return (reaction.emoji == self.pick_emoji) and (reaction.message.id == msg.id) and (user.id == person_buying.id)
 
 		try:
 			await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
