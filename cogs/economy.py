@@ -547,7 +547,7 @@ class Shop():
 			await ctx.send(embed=self.bot.error("You can not afford this item"))
 			return
 
-		new_balance = balance = item["cost"]
+		new_balance = balance - item["cost"]
 		query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
 		await ctx.db.execute(query, item["id"], ctx.author.id, ctx.guild.id)
 		if role:
@@ -556,7 +556,7 @@ class Shop():
 			query = "UPDATE bank SET balance = $1 WHERE user_id = $2 and guild_id = $3"
 			await ctx.db.execute(query, new_balance, ctx.author.id, ctx.guild.id)
 
-		await ctx.send("Item purchased. New balance is {}".format(new_balance))
+		await ctx.send(embed=self.bot.success("Item purchased. New balance is {}".format(new_balance)))
 
 
 		query = "SELECT * FROM bank WHERE user_id = $1 and guild_id = $2"
