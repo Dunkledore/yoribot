@@ -630,6 +630,7 @@ class Shop():
 
 			guild = channel.guild
 			message_reaction = int(emoji[0])
+			await hook.send(message_reaction)
 			query = "SELECT * FROM shop WHERE guild_id = $1 AND message_reaction = $2 AND message_id = $3"
 			item = await self.bot.pool.fetchrow(query, guild.id, message_reaction, message_id)
 			if not item:
