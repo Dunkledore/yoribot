@@ -608,6 +608,8 @@ class Shop():
 
 		cog = self.bot.get_cog("Stats")
 		hook = await cog.webhook()
+		await hook.send("got reaction")
+		await hook.send("its was {}".format(emoji))
 		try:
 			if emoji not in [str(x) + self.closing_keycap for x in range(1,10)]:
 				return
