@@ -611,30 +611,20 @@ class Shop():
 
 		cog = self.bot.get_cog("Stats")
 		hook = await cog.webhook()
-		await hook.send("got reaction")
-		await hook.send("its was {}".format(emoji))
 		try:
 			emoji_list = [str(x) + self.closing_keycap for x in range(1,10)]
-			await hook.send(str(emoji_list))
 			if str(emoji) not in [str(x) + self.closing_keycap for x in range(1,10)]:
-				await hook.send("false")
 				return
-
-			await hook.send("in list")
 
 			channel = self.bot.get_channel(channel_id)
 			if not channel or not channel.guild:
 				return
-
-			await hook.send("got channel")
 
 			guild = channel.guild
 			query = "SELECT * FROM shop WHERE guild_id = $1 AND message_reaction = $2 AND message_id = $3"
 			item = await self.bot.pool.fetchrow(query, guild.id, int(str(emoji)[0]), message_id)
 			if not item:
 				return
-
-			await hook.send("got item")
 
 			query = "SELECT * FROM bank WHERE guild_id = $1 AND user_id = $2"
 			user = guild.get_member(user_id)
