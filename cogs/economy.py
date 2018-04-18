@@ -658,7 +658,7 @@ class Shop():
 				query = "UPDATE bank SET balance = $1 WHERE user_id = $2 and guild_id = $3"
 				await self.bot.pool.execute(query, new_balance, user_id, guild.id)
 
-			await channel.send(embed=self.bot.success("{}tem purchased. New balance is {}".format(user.mention + " i" if user else "I", new_balance)))
+			await channel.send(embed=self.bot.success("{}tem purchased. New balance is {}".format(user.mention + " i" if user else "I", new_balance)), delete_after=5.0)
 		except Exception as e:
 			await hook.send(str(e))
 
