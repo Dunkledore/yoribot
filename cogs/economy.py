@@ -545,7 +545,7 @@ class Shop():
 			balance = account["balance"]
 
 		if item["cost"] > balance:
-			await ctx.send(embed=self.bot.error("You can not afford this item"))
+			await ctx.send(embed=self.bot.error("You can not afford this item :sob:"))
 			return
 
 		new_balance = balance - item["cost"]
@@ -604,11 +604,50 @@ class Shop():
 		"""Sells an item to another member. They must accept the transaction"""
 		pass
 
-	@commands.command()
-	@commands.guild_only()
-	async def owneditems(self, ctx):
-		"""Shows all of the items you own."""
-		pass
+	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
+
+		cog = self.bot.get_cog("Stats")
+		hook = await cog.webhook()
+		try:
+			if emoji not in [str(x) + self.closing_keycap for x in range(1,10)]:
+				return
+
+			channel = self.bot.get_channel(channel_id)
+			if not channel or not channel.guild:
+				return
+
+			guild = channel.guild
+			message_reaction = emoji[0]
+			query = "SELECT * FROM shop WHERE guild_id = $1 AND message_reaction = $2 AND message_id = $3"
+			item = await self.bot.pool.fetchrow(query, guild.id, message_reaction, message_id)
+			if not item:
+				return
+
+			query = "SELECT * FROM bank WHERE guild_id = $1 AND user_id = $2"
+			user = self.bot.get_user(user_id)
+			account = await self.bot.pool.fetchrow(query, guild.id, user_id)
+			if not account:
+				balance = 0
+			else:
+				balance = account["balance"]
+
+			if item["cost"] > balance:
+				await channel.send(embed=self.bot.error("{}ou can not afford this item :sob:".format(user.mention + " y" if user else "Y")), delete_after=5.0)
+				return
+
+			new_balance = balance - item["cost"]
+			query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
+			await self.bot.pool.execute(query, item["id"], user_id, guild.id)
+			role = discord.utils.get(guild.roles, name=item["item_name"])
+			if role and user:
+				await user.add_roles(role)
+			if item["cost"] != 0:
+				query = "UPDATE bank SET balance = $1 WHERE user_id = $2 and guild_id = $3"
+				await self.bot.pool.execute(query, new_balance, user_id, guild.id)
+
+			await channel.send(embed=self.bot.success("{}tem purchased. New balance is {}".format(user.mention + " i" if user else "I", new_balance)))
+		except Exception as e:
+			await hook.send(str(e))
 
 
 def setup(bot):
