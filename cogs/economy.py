@@ -562,9 +562,35 @@ class Shop():
 		query = "SELECT * FROM bank WHERE user_id = $1 and guild_id = $2"
 		account = await ctx.db.fetchrow(query, ctx.author.id, ctx.guild.id)
 
+	@commands.command()
+	@commands.guild_only()
+	async def purchases(self, ctx, user: discord.Member = None):
+		if not user:
+			user = ctx.author
 
+		query = "SELECT item_id FROM shop_purchases WHERE user_id = $1 and guild_id = $2"
+		embed = discord.Embed(title="Shop purchases for {}".format(user.name), description="")
+		if not items:
+			embed.description = "This user doesn't have any purchases"
+			await ctx.send(embed=embed)
+			return
+		items = dict(await ctx.db.fetch(query, user.id, ctx.guild.id))
+		item_ids = []
+		for k,v in items.items():
+			item_ids.append(v)
 
+		query = "SELECT * FROM shop WHERE item_id IN $1 AND guild_id = $2"
+		items = dict(await ctx.db.fetch(query, item_ids, ctx.guild.id))
+		for item in items:
+			if item["role"]:
+				role = discord.utils.get(ctx.guild.roles, name=int(item["item_name"]))
+				if role:
+					item["item_name"] = role.mention
+				else:
+					items.remove(item)
+			embed.description += item["item_name"] + "\n"
 
+		await ctx.send(embed=embed)
 
 
 
