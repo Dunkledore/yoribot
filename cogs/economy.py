@@ -347,6 +347,7 @@ class Shop():
 	def __init__(self, bot):
 		self.bot = bot
 		self.closing_keycap = "\u20e3"
+		self.pick_emoji = "☑"
 
 	
 	#Admin related commands
@@ -623,10 +624,21 @@ class Shop():
 			await ctx.send(embed=self.bot.error("{} doesn't have enough to buy this.".format(person_buying.mention)))
 			return
 
+		msg = await ctx.send(embed=self.bot.info("{}, {} wishes to sell {} to you for {}. Click {} to accept".format(person_buying.mention, ctx.author.mention, item, self.pick_emoji)))
+		await msg.add_reaction(self.pick_emoji)
+		def check(reaction, user):
+			return (emoji == self.pick_emoji) and (reaction.message.id == msg.id) and (user.id == person_buying.id)
+
+		try:
+			await self.bot.wait_for("reaction_add", check=check, timeout = 60.0)
+		except Exception as e:
+			await msg.remove_reaction(self.pick_emoji, ctx.me)
+			return
+
 		query = "DELETE FROM shop_purchases WHERE id IN (SELECT id FROM shop_purchases WHERE item_id = $1 AND user_id = $2 LIMIT 1)"
 		await ctx.db.execute(query, db_item["id"], ctx.author.id)
 		query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
-		await ctx.db.pool.execute(query, db_item["id"], person_buying.id, ctx.guild.id)
+		await ctx.db.execute(query, db_item["id"], person_buying.id, ctx.guild.id)
 		if cost != 0:
 			query = "UPDATE bank SET balance = $1 WHERE user_id = $2 and guild_id = $3"
 			await ctx.db.execute(query, balance-cost, person_buying.id, ctx.guild.id)
