@@ -584,7 +584,7 @@ class Shop():
 		items = await ctx.db.fetch(query, item_ids, ctx.guild.id)
 		for item in items:
 			if item["role"]:
-				role = discord.utils.get(ctx.guild.roles, name=int(item["item_name"]))
+				role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 				if role:
 					item["item_name"] = role.mention
 				else:
