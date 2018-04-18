@@ -629,7 +629,7 @@ class Shop():
 			await hook.send("got channel")
 
 			guild = channel.guild
-			for x in emoji:
+			for x in str(emoji):
 				await hook.send(str(x))
 			await hook.send(message_reaction)
 			query = "SELECT * FROM shop WHERE guild_id = $1 AND message_reaction = $2 AND message_id = $3"
