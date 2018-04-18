@@ -624,7 +624,7 @@ class Shop():
 			return
 
 		query = "DELETE FROM shop_purchases WHERE id IN (SELECT id FROM shop_purchases WHERE item_id = $1 AND user_id = $2 LIMIT 1)"
-		await ctd.db.execute(query, db_item["id"], ctx.author.id)
+		await ctx.db.execute(query, db_item["id"], ctx.author.id)
 		query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
 		await ctx.db.pool.execute(query, db_item["id"], person_buying.id, ctx.guild.id)
 		if cost != 0:
