@@ -616,7 +616,7 @@ class Shop():
 		try:
 			emoji_list = [str(x) + self.closing_keycap for x in range(1,10)]
 			await hook.send(str(emoji_list))
-			if emoji not in [str(x) + self.closing_keycap for x in range(1,10)]:
+			if str(emoji) not in [str(x) + self.closing_keycap for x in range(1,10)]:
 				await hook.send("false")
 				return
 
