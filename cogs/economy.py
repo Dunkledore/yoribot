@@ -525,7 +525,53 @@ class Shop():
 	@commands.guild_only()
 	async def buy(self, ctx, item):
 		"""Buys an item from the shop"""
-		pass
+		query = "SELECT * FROM shop WHERE guild_id = $1 AND item_name = $2"
+		item = await ctx.db.fetchrow(query, ctx.guild.id, item)
+		role = None
+		if not item:
+			role = discord.utils.get(ctx.guild.roles, name=item)
+			if role:
+				item = await ctx.db.fetchrow(query, ctx.guild.id, str(role.id))
+			if not item:
+				await ctx.send(embed=self.bot.error("This is not a valid item"))
+				return
+
+		query = "SELECT * FROM bank WHERE guild_id = $1, user_id = $2"
+		account = await ctx.db.fetchrow(query, ctx.guild.id, ctx.author.id)
+		if not account:
+			balance = 0
+		else:
+			balance = account["balance"]
+
+		if item["cost"] > balance:
+			await ctx.send(embed=self.bot.error("You can not afford this item"))
+			return
+
+		new_balance = balance = item["cost"]
+		query = "INSERT INTO shop_purchases (item_id, user_id, guild_id) VALUES ($1, $2, $3)"
+		await ctx.db.execute(query, item["id"], ctx.author.id, ctx.guild.id)
+		if role:
+			await ctx.author.add_roles(role)
+		if item["cost"] != 0:
+			query = "UPDATE bank SET balance = $1 WHERE user_id=$2 and guild_id=$3"
+			await ctx.db.execute(query, new_balance, ctx.author.id, ctx.guild.id)
+
+		await ctx.send("Item purchased. New balance is {}".format(new_balance))
+
+
+
+
+	
+
+		query = "SELECT * FROM bank WHERE user_id = $1 and guild_id = $2"
+		account = await ctx.db.fetchrow(query, ctx.author.id, ctx.guild.id)
+
+
+
+
+
+
+
 
 	@commands.command()
 	@commands.guild_only()
