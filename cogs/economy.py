@@ -536,7 +536,7 @@ class Shop():
 				await ctx.send(embed=self.bot.error("This is not a valid item"))
 				return
 
-		query = "SELECT * FROM bank WHERE guild_id = $1, user_id = $2"
+		query = "SELECT * FROM bank WHERE guild_id = $1 AND user_id = $2"
 		account = await ctx.db.fetchrow(query, ctx.guild.id, ctx.author.id)
 		if not account:
 			balance = 0
@@ -553,15 +553,11 @@ class Shop():
 		if role:
 			await ctx.author.add_roles(role)
 		if item["cost"] != 0:
-			query = "UPDATE bank SET balance = $1 WHERE user_id=$2 and guild_id=$3"
+			query = "UPDATE bank SET balance = $1 WHERE user_id = $2 and guild_id = $3"
 			await ctx.db.execute(query, new_balance, ctx.author.id, ctx.guild.id)
 
 		await ctx.send("Item purchased. New balance is {}".format(new_balance))
 
-
-
-
-	
 
 		query = "SELECT * FROM bank WHERE user_id = $1 and guild_id = $2"
 		account = await ctx.db.fetchrow(query, ctx.author.id, ctx.guild.id)
