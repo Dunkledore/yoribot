@@ -580,7 +580,7 @@ class Shop():
 			item_ids.append(item["item_id"])
 
 		query = "SELECT * FROM shop WHERE id = any($1::int[]) AND guild_id = $2"
-		items = dict(await ctx.db.fetch(query, item_ids, ctx.guild.id))
+		items = await ctx.db.fetch(query, item_ids, ctx.guild.id)
 		for item in items:
 			if item["role"]:
 				role = discord.utils.get(ctx.guild.roles, name=int(item["item_name"]))
