@@ -587,7 +587,7 @@ class Shop():
 		for index, item in enumerate(items):
 			items[index] = dict(item)
 		for item in purchase_items:
-			shop_item = [shop_item for shop_item in items if shop_item["id"] == item["item_id"]]
+			item = [shop_item for shop_item in items if shop_item["id"] == item["item_id"]][0]
 			if item["role"]:
 				role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 				if role:
