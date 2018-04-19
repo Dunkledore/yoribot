@@ -579,7 +579,7 @@ class Shop():
 			await ctx.send(embed=embed)
 			return
 		item_ids = []
-		for item in _purchase_items:
+		for item in purchase_items:
 			item_ids.append(item["item_id"])
 
 		query = "SELECT * FROM shop WHERE id = any($1::int[]) AND guild_id = $2"
