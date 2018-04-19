@@ -573,20 +573,21 @@ class Shop():
 
 		query = "SELECT item_id FROM shop_purchases WHERE user_id = $1 and guild_id = $2"
 		embed = discord.Embed(title="Shop purchases for {}".format(user.name), description="")
-		items = await ctx.db.fetch(query, user.id, ctx.guild.id)
-		if not items:
+		purchase_items = await ctx.db.fetch(query, user.id, ctx.guild.id)
+		if not purchase_items:
 			embed.description = "This user doesn't have any purchases"
 			await ctx.send(embed=embed)
 			return
 		item_ids = []
-		for item in items:
+		for item in _purchase_items:
 			item_ids.append(item["item_id"])
 
 		query = "SELECT * FROM shop WHERE id = any($1::int[]) AND guild_id = $2"
 		items = await ctx.db.fetch(query, item_ids, ctx.guild.id)
 		for index, item in enumerate(items):
 			items[index] = dict(item)
-		for item in items:
+		for item in purchase_items:
+			shop_item = [shop_item for shop_item in items if shop_item["id"] == item["item_id"]]
 			if item["role"]:
 				role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 				if role:
