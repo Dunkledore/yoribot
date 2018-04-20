@@ -35,6 +35,7 @@ initial_extensions = (
     'cogs.blizzard',
     'cogs.censor',
     'cogs.comics',
+    'cogs.config',
     'cogs.conversion',
     'cogs.cookie',
     'cogs.discomegle',
