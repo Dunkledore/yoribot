@@ -55,7 +55,6 @@ class Admin:
 
         for channel in guild.text_channels:
             if guild.me in channel.members:
-                msg = await ctx.send("Doing {}".format(channel.name))
                 async for message in channel.history(limit=5000):
                     try:
                         if message.content:
@@ -66,20 +65,20 @@ class Admin:
                                         words[word] += 1
                                     else:
                                         words[word] = 1
-                                    if messgae.author in tox_users:
+                                    if messaage.author in tox_users:
                                         tox_users[message.author].append(word)
                                     else:
                                         tox_users[message.author] = [word]
                     except Exception as e:
                         await ctx.send(e)
-                await msg.edit(content="Done {}".format(channel.name))
+
 
         embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "number of offences {}".format(tox_number))
         for word, number in words.items():
             embed.add_field(name=word, value=number)
         for user, user_words in tox_users.items():
             embed.add_field(name=user.name, value = ",".join(user_words))
-        await ctx.send(emebd=embed)
+        await ctx.send(embed=embed)
 
 
 
