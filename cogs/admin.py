@@ -75,13 +75,13 @@ class Admin:
 
 
         embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "number of offences {}".format(tox_number))
+        em = discord.Embed(title="User tox report")
         for word, number in words.items():
             embed.add_field(name=word, value=number)
         for user, user_words in tox_users.items():
             value_str = ""
             for item in set(user_words):
                 value_str += "{} - {}\n".format(item, user_words.count(item))
-            em = discord.Embed(title="User tox report")
             em.add_field(name=user.name, value=value_str)
         await ctx.send(embed=embed)
         await ctx.send(embed=em)
