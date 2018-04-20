@@ -21,6 +21,7 @@ class Admin:
         self.bot = bot
         self._last_result = None
         self.sessions = set()
+        self.tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nazi","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
 
     def cleanup_code(self, content):
         """Automatically removes code blocks from the code."""
@@ -39,6 +40,26 @@ class Admin:
             return f'```py\n{e.__class__.__name__}: {e}\n```'
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
+    @commands.command(hidden=True)
+    @checks.is_developer()
+    async def tox(self, ctx, guild_id : int):
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            await ctx.send(embed=self.bot.error("Guild not found"))
+
+        await ctx.send("Gathering data...")
+        tox_number = 0
+
+        for channel in guild.text_channels:
+            async for message in channel.history(limit=5000):
+                if any(word in message.content for word in self.tox_words):
+                    if message.author in guild.member:
+                        tox_number += 1
+
+        await ctx.send(embed=self.bot.notice("Tox report came up with {} matches".format(tox_number)))
+
+
+
     @commands.command(hidden=True)
     @checks.is_owner()
     async def leave(self, ctx, id : int):
