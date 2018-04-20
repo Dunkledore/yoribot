@@ -82,7 +82,7 @@ class Admin:
             for item in set(user_words):
                 value_str += "{} - {}\n".format(item, user_words.count(item))
             await ctx.send(value_str)
-            em = dicord.Embed(title="User tox report")
+            em = discord.Embed(title="User tox report")
             em.add_field(name=user.name, value=value_str)
         await ctx.send(embed=embed)
         await ctx.send(embed=em)
