@@ -79,10 +79,8 @@ class Admin:
         for user, user_words in tox_users.items():
             value_str = ""
             for item in set(user_words):
-                value_str += "{} - {}".format(item, user_words.count(item))
-
-            await ctx.send(value_str)
-            embed.add_field(name=user.name, value = ",".join(user_words))
+                value_str += "{} - {}\n".format(item, user_words.count(item))
+            embed.add_field(name=user.name, value = value_str)
         await ctx.send(embed=embed)
 
 
