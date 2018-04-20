@@ -77,6 +77,11 @@ class Admin:
         for word, number in words.items():
             embed.add_field(name=word, value=number)
         for user, user_words in tox_users.items():
+            value_str = ""
+            for item in set(user_words):
+                value_str += "{} - {}".format(item, user_words.count(item))
+
+            await ctx.send(value_str)
             embed.add_field(name=user.name, value = ",".join(user_words))
         await ctx.send(embed=embed)
 
