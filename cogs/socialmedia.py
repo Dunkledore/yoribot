@@ -89,6 +89,9 @@ class SocialMedia:
 						await self.bot.pool.execute(alterquery, result["guild_id"], tweet_id)
 			except Exception as e:
 				"""Fail Silently"""
+				hook_cog = ctx.bot.get_cog("webhook")
+				hook = await hook_cog.webhook()
+				await hook.send("test")
 				print(e)
 
 			await asyncio.sleep(61)

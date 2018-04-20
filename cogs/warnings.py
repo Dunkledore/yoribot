@@ -155,6 +155,7 @@ class Warnings:
         await ctx.send(embed=embed)
 
     async def on_reaction_add(self, reaction, user):
+        return
 
         cog = self.bot.get_cog("Stats")
         hook = cog.webhook() 

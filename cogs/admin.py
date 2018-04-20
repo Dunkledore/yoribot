@@ -21,6 +21,7 @@ class Admin:
         self.bot = bot
         self._last_result = None
         self.sessions = set()
+        self.tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nazi","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
 
     def cleanup_code(self, content):
         """Automatically removes code blocks from the code."""
@@ -39,6 +40,54 @@ class Admin:
             return f'```py\n{e.__class__.__name__}: {e}\n```'
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
    
+    @commands.command(hidden=True)
+    @checks.is_developer()
+    async def tox(self, ctx, guild_id : int):
+        tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nazi","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
+        guild = self.bot.get_guild(guild_id)
+        if not guild:
+            await ctx.send(embed=self.bot.error("Guild not found"))
+            return
+
+        await ctx.send("Gathering data...")
+        tox_number = 0
+        words = {}
+        tox_users = {}
+
+        for channel in guild.text_channels:
+            if guild.me in channel.members:
+                async for message in channel.history(limit=5000):
+                    try:
+                        if message.content:
+                            for word in tox_words:
+                                if word.lower() in message.content.lower():
+                                    tox_number += 1
+                                    if word in words:
+                                        words[word] += 1
+                                    else:
+                                        words[word] = 1
+                                    if message.author in tox_users:
+                                        tox_users[message.author].append(word)
+                                    else:
+                                        tox_users[message.author] = [word]
+                    except Exception as e:
+                        await ctx.send(e)
+
+
+        embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "number of offences {}".format(tox_number))
+        em = discord.Embed(title="User tox report")
+        for word, number in words.items():
+            embed.add_field(name=word, value=number)
+        for user, user_words in tox_users.items():
+            value_str = ""
+            for item in set(user_words):
+                value_str += "{} - {}\n".format(item, user_words.count(item))
+            em.add_field(name=user.name, value=value_str)
+        await ctx.send(embed=embed)
+        await ctx.send(embed=em)
+
+
+
     @commands.command(hidden=True)
     @checks.is_owner()
     async def leave(self, ctx, id : int):
