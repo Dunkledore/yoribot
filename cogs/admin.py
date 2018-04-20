@@ -60,7 +60,7 @@ class Admin:
                     try:
                         if message.content:
                             for word in tox_words:
-                                if word in message.content:
+                                if word.lower() in message.content.lower():
                                     tox_number += 1
                                     if word in words:
                                         words[word] += 1
@@ -81,7 +81,6 @@ class Admin:
             value_str = ""
             for item in set(user_words):
                 value_str += "{} - {}\n".format(item, user_words.count(item))
-            await ctx.send(value_str)
             em = discord.Embed(title="User tox report")
             em.add_field(name=user.name, value=value_str)
         await ctx.send(embed=embed)
