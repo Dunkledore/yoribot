@@ -65,7 +65,7 @@ class Admin:
                                         words[word] += 1
                                     else:
                                         words[word] = 1
-                                    if messaage.author in tox_users:
+                                    if message.author in tox_users:
                                         tox_users[message.author].append(word)
                                     else:
                                         tox_users[message.author] = [word]
