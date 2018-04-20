@@ -55,6 +55,7 @@ class Admin:
                 if any(word in message.content for word in self.tox_words):
                     if message.author in guild.member:
                         tox_number += 1
+            await ctx.send("Done {}".format(channel.name))
 
         await ctx.send(embed=self.bot.notice("Tox report came up with {} matches".format(tox_number)))
 
