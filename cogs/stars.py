@@ -212,6 +212,8 @@ class Stars:
         channel = self.bot.get_channel(channel_id)
         if not isinstance(channel, discord.TextChannel):
             return
+        if channel.is_nsfw():
+            return
 
         method = getattr(self, f'{fmt}_message')
 
