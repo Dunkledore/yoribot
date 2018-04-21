@@ -43,7 +43,10 @@ class Admin:
     @commands.command(hidden=True)
     @checks.is_developer()
     async def tox(self, ctx, guild_id : int, *, ignore_roles = None):
-        role_names = ignore_roles.split(",")
+        if role_names:
+            role_names = ignore_roles.split(",")
+        else:
+            role_names = []
         roles = []
         guild = self.bot.get_guild(guild_id)
         for role in role_names:
