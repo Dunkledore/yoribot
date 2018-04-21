@@ -42,12 +42,12 @@ class Admin:
    
     @commands.command(hidden=True)
     @checks.is_developer()
-    async def tox(self, ctx, guild_id : int, *, ignore_roles):
+    async def tox(self, ctx, guild_id : int, *, ignore_roles = None):
         role_names = ignore_roles.split(",")
         roles = []
         guild = self.bot.get_guild(guild_id)
         for role in role_names:
-            actual_role = discord.Utils.get(guild.roles, name=role)
+            actual_role = discord.utils.get(guild.roles, name=role)
             if not actual_role:
                 await ctx.send("Role {} not found".format(role))
                 return
