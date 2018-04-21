@@ -76,7 +76,6 @@ class Admin:
                             for word in self.tox_words:
                                 if word.lower() in message.content.lower():
                                     if message.author in guild.members:
-                                        await ctx.send(message.author.name)
                                         if not any([role in message.author.roles for role in roles]):
                                             tox_number += 1
                                             if word in words:
