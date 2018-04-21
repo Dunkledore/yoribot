@@ -155,11 +155,11 @@ class Website:
 		@self.app.route('/bank', methods=['GET'])
 		async def bank():
 			query = "SELECT * FROM bank"
-			results = await coro_exc(self.bot.pool.fetch(query))
-			return jsonify(results=list(results))
+			results = await self.bot.pool.fetch(query)
+			for index, item in enumrate(results):
+				results[index] = dict(item)
+			return jsonify(results)
 
-		async def coro_exc(coro):
-			return await coro
 
 
 			
