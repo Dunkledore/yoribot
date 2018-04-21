@@ -66,7 +66,7 @@ class Admin:
         tox_users = {}
 
         for channel in guild.text_channels:
-            await ctx.send(channe.name)
+            await ctx.send(channel.name)
             if guild.me in channel.members:
                 async for message in channel.history(limit=5000):
                     try:
