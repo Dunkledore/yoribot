@@ -43,7 +43,7 @@ class Admin:
     @commands.command(hidden=True)
     @checks.is_developer()
     async def tox(self, ctx, guild_id : int):
-        tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nazi","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
+        tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
         guild = self.bot.get_guild(guild_id)
         if not guild:
             await ctx.send(embed=self.bot.error("Guild not found"))
