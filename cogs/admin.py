@@ -71,17 +71,18 @@ class Admin:
                     try:
                         if message.content:
                             for word in self.tox_words:
-                                if word.lower() in message.content.lower():
-                                    if not any([role in message.author.roles for role in roles]):
-                                        tox_number += 1
-                                        if word in words:
-                                            words[word] += 1
-                                        else:
-                                            words[word] = 1
-                                        if message.author in tox_users:
-                                            tox_users[message.author].append(word)
-                                        else:
-                                            tox_users[message.author] = [word]
+                                if message.author in guild.members:
+                                    if word.lower() in message.content.lower():
+                                        if not any([role in message.author.roles for role in roles]):
+                                            tox_number += 1
+                                            if word in words:
+                                                words[word] += 1
+                                            else:
+                                                words[word] = 1
+                                            if message.author in tox_users:
+                                                tox_users[message.author].append(word)
+                                            else:
+                                                tox_users[message.author] = [word]
                     except Exception as e:
                         await ctx.send(e)
 
