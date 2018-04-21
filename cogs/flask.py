@@ -155,8 +155,12 @@ class Website:
 		@self.app.route('/bank', methods=['GET'])
 		async def bank():
 			query = "SELECT * FROM bank"
-			results = await self.bot.pool.fetch(query)
+			results = await coro_exc(self.bot.pool.fetch(query))
 			return jsonify(results=list(results))
+
+		async def coro_exc(coro):
+			return await coro
+
 
 			
 		@self.app.route('/')
