@@ -160,6 +160,13 @@ class Website:
 				results[index] = dict(item)
 			return jsonify(results)
 
+		@self.app.route('/ip', methods=['GET'])
+		async def ip():
+			return request.remote_addr
+
+
+		@self.app.route('/api/bans/')
+
 
 
 			
