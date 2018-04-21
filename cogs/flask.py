@@ -91,8 +91,8 @@ class Website:
 	#@checks.is_developer()
 	async def run_app(self, ctx):
 		@self.app.errorhandler(401)
-			def custom_401(error):
-				return Response("Please visit support server to authorize your ip", 401)
+		def custom_401(error):
+			return Response("Please visit support server to authorize your ip", 401)
 		
 		@self.app.errorhandler(404)
 		def page_not_found(e):
