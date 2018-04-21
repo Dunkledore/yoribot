@@ -21,7 +21,7 @@ class Admin:
         self.bot = bot
         self._last_result = None
         self.sessions = set()
-        self.tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nazi","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
+        self.tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
 
     def cleanup_code(self, content):
         """Automatically removes code blocks from the code."""
@@ -42,9 +42,17 @@ class Admin:
    
     @commands.command(hidden=True)
     @checks.is_developer()
-    async def tox(self, ctx, guild_id : int):
-        tox_words = ["fag","fagging","faggitt","faggot","faggs","fagot","fagots","fags","fannyfucker","n1gga","n1gger","nigg3r","nigg4h","nigga","niggah","niggas","niggaz","nigger","niggers","shitdick","I'm ugly","I look ugly","im ugly","im too ugly","i'm too ugly","kys","kill yourself","end yourself"]
+    async def tox(self, ctx, guild_id : int, *, ignore_roles):
+        role_names = ignore_roles.split(",")
+        roles = []
         guild = self.bot.get_guild(guild_id)
+        for role in role_names:
+            actual_role = discord.Utils.get(guild.roles, name=role)
+            if not actual_role:
+                await ctx.send("Role {} not found".format(role))
+                return
+            else:
+                roles.append(actual_role)
         if not guild:
             await ctx.send(embed=self.bot.error("Guild not found"))
             return
@@ -61,15 +69,16 @@ class Admin:
                         if message.content:
                             for word in tox_words:
                                 if word.lower() in message.content.lower():
-                                    tox_number += 1
-                                    if word in words:
-                                        words[word] += 1
-                                    else:
-                                        words[word] = 1
-                                    if message.author in tox_users:
-                                        tox_users[message.author].append(word)
-                                    else:
-                                        tox_users[message.author] = [word]
+                                    if not any(role in message.author.roles for role in roles)
+                                        tox_number += 1
+                                        if word in words:
+                                            words[word] += 1
+                                        else:
+                                            words[word] = 1
+                                        if message.author in tox_users:
+                                            tox_users[message.author].append(word)
+                                        else:
+                                            tox_users[message.author] = [word]
                     except Exception as e:
                         await ctx.send(e)
 
