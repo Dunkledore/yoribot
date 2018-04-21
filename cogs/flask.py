@@ -155,7 +155,7 @@ class Website:
 		@self.app.route('/bank', methods=['GET'])
 		async def bank():
 			query = "SELECT * FROM bank"
-			result = await self.bot.pool.fetch(query)
+			results = await self.bot.pool.fetch(query)
 			banks = []
 			for res in results:
 				banks.append(res)
