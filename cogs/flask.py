@@ -1,6 +1,6 @@
 import discord 
 from discord.ext import commands
-from quart import Quart, g, session, render_template, redirect, request
+from quart import Quart, g, session, render_template, redirect, request, jsonify
 from requests_oauthlib import OAuth2Session
 import os
 import asyncio
@@ -151,6 +151,13 @@ class Website:
 		@self.app.route('/about')
 		async def about():
 			return await render_template('about.html')
+
+		@self.app.route('/bank', methods=['GET'])
+		async def bank():
+			query = "SELECT * FROM bank"
+			result = self.bot.pool.fetch(query)
+			return jsonify(dict(result))
+
 			
 		@self.app.route('/')
 		async def index():
