@@ -91,7 +91,7 @@ class Admin:
                         await ctx.send(e)
 
 
-        embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "Number of messages: {}\nNumber of offences {}".format(message_count,tox_number))
+        embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "Number of messages: {}\nNumber of offences: {}".format(message_count,tox_number))
         em = discord.Embed(title="User tox report")
         for word, number in words.items():
             embed.add_field(name=word, value=number)
