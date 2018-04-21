@@ -156,7 +156,8 @@ class Website:
 		async def bank():
 			query = "SELECT * FROM bank"
 			result = await self.bot.pool.fetch(query)
-			return jsonify(list(result))
+			banks = list(result)
+			return jsonify(banks)
 
 			
 		@self.app.route('/')
