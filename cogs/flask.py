@@ -156,7 +156,7 @@ class Website:
 		async def bank():
 			query = "SELECT * FROM bank"
 			results = await self.bot.pool.fetch(query)
-			for index, item in enumrate(results):
+			for index, item in enumerate(results):
 				results[index] = dict(item)
 			return jsonify(results)
 
