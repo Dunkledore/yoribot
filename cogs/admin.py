@@ -68,12 +68,13 @@ class Admin:
         for channel in guild.text_channels:
             await ctx.send(channel.name)
             if guild.me in channel.members:
-                async for message in channel.history(limit=5000):
+                history = await channe.history(limit=5000).flatten()
+                for message in history:
                     try:
                         if message.content:
                             for word in self.tox_words:
-                                if message.author in guild.members:
-                                    if word.lower() in message.content.lower():
+                                if word.lower() in message.content.lower():
+                                    if message.author in guild.members:
                                         await ctx.send(message.author.name)
                                         if not any([role in message.author.roles for role in roles]):
                                             tox_number += 1
