@@ -159,7 +159,8 @@ class Website:
 			banks = []
 			for res in results:
 				banks.append(res)
-			return jsonify(banks)
+			to_return = jsonify(banks)
+			return to_return
 
 			
 		@self.app.route('/')
