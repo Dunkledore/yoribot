@@ -69,7 +69,7 @@ class Admin:
                         if message.content:
                             for word in tox_words:
                                 if word.lower() in message.content.lower():
-                                    if not any(role in message.author.roles for role in roles)
+                                    if not any(role in message.author.roles for role in roles):
                                         tox_number += 1
                                         if word in words:
                                             words[word] += 1
