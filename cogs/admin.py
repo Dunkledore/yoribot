@@ -68,7 +68,7 @@ class Admin:
         for channel in guild.text_channels:
             await ctx.send(channel.name)
             if guild.me in channel.members:
-                history = await channe.history(limit=5000).flatten()
+                history = await channel.history(limit=5000).flatten()
                 for message in history:
                     try:
                         if message.content:
