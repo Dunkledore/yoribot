@@ -67,7 +67,7 @@ class Admin:
                 async for message in channel.history(limit=5000):
                     try:
                         if message.content:
-                            for word in tox_words:
+                            for word in self.tox_words:
                                 if word.lower() in message.content.lower():
                                     if not any(role in message.author.roles for role in roles):
                                         tox_number += 1
