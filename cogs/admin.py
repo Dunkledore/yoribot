@@ -43,7 +43,7 @@ class Admin:
     @commands.command(hidden=True)
     @checks.is_developer()
     async def tox(self, ctx, guild_id : int, *, ignore_roles = None):
-        if role_names:
+        if ignore_roles:
             role_names = ignore_roles.split(",")
         else:
             role_names = []
