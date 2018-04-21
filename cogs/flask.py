@@ -1,6 +1,6 @@
 import discord 
 from discord.ext import commands
-from quart import Quart, g, session, render_template, redirect, request, jsonify
+from quart import Quart, g, session, render_template, redirect, request, jsonify, abort, Response
 from requests_oauthlib import OAuth2Session
 import os
 import asyncio
@@ -77,6 +77,7 @@ class Website:
 		self.app = Quart(__name__)
 		self.app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
 		self.bot.loop.run_until_complete(self.run_app(None))
+		self.ip_list = []
 
 
 		
@@ -89,7 +90,10 @@ class Website:
 	#@commands.command(hidden=True)
 	#@checks.is_developer()
 	async def run_app(self, ctx):
-
+		@self.app.errorhandler(401)
+			def custom_401(error):
+				return Response("Please visit support server to authorize your ip", 401)
+		
 		@self.app.errorhandler(404)
 		def page_not_found(e):
 			return render_template('404.html'), 404
@@ -154,6 +158,8 @@ class Website:
 
 		@self.app.route('/bank', methods=['GET'])
 		async def bank():
+			if request.remote_addr not in self.ip_list:
+				abort(401)
 			query = "SELECT * FROM bank"
 			results = await self.bot.pool.fetch(query)
 			for index, item in enumerate(results):
@@ -163,11 +169,6 @@ class Website:
 		@self.app.route('/ip', methods=['GET'])
 		async def ip():
 			return request.remote_addr
-
-
-		@self.app.route('/api/bans/')
-
-
 
 			
 		@self.app.route('/')
@@ -197,6 +198,8 @@ class Website:
 		async def commands_list():
 			commands = self.get_commands()
 			return await render_template('commands_list.html', commands=commands)
+
+
 
 		
 		t = Thread(target=self.start_app)
@@ -254,6 +257,19 @@ class Website:
 		query = "SELECT * FROM profile WHERE user_id = $1"
 		results = await self.bot.pool.fetchrow(query, int(user_id))
 		return dict(results)
+
+
+	@commands.command(name="update_ip_cache")
+	async def _update_ip_cache(self, ctx):
+		await self.update_ip_cache()
+		await ctx.send(embed=self.bot.success("Updated"))
+
+
+
+	async def update_ip_cache(self):
+		query = "SELECT ip FROM auth_ips"
+		self.ip_list = await self.bot.pool.fetch(query)
+
 
 
 
