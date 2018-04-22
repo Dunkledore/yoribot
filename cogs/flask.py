@@ -78,8 +78,9 @@ class Website:
 		self.bot = bot
 		self.app = Quart(__name__)
 		self.app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
-		self.bot.loop.run_until_complete(self.run_app(None))
+		self.bot.loop.create_task(self.run_app())
 		self.ip_list = []
+		self.bot.loop.create_task(self.update_ip_cache())
 
 
 		
@@ -89,9 +90,7 @@ class Website:
 		self.app.run(host ='0.0.0.0', port=config.port)
 
 
-	#@commands.command(hidden=True)
-	#@checks.is_developer()
-	async def run_app(self, ctx):
+	async def run_app(self):
 		@self.app.errorhandler(401)
 		def custom_401(error):
 			return Response("{}\n Please visit support server to authorize your ip".format(str(error)), status=401)
