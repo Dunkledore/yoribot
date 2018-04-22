@@ -182,7 +182,7 @@ class Website:
 			if str(request.remote_addr) not in self.ip_list:
 				abort(401)
 
-			form = await request.form()
+			form = await request.form
 			user_id = form.get('user_id')
 			guild_id = form.get('guild_id')
 			reason = form.get('reason')
