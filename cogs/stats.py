@@ -55,7 +55,7 @@ class Stats:
 
     async def webhook(self, guilds = None):
         query =  "SELECT * FROM webhook WHERE guilds = $1"
-        results = await self.bot.pool.fetchrow(query, guilds or False)
+        results = await self.bot.pool.fetchrow(query, guilds)
         wh_id = results["wh_id"]
         wh_token = results["wh_token"]
         hook = discord.Webhook.partial(id=int(wh_id), token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
