@@ -174,7 +174,7 @@ class Website:
 		@self.app.route('/bans/', methods=['POST'])
 		async def add_ban():
 			if request.remote_addr not in self.ip_list:
-				print str(type(request.remote_addr)) + str(request,remote_addr)
+				print (str(type(request.remote_addr)) + str(request,remote_addr))
 				abort(401)
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
