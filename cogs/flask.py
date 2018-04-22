@@ -204,6 +204,7 @@ class Website:
 
 
 			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
+			await self.bot.poo.execute(query, user_id, guild_id, reason)
 
 			return Response("Ban accepted", status=201)
 
