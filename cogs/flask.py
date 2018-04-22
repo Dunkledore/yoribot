@@ -181,6 +181,7 @@ class Website:
 		async def add_ban():
 			if str(request.remote_addr) not in self.ip_list:
 				abort(401)
+
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
 			reason = request.args.get('reason')
@@ -192,6 +193,9 @@ class Website:
 				user_id = int(str(user_id))
 				guild_id = int(str(guild_id))
 			except Exception as e:
+				cog = ctx.bot.get_cog("Stats")
+				hook = await cogs.webhook()
+				await hook.send(str(e))
 				abort(400)
 
 
