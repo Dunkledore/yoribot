@@ -190,7 +190,7 @@ class Website:
 
 			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
 
-			return Response("Ban accepts", status=201)
+			return Response("Ban accepted", status=201)
 
 
 		@self.app.route('/ip', methods=['GET'])
