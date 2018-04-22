@@ -95,6 +95,13 @@ class Website:
 		@self.app.errorhandler(401)
 		def custom_401(error):
 			return Response("{}\n Please visit support server to authorize your ip".format(str(error)), status=401)
+
+		async def authorized(req):
+			if req.remote_addr not in self.ip_list:
+				cog = self.bot.get_cog("Stats")
+				hook = await cog.webhook()
+				await hook.send("Unauthorized access from {}".format(str(req.remote_addr)))
+				abort(401)
 	
 		@self.app.errorhandler(400)
 		def custom_400(error):
@@ -157,8 +164,8 @@ class Website:
 
 		@self.app.route('/bans/<int:user_id>', methods=['GET'])
 		async def is_banned(user_id):
-			if request.remote_addr not in self.ip_list:
-				abort(401)
+			await authorized(request)
+
 			query = "SELECT * FROM bans WHERE user_id = $1"
 			results = await self.bot.pool.fetch(query, user_id)
 			to_send = {}
@@ -173,8 +180,7 @@ class Website:
 
 		@self.app.route('/bans/', methods=['POST'])
 		async def add_ban():
-			if request.remote_addr not in self.ip_list:
-				print (str(type(request.remote_addr)) + str(request,remote_addr))
+			if str(request.remote_addr) not in self.ip_list:
 				abort(401)
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
