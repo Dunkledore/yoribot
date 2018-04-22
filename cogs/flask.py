@@ -182,9 +182,10 @@ class Website:
 			if str(request.remote_addr) not in self.ip_list:
 				abort(401)
 
-			user_id = request.form.get('user_id')
-			guild_id = request.form.get('guild_id')
-			reason = request.form.get('reason')
+			form = await request.form()
+			user_id = form.get('user_id')
+			guild_id = form.get('guild_id')
+			reason = form.get('reason')
 
 			if None in (user_id, guild_id, reason):
 				cog = self.bot.get_cog("Stats")
