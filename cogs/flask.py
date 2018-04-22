@@ -188,7 +188,7 @@ class Website:
 
 			if None in (user_id, guild_id, reason):
 				cog = self.bot.get_cog("Stats")
-				hook = await cogs.webhook()
+				hook = await cog.webhook()
 				await hook.send("{} {} {}".format(user_id, guild_id, reason))
 				abort(400)
 
