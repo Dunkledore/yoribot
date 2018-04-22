@@ -160,8 +160,16 @@ class Website:
 			if request.remote_addr not in self.ip_list:
 				abort(401)
 			query = "SELECT * FROM bans WHERE user_id = $1"
-			results = await self.bot.pool.fetchrow(query, user_id)
-			return jsonify(dict(results))
+			results = await self.bot.pool.fetch(query, user_id)
+			to_send = {}
+			if results:
+				to_send["bans"] = []
+				for result in results:
+					to_send["bans"].append({"user_id", result["user_id"], "guild_id" : result["guild_id"], "reason" : result["reason"]})
+			else:
+				to_send["bans"] = None
+
+			return jsonify(to_send)
 
 		@self.app.route('/bans/', methods=['POST'])
 		async def add_ban():
