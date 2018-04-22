@@ -166,7 +166,7 @@ class Website:
 			results = await self.bot.pool.fetchrow(query, user_id)
 			return jsonify(dict(results))
 
-		@self.app.route('/bans/<int:user_id>' methods=['POST'])
+		@self.app.route('/bans/<int:user_id>', methods=['POST'])
 		async def add_ban():
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
