@@ -165,6 +165,8 @@ class Website:
 
 		@self.app.route('/bans/', methods=['POST'])
 		async def add_ban():
+			if request.remote_addr not in self.ip_list:
+				abort(401)
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
 			reason = request.args.get('reason')
@@ -172,13 +174,7 @@ class Website:
 			if None in (user_id, guild_id, reason):
 				abort(400)
 
-			#query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
-
-			#await self.bot.execute(query, user_id, guild_id, reason)
-			return "success"
-
-
-
+			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
 
 
 		@self.app.route('/ip', methods=['GET'])
@@ -276,9 +272,9 @@ class Website:
 
 	@commands.command(name="update_ip_cache")
 	async def _update_ip_cache(self, ctx):
+		await ctx.send(embed=self.bot.notice("Updating"))
 		await self.update_ip_cache()
 		await ctx.send(embed=self.bot.success("Updated"))
-
 
 
 	async def update_ip_cache(self):
