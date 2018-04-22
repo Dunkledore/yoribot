@@ -171,7 +171,7 @@ class Website:
 			if results:
 				to_send["bans"] = []
 				for result in results:
-					to_send["bans"].append({"user_id": result["user_id"], "guild_id" : result["guild_id"], "reason" : result["reason"]})
+					to_send["bans"].append({"user_id": result["user_id"], "guild_id" : result["guild_id"], "guild_name", result["guild_name"], "reason" : result["reason"]})
 			else:
 				to_send["bans"] = None
 
@@ -187,7 +187,7 @@ class Website:
 			guild_id = form.get('guild_id')
 			reason = form.get('reason')
 
-			if None in (user_id, guild_id, reason):
+			if None in (user_id, guild_id):
 				cog = self.bot.get_cog("Stats")
 				hook = await cog.webhook()
 				await hook.send("{} {} {}".format(user_id, guild_id, reason))
