@@ -94,7 +94,7 @@ class Website:
 	async def run_app(self, ctx):
 		@self.app.errorhandler(401)
 		def custom_401(error):
-			return Response("Please visit support server to authorize your ip: {}".format(str(error)), status=401)
+			return Response("{}\n Please visit support server to authorize your ip".format(str(error)), status=401)
 	
 		@self.app.errorhandler(400)
 		def custom_400(error):
@@ -163,7 +163,7 @@ class Website:
 			results = await self.bot.pool.fetchrow(query, user_id)
 			return jsonify(dict(results))
 
-		@self.app.route('/bans/<int:user_id>', methods=['POST'])
+		@self.app.route('/bans/', methods=['POST'])
 		async def add_ban():
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
