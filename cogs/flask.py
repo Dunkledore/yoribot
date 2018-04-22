@@ -187,6 +187,9 @@ class Website:
 			reason = request.args.get('reason')
 
 			if None in (user_id, guild_id, reason):
+				cog = ctx.bot.get_cog("Stats")
+				hook = await cogs.webhook()
+				await hook.send("{} {} {}".format(user_id, guild_id, reason))
 				abort(400)
 
 			try:
