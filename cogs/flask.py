@@ -94,15 +94,12 @@ class Website:
 	async def run_app(self, ctx):
 		@self.app.errorhandler(401)
 		def custom_401(error):
-			return Response("Please visit support server to authorize your ip", status=401)
-		
-		@self.app.errorhandler(404)
-		def page_not_found(e):
-			return render_template('404.html'), 404
+			return Response("Please visit support server to authorize your ip: {}".format(str(error)), status=401)
+	
+		@self.app.errorhandler(400)
+		def custom_400(error):
+			return Response("Bad Request: {}".format(str(error)))
 
-		@self.app.errorhandler(500)
-		def page_not_found(e):
-			return render_template('404.html'), 500
 
 		@self.app.route('/tutorials')
 		def tutorials():
@@ -171,6 +168,9 @@ class Website:
 			user_id = request.args.get('user_id')
 			guild_id = request.args.get('guild_id')
 			reason = request.args.get('reason')
+
+			if None in (user_id, guild_id, reason):
+				abort(400)
 
 			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
 
