@@ -189,8 +189,8 @@ class Website:
 				abort(400)
 
 			try:
-				user_id = int(user_id)
-				guild_id = int(guild_id)
+				user_id = int(str(user_id))
+				guild_id = int(str(guild_id))
 			except Exception as e:
 				abort(400)
 
