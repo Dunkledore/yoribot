@@ -188,6 +188,13 @@ class Website:
 			if None in (user_id, guild_id, reason):
 				abort(400)
 
+			try:
+				user_id = int(user_id)
+				guild_id = int(guild_id)
+			except Exception as e:
+				abort(400)
+
+
 			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
 
 			return Response("Ban accepted", status=201)
