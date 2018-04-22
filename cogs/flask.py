@@ -278,7 +278,9 @@ class Website:
 
 	async def update_ip_cache(self):
 		query = "SELECT ip FROM ips"
-		self.ip_list = await self.bot.pool.fetch(query)
+		results = await self.bot.pool.fetch(query)
+		for result in results:
+			self.ip_list.append(result["ip"])
 
 
 
