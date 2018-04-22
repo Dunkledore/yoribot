@@ -69,6 +69,8 @@ def _command_signature(cmd):
 
 	return ' '.join(result)
 
+#CREATE TABLE bans (user_id BIGINT, guild_id BIGINT, reason Text)
+
 class Website:
 	"""The Welcome Related Commands"""
 
@@ -92,7 +94,7 @@ class Website:
 	async def run_app(self, ctx):
 		@self.app.errorhandler(401)
 		def custom_401(error):
-			return Response("Please visit support server to authorize your ip", 401)
+			return Response("Please visit support server to authorize your ip", 401, {"code" : 0 , "message" : "Please visit support server to authorize your ip"})
 		
 		@self.app.errorhandler(404)
 		def page_not_found(e):
@@ -156,15 +158,28 @@ class Website:
 		async def about():
 			return await render_template('about.html')
 
-		@self.app.route('/bank', methods=['GET'])
-		async def bank():
+		@self.app.route('/bans/<int:user_id>', methods=['GET'])
+		async def is_banned(user_id):
 			if request.remote_addr not in self.ip_list:
 				abort(401)
-			query = "SELECT * FROM bank"
-			results = await self.bot.pool.fetch(query)
-			for index, item in enumerate(results):
-				results[index] = dict(item)
-			return jsonify(results)
+			query = "SELECT * FROM bans WHERE user_id = $1"
+			results = await self.bot.pool.fetchrow(query, user_id)
+			return jsonify(dict(results))
+
+		@self.app.route('/bans/<int:user_id>' methods=['POST'])
+		async def add_ban():
+			user_id = request.args.get('user_id')
+			guild_id = request.args.get('guild_id')
+			reason = request.args.get('reason')
+
+			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
+
+			await self.bot.execute(query, user_id, guild_id, reason)
+			return {}
+
+
+
+
 
 		@self.app.route('/ip', methods=['GET'])
 		async def ip():
