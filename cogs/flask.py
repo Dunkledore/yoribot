@@ -165,7 +165,7 @@ class Website:
 			if results:
 				to_send["bans"] = []
 				for result in results:
-					to_send["bans"].append({"user_id", result["user_id"], "guild_id" : result["guild_id"], "reason" : result["reason"]})
+					to_send["bans"].append({"user_id": result["user_id"], "guild_id" : result["guild_id"], "reason" : result["reason"]})
 			else:
 				to_send["bans"] = None
 
