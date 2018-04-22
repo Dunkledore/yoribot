@@ -172,10 +172,10 @@ class Website:
 			if None in (user_id, guild_id, reason):
 				abort(400)
 
-			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
+			#query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
 
-			await self.bot.execute(query, user_id, guild_id, reason)
-			return {}
+			#await self.bot.execute(query, user_id, guild_id, reason)
+			return "success"
 
 
 
