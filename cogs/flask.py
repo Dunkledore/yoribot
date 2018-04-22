@@ -272,13 +272,12 @@ class Website:
 
 	@commands.command(name="update_ip_cache")
 	async def _update_ip_cache(self, ctx):
-		await ctx.send(embed=self.bot.notice("Updating"))
 		await self.update_ip_cache()
 		await ctx.send(embed=self.bot.success("Updated"))
 
 
 	async def update_ip_cache(self):
-		query = "SELECT ip FROM auth_ips"
+		query = "SELECT ip FROM ips"
 		self.ip_list = await self.bot.pool.fetch(query)
 
 
