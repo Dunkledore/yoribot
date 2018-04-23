@@ -11,7 +11,7 @@ from .utils.formats import TabularData
 
 def bankmanagerembed(message):
 	embed = discord.Embed(description=message)
-	embed.set_author(name="The bank manager of YoirBank says...", icon_url="https://cdn.discordapp.com/avatars/378073671014809612/454d95735bd20bad792ae45a58777a37.webp?size=1024")
+	embed.set_author(name="The bank manager of YoriBank says...", icon_url="https://cdn.discordapp.com/avatars/378073671014809612/454d95735bd20bad792ae45a58777a37.webp?size=1024")
 	return embed
 
 def shopmanagerembed(message):
