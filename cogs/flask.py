@@ -185,9 +185,10 @@ class Website:
 			form = await request.form
 			user_id = form.get('user_id')
 			guild_id = form.get('guild_id')
+			guild_name = form.get('guild_name')
 			reason = form.get('reason')
 
-			if None in (user_id, guild_id):
+			if None in (user_id, guild_id, guild_name):
 				cog = self.bot.get_cog("Stats")
 				hook = await cog.webhook()
 				await hook.send("{} {} {}".format(user_id, guild_id, reason))
@@ -203,8 +204,8 @@ class Website:
 				abort(400)
 
 
-			query = "INSERT INTO bans (user_id, guild_id, reason) VALUES ($1, $2, $3)"
-			await self.bot.pool.execute(query, user_id, guild_id, reason)
+			query = "INSERT INTO bans (user_id, guild_id, guild_name, reason) VALUES ($1, $2, $3 $4)"
+			await self.bot.pool.execute(query, user_id, guild_id, guild_name, reason)
 
 			return Response("Ban accepted", status=201)
 
