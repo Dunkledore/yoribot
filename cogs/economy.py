@@ -508,7 +508,7 @@ class Shop():
 		itemstable.set_columns(headers)
 		shop_items = []
 		for item in items:
-			shop_items.append([item["item_name"], item["cost"],item["quantity"] if item["quantity"] >=0 else ∞])
+			shop_items.append([item["item_name"], item["cost"],item["quantity"] if item["quantity"] >=0 else "∞"])
 		shop_items.sort(key=lambda x: x[1])
 		itemstable.add_rows(shop_items)
 		itemtext = "```{}```".format(itemstable.render())
