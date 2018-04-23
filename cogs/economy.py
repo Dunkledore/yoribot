@@ -492,9 +492,9 @@ class Shop():
 		for item in items:
 			role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 			if role:
-				shop_roles.append([role.name, item["cost"], item["quantity"] if item["quantity"] >=0 else ∞])
+				shop_roles.append([role.name, item["cost"], item["quantity"] if item["quantity"] >=0 else "∞"])
 			else:
-				shop_roles.append([item["item_name"], item["cost"], item["quantity"] if item["quantity"] >=0 else ∞]) 
+				shop_roles.append([item["item_name"], item["cost"], item["quantity"] if item["quantity"] >=0 else "∞"]) 
 		shop_roles.sort(key=lambda x: x[1])
 		roletable.add_rows(shop_roles)
 		roletext = "```{}```".format(roletable.render())
