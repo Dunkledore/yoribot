@@ -22,8 +22,8 @@ def shopmanagerembed(message):
 
 #create table economy_config (guild_id BIGINT unique, drop_rate INT, drop_amount_min INT, drop_amount_max INT, channels BIGINT[], currency TEXT)
 #create table bank (user_id BIGINT, guild_id BIGINT, balance INT, PRIMARY KEY (user_id, guild_id))
-#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT)
 #create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
+#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, message_id BIGINT, message_reaction INT PRIMARY KEY (item_name, guild_id))
 		
 
 class Economy():
@@ -339,8 +339,7 @@ class Economy():
 		pass
 
 
-#create table shop_purchases (id SERIAL, item_id INT, user_id BIGINT, guild_ID BIGINT)
-#create table shop (id SERIAL, item_name text, role bool, guild_id BIGINT, cost INT, quantity INT, message_id BIGINT, message_reaction INT PRIMARY KEY (item_name, guild_id))
+
 
 class Shop():
 	"""Shop related commands"""
@@ -493,9 +492,9 @@ class Shop():
 		for item in items:
 			role = discord.utils.get(ctx.guild.roles, id=int(item["item_name"]))
 			if role:
-				shop_roles.append([role.name, item["cost"], item["quantity"]])
+				shop_roles.append([role.name, item["cost"], item["quantity"] if item["quantity"] >=0 else ∞])
 			else:
-				shop_roles.append([item["item_name"], item["cost"],item["quantity"]]) 
+				shop_roles.append([item["item_name"], item["cost"], item["quantity"] if item["quantity"] >=0 else ∞]) 
 		shop_roles.sort(key=lambda x: x[1])
 		roletable.add_rows(shop_roles)
 		roletext = "```{}```".format(roletable.render())
@@ -509,7 +508,7 @@ class Shop():
 		itemstable.set_columns(headers)
 		shop_items = []
 		for item in items:
-			shop_items.append([item["item_name"], item["cost"],item["quantity"]])
+			shop_items.append([item["item_name"], item["cost"],item["quantity"] if item["quantity"] >=0 else ∞])
 		shop_items.sort(key=lambda x: x[1])
 		itemstable.add_rows(shop_items)
 		itemtext = "```{}```".format(itemstable.render())
