@@ -198,7 +198,7 @@ class Website:
 				guild_id = int(str(guild_id))
 			except Exception as e:
 				cog = self.bot.get_cog("Stats")
-				hook = await cogs.webhook()
+				hook = await cog.webhook()
 				await hook.send(str(e))
 				abort(400)
 
