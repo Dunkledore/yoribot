@@ -204,7 +204,7 @@ class Website:
 				abort(400)
 
 
-			query = "INSERT INTO bans (user_id, guild_id, guild_name, reason) VALUES ($1, $2, $3 $4)"
+			query = "INSERT INTO bans (user_id, guild_id, guild_name, reason) VALUES ($1, $2, $3, $4)"
 			await self.bot.pool.execute(query, user_id, guild_id, guild_name, reason)
 
 			return Response("Ban accepted", status=201)
