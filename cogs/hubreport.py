@@ -31,7 +31,7 @@ class HubReport:
 			embed.set_thumbnail(url=user.avatar_url)
 			await hubchannel.send("Got This Far")
 			await hubchannel.send(embed=embed)
-
+		return
 def setup(bot: commands.Bot):
 	n = HubReport(bot)
 	bot.add_listener(n.member_ban, "on_member_ban")
