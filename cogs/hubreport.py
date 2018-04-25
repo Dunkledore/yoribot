@@ -18,6 +18,15 @@ class HubReport:
 		self.bot = bot
 		self.approve_emoji = "✅"
 		self.reject_emoji = "❌"
+		self.deletedmessages = MaxList(500)
+
+	async def gather_proof(self,message):
+		
+		summary=[]
+		for message in self.deletedmessage:
+			if message.author == user:
+				summary.append(message)
+		return summary[-5:]
 
 	async def member_ban(self, guild, user: discord.User):
 
@@ -59,7 +68,7 @@ class HubReport:
 								value=reasonbanned)
 			else:
 				embed.add_field(
-					name="Banned by", value="Please enable access to AuditLogs to see this")
+					name="Banned by", value="This server did not enable Audit Logs")
 
 			report = await hubchannel.send(embed=embed)
 			await report.add_reaction(self.approve_emoji)
