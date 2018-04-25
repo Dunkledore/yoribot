@@ -87,7 +87,7 @@ class HubReport:
 
 		invite_link = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
 
-		embed = discord.Embed(description = guild_description + "\n" + invite_link, title = guid_name)
+		embed = discord.Embed(description = guild_description + "\n" + invite_link, title = guild_name)
 		await channel.send(embed=embed)
 
 
