@@ -108,8 +108,6 @@ class HubReport:
 		await ctx.send(embed=self.bot.success("Sent"))
 
 
-
-
 	def audit_log_permissions(self, guild):
 		member = guild.get_member(self.bot.user.id)
 		return member.guild_permissions.view_audit_log
