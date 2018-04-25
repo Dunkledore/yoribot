@@ -17,7 +17,7 @@ class HubReport:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 		self.approve_emoji = "✅"
-		self.approve_emoji = "❌"
+		self.reject_emoji = "❌"
 
 	async def member_ban(self, guild, user: discord.User):
 
