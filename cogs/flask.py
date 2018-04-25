@@ -1,6 +1,6 @@
 import discord 
 from discord.ext import commands
-from quart import Quart, g, session, render_template, redirect, request
+from quart import Quart, g, session, render_template, redirect, request, jsonify, abort, Response
 from requests_oauthlib import OAuth2Session
 import os
 import asyncio
@@ -69,6 +69,8 @@ def _command_signature(cmd):
 
 	return ' '.join(result)
 
+#CREATE TABLE bans (user_id BIGINT, guild_id BIGINT, reason Text)
+
 class Website:
 	"""The Welcome Related Commands"""
 
@@ -76,7 +78,9 @@ class Website:
 		self.bot = bot
 		self.app = Quart(__name__)
 		self.app.config['SECRET_KEY'] = OAUTH2_CLIENT_SECRET
-		self.bot.loop.run_until_complete(self.run_app(None))
+		self.bot.loop.create_task(self.run_app())
+		self.ip_list = []
+		self.bot.loop.create_task(self.update_ip_cache())
 
 
 		
@@ -86,17 +90,22 @@ class Website:
 		self.app.run(host ='0.0.0.0', port=config.port)
 
 
-	#@commands.command(hidden=True)
-	#@checks.is_developer()
-	async def run_app(self, ctx):
+	async def run_app(self):
+		@self.app.errorhandler(401)
+		def custom_401(error):
+			return Response("{}\n Please visit support server to authorize your ip".format(str(error)), status=401)
 
-		@self.app.errorhandler(404)
-		def page_not_found(e):
-			return render_template('404.html'), 404
+		async def authorized(req):
+			if req.remote_addr not in self.ip_list:
+				cog = self.bot.get_cog("Stats")
+				hook = await cog.webhook()
+				await hook.send("Unauthorized access from {}".format(str(req.remote_addr)))
+				abort(401)
+	
+		@self.app.errorhandler(400)
+		def custom_400(error):
+			return Response("Bad Request: {}".format(str(error)))
 
-		@self.app.errorhandler(500)
-		def page_not_found(e):
-			return render_template('404.html'), 500
 
 		@self.app.route('/tutorials')
 		def tutorials():
@@ -151,6 +160,60 @@ class Website:
 		@self.app.route('/about')
 		async def about():
 			return await render_template('about.html')
+
+		@self.app.route('/bans/<int:user_id>', methods=['GET'])
+		async def is_banned(user_id):
+			await authorized(request)
+
+			query = "SELECT * FROM bans WHERE user_id = $1"
+			results = await self.bot.pool.fetch(query, user_id)
+			to_send = {}
+			if results:
+				to_send["bans"] = []
+				for result in results:
+					to_send["bans"].append({"user_id": result["user_id"], "guild_id" : result["guild_id"], "guild_name": result["guild_name"], "reason" : result["reason"]})
+			else:
+				to_send["bans"] = None
+
+			return jsonify(to_send)
+
+		@self.app.route('/bans/', methods=['POST'])
+		async def add_ban():
+			if str(request.remote_addr) not in self.ip_list:
+				abort(401)
+
+			form = await request.form
+			user_id = form.get('user_id')
+			guild_id = form.get('guild_id')
+			guild_name = form.get('guild_name')
+			reason = form.get('reason')
+
+			if None in (user_id, guild_id, guild_name):
+				cog = self.bot.get_cog("Stats")
+				hook = await cog.webhook()
+				await hook.send("{} {} {}".format(user_id, guild_id, reason))
+				abort(400)
+
+			try:
+				user_id = int(str(user_id))
+				guild_id = int(str(guild_id))
+			except Exception as e:
+				cog = self.bot.get_cog("Stats")
+				hook = await cog.webhook()
+				await hook.send(str(e))
+				abort(400)
+
+
+			query = "INSERT INTO bans (user_id, guild_id, guild_name, reason) VALUES ($1, $2, $3, $4)"
+			await self.bot.pool.execute(query, user_id, guild_id, guild_name, reason)
+
+			return Response("Ban accepted", status=201)
+
+
+		@self.app.route('/ip', methods=['GET'])
+		async def ip():
+			return request.remote_addr
+
 			
 		@self.app.route('/')
 		async def index():
@@ -179,6 +242,8 @@ class Website:
 		async def commands_list():
 			commands = self.get_commands()
 			return await render_template('commands_list.html', commands=commands)
+
+
 
 		
 		t = Thread(target=self.start_app)
@@ -236,6 +301,20 @@ class Website:
 		query = "SELECT * FROM profile WHERE user_id = $1"
 		results = await self.bot.pool.fetchrow(query, int(user_id))
 		return dict(results)
+
+
+	@commands.command(name="update_ip_cache")
+	async def _update_ip_cache(self, ctx):
+		await self.update_ip_cache()
+		await ctx.send(embed=self.bot.success("Updated"))
+
+
+	async def update_ip_cache(self):
+		query = "SELECT ip FROM ips"
+		results = await self.bot.pool.fetch(query)
+		for result in results:
+			self.ip_list.append(result["ip"])
+
 
 
 
