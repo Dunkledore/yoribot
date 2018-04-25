@@ -18,8 +18,9 @@ class HubReport:
 		self.bot = bot
 
 
-	async def member_ban(self,guild,user: discord.User):
+	async def hub_ban_audit(self,guild,user: discord.User):
 
+		server = guild
 		reason = discord.utils.get(bans, user=user)[0]
 		hubchannel=self.bot.get_channel(438710528299368458)
 		try:
@@ -29,10 +30,12 @@ class HubReport:
 			embed.add_field(name= "Server ID: ", value = str(server.id))
 			embed.add_field(name= "Reason: ", value= reason)
 			embed.set_thumbnail(url=user.avatar_url)
-			await hubchannel.send("Got This Far")
 			await hubchannel.send(embed=embed)
-		return
+		except Exception as e:
+			await hubchannel.send(e)
+
+
 def setup(bot: commands.Bot):
 	n = HubReport(bot)
-	bot.add_listener(n.member_ban, "on_member_ban")
+	bot.add_listener(n.hub_ban_audit, "on_member_ban")
 	bot.add_cog(n)
