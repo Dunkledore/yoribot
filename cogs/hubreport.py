@@ -20,14 +20,6 @@ class HubReport:
 		self.reject_emoji = "❌"
 		self.deletedmessages = MaxList(500)
 
-	async def gather_proof(self,message):
-		
-		summary=[]
-		for message in self.deletedmessage:
-			if message.author == user:
-				summary.append(message)
-		return summary[-5:]
-
 	async def member_ban(self, guild, user: discord.User):
 
 		hubchannel=self.bot.get_channel(438710528299368458)
@@ -83,6 +75,15 @@ class HubReport:
 	def audit_log_permissions(self, guild):
 		member = guild.get_member(self.bot.user.id)
 		return member.guild_permissions.view_audit_log
+
+	def gather_proof(self,message):
+		
+		summary=[]
+		for message in self.deletedmessage:
+			if message.author == user:
+				summary.append(message)
+		return summary[-5:]
+
 
 def setup(bot: commands.Bot):
 	n = HubReport(bot)
