@@ -37,8 +37,9 @@ class HubReport:
 				for banentry in bans:
 					if member == banentry[1]:
 						bannedin += guild.name + '\n'
-						except Exception as e:
-							pass
+					except Exception as e:
+						pass
+
 			reason = discord.utils.get(bans, user=user)[0]
 			hubchannel=self.bot.get_channel(438710528299368458)
 		try:
@@ -60,8 +61,6 @@ class HubReport:
 
 
 def setup(bot: commands.Bot):
-	check_folders()
-	check_files()
 	n = HubReport(bot)
 	bot.add_listener(n.hub_ban_audit, "on_member_ban")
 	bot.add_cog(n)
