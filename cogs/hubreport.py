@@ -18,6 +18,7 @@ class HubReport:
 		self.bot = bot
 		self.approve_emoji = "✅"
 		self.reject_emoji = "❌"
+		self.deletedmessages = MaxList(500)
 
 	async def member_ban(self, guild, user: discord.User):
 
@@ -29,7 +30,7 @@ class HubReport:
 			embed = discord.Embed(color= 0xdf2a2a)
 			embed.timestamp = datetime.datetime.utcnow()
 			embed.set_footer(text='Report Dated:')
-			embed.set_author(name=str(user.name), icon_url=server.icon_url)
+			embed.set_author(name=str(user.name) + "was banned in" + server.name , icon_url=server.icon_url)
 			embed.add_field(name='ID', value=str(user.id))
 			embed.set_thumbnail(url= user.avatar_url)
 			if self.audit_log_permissions(guild):
@@ -59,7 +60,7 @@ class HubReport:
 								value=reasonbanned)
 			else:
 				embed.add_field(
-					name="Banned by", value="Please enable access to AuditLogs to see this")
+					name="Error:", value="This server did not enable Audit Logs")
 
 			report = await hubchannel.send(embed=embed)
 			await report.add_reaction(self.approve_emoji)
@@ -71,6 +72,7 @@ class HubReport:
 	def audit_log_permissions(self, guild):
 		member = guild.get_member(self.bot.user.id)
 		return member.guild_permissions.view_audit_log
+
 
 def setup(bot: commands.Bot):
 	n = HubReport(bot)
