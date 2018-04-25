@@ -40,7 +40,7 @@ class HubReport:
 					except Exception as e:
 						pass
 			reason = discord.utils.get(bans, user=user)[0]
-			hubchannel=self.bot.get_channel(381089479450034176)
+			hubchannel=self.bot.get_channel(438710528299368458)
 		try:
 			embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
 			embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
