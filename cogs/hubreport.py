@@ -18,21 +18,10 @@ class HubReport:
 		self.bot = bot
 
 
-	async def hub_ban_audit(self,guild,user: discord.User):
+	async def member_ban(self,guild,user: discord.User):
 
-		server = guild
-		bannedin= ""
-		for guild in self.bot.guilds:
-			try:
-				bans = await guild.bans()
-				for banentry in bans:
-					if user == banentry[1]:
-						bannedin += guild.name + '\n'
-			except Exception as e:
-				pass
-
-			reason = discord.utils.get(bans, user=user)[0]
-			hubchannel=self.bot.get_channel(438710528299368458)
+		reason = discord.utils.get(bans, user=user)[0]
+		hubchannel=self.bot.get_channel(438710528299368458)
 		try:
 			embed = discord.Embed(title= "User Name: " + str(user.name) + " User ID: " + str(user.id),  colour=discord.Colour.red())
 			embed.set_author(name= "🔨 User Action Report for " + str(user.name), icon_url=server.icon_url)
@@ -40,14 +29,11 @@ class HubReport:
 			embed.add_field(name= "Server ID: ", value = str(server.id))
 			embed.add_field(name= "Reason: ", value= reason)
 			embed.set_thumbnail(url=user.avatar_url)
-			if bannedin:
-				embed.add_field(name='Banned In', value = bannedin, inline=False)
 			await hubchannel.send(embed=embed)
-		except Exception as e:
-			await hubchannel.send(e)
+
 
 
 def setup(bot: commands.Bot):
 	n = HubReport(bot)
-	bot.add_listener(n.hub_ban_audit, "on_member_ban")
+	bot.add_listener(n.member_ban, "on_member_ban")
 	bot.add_cog(n)
