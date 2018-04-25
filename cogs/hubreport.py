@@ -35,7 +35,7 @@ class HubReport:
 			try:
 				bans = await guild.bans()
 				for banentry in bans:
-					if member == banentry[1]:
+					if user == banentry[1]:
 						bannedin += guild.name + '\n'
 			except Exception as e:
 				pass
