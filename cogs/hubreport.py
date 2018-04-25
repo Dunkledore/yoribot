@@ -20,13 +20,14 @@ class HubReport:
 	async def member_ban(self, guild, user: discord.User):
 
 		hubchannel=self.bot.get_channel(438710528299368458)
-
+		server = guild
+		
 		try:
 
-			embed = discord.Embed(color= 0xdf2a2a, title="🔨 Member Banned")
+			embed = discord.Embed(color= 0xdf2a2a)
 			embed.timestamp = datetime.datetime.utcnow()
-			embed.set_footer(text='Banned')
-			embed.set_author(name=str(user.name), icon_url=user.avatar_url)
+			embed.set_footer(text='Report Dated:')
+			embed.set_author(name=str(user.name), icon_url=server.icon_url)
 			embed.add_field(name='ID', value=str(user.id))
 			embed.set_thumbnail(url= user.avatar_url)
 			if self.audit_log_permissions(guild):
