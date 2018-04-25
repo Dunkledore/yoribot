@@ -17,6 +17,14 @@ class HubReport:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 		self.deletedmessages = MaxList(500)
+		
+	async def gather_proof(self,message):
+		
+		summary=[]
+		for message in self.deletedmessage:
+			if message.author == user:
+				summary.append(message)
+		return summary[-5:]
 
 	async def on_message_delete(self, message):
 		self.deletedmessages.append(message)
