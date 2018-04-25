@@ -16,7 +16,8 @@ class HubReport:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
-		self.pick_emoji = "☑"
+		self.approve_emoji = "✅"
+		self.approve_emoji = "❌"
 
 	async def member_ban(self, guild, user: discord.User):
 
@@ -61,7 +62,8 @@ class HubReport:
 					name="Banned by", value="Please enable access to AuditLogs to see this")
 
 			report = await hubchannel.send(embed=embed)
-			await report.add_reaction(self.pick_emoji)
+			await report.add_reaction(self.approve_emoji)
+			await report.add_reaction(self.reject_emoji)
 		except Exception as e:
 			await hubchannel.send(str(e))
 
