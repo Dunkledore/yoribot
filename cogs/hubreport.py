@@ -29,7 +29,7 @@ class HubReport:
 			embed = discord.Embed(color= 0xdf2a2a)
 			embed.timestamp = datetime.datetime.utcnow()
 			embed.set_footer(text='Report Dated:')
-			embed.set_author(name=str(user.name), icon_url=server.icon_url)
+			embed.set_author(name=str(user.name) + "was banned in" + server.name , icon_url=server.icon_url)
 			embed.add_field(name='ID', value=str(user.id))
 			embed.set_thumbnail(url= user.avatar_url)
 			if self.audit_log_permissions(guild):
