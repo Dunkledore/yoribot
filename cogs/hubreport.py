@@ -68,7 +68,10 @@ class HubReport:
 								value=reasonbanned)
 			else:
 				embed.add_field(
-					name="Banned by", value="This server did not enable Audit Logs")
+					name="Error:", value="This server did not enable Audit Logs")
+			messages = gather_proof(user)
+			for message in messages:
+				embed.add_field(name= message.created_at, value= message.content)
 
 			report = await hubchannel.send(embed=embed)
 			await report.add_reaction(self.approve_emoji)
