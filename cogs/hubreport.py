@@ -17,14 +17,8 @@ class HubReport:
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
 		self.deletedmessages = MaxList(500)
-		
-	async def gather_proof(self,message):
-		
-		summary=[]
-		for message in self.deletedmessage:
-			if message.author == user:
-				summary.append(message)
-		return summary[-5:]
+
+
 
 	async def on_message_delete(self, message):
 		self.deletedmessages.append(message)
@@ -56,11 +50,7 @@ class HubReport:
 			embed.add_field(name= "Server:", value= server.name)
 			embed.add_field(name= "Server ID: ", value = str(server.id))
 			embed.add_field(name= "Reason: ", value= reason)
-			messages = gather_proof(user)
-			for message in messages:
-				embed.add_field(name= message.created_at, value= message.content)
 			embed.set_thumbnail(url=user.avatar_url)
-
 			if bannedin:
 				embed.add_field(name='Banned In', value = bannedin, inline=False)
 			await hubchannel.send(embed=embed)
