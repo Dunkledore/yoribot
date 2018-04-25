@@ -61,9 +61,6 @@ class HubReport:
 			else:
 				embed.add_field(
 					name="Error:", value="This server did not enable Audit Logs")
-			messages = gather_proof(user)
-			for message in messages:
-				embed.add_field(name= message.created_at, value= message.content)
 
 			report = await hubchannel.send(embed=embed)
 			await report.add_reaction(self.approve_emoji)
@@ -75,14 +72,6 @@ class HubReport:
 	def audit_log_permissions(self, guild):
 		member = guild.get_member(self.bot.user.id)
 		return member.guild_permissions.view_audit_log
-
-	def gather_proof(self,message):
-		
-		summary=[]
-		for message in self.deletedmessage:
-			if message.author == user:
-				summary.append(message)
-		return summary[-5:]
 
 
 def setup(bot: commands.Bot):
