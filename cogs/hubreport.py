@@ -16,12 +16,13 @@ class HubReport:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
+		self.pick_emoji = "☑"
 
 	async def member_ban(self, guild, user: discord.User):
 
 		hubchannel=self.bot.get_channel(438710528299368458)
 		server = guild
-		
+
 		try:
 
 			embed = discord.Embed(color= 0xdf2a2a)
@@ -59,9 +60,11 @@ class HubReport:
 				embed.add_field(
 					name="Banned by", value="Please enable access to AuditLogs to see this")
 
-			await hubchannel.send(embed=embed)
+			report = await hubchannel.send(embed=embed)
+			await report.add_reaction(self.pick_emoji)
 		except Exception as e:
 			await hubchannel.send(str(e))
+
 
 	def audit_log_permissions(self, guild):
 		member = guild.get_member(self.bot.user.id)
