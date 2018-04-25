@@ -64,15 +64,18 @@ class Admin:
         tox_number = 0
         words = {}
         tox_users = {}
+        message_count = 0
 
         for channel in guild.text_channels:
             if guild.me in channel.members:
-                async for message in channel.history(limit=5000):
+                history = await channel.history(limit=5000).flatten()
+                message_count += len(history)
+                for message in history:
                     try:
                         if message.content:
                             for word in self.tox_words:
-                                if message.author in guild.members:
-                                    if word.lower() in message.content.lower():
+                                if word.lower() in message.content.lower():
+                                    if message.author in guild.members:
                                         if not any([role in message.author.roles for role in roles]):
                                             tox_number += 1
                                             if word in words:
@@ -87,7 +90,7 @@ class Admin:
                         await ctx.send(e)
 
 
-        embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "number of offences {}".format(tox_number))
+        embed = discord.Embed(title = "Tox Report for {}".format(guild.name), description = "Number of messages: {}\nNumber of offences: {}".format(message_count,tox_number))
         em = discord.Embed(title="User tox report")
         for word, number in words.items():
             embed.add_field(name=word, value=number)

@@ -53,11 +53,11 @@ class Stats:
     async def on_socket_response(self, msg):
         self.bot.socket_stats[msg.get('t')] += 1
 
-    async def webhook(self):
-        query =  "SELECT * FROM webhook"
-        results = await self.bot.pool.fetch(query)
-        wh_id = results[0]["wh_id"]
-        wh_token = results[0]["wh_token"]
+    async def webhook(self, guilds = None):
+        query =  "SELECT * FROM webhook WHERE guilds = $1"
+        results = await self.bot.pool.fetchrow(query, guilds or False)
+        wh_id = results["wh_id"]
+        wh_token = results["wh_token"]
         hook = discord.Webhook.partial(id=int(wh_id), token=wh_token, adapter=discord.AsyncWebhookAdapter(self.bot.session))
         return hook
 
@@ -452,7 +452,7 @@ class Stats:
         if guild.me:
             e.timestamp = guild.me.joined_at
 
-        hook = await self.webhook()
+        hook = await self.webhook(True)
         await hook.send(embed=e)
 
     async def on_guild_join(self, guild):
