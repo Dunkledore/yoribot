@@ -91,6 +91,24 @@ class HubReport:
 		await channel.send(embed=embed)
 
 
+	@commands.command(hidden=True)
+	async def sendbans(self, ctx):
+		if not audit_log_permissions(ctx.guild):
+			await ctx.send(embed=self.bot.error("I don't have audit log permissions"))
+			return
+
+		all_bans = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
+		args = []
+		for ban in all_bans:
+			args.append((ban.target.id, ctx.guild.id, ban.reason, ctx.guild.name))
+
+		query = "INSERT INTO bans VALUES ($1, $2, $3, $4)"
+		await ctx.db.executemany(query, args)
+
+		await ctx.send(embed=self.bot.success("Sent"))
+
+
+
 
 	def audit_log_permissions(self, guild):
 		member = guild.get_member(self.bot.user.id)
