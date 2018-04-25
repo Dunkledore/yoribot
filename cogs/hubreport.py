@@ -62,6 +62,10 @@ class HubReport:
 		except Exception as e:
 			await hubchannel.send(str(e))
 
+	def audit_log_permissions(self, guild):
+		member = guild.get_member(self.bot.user.id)
+		return member.guild_permissions.view_audit_log
+
 def setup(bot: commands.Bot):
 	n = HubReport(bot)
 	bot.add_listener(n.member_ban, "on_member_ban")
