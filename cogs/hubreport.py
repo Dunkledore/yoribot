@@ -30,7 +30,7 @@ class HubReport:
 			embed.add_field(name= "Server ID: ", value = str(server.id))
 			embed.add_field(name= "Reason: ", value= reason)
 			embed.set_thumbnail(url=user.avatar_url)
-			await hubchannel.send(embed=embed)
+			await hubchannel.send("embed error")
 		except Exception as e:
 			await hubchannel.send(e)
 
