@@ -16,18 +16,7 @@ class HubReport:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
-		self.deletedmessages = MaxList(500)
 
-
-
-	async def on_message_delete(self, message):
-		self.deletedmessages.append(message)
-
-		hubchannel=self.bot.get_channel(438710528299368458)
-		he = discord.Embed(colour=discord.Colour.red())
-		he.add_field(name='Message: ' + str(message.id), value= message.content, inline=False)
-		he.set_footer(text=""'Sent In: ' + message.channel.name + ' Channel ID:  ' + str(message.channel.id))
-		await hubchannel.send(embed=he)
 
 	async def hub_ban_audit(self,guild,user: discord.User):
 
