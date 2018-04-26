@@ -97,7 +97,7 @@ class HubReport:
 			await ctx.send(embed=self.bot.error("I don't have audit log permissions"))
 			return
 
-		all_bans = await guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
+		all_bans = await ctx.guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
 		args = []
 		for ban in all_bans:
 			args.append((ban.target.id, ctx.guild.id, ban.reason, ctx.guild.name))
