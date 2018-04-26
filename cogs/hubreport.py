@@ -1,10 +1,9 @@
 from copy import deepcopy
 import os
-
+import asyncio
 import discord
-import datetime
 from discord.ext import commands
-from .utils.maxlist import MaxList
+import datetime
 from .utils.dataIO import dataIO
 from .utils import checks, time, chat_formatting as cf
 
@@ -18,7 +17,6 @@ class HubReport:
 		self.bot = bot
 		self.approve_emoji = "✅"
 		self.reject_emoji = "❌"
-		self.deletedmessages = MaxList(500)
 
 	async def member_ban(self, guild, user: discord.User):
 
@@ -67,6 +65,47 @@ class HubReport:
 			await report.add_reaction(self.reject_emoji)
 		except Exception as e:
 			await hubchannel.send(str(e))
+
+	@commands.command(hidden=True)
+	async def addserver(self, ctx, channel: discord.TextChannel):
+
+		if channel.id not in [438710892062965790, 438711271878033428, 438711230815797270, 438711168551354368]:
+			await ctx.send("This is not a valid advertising channel")
+			return
+
+		def check(m):
+			return (m.author is ctx.author) and (m.channel is ctx.channel)
+
+		await ctx.send("Enter guild name")
+
+		guild_name = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
+		await ctx.send("Enter guild description. Typing in notepad and pasting in will allow for multi-line")
+
+		guild_description = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
+
+		await ctx.send("Send invite link")
+
+		invite_link = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
+
+		embed = discord.Embed(description = guild_description + "\n" + invite_link, title = guild_name)
+		await channel.send(embed=embed)
+
+
+	@commands.command(hidden=True)
+	async def sendbans(self, ctx):
+		if not self.audit_log_permissions(ctx.guild):
+			await ctx.send(embed=self.bot.error("I don't have audit log permissions"))
+			return
+
+		all_bans = await ctx.guild.audit_logs(action=discord.AuditLogAction.ban).flatten()
+		args = []
+		for ban in all_bans:
+			args.append((ban.target.id, ctx.guild.id, ban.reason, ctx.guild.name))
+
+		query = "INSERT INTO bans VALUES ($1, $2, $3, $4)"
+		await ctx.db.executemany(query, args)
+
+		await ctx.send(embed=self.bot.success("Sent"))
 
 
 	def audit_log_permissions(self, guild):
