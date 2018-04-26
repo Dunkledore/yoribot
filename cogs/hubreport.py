@@ -93,7 +93,7 @@ class HubReport:
 
 	@commands.command(hidden=True)
 	async def sendbans(self, ctx):
-		if not audit_log_permissions(ctx.guild):
+		if not self.audit_log_permissions(ctx.guild):
 			await ctx.send(embed=self.bot.error("I don't have audit log permissions"))
 			return
 
