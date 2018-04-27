@@ -68,6 +68,7 @@ class HubReport:
 
 	@commands.command(hidden=True)
 	async def addserver(self, ctx, channel: discord.TextChannel):
+        """Use this command to add your server to one of the disignated channels in the lgbtdiscord.com server."""
 
 		if channel.id not in [438710892062965790, 438711271878033428, 438711230815797270, 438711168551354368]:
 			await ctx.send("This is not a valid advertising channel")
@@ -92,12 +93,13 @@ class HubReport:
 		icon_link = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
 
 		embed = discord.Embed(description = guild_description + "\n" + invite_link, title = guild_name)
-		embed.set_thumbnail(url= icon_url)
+		embed.set_thumbnail(url= icon_link)
 		await channel.send(embed=embed)
 
 
 	@commands.command(hidden=True)
 	async def sendbans(self, ctx):
+        """Contribute to the safety of participating servers by uploading your ban information to our database."""
 		if not self.audit_log_permissions(ctx.guild):
 			await ctx.send(embed=self.bot.error("I don't have audit log permissions"))
 			return
