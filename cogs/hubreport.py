@@ -87,7 +87,12 @@ class HubReport:
 
 		invite_link = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
 
+		await ctx.send("Link to server icon or logo.")
+
+		icon_link = (await self.bot.wait_for("message", check = check, timeout=300.0)).content
+
 		embed = discord.Embed(description = guild_description + "\n" + invite_link, title = guild_name)
+		embed.set_thumbnail(url= icon_url)
 		await channel.send(embed=embed)
 
 
