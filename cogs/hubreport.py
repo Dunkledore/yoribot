@@ -84,9 +84,9 @@ class HubReport:
 					vote_up = reaction.emoji == self.approve_emoji
 					staff_approver = False
 					for role in react_user.roles:
-						if role.id == 439366293100167192
+						if role.id == 439366293100167192:
 							staff_approver = True
-					if staff_approver
+					if staff_approver:
 						approval_count = 3 if vote_up else -3
 					else:
 						approval_count = approval_count + (1 if vote_up else -1)
@@ -95,7 +95,7 @@ class HubReport:
 					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Approved by {}".format("Staff" if staff_approver else "Votes"))
 					update_query = "UPDATE bans SET approved = $1 WHERE (user_id = $2) and (guild_id = $3)"
 					await self.bot.pool.execute(query, True, user.id, guild.id)
-				elif approval_count <=-3
+				elif approval_count <=-3:
 					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Denied by {}".format("Staff" if staff_approver else "Votes"))
 				else:
 					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Waiting For Approval {}/3".format(approval_count))
