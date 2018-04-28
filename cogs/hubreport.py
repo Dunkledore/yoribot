@@ -81,7 +81,9 @@ class HubReport:
 				while -3 < approval_count <3:
 
 					def check(reaction, user):
-						return (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
+						checked = (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
+						await hubchannel.send(str(checked))
+						return checked
 
 					reaction, react_user = await self.bot.wait_for("reaction_add", check=check)
 					vote_up = reaction.emoji == self.approve_emoji
