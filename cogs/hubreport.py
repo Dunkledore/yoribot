@@ -81,12 +81,11 @@ class HubReport:
 				while -3 < approval_count <3:
 
 					def check(reaction, user):
-						if user is self.bot.user:
+						if user.bot:
 							return False
 						return (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
 
 					reaction, react_user = await self.bot.wait_for("reaction_add", check=check)
-					await hubchannel.send("check approved")
 					vote_up = reaction.emoji == self.approve_emoji
 					staff_approver = False
 					for role in react_user.roles:
@@ -95,7 +94,6 @@ class HubReport:
 					if staff_approver:
 						approval_count = 3 if vote_up else -3
 					else:
-						await hubchannel.send("not staff ")
 						approval_count = approval_count + (1 if vote_up else -1)
 						await hubchannel.send(str(approval_count))
 
@@ -108,7 +106,6 @@ class HubReport:
 					elif approval_count <=-3:
 						embed.set_field_at(len(embed.fields)-1, name="Status", value = "Denied by {}".format("Staff" if staff_approver else "Votes"))
 					else:
-						await hubchannel.send("embed modififed")
 						embed.set_field_at(len(embed.fields)-1, name="Status", value = "Waiting For Approval {}/3".format(approval_count))
 
 
