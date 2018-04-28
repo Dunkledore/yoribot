@@ -95,8 +95,6 @@ class HubReport:
 						approval_count = 3 if vote_up else -3
 					else:
 						approval_count = approval_count + (1 if vote_up else -1)
-						await hubchannel.send(str(approval_count))
-
 
 					
 					if approval_count >= 3:
