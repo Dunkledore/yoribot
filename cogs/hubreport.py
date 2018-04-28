@@ -57,7 +57,7 @@ class HubReport:
 			
 			approved_query = "SELECT approved_guilds FROM hubconfig"
 			insert_query = "INSERT INTO bans (user_id, guild_id, guild_name, reason, approved) VALUES ($1, $2, $3, $4, $5)"
-			approved_guilds = (await self.bot.pool.fetchrow(query))["approved_guilds"]
+			approved_guilds = (await self.bot.pool.fetchrow(approved_query))["approved_guilds"]
 			approved_guild = guild.id in approved_guilds
 
 			embed.add_field(name="Status", value="Auto-Approved. (Trusted Server)" if approved_guild else "Waiting For Approval 0/3")
@@ -94,7 +94,7 @@ class HubReport:
 				if approval_count >= 3:
 					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Approved by {}".format("Staff" if staff_approver else "Votes"))
 					update_query = "UPDATE bans SET approved = $1 WHERE (user_id = $2) and (guild_id = $3)"
-					await self.bot.pool.execute(query, True, user.id, guild.id)
+					await self.bot.pool.execute(update_query, True, user.id, guild.id)
 				elif approval_count <=-3:
 					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Denied by {}".format("Staff" if staff_approver else "Votes"))
 				else:
