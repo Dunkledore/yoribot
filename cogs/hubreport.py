@@ -81,7 +81,7 @@ class HubReport:
 				while -3 < approval_count <3:
 
 					def check(reaction, user):
-						if user is self.bot.me:
+						if user is self.bot.user:
 							return False
 						return (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
 
