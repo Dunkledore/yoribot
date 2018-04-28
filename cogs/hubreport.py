@@ -6,7 +6,10 @@ from discord.ext import commands
 import datetime
 from .utils.dataIO import dataIO
 from .utils import checks, time, chat_formatting as cf
+import asyncpg
 
+
+#create table hubconfig (approved_guilds bigint[]) 
 
 class HubReport:
 
