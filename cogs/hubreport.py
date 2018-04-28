@@ -82,7 +82,7 @@ class HubReport:
 
 					def check(reaction, user):
 						checked = (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
-						await hubchannel.send(str(checked))
+						print(checked)
 						return checked
 
 					reaction, react_user = await self.bot.wait_for("reaction_add", check=check)
