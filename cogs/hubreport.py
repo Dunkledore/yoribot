@@ -100,19 +100,19 @@ class HubReport:
 						await hubchannel.send(str(approval_count))
 
 
-				
-				if approval_count >= 3:
-					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Approved by {}".format("Staff" if staff_approver else "Votes"))
-					update_query = "UPDATE bans SET approved = $1 WHERE (user_id = $2) and (guild_id = $3)"
-					await self.bot.pool.execute(update_query, True, user.id, guild.id)
-				elif approval_count <=-3:
-					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Denied by {}".format("Staff" if staff_approver else "Votes"))
-				else:
-					await hubchannel.send("embed modififed")
-					embed.set_field_at(len(embed.fields)-1, name="Status", value = "Waiting For Approval {}/3".format(approval_count))
+					
+					if approval_count >= 3:
+						embed.set_field_at(len(embed.fields)-1, name="Status", value = "Approved by {}".format("Staff" if staff_approver else "Votes"))
+						update_query = "UPDATE bans SET approved = $1 WHERE (user_id = $2) and (guild_id = $3)"
+						await self.bot.pool.execute(update_query, True, user.id, guild.id)
+					elif approval_count <=-3:
+						embed.set_field_at(len(embed.fields)-1, name="Status", value = "Denied by {}".format("Staff" if staff_approver else "Votes"))
+					else:
+						await hubchannel.send("embed modififed")
+						embed.set_field_at(len(embed.fields)-1, name="Status", value = "Waiting For Approval {}/3".format(approval_count))
 
 
-				await report.edit(embed=embed)
+					await report.edit(embed=embed)
 
 
 
