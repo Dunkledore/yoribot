@@ -72,20 +72,23 @@ class HubReport:
 				await self.bot.pool.execute(delete_query, user.id, guild.id)
 				await self.bot.pool.execute(insert_query, user.id, guild.id, guild.name, reasonbanned, True if approved_guild else False)
 
-
 			if not approved_guild:
 				await report.add_reaction(self.approve_emoji)
 				await report.add_reaction(self.reject_emoji)
 
 				approval_count = 0
+				voters = []
 				while -3 < approval_count <3:
 
 					def check(reaction, user):
 						if user.bot:
 							return False
+						if user in voters:
+							return False
 						return (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
 
 					reaction, react_user = await self.bot.wait_for("reaction_add", check=check)
+					voters.append(react_user)
 					vote_up = reaction.emoji == self.approve_emoji
 					staff_approver = False
 					for role in react_user.roles:
