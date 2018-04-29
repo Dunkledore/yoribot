@@ -10,7 +10,7 @@ numbs = {
 }
 
 
-class urbandictionary:
+class UrbanDictionary:
     """Search games using IGDB"""
 
     def __init__(self, bot):
@@ -74,10 +74,10 @@ class urbandictionary:
 
         if not message:
             message =\
-                await self.bot.send_message(ctx.message.channel, embed=cog)
-            await self.bot.add_reaction(message, "⬅")
-            await self.bot.add_reaction(message, "❌")
-            await self.bot.add_reaction(message, "➡")
+                await ctx.send(embed=cog)
+            await message.add_reaction("⬅")
+            await message.add_reaction("❌")
+            await message.add_reaction("➡")
         else:
             message = await self.bot.edit_message(message, embed=cog)
         react = await self.bot.wait_for_reaction(
@@ -123,4 +123,4 @@ class urbandictionary:
                 pass
 
 def setup(bot):
-   bot.add_cog(urbandictionary(bot))
+   bot.add_cog(UrbanDictionary(bot))
