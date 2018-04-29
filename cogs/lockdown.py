@@ -77,7 +77,7 @@ class Lockdown():
 		else:
 			new_status = (status.lower() == "on")
 		if str(guild.id) not in self.settings:
-			self.settings[guild.id] = {}
+			self.settings[str(guild.id)] = {}
 		if "channels" not in self.settings[str(guild.id)]:
 			self.settings[guild.id]["channels"] = {}
 		if str(channel.id) not in self.settings[str(guild.id)]["channels"]:
