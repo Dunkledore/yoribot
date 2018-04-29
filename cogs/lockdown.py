@@ -38,9 +38,9 @@ class Lockdown():
 						bot_perms_edited = True
 					if bot_perms_edited:
 						await channel.set_permissions(guild.me, bot_perms)
-			await ctx.send("guild is locked down. You can unlock the guild by doing {}unlockdown".format(ctx.prefix))
+			await ctx.send(embed=self.bot.success("guild is locked down. You can unlock the guild by doing {}unlockdown".format(ctx.prefix)))
 		else:
-			await ctx.send("No settings available for this guild!")
+			await ctx.send(embed=self.bot.success("No settings available for this guild!"))
 
 	@commands.command()
 	@commands.guild_only()
@@ -49,7 +49,6 @@ class Lockdown():
 		"""Ends the lockdown for this guild"""
 		guild = ctx.message.guild
 		mod_role_id = self.get_mod_role_id(guild)
-		admin = self.bot.settings.get_guild_admin(guild)
 		role_list = [role for role in guild.roles if role.id != mod_role_id]
 		if str(guild.id) in self.settings:
 			for channel in guild.channels:
@@ -59,11 +58,12 @@ class Lockdown():
 						cur_role_perms.send_messages = None
 						print("Editing channel permissions for {}".format(role.name))
 						await channel.set_permissions(ole, cur_role_perms)
-			await ctx.send("guild has been unlocked!")
+			await ctx.send(embed=self.bot.success("guild has been unlocked!"))
 		else:
-			await ctx.send("No settings available for this guild!")
+			await ctx.send(embed=self.bot.success("No settings available for this guild!"))
 
 	@commands.command()
+	@checks.is_admin()
 	@commands.guild_only()
 	async def lockchanset(self, ctx, channel: discord.TextChannel, status: str):
 		"""Sets whether or not the channel will be
@@ -72,7 +72,7 @@ class Lockdown():
 		guild = ctx.message.guild
 		new_status = None
 		if status.lower() not in ["on", "off"]:
-			ctx.send("Invalid status specified!")
+			ctx.send(embed=self.bot.success("Invalid status specified!"))
 			return
 		else:
 			new_status = (status.lower() == "on")
@@ -84,7 +84,7 @@ class Lockdown():
 			self.settings[str(guild.id)]["channels"][str(channel.id)] = None
 		self.settings[str(guild.id)]["channels"][str(channel.id)] = new_status
 		dataIO.save_json("data/lockdown/settings.json", self.settings)
-		await ctx.send("New status for {} set!".format(channel.mention))
+		await ctx.send(embed=self.bot.success("New status for {} set!".format(channel.mention)))
 
 	async def get_mod_role_id(self, guild):
 		query = "SELECT * FROM mod_config WHERE guild_id = $1"
