@@ -35,7 +35,8 @@ class Dictionary:
 					else:
 						str_buffer += str(counter) + ". " + val + "\n"
 						counter += 1
-		await ctx.send(str_buffer)
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                description = str_buffer))
 
 	@commands.command(name="antonym", pass_context=True)
 	async def antonym(self, ctx, *, word: str):
@@ -46,7 +47,8 @@ class Dictionary:
 			await self.bot.delete_message(x)
 			await ctx.send("This word is not in the dictionary.")
 			return
-		await ctx.send("Antonyms for **" + search_term + "**: *" + "*, *".join(result) + "*")
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                description ="Antonyms for **" + search_term + "**: *" + "*, *".join(result) + "*"))
 
 	@commands.command(name="synonym", pass_context=True)
 	async def synonym(self, ctx, *, word: str):
@@ -57,7 +59,8 @@ class Dictionary:
 			await self.bot.delete_message(x)
 			await ctx.send("This word is not in the dictionary.")
 			return
-		await ctx.send("Synonyms for **" + search_term + "**: *" + "*, *".join(result) + "*")
+		await ctx.send(embed=discord.Embed(color=ctx.message.author.color,
+                                description ="Synonyms for **" + search_term + "**: *" + "*, *".join(result) + "*"))
 
 
 def setup(bot):
