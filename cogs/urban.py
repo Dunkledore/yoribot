@@ -21,8 +21,9 @@ class urbandictionary:
         data = None
 
         try:
-            async with aiohttp.get(url) as response:
-                data = await response.json()
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    data = await response.json()
 
         except:
             return None
