@@ -13,7 +13,7 @@ class Lockdown():
 		self.settings = dataIO.load_json("data/lockdown/settings.json")
 
 	@commands.command(pass_context=True, no_pm=True)
-	@checks.is_mod
+	@checks.is_mod()
 	async def lockdown(self, ctx):
 		"Toggles the lockdown mode"
 		guild = ctx.message.guild
@@ -48,7 +48,7 @@ class Lockdown():
 			ctx.send("No settings available for this guild!")
 
 	@commands.command(pass_context=True, no_pm=True)
-	@checks.is_mod
+	@checks.is_mod()
 	async def unlockdown(self, ctx):
 		"""Ends the lockdown for this guild"""
 		guild = ctx.message.guild
