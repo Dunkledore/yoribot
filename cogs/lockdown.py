@@ -27,7 +27,7 @@ class Lockdown():
 						cur_role_perms = channel.overwrites_for(role)
 						cur_role_perms.send_messages = False
 						print("Editing channel permissions for {}".format(role.name))
-						await channel.set_permissions(role, cur_role_perms)
+						await channel.set_permissions(role, overwrite=cur_role_perms)
 					bot_perms = channel.overwrites_for(guild.me)
 					bot_perms_edited = False
 					if not bot_perms.read_messages:
@@ -37,7 +37,7 @@ class Lockdown():
 						bot_perms.send_messages = True
 						bot_perms_edited = True
 					if bot_perms_edited:
-						await channel.set_permissions(guild.me, bot_perms)
+						await channel.set_permissions(guild.me, overwrite=bot_perms)
 			await ctx.send(embed=self.bot.success("guild is locked down. You can unlock the guild by doing {}unlockdown".format(ctx.prefix)))
 		else:
 			await ctx.send(embed=self.bot.success("No settings available for this guild!"))
@@ -57,7 +57,7 @@ class Lockdown():
 						cur_role_perms = channel.overwrites_for(role)
 						cur_role_perms.send_messages = None
 						print("Editing channel permissions for {}".format(role.name))
-						await channel.set_permissions(ole, cur_role_perms)
+						await channel.set_permissions(role, overwrite=cur_role_perms)
 			await ctx.send(embed=self.bot.success("guild has been unlocked!"))
 		else:
 			await ctx.send(embed=self.bot.success("No settings available for this guild!"))
