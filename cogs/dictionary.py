@@ -12,7 +12,6 @@ class Dictionary:
 	@commands.command(name="define", pass_context=True)
 	async def define(self, ctx, *, word: str):
 		"""Displays definitions of a given word"""
-		await ctx.send("Searching...")
 		search_term = word.split(" ", 1)[0]
 		result = self.dictionary.meaning(search_term)
 		str_buffer = ""
@@ -41,7 +40,6 @@ class Dictionary:
 	@commands.command(name="antonym", pass_context=True)
 	async def antonym(self, ctx, *, word: str):
 		"""Displays antonyms for a given word"""
-		await ctx.send("Searching...")
 		search_term = word.split(" ", 1)[0]
 		result = self.dictionary.antonym(search_term)
 		if result is None:
@@ -53,7 +51,6 @@ class Dictionary:
 	@commands.command(name="synonym", pass_context=True)
 	async def synonym(self, ctx, *, word: str):
 		"""Displays synonyms for a given word"""
-		await ctx.send("Searching...")
 		search_term = word.split(" ", 1)[0]
 		result = self.dictionary.synonym(search_term)
 		if result is None:
