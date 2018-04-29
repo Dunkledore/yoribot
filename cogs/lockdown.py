@@ -71,7 +71,7 @@ class Lockdown():
 		   Options for status are on or off"""
 		guild = ctx.message.guild
 		new_status = None
-		if status.lower() not in ["on", "off"]
+		if status.lower() not in ["on", "off"]:
 			ctx.send("Invalid status specified!")
 			return
 		else:
