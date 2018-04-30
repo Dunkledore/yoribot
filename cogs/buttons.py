@@ -123,11 +123,6 @@ class Buttons:
 
         await action
 
-    @commands.command(hidden=True)
-    async def bored(self, ctx):
-        """boredom looms"""
-        await ctx.send('http://i.imgur.com/BuTKSzf.png')
-
     @commands.command(pass_context=True)
     @checks.is_mod()
     async def nostalgia(self, ctx, date: date, *, channel: discord.TextChannel = None):
