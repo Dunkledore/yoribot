@@ -100,28 +100,6 @@ class SpoilerCooldown(commands.CooldownMapping):
 class Buttons:
     """Buttons that make you feel."""
 
-    def __init__(self, bot):
-        self.bot = bot
-        self._spoiler_cache = LRU(128)
-        self._spoiler_cooldown = SpoilerCooldown()
-
-    @commands.command(hidden=True)
-    async def feelgood(self, ctx):
-        """press"""
-        await ctx.send('*pressed*')
-
-    @commands.command(hidden=True)
-    async def feelbad(self, ctx):
-        """depress"""
-        await ctx.send('*depressed*')
-
-    @commands.command()
-    async def love(self, ctx):
-        """What is love?"""
-        action = random.choice([ctx.send('https://www.youtube.com/watch?v=HEXWRTEbj1I'),
-                                ctx.invoke(self.g, query='define: love')])
-
-        await action
 
     @commands.command(pass_context=True)
     @checks.is_mod()
@@ -471,7 +449,7 @@ class Buttons:
 
             await ctx.send(msg)
 
-    @commands.command()
+    @commands.command(432741720581603328)
     @commands.cooldown(rate=1, per=60.0, type=commands.BucketType.user)
     async def feedback(self, ctx, *, content: str):
         """Gives feedback about the bot.
@@ -486,7 +464,7 @@ class Buttons:
         """
 
         e = discord.Embed(title='Feedback', colour=0x738bd7)
-        channel = self.bot.get_channel(263814407191134218)
+        channel = self.bot.get_channel()
         if channel is None:
             return
 
