@@ -129,7 +129,7 @@ class Buttons:
         await ctx.send('http://i.imgur.com/BuTKSzf.png')
 
     @commands.command(pass_context=True)
-    @checks.mod_or_permissions(manage_messages=True)
+    @checks.is_mod()
     async def nostalgia(self, ctx, date: date, *, channel: discord.TextChannel = None):
         """Pins an old message from a specific date.
 
