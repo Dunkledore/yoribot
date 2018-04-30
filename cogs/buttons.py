@@ -100,6 +100,10 @@ class SpoilerCooldown(commands.CooldownMapping):
 class Buttons:
     """Buttons that make you feel."""
 
+    def __init__(self, bot):
+        self.bot = bot
+        self._spoiler_cache = LRU(128)
+        self._spoiler_cooldown = SpoilerCooldown()
 
     @commands.command(pass_context=True)
     @checks.is_mod()
@@ -629,5 +633,4 @@ class Buttons:
         await spoiler_message.add_reaction(':spoiler:430469957042831371')
 
 def setup(bot):
-    n=Buttons(bot)
-    bot.add_cog(n)
+    bot.add_cog(Buttons(bot))
