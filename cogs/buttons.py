@@ -449,7 +449,7 @@ class Buttons:
 
             await ctx.send(msg)
 
-    @commands.command(432741720581603328)
+    @commands.command()
     @commands.cooldown(rate=1, per=60.0, type=commands.BucketType.user)
     async def feedback(self, ctx, *, content: str):
         """Gives feedback about the bot.
@@ -464,7 +464,7 @@ class Buttons:
         """
 
         e = discord.Embed(title='Feedback', colour=0x738bd7)
-        channel = self.bot.get_channel()
+        channel = self.bot.get_channel(432741720581603328)
         if channel is None:
             return
 
