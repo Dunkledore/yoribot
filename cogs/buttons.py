@@ -629,4 +629,5 @@ class Buttons:
         await spoiler_message.add_reaction(':spoiler:430469957042831371')
 
 def setup(bot):
-    bot.add_cog(Buttons(bot))
+    n=Buttons(bot)
+    bot.add_cog(n)
