@@ -284,7 +284,7 @@ class Buttons:
 
         spoiler_message = await ctx.send(embed=cache.to_spoiler_embed(ctx, storage_message))
         self._spoiler_cache[spoiler_message.id] = cache
-        await spoiler_message.add_reaction(':warning:')
+        await spoiler_message.add_reaction("\U000026a0")
 
 def setup(bot):
     bot.add_cog(Buttons(bot))
