@@ -78,7 +78,13 @@ class HubReport:
 
 				approval_count = 0
 				voters = []
-				while -3 < approval_count <3:
+				timestamp = datetime.datetime.utcnow()
+
+				while (-3 < approval_count <3):
+					if timestamp - datetime.datetime.utcnow() > datetime.timedelta(days=1):
+						embed.set_field_at(len(embed.fields)-1, name="Status", value="Denied by timeout")
+						await report.edit(embed=embed)
+						return
 
 					def check(reaction, user):
 						if user.bot:
@@ -87,7 +93,10 @@ class HubReport:
 							return False
 						return (reaction.message.id == report.id) and (reaction.emoji == self.approve_emoji or reaction.emoji == self.reject_emoji)
 
-					reaction, react_user = await self.bot.wait_for("reaction_add", check=check)
+					try;
+						reaction, react_user = await self.bot.wait_for("reaction_add", check=check, timeout=3600.0)
+					except asyncio.TimeoutError:
+						continue
 					voters.append(react_user)
 					vote_up = reaction.emoji == self.approve_emoji
 					staff_approver = False
@@ -111,10 +120,6 @@ class HubReport:
 
 
 					await report.edit(embed=embed)
-
-
-
-
 
 
 
