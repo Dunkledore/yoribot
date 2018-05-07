@@ -63,7 +63,7 @@ class Stats:
 
 
     @commands.command(hidden=True)
-    @commands.is_owner()
+    @commands.is_developer()
     async def commandstats(self, ctx, limit=20):
         """Shows command stats.
 
