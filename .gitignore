@@ -11,3 +11,4 @@ cogs/admin.py
 .idea/yoribot.iml
 .vscode
 *.gif
+.idea/codeStyles/codeStyleConfig.xml
