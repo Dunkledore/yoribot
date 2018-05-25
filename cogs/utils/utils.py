@@ -2,7 +2,6 @@ import traceback
 import discord
 
 
-
 def traceback_from_exc(e, stack=4):
 	return "\n".join(traceback.format_exception(type(e), e, e.__traceback__, stack))
 

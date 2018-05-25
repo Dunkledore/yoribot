@@ -24,6 +24,8 @@ class Developers:
 	async def updatetables(self, ctx):
 		statements = ["CREATE TABLE IF NOT EXISTS guild_config (guild_id BIGINT PRIMARY_KEY, mod_role_id BIGINT, "
 		              "admin_role_id BIGINT, greeter_role_id BIGINT",
+		              "CREATE TABLE IF NOT EXISTS statistics (id SERIAL, guild_id BIGINT, channel_id BIGINT, author_id "
+		              "BIGINT, time timestamp with time zone DEFAULT current_timestamp, prefix TEXT, command_name TEXT"
 		              ]
 
 		for statement in statements:

@@ -6,7 +6,7 @@ import asyncpg
 from datetime import datetime
 
 import aiohttp
-import discord
+from discord import Embed, Game, Forbidden
 from discord.ext import commands
 
 from cogs.utils import utils, dataIO
@@ -60,21 +60,21 @@ class YoriBot(commands.AutoShardedBot):
 
 	@staticmethod
 	def success(description):
-		embed = discord.Embed(color=0x2ecc71,
+		embed = Embed(color=0x2ecc71,
 		                      title="✅ Success",
 		                      description=description)
 		return embed
 
 	@staticmethod
 	def notice(description):
-		embed = discord.Embed(color=0xe67e22,
+		embed = Embed(color=0xe67e22,
 		                      title="❕ Notice",
 		                      description=description)
 		return embed
 
 	@staticmethod
 	def error(description):
-		embed = discord.Embed(color=0xe74c3c,
+		embed = Embed(color=0xe74c3c,
 		                      title="⚠ Error",
 		                      description=description)
 		return embed
@@ -83,7 +83,7 @@ class YoriBot(commands.AutoShardedBot):
 		print("connected")
 		if not hasattr(self, 'uptime'):
 			self.uptime = datetime.utcnow()
-		await self.change_presence(activity=discord.Game(name="yoribot.com"))
+		await self.change_presence(activity=Game(name="yoribot.com"))
 		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
 
 	async def on_resumed(self):
@@ -102,7 +102,7 @@ class YoriBot(commands.AutoShardedBot):
 		elif not isinstance(error, (commands.CheckFailure,
 		                            commands.CommandNotFound,
 		                            commands.UserInputError,
-		                            discord.Forbidden)):
+		                            Forbidden)):
 			e = discord.Embed(title='Command Error', colour=0xcc3366)
 			e.add_field(name='Command Name', value=ctx.command.qualified_name)
 			e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')
@@ -123,7 +123,7 @@ class YoriBot(commands.AutoShardedBot):
 		hook = self.error_hook
 
 		try:
-			e = discord.Embed(title=f"Error in on_{event_method}", colour=0xcc3366)
+			e = Embed(title=f"Error in on_{event_method}", colour=0xcc3366)
 			exc = traceback.format_exc(-4)
 			e.description = f"```py\n{exc}\n```"
 			e.timestamp = datetime.utcnow()
@@ -131,6 +131,6 @@ class YoriBot(commands.AutoShardedBot):
 		except Exception as e:
 			print(e)
 
-
 	def run(self):
 		super().run(token, reconnect=True)
+
