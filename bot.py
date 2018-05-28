@@ -1,206 +1,136 @@
-from discord.ext import commands
-import discord
-from cogs.utils import checks, context, db
-from cogs.utils.config import Config
-import datetime, re
-import json, asyncio
-import copy
-import logging
-import traceback
-import aiohttp
+import datetime
+import os
 import sys
-from collections import Counter
-
-import config
+import traceback
 import asyncpg
+from datetime import datetime
 
-description = """
-Hello! I am a premium Discord bot.
-"""
+import aiohttp
+from discord import Embed, Game, Forbidden
+from discord.ext import commands
 
-log = logging.getLogger(__name__)
+from cogs.utils import utils, dataIO
+from instance import token, new_server_hook, error_hook, db_uri
 
-logger = logging.getLogger(__name__)
-logger.setLevel(0)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
+initial_cogs = ["admin",
+                "developers",]
 
-initial_extensions = (
-    
-    'cogs.admin',
-    'cogs.anime',
-    'cogs.audio',
-    'cogs.away',
-    'cogs.blizzard',
-    'cogs.censor',
-    'cogs.comics',
-    'cogs.config',
-    'cogs.conversion',
-    'cogs.cookie',
-    'cogs.discomegle',
-    'cogs.economy',
-    'cogs.embed',
-    'cogs.ffxiv',
-    'cogs.filter',
-    'cogs.flask',
-    'cogs.fun',
-    'cogs.greet',
-    'cogs.hangman',
-    'cogs.hubreport',
-    'cogs.inviteaudit',
-    'cogs.memberaudit',
-    'cogs.mod',
-    'cogs.nsfw',
-    'cogs.poll',
-    'cogs.pokedex',
-    'cogs.profile',
-    'cogs.race',
-    'cogs.rate',
-    'cogs.reactroles',
-    'cogs.reminder',
-    'cogs.reddit',
-    'cogs.rift',
-    'cogs.rolemanager',
-    'cogs.searches',
-    'cogs.smite',
-    'cogs.socialmedia',
-    'cogs.stars',
-    'cogs.stats',
-    'cogs.streamrole',
-    'cogs.tags',
-    'cogs.terminal',
-    'cogs.trivia',
-    'cogs.utilities',
-    'cogs.warnings',
-    'cogs.weather',
-    'cogs.welcome',
-)
 
 def _prefix_callable(bot, msg):
-    user_id = bot.user.id
-    base = [f'<@!{user_id}> ', f'<@{user_id}> ']
-    if msg.guild is None:
-        base.append('*')
-        
-    else:
-        base.extend(bot.prefixes.get(msg.guild.id, ['*']))
-    return base
+	user_id = bot.user.id
+	base = [f'<@!{user_id}> ', f'<@{user_id}> ']
+	if msg.guild is None:
+		base.append('*')
+	else:
+		base.extend(bot.prefixes.get(msg.guild.id, ['*']))
+	return base
+
 
 class YoriBot(commands.AutoShardedBot):
-    def __init__(self):
-        super().__init__(command_prefix=_prefix_callable, description=description,
-                         pm_help=None, help_attrs=dict(hidden=True))
 
-        self.client_id = config.client_id
-        self.carbon_key = config.carbon_key
-        self.bots_key = config.bots_key
-        self.challonge_api_key = config.challonge_api_key
-        self.session = aiohttp.ClientSession(loop=self.loop)
+	def __init__(self):
+		super().__init__(command_prefix=_prefix_callable, description="YoriBot",
+		                 pm_help=None, help_attrs=dict(hidden=True))
 
-        self.add_command(self.do)
+		if not os.path.exists("data/prefixes/"):
+			os.makedirs("data/prefixes")
+		if not os.path.exists("data/prefixes/prefixes.json"):
+			dataIO.save_json("data/prefixes/prefixes.json", {})
+		self.prefixes = dataIO.load_json("data/prefixes/prefixes.json")
 
-        # guild_id: list
-        self.prefixes = Config('prefixes.json')
+		self.session = aiohttp.ClientSession(loop=self.loop)
+		self.error_hook = utils.get_webhook(error_hook, self.session)
+		self.new_server_hook = utils.get_webhook(new_server_hook, self.session)
 
-        for extension in initial_extensions:
-            try:
-                self.load_extension(extension)
-            except Exception as e:
-                print(f'Failed to load extension {extension}.', file=sys.stderr)
-                traceback.print_exc()
+		self.loop.create_task(self.__ainit__())
 
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.author.send('This command cannot be used in private messages.')
-        elif isinstance(error, commands.DisabledCommand):
-            await ctx.author.send('Sorry. This command is disabled and cannot be used.')
-        elif isinstance(error, commands.CommandInvokeError):
-            print(f'In {ctx.command.qualified_name}:', file=sys.stderr)
-            traceback.print_tb(error.original.__traceback__)
-            print(f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
+	async def __ainit__(self):
 
-    def get_guild_prefixes(self, guild, *, local_inject=_prefix_callable):
-        proxy_msg = discord.Object(id=None)
-        proxy_msg.guild = guild
-        return local_inject(self, proxy_msg)
+		self.pool = asyncpg.create_pool(db_uri)
 
-    def get_raw_guild_prefixes(self, guild_id):
-        return self.prefixes.get(guild_id, ['*'])
+		for extension in initial_cogs:
+			try:
+				self.load_extension("cogs."+extension)
+			except Exception as e:
+				print(f'Failed to load extension {extension}.', file=sys.stderr)
+				traceback.print_exc()
 
-    async def set_guild_prefixes(self, guild, prefixes):
-        if len(prefixes) == 0:
-            await self.prefixes.put(guild.id, [])
-        elif len(prefixes) > 10:
-            raise RuntimeError('Cannot have more than 10 custom prefixes.')
-        else:
-            await self.prefixes.put(guild.id, sorted(set(prefixes), reverse=True))
+	def save_prefixes(self):
+		dataIO.save_json("data/prefixes/prefixes.json", self.prefixes)
 
-    async def on_ready(self):
-        if not hasattr(self, 'uptime'):
-            self.uptime = datetime.datetime.utcnow()
-        await self.change_presence(activity=discord.Game(name="yoribot.com"))
+	@staticmethod
+	def success(description):
+		embed = Embed(color=0x2ecc71,
+		                      title="✅ Success",
+		                      description=description)
+		return embed
 
-        print(f'Ready: {self.user} (ID: {self.user.id})')
+	@staticmethod
+	def notice(description):
+		embed = Embed(color=0xe67e22,
+		                      title="❕ Notice",
+		                      description=description)
+		return embed
 
-    async def on_resumed(self):
-        print('resumed...')
+	@staticmethod
+	def error(description):
+		embed = Embed(color=0xe74c3c,
+		                      title="⚠ Error",
+		                      description=description)
+		return embed
 
-    async def process_commands(self, message):
-        ctx = await self.get_context(message, cls=context.Context)
+	async def on_ready(self):
+		print("connected")
+		if not hasattr(self, 'uptime'):
+			self.uptime = datetime.utcnow()
+		await self.change_presence(activity=Game(name="yoribot.com"))
+		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
 
-        if ctx.command is None:
-            return
+	async def on_resumed(self):
+		await self.error_hook.send(embed=self.notice('Resumed...'))
 
-        async with ctx.acquire():
-            await self.invoke(ctx)
+	async def on_message(self, message):
+		if message.author.bot:
+			return
+		await self.process_commands(message)
 
-    async def on_message(self, message):
-        if message.author.bot:
-            return
-        await self.process_commands(message)
+	async def on_command_error(self, ctx, error):
+		if isinstance(error, commands.NoPrivateMessage):
+			await ctx.author.send('This command cannot be used in private messages.')
+		elif isinstance(error, commands.DisabledCommand):
+			await ctx.author.send('Sorry. This command is disabled and cannot be used.')
+		elif not isinstance(error, (commands.CheckFailure,
+		                            commands.CommandNotFound,
+		                            commands.UserInputError,
+		                            Forbidden)):
+			e = discord.Embed(title='Command Error', colour=0xcc3366)
+			e.add_field(name='Command Name', value=ctx.command.qualified_name)
+			e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')
 
-    async def close(self):
-        await super().close()
-        await self.session.close()
+			fmt = f'Channel: {ctx.channel} (ID: {ctx.channel.id})'
+			if ctx.guild:
+				fmt = f'{fmt}\nGuild: {ctx.guild} (ID: {ctx.guild.id})'
+			e.add_field(name='Location', value=fmt, inline=False)
+			exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, 4))
+			e.description = f'```py\n{exc}\n```'
+			e.timestamp = datetime.utcnow()
+			hook = self.error_hook
+			await hook.send(embed=e)
 
+	async def on_error(self, event_method, *args, **kwargs):
+		print("error")
+		print(event_method)
+		hook = self.error_hook
 
-    def success(self, description):
-        embed=discord.Embed(color=0x2ecc71,
-                                title = "✅ Success",
-                                description =description)
-        return embed
+		try:
+			e = Embed(title=f"Error in on_{event_method}", colour=0xcc3366)
+			exc = traceback.format_exc(-4)
+			e.description = f"```py\n{exc}\n```"
+			e.timestamp = datetime.utcnow()
+			await hook.send(embed=e)
+		except Exception as e:
+			print(e)
 
-    def notice(self, description):
-        embed=discord.Embed(color=0xe67e22,
-                                title = "❕ Notice",
-                                description = description)
-        return embed
+	def run(self):
+		super().run(token, reconnect=True)
 
-    def error(self, description):
-        embed=discord.Embed(color=0xe74c3c,
-                                title = "⚠ Error",
-                                description =description)
-        return embed
-
-
-        
-    def run(self):
-        super().run(config.token, reconnect=True)
-
-    @property
-    def config(self):
-        return __import__('config')
-
-    @commands.command(hidden=True)
-    @commands.is_owner()
-    async def do(self, ctx, times: int, *, command):
-        """Repeats a command a specified number of times."""
-        msg = copy.copy(ctx.message)
-        msg.content = command
-
-        new_ctx = await self.get_context(msg, cls=context.Context)
-        new_ctx.db = ctx.db
-
-        for i in range(times):
-            await new_ctx.reinvoke()

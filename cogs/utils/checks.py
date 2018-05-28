@@ -1,208 +1,101 @@
 from discord.ext import commands
 
 
-# The permission system of the bot is based on a "just works" basis
-# You have permissions and the bot has permissions. If you meet the permissions
-# required to execute the command (and the bot does as well) then it goes through
-# and you can execute the command.
-# Certain permissions signify if the person is a moderator (Manage Server) or an
-# admin (Administrator). Having these signify certain bypasses.
-# Of course, the owner will always be able to execute commands.
-
-async def check_permissions(ctx, perms, *, check=all):
-    is_owner = await ctx.bot.is_owner(ctx.author)
-    if is_owner:
-        return True
-
-
-async def check_guild_permissions(ctx, perms, *, check=all):
-    is_owner = await ctx.bot.is_owner(ctx.author)
-    if is_owner:
-        return True
-
-    if ctx.guild is None:
-        return False
-
-    resolved = ctx.author.guild_permissions
-    return check(getattr(resolved, name, None) == value for name, value in perms.items())
-
-
-def has_permissions(*, check=all, **perms):
-    async def pred(ctx):
-        return await check_permissions(ctx, perms, check=check)
-
-    return commands.check(pred)
-
-
-def has_guild_permissions(*, check=all, **perms):
-    async def pred(ctx):
-        return await check_guild_permissions(ctx, perms, check=check)
-
-    return commands.check(pred)
-
-
-def is_nsfw():
-    def pred(ctx):
-        return ctx.message.channel.is_nsfw()
-
-    return commands.check(pred)
-
-
-async def has_level(level, ctx):
-    is_owner = await ctx.bot.is_owner(ctx.author)
-    if is_owner:
-        return True
-
-    if ctx.author.id in [146893225850961920, 234353120455426048, 123900100081745922, 222738013971677184, 231947623093895169]:
-        levels = ["developer", "admin", "mod"]
-        return level in levels
-
-    admin = await check_guild_permissions(ctx, {'administrator': True})
-    if admin:
-        levels = ["admin", "mod"]
-        return level in levels
-
-    query = "SELECT * FROM mod_config WHERE guild_id = $1"
-    results = await ctx.db.fetch(query, ctx.guild.id)
-
-    mod_role = None
-    if results:
-        mod_role = results[0]["mod_role"]
-    else:
-        mod_role = None
-
-    for role in ctx.author.roles:
-        if role.id == mod_role:
-            levels = ["mod"]
-            return level in levels
-
-    return False
-
-
-def is_mod():
-    async def pred(ctx):
-        return await has_level("mod", ctx)
-
-    return commands.check(pred)
-
-
-def is_admin():
-    async def pred(ctx):
-        return await has_level("admin", ctx)
-
-    return commands.check(pred)
-
-
 def is_developer():
-    async def pred(ctx):
-        return await has_level("developer", ctx)
-
-    return commands.check(pred)
-
-
-def is_owner():
-    async def pred(ctx):
-        return await has_level("owner", ctx)
-
-    return commands.check(pred)
+	def check(ctx):
+		return has_level(ctx, "developer")
+	return commands.check(check)
 
 
 def is_guild_owner():
-    async def pred(ctx):
-        return ctx.author == ctx.guild.owner
+	def check(ctx):
+		return has_level(ctx, "guild_owner")
+	return commands.check(check)
 
-    return commands.check(pred)
+
+def is_admin():
+	def check(ctx):
+		return has_level(ctx, "admin")
+	return commands.check(check)
 
 
-def is_tweeter():
-    async def pref(ctx):
-        if ctx.message.author == ctx.guild.owner:
-            return True
-        query = "SELECT * FROM social_config WHERE guild_id = $1"
-        results = await ctx.db.fetch(query, ctx.guild.id)
-        tweeter_role = results[0]["tweeter_role_id"]
-        for role in ctx.author.roles:
-            if role.id == tweeter_role:
-                return True
-        return False
-
-    return commands.check(pref)
+def is_mod():
+	def check(ctx):
+		return has_level(ctx, "mod")
+	return commands.check(check)
 
 
 def is_greeter():
-    async def pref(ctx):
-        if ctx.message.author == ctx.guild.owner:
-            return True
-        has_mod = await has_level("mod", ctx)
-        if has_mod:
-            return True
-        query = "SELECT * FROM greet WHERE guild_id = $1"
-        results = await ctx.db.fetch(query, ctx.guild.id)
-        tweeter_role = results[0]["greeter_role_id"]
-        for role in ctx.author.roles:
-            if role.id == tweeter_role:
-                return True
-        return False
-
-    return commands.check(pref)
-
-def can_grant_over_18():
-    async def pref(ctx):
-        if ctx.message.author == ctx.guild.owner:
-            return True
-        has_mod = await has_level("mod", ctx)
-        if has_mod:
-            return True
-        query = "SELECT * FROM over_18 WHERE guild_id = $1"
-        results = await ctx.db.fetch(query, ctx.guild.id)
-        tweeter_role = results[0]["grant_over18_role_id"]
-        for role in ctx.author.roles:
-            if role.id == tweeter_role:
-                return True
-        return False
-
-    return commands.check(pref)
-
-def can_grant_over_18():
-    async def pref(ctx):
-        if ctx.message.author == ctx.guild.owner:
-            return True
-        has_mod = await has_level("mod", ctx)
-        if has_mod:
-            return True
-        query = "SELECT * FROM over_18 WHERE guild_id = $1"
-        results = await ctx.db.fetch(query, ctx.guild.id)
-        tweeter_role = results[0]["grant_over18_role_id"]
-        for role in ctx.author.roles:
-            if role.id == tweeter_role:
-                return True
-        return False
-
-    return commands.check(pref)
-
-def can_grant_under_18():
-    async def pref(ctx):
-        if ctx.message.author == ctx.guild.owner:
-            return True
-        has_mod = await has_level("mod", ctx)
-        if has_mod:
-            return True
-        query = "SELECT * FROM under_18 WHERE guild_id = $1"
-        results = await ctx.db.fetch(query, ctx.guild.id)
-        tweeter_role = results[0]["grant_under18_role_id"]
-        for role in ctx.author.roles:
-            if role.id == tweeter_role:
-                return True
-        return False
-
-    return commands.check(pref)
+	def check(ctx):
+		return has_level(ctx, "greeter")
+	return commands.check(check)
 
 
-def is_in_guilds(*guild_ids):
-    def predicate(ctx):
-        guild = ctx.guild
-        if guild is None:
-            return False
-        return guild.id in guild_ids
+async def has_level(ctx, level):
+	# OWNER #
+	author = ctx.author
+	if author is ctx.bot.is_owner(author):
+		return True
 
-    return commands.check(predicate)
+	# DEVELOPER #
+	if author.id in [123900100081745922]:
+		return level in ["developer",
+						 "guild_owner",
+						 "admin",
+						 "mod",
+						 "greeter", ]
+
+	# GUILD OWNER #
+	if author is ctx.guild.owner:
+		return level in ["guild_owner",
+						 "admin",
+						 "mod",
+						 "greeter", ]
+
+	# ADMIN #
+	if ctx.author.guild_permissions.administrator:
+		return level in ["admin",
+						 "mod",
+						 "greeter", ]
+
+	query = "SELECT admin_role_id FROM guild_config WHERE guild_id = $1"
+	admin_role_id = await ctx.bot.pool.fetchval(query, ctx.guild.id)  # Admin is permission or role
+	for role in ctx.author.roles:
+		if role.id == admin_role_id:
+			return level in ["admin",
+			                 "mod",
+			                 "greeter", ]
+
+	# MOD #
+	query = "SELECT mod_role_id FROM guild_config WHERE guild_id = $1"
+	mod_role_id = await ctx.bot.pool.fetchval(query, ctx.guild.id)
+	for role in ctx.author.roles:
+		if role.id == mod_role_id:
+			return level in ["mod",
+			                 "greeter", ]
+
+	# GREETER #
+	query = "SELECT greeter_role_id FROM guild_config WHERE guild_id = $1"
+	greeter_role_id = await ctx.bot.pool.fetchval(query, ctx.guild.id)
+	for role in ctx.author.roles:
+		if role.id == greeter_role_id:
+			return level in ["greeter", ]
+
+	return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
