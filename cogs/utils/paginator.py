@@ -45,6 +45,7 @@ class Pages:
 		self.maximum_pages = pages
 		self.embed = discord.Embed(colour=discord.Colour.blurple())
 		self.paginating = len(entries) > per_page
+		self.paginating = len(entries) > per_page
 		self.show_entry_count = show_entry_count
 		self.reaction_emojis = [
 			('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', self.first_page),
@@ -104,7 +105,6 @@ class Pages:
 			return
 
 		p.append('')
-		p.append('Confused? React with \N{INFORMATION SOURCE} for more info.')
 		self.embed.description = '\n'.join(p)
 		self.message = await self.channel.send(embed=self.embed)
 		for (reaction, _) in self.reaction_emojis:
@@ -356,8 +356,6 @@ class HelpPaginator(Pages):
 		self.description = inspect.getdoc(cog)
 		self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
 
-		# no longer need the database
-		await ctx.release()
 
 		return self
 
@@ -379,7 +377,6 @@ class HelpPaginator(Pages):
 			self.description = command.help or 'No help given.'
 
 		self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
-		await ctx.release()
 		return self
 
 	@classmethod
@@ -410,7 +407,6 @@ class HelpPaginator(Pages):
 
 		self = cls(ctx, nested_pages, per_page=1)  # this forces the pagination session
 		self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
-		await ctx.release()
 
 		# swap the get_page implementation with one that supports our style of pagination
 		self.get_page = self.get_bot_page
@@ -446,7 +442,8 @@ class HelpPaginator(Pages):
 			self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
 
 		if self.maximum_pages:
-			self.embed.set_author(name=f'Page {page}/{self.maximum_pages} ({self.total} commands)')
+			if self.maximum_pages > 1:
+				self.embed.set_author(name=f'Page {page}/{self.maximum_pages} ({self.total} commands)')
 
 		if not self.paginating:
 			return await self.channel.send(embed=self.embed)

@@ -12,7 +12,9 @@ from discord.ext import commands
 from cogs.utils import utils, dataIO
 from instance import token, new_server_hook, error_hook, db_uri
 
-initial_cogs = ["admin",
+initial_cogs = ["logs",
+                "prefix",
+                "utilities",
                 "developers",]
 
 
@@ -43,10 +45,11 @@ class YoriBot(commands.AutoShardedBot):
 		self.new_server_hook = utils.get_webhook(new_server_hook, self.session)
 
 		self.loop.create_task(self.__ainit__())
+		self.categories = {}
 
 	async def __ainit__(self):
 
-		self.pool = asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:
@@ -103,7 +106,7 @@ class YoriBot(commands.AutoShardedBot):
 		                            commands.CommandNotFound,
 		                            commands.UserInputError,
 		                            Forbidden)):
-			e = discord.Embed(title='Command Error', colour=0xcc3366)
+			e = Embed(title='Command Error', colour=0xcc3366)
 			e.add_field(name='Command Name', value=ctx.command.qualified_name)
 			e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')
 
@@ -133,4 +136,3 @@ class YoriBot(commands.AutoShardedBot):
 
 	def run(self):
 		super().run(token, reconnect=True)
-
