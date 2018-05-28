@@ -6,10 +6,6 @@ class Statistics:
 
 	def __init__(self, bot):
 		self.bot = bot
-		if "Other" not in self.bot.categories:
-			self.bot.categories["Other"] = [type(self).__name__]
-		elif type(self).__name__ not in self.bot.categories["Admin and Moderation"]:
-			self.bot.categories["Other"].append(type(self).__name__)
 
 	async def on_command(self, ctx):
 		query = "INSERT INTO statistics (guild_id, channel_id, author_id, prefix, command_name) VALUES ($1, $2, $3, $4, $5)"
