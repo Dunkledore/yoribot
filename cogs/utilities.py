@@ -31,6 +31,7 @@ class Utilities:
 				await ctx.invoke(ctx.command, cog_or_command_or_category=category_name)
 			next_page = [('\N{BLACK RIGHT-POINTING TRIANGLE}', pager.next_page)]
 			previous_page = [('\N{BLACK LEFT-POINTING TRIANGLE}', pager.previous_page)]
+			stop_pager = [('\N{BLACK SQUARE FOR STOP}', pager.stop_pages)]
 			reaction_emojis = [("1\u20e3", lambda: numbered_page(1)),
 			                ("2\u20e3", lambda: numbered_page(2)),
 			                ("3\u20e3", lambda: numbered_page(3)),
@@ -43,7 +44,7 @@ class Utilities:
 
 			pager.paginating = True
 			show_page_controls = len(entries) > 9
-			pager.reaction_emojis = (previous_page if show_page_controls else []) + reaction_emojis[:len(entries)] + (next_page if show_page_controls else [])
+			pager.reaction_emojis = (previous_page if show_page_controls else []) + reaction_emojis[:len(entries)] + (next_page if show_page_controls else []) + stop_pager
 		else:
 			if cog_or_command_or_category in self.bot.categories:
 				entries = self.bot.categories[cog_or_command_or_category]
@@ -57,6 +58,7 @@ class Utilities:
 
 				next_page = [('\N{BLACK RIGHT-POINTING TRIANGLE}', pager.next_page)]
 				previous_page = [('\N{BLACK LEFT-POINTING TRIANGLE}', pager.previous_page)]
+				stop_pager = [('\N{BLACK SQUARE FOR STOP}', pager.stop_pages)]
 				reaction_emojis = [("1\u20e3", lambda: numbered_page(1)),
 				                   ("2\u20e3", lambda: numbered_page(2)),
 				                   ("3\u20e3", lambda: numbered_page(3)),
@@ -67,9 +69,8 @@ class Utilities:
 				                   ("8\u20e3", lambda: numbered_page(8)),
 				                   ("9\u20e3", lambda: numbered_page(9))]
 
-
 				show_page_controls = len(entries) > 9
-				pager.reaction_emojis = (previous_page if show_page_controls else []) + reaction_emojis[:len(entries)] + (next_page if show_page_controls else [])
+				pager.reaction_emojis = (previous_page if show_page_controls else []) + reaction_emojis[:len(entries)] + (next_page if show_page_controls else []) + stop_pager
 				pager.paginating = True
 
 			else:

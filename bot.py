@@ -15,7 +15,7 @@ from instance import token, new_server_hook, error_hook, db_uri
 initial_cogs = ["logs",
                 "prefix",
                 "utilities",
-                "developers",]
+                "developers", ]
 
 
 def _prefix_callable(bot, msg):
@@ -24,7 +24,7 @@ def _prefix_callable(bot, msg):
 	if msg.guild is None:
 		base.append('*')
 	else:
-		base.extend(bot.prefixes.get(msg.guild.id, ['*']))
+		base.extend(bot.prefixes.get(str(msg.guild.id), ['*']))
 	return base
 
 
@@ -49,7 +49,7 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def __ainit__(self):
 
-		#self.pool = await asyncpg.create_pool(db_uri)
+		# self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:
@@ -64,22 +64,22 @@ class YoriBot(commands.AutoShardedBot):
 	@staticmethod
 	def success(description):
 		embed = Embed(color=0x2ecc71,
-		                      title="✅ Success",
-		                      description=description)
+		              title="✅ Success",
+		              description=description)
 		return embed
 
 	@staticmethod
 	def notice(description):
 		embed = Embed(color=0xe67e22,
-		                      title="❕ Notice",
-		                      description=description)
+		              title="❕ Notice",
+		              description=description)
 		return embed
 
 	@staticmethod
 	def error(description):
 		embed = Embed(color=0xe74c3c,
-		                      title="⚠ Error",
-		                      description=description)
+		              title="⚠ Error",
+		              description=description)
 		return embed
 
 	async def on_ready(self):
