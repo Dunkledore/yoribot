@@ -22,12 +22,12 @@ class Prefix:
 	@commands.guild_only()
 	@checks.is_admin()
 	async def prefix(self, ctx):
-		"""Contains commands for prefix management. Use help prefix for more information"""
+		"""See the prefixes for the guild"""
 		if str(ctx.guild.id) not in self.bot.prefixes:
 			self.bot.prefixes[str(ctx.guild.id)] = []
 
 		if not ctx.invoked_subcommand:
-			base_prefixes = [f"<@{self.bot.user.id}>", f"<@!{self.bot.user.id}>"]
+			base_prefixes = [f"<@{self.bot.user.id}>"]
 			prefixes = self.bot.prefixes[str(ctx.guild.id)]
 			if not prefixes:
 				usable_prefixes = base_prefixes.append["*"]
@@ -36,7 +36,7 @@ class Prefix:
 			embed = Embed(title=f"Prefixes for {ctx.guild.name}", description="\n".join(usable_prefixes))
 			await ctx.send(embed=embed)
 
-	@commands.command()
+	@commands.command(aliases=['prefix_add'])
 	@commands.guild_only()
 	@checks.is_mod()
 	async def add_prefix(self, ctx, *, prefix):
@@ -49,9 +49,9 @@ class Prefix:
 		else:
 			self.bot.prefixes[str(ctx.guild.id)].append(prefix)
 			self.bot.save_prefixes()
-			await self.bot.send(embed=self.bot.success(f"{prefix} added"))
+			await ctx.send(embed=self.bot.success(f"{prefix} added"))
 
-	@commands.command(aliases=['delete_prefix'])
+	@commands.command(aliases=['delete_prefix', 'prefix_delete', 'prefix_remove'])
 	@checks.is_admin()
 	@commands.guild_only()
 	async def remove_prefix(self, ctx, *, prefix):
