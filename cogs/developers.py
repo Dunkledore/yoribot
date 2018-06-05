@@ -188,7 +188,7 @@ class Developers:
 		await self.bot.wait_until_ready()
 		count = 0
 		while True:
-			asyncio.sleep(30)
+			asyncio.sleep(600)
 
 			presenceText = ""
 			if count == 0:

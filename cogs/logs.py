@@ -1,11 +1,9 @@
 from discord.ext import commands
 from .utils import checks, utils
-from ..instance import root_website
 from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction
 import asyncpg
 import datetime
 import asyncio
-
 
 
 class Logs:
@@ -90,12 +88,7 @@ class Logs:
 		if not log_channel:
 			return
 
-
-		query = "INSERT into event_logs (action, target_id, user_id, guild_id VALUES ($1, $2, $3, $4) RETURNING ID"
-		log_id = await self.bot.pool.fetchval(query, "join", member.id, None, member.guild.id)
-
-		created = (datetime.datetime.utcnow()-
-		           member.created_at).total_seconds()//60
+		created = (datetime.datetime.utcnow()-member.created_at).total_seconds()//60
 		if created < 30:
 			colour = 0xdda453
 		else:
@@ -122,7 +115,7 @@ class Logs:
 		query = "SELECT guild_id FROM log_config WHERE mod_participation = $1"
 		participating_guilds = await self.bot.pool.fetch(query, True)
 		participating_guilds = [participating_guild["guild_id"] for participating_guild in participating_guilds]
-		query = f'SELECT DISTINCT guild_id FROM event_logs WHERE (target_id = $1) and (guild_id in {tuple(participating_mod_log_guilds)})'
+		query = f'SELECT DISTINCT guild_id FROM event_logs WHERE (target_id = $1) and (guild_id in {tuple(participating_guilds)})'
 		guilds_id_with_logs = await self.bot.pool.fetch(query, member.id)
 		guilds_with_logs = []
 		for guild_id in guilds_id_with_logs:
@@ -130,7 +123,8 @@ class Logs:
 			guilds_with_logs.append(guild)
 
 		if guilds_with_logs:
-			embed.add_field(name="Mod Logs", value="\n".join([f'[{guild.name}]({root_website}/logs/{guild.id}/{member.id}' for guild in guilds_with_logs]))
+			embed.add_field(name="Mod Logs", value="\n".join(
+				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id}' for guild in guilds_with_logs]))
 
 		await log_channel.send(embed=embed)
 
@@ -166,12 +160,12 @@ class Logs:
 		embed.add_field(name="Username", value=f'{user.name}{user.discriminator} - {user.mention}')
 		embed.add_field(name="User ID", value=f'{user.id}')
 		embed.timestamp = datetime.datetime.utcnow()
-		banner, reason = await self.get_ban_info()
+		banner, reason = await self.get_ban_info(guild, user)
 		embed.add_field(name="Banned by", value=banner)
 		embed.add_field(name="Reason", value=reason)
 
-		embed.add_field(name="Message History", value=f"[View Message History]({root_website}/messages/{guild.id)}/{member.id})")
-
+		embed.add_field(name="Message History",
+		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{member.id})")
 
 	async def on_member_unban(self, guild, user):
 		pass
@@ -197,9 +191,6 @@ class Logs:
 
 		await log_channel.send(embed=embed)
 
-
-
-
 	async def on_message_edit(self, before, after):
 		query = "UPDATE message_logs SET status = $1, content = $2 WHERE message_id = $3"
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
@@ -221,7 +212,6 @@ class Logs:
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
-
 
 	# Utilities
 
@@ -254,7 +244,6 @@ class Logs:
 			except Forbidden:
 				pass
 		return banned_in
-
 
 	async def track_invites(self):
 		await self.bot.wait_until_ready()
@@ -289,12 +278,9 @@ class Logs:
 						ban_info.reason)
 				else:
 					reasonbanned = "No Reason Provided"
-			return (banner.mention, reasonbanned)
+			return banner.mention, reasonbanned
 		except Forbidden:
-			return ("No access to Audit Logs", "No access to Audit Logs")
-
-
-
+			return "No access to Audit Logs", "No access to Audit Logs"
 
 
 def setup(bot):

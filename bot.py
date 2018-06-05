@@ -11,7 +11,7 @@ from discord import Embed, Game, Forbidden, Game
 from discord.ext import commands
 
 from cogs.utils import utils, dataIO
-from instance import token, new_server_hook, error_hook, db_uri
+from instance import token, new_server_hook, error_hook, db_uri, root_website
 
 initial_cogs = ["logs",
                 "prefix",
@@ -46,12 +46,13 @@ class YoriBot(commands.AutoShardedBot):
 		self.new_server_hook = utils.get_webhook(new_server_hook, self.session)
 
 		self.loop.create_task(self.__ainit__())
-		self.loop.create_task(self.rotate_presence())
 		self.categories = {}
+
+		self.root_website = root_website
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		# self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:
@@ -60,17 +61,6 @@ class YoriBot(commands.AutoShardedBot):
 				print(f'Failed to load extension {extension}.', file=sys.stderr)
 				traceback.print_exc()
 
-	async def rotate_presence(self):
-		await self.wait_until_ready()
-		while True:
-			await self.change_presence(activity=Game(name="yoribot.com"))
-			asyncio.sleep(30)
-			await self.change_presence(activity=Game(name="@Yori Help"))
-			asyncio.sleep(30)
-			await self.change_presence(activity=Game(name=f'Users: {len(self.guilds)}'))
-			asyncio.sleep(30)
-			await self.change_presence(activity=Game(name=f'Guilds: {len(self.users)}'))
-			asyncio.sleep(30)
 	def save_prefixes(self):
 		dataIO.save_json("data/prefixes/prefixes.json", self.prefixes)
 
