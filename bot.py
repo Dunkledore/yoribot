@@ -51,7 +51,7 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def __ainit__(self):
 
-		# self.pool = await asyncpg.create_pool(db_uri)
+		self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:
