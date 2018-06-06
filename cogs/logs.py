@@ -152,12 +152,13 @@ class Logs:
 		if not log_channel:
 			return
 
-		embed = Embed(title=f'User Joined', colour=0xFFA500)
+		embed = Embed(title=f'User Left', colour=0xFFA500)
 		embed.add_field(name="User", value=member.mention)
 		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		embed.set_footer(text='Left')
+		embed.add_field(name='Was a member since', value=yoriutils.human_timedelta(member.joined_at), inline=False)
 		await log_channel.send(embed=embed)
 
 	async def on_member_ban(self, guild, user):
