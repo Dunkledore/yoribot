@@ -114,7 +114,7 @@ class Logs:
 
 		query = "SELECT guild_id FROM log_config WHERE mod_participation = $1"
 		participating_guilds = await self.bot.pool.fetch(query, True)
-		participating_guilds = [participating_guild["guild_id"] for participating_guild in participating_guilds]
+		participating_guilds = [participating_guild["guild_id"] for participating_guild in participating_guilds] + [0]
 		query = f'SELECT DISTINCT guild_id FROM event_logs WHERE (target_id = $1) and (guild_id in {tuple(participating_guilds)})'
 		guilds_id_with_logs = await self.bot.pool.fetch(query, member.id)
 		guilds_with_logs = []
