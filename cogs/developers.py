@@ -16,7 +16,7 @@ class Developers:
 		self.bot = bot
 		self.divisor = 1
 		self.bot.loop.create_task(self.error())
-		#self.bot.loop.create_task(self.statuses())
+		self.bot.loop.create_task(self.statuses())
 
 	# Database #
 
