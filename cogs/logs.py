@@ -224,7 +224,7 @@ class Logs:
 			most_recent_used_invites = []
 			previous_invites = self.invites.get(guild)
 			if previous_invites:
-				current_invites = await guild.invite()
+				current_invites = await guild.invites()
 				for new_invite in current_invites:
 					previous_invite = utils.get(previous_invites, code=new_invite.code)
 					if previous_invite:
