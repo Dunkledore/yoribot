@@ -183,6 +183,8 @@ class Logs:
 		embed.add_field(name="Message History",
 		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id})")
 
+		await log_channel.send(embed=embed)
+
 	async def on_member_unban(self, guild, user):
 		pass
 
