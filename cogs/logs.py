@@ -114,14 +114,14 @@ class Logs:
 		embed.add_field(name="Inviter", value=inviter)
 		embed.add_field(name="Number of invite uses",value=no_uses)
 
-		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
+
 
 		bans = await self.get_yori_bans(member)
 		if bans:
 			embed.colour = 0xdda453
-			embed.add_field(name="Servers Banned In:", value="\n".join([guild.name for guild in bans]))
+			embed.add_field(name="Servers Banned In:", value="\n".join([guild.name for guild in bans]), inline=False)
 		else:
-			embed.add_field(name="Servers Banned In:", value="None")
+			embed.add_field(name="Servers Banned In:", value="None", inline=False)
 
 		query = "SELECT guild_id FROM log_config WHERE mod_participation = $1"
 		participating_guilds = await self.bot.pool.fetch(query, True)
@@ -138,6 +138,7 @@ class Logs:
 			embed.add_field(name="Mod Logs", value="\n".join(
 				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id})' for guild in guilds_with_logs]), inline=False)
 
+		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at), inline=False)
 		await log_channel.send(embed=embed)
 
 	async def on_member_remove(self, member):
