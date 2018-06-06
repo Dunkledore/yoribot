@@ -97,20 +97,26 @@ class Logs:
 		embed = Embed(title=f'User Joined - Mod Report #{log_id}', colour=colour)  # TODO Colour
 		embed.add_field(name="Username", value=f'{member.name}{member.discriminator} - {member.mention}')
 		embed.add_field(name="User ID", value=f'{member.id}')
-		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
+
 		embed.timestamp = datetime.datetime.utcnow()
 
 		invites = await self.get_most_recent_used_invites_for_guild(member.guild)
 		if not invites:
 			invite = "Unknown"
+			inviter = "Unknown"
 		else:
 			invite = "\n".join(invites)
+			inviter = "\n".join([invite.inviter or "Widget" for invite in invites])
 		embed.add_field(name='Invite', value=invite)
+
+		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
 
 		bans = await self.get_yori_bans(member)
 		if bans:
 			embed.colour = 0xdda453
 			embed.add_field(name="Servers Banned In:", value="\n".join([guild.name for guild in bans]), inline=False)
+		else:
+			embed.add_field(name="Servers Banned In:", value="None")
 
 		query = "SELECT guild_id FROM log_config WHERE mod_participation = $1"
 		participating_guilds = await self.bot.pool.fetch(query, True)
