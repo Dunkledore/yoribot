@@ -80,8 +80,13 @@ class Logs:
 
 		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE id = $3"
 		await self.bot.pool.execute(query, ctx.author.id, reason, log_number)
+		query = "SELECT member_log_channel FROM log_config WHERE guild_id = $1"
+		log_channel_id = await self.bot.pool.fetchval(query, ctx.guild.id)
+		channel = self.bot.get_channel(log_channel_id)
+		if not channel:
+			return
 
-		log_report_message = await ctx.guild.get_message(report["report_message_id"])
+		log_report_message = await channel.get_message(report["report_message_id"])
 		if not log_report_message:
 			return
 
