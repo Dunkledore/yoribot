@@ -207,8 +207,10 @@ class Logs:
 		embed.add_field(name="User ID", value=f'{after.author.id}')
 		embed.add_field(name="Channel", value=f'{after.channel.mention}')
 		embed.add_field(name="Channel ID", value=f'{after.channel.id}')
-		embed.add_field(name="Original Message Content", value=before.content, inline=False)
-		embed.add_field(name="New Message Content", value=after.content, inline=False)
+		if before.content:
+			embed.add_field(name="Original Message Content", value=before.content, inline=False)
+		if after.content:
+			embed.add_field(name="New Message Content", value=after.content, inline=False)
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
