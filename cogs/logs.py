@@ -112,7 +112,7 @@ class Logs:
 			no_uses = "\n".join([invite.uses for invite in invites])
 		embed.add_field(name='Invite', value=invite_code)
 		embed.add_field(name="Inviter", value=inviter)
-		emebd.add_field(name="Number of invite uses",value=no_uses)
+		embed.add_field(name="Number of invite uses",value=no_uses)
 
 		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
 
