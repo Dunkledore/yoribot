@@ -56,7 +56,7 @@ class Developers:
 
 		if len(results) == 0:
 			embed = self.bot.success(f'`{results}`')
-			embed.set_footer(f'Took {start-end:.2f}ms')
+			embed.set_footer(text=f'Took {start-end:.2f}ms')
 			return await ctx.send(embed=embed)
 
 		headers = list(results[0].keys())
@@ -73,7 +73,7 @@ class Developers:
 			await ctx.send(file=File(fp, 'results.txt'))
 		else:
 			embed = self.bot.success(fmt)
-			embed.set_footer(f'Took {start-end:.2}fms')
+			embed.set_footer(text=f'Took {start-end:.2}fms')
 			await ctx.send(embed=embed)
 
 	# Deliberate Errors #
