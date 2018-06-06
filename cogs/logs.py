@@ -1,5 +1,5 @@
 from discord.ext import commands
-from .utils import checks, utils
+from .utils import checks, utils as yoriutils
 from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction
 import asyncpg
 import datetime
@@ -97,7 +97,7 @@ class Logs:
 		embed = Embed(title=f'User Joined - Mod Report #{log_id}', colour=colour)  # TODO Colour
 		embed.add_field(name="Username", value=f'{member.name}{member.discriminator} - {member.mention}')
 		embed.add_field(name="User ID", value=f'{member.id}')
-		embed.add_field(name='Created', value=utils.human_timedelta(member.created_at))
+		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
 		embed.timestamp = datetime.datetime.utcnow()
 
 		invites = await self.get_most_recent_used_invites_for_guild(member.guild)
