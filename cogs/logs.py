@@ -95,7 +95,8 @@ class Logs:
 			colour = 0x53dda4
 
 		embed = Embed(title=f'User Joined - Mod Report #{log_id}', colour=colour)  # TODO Colour
-		embed.add_field(name="Username", value=f'{member.name}{member.discriminator} - {member.mention}')
+		embed.add_field(name="User", value=member.mention)
+		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 
 		embed.timestamp = datetime.datetime.utcnow()
@@ -107,15 +108,15 @@ class Logs:
 		else:
 			invite = "\n".join(invites)
 			inviter = "\n".join([invite.inviter or "Widget" for invite in invites])
-		embed.add_field(name='Invite', value=invite, inline=False)
+		embed.add_field(name='Invite', value=invite)
 		embed.add_field(name="Inviter", value=inviter)
 
-		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at), inline=False)
+		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
 
 		bans = await self.get_yori_bans(member)
 		if bans:
 			embed.colour = 0xdda453
-			embed.add_field(name="Servers Banned In:", value="\n".join([guild.name for guild in bans]), inline=False)
+			embed.add_field(name="Servers Banned In:", value="\n".join([guild.name for guild in bans]))
 		else:
 			embed.add_field(name="Servers Banned In:", value="None")
 
@@ -132,7 +133,7 @@ class Logs:
 
 		if guilds_with_logs:
 			embed.add_field(name="Mod Logs", value="\n".join(
-				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id})' for guild in guilds_with_logs]))
+				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id})' for guild in guilds_with_logs]), inline=False)
 
 		await log_channel.send(embed=embed)
 
