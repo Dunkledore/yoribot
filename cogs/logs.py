@@ -163,7 +163,7 @@ class Logs:
 	async def on_member_ban(self, guild, user):
 
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
-		log_id = await self.bot.pool.fetchval(query, "join", user.id, None, guild.id)
+		log_id = await self.bot.pool.fetchval(query, "ban", user.id, None, guild.id)
 
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
 		log_channel_id = await self.bot.pool.fetchval(query, guild.id)
@@ -181,7 +181,7 @@ class Logs:
 		embed.add_field(name="Reason", value=reason)
 
 		embed.add_field(name="Message History",
-		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{member.id})")
+		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id})")
 
 	async def on_member_unban(self, guild, user):
 		pass
