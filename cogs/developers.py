@@ -62,7 +62,7 @@ class Developers:
 		headers = list(results[0].keys())
 		table = PrettyTable(headers)
 		for row in results:
-			table.add_row(row.values())
+			table.add_row(list(row.values()))
 		table = table.get_string()
 
 		fmt = f'```\n{table}\n```'
