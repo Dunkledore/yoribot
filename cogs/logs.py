@@ -157,7 +157,6 @@ class Logs:
 		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 		embed.timestamp = datetime.datetime.utcnow()
-		embed.set_footer(text='Left')
 		embed.add_field(name='Was a member since', value=yoriutils.human_timedelta(member.joined_at), inline=False)
 		await log_channel.send(embed=embed)
 
@@ -172,8 +171,9 @@ class Logs:
 		if not log_channel:
 			return
 
-		embed = Embed(title=f'User Joined - Mod Report #{log_id}', color=0xdf2a2a)
-		embed.add_field(name="Username", value=f'{user.name}{user.discriminator} - {user.mention}')
+		embed = Embed(title=f'User Banned - Mod Report #{log_id}', color=0xdf2a2a)
+		embed.add_field(name="User", value=user.mention)
+		embed.add_field(name="Username", value =f'{user.name}#{user.discriminator}')
 		embed.add_field(name="User ID", value=f'{user.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		banner, reason = await self.get_ban_info(guild, user)
@@ -306,13 +306,16 @@ class Logs:
 
 	@commands.command()
 	@checks.is_developer()
-	async def fakeevent(self, ctx, event):
+	async def fake(self, ctx, event):
 		if event == "on_member_join":
 			func = getattr(self, "on_member_join")
 			await func(ctx.author)
 		if event == "on_member_remove":
 			func = getattr(self, "on_member_remove")
 			await func(ctx.author)
+		if event == "on_member_ban":
+			func = getattr(self, "on_member_ban")
+			await func(ctx.guild, ctx.author)
 
 
 
