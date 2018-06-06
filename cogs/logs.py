@@ -103,13 +103,16 @@ class Logs:
 
 		invites = await self.get_most_recent_used_invites_for_guild(member.guild)
 		if not invites:
-			invite = "Unknown"
+			invite_code = "Unknown"
 			inviter = "Unknown"
+			no_uses = "Unknown"
 		else:
-			invite = "\n".join(invites)
+			invite_code = "\n".join(invites)
 			inviter = "\n".join([invite.inviter or "Widget" for invite in invites])
-		embed.add_field(name='Invite', value=invite)
+			no_uses = "\n".join([invite.uses for invite in invites])
+		embed.add_field(name='Invite', value=invite_code)
 		embed.add_field(name="Inviter", value=inviter)
+		emebd.add_field(name="Number of invite uses",value=no_uses)
 
 		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
 
