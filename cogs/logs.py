@@ -83,7 +83,7 @@ class Logs:
 		log_id = await self.bot.pool.fetchval(query, "join", member.id, None, member.guild.id)
 
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
-		log_channel_id = await self.bot.pool.fetchval(query)
+		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
@@ -131,7 +131,7 @@ class Logs:
 	async def on_member_remove(self, member):
 
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
-		log_channel_id = await self.bot.pool.fetchval(query)
+		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
@@ -151,7 +151,7 @@ class Logs:
 		log_id = await self.bot.pool.fetchval(query, "join", user.id, None, guild.id)
 
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
-		log_channel_id = await self.bot.pool.fetchval(query)
+		log_channel_id = await self.bot.pool.fetchval(query, guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
@@ -175,7 +175,7 @@ class Logs:
 		await self.bot.pool.execute(query, "deleted", message.id)
 
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
-		log_channel_id = await self.bot.pool.fetchval(query)
+		log_channel_id = await self.bot.pool.fetchval(query, message.channe.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
@@ -196,7 +196,7 @@ class Logs:
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
 
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
-		log_channel_id = await self.bot.pool.fetchval(query)
+		log_channel_id = await self.bot.pool.fetchval(query, before.channel.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
