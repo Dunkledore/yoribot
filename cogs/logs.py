@@ -107,10 +107,10 @@ class Logs:
 		else:
 			invite = "\n".join(invites)
 			inviter = "\n".join([invite.inviter or "Widget" for invite in invites])
-		embed.add_field(name='Invite', value=invite)
+		embed.add_field(name='Invite', value=invite, inline=False)
 		embed.add_field(name="Inviter", value=inviter)
 
-		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at))
+		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at), inline=False)
 
 		bans = await self.get_yori_bans(member)
 		if bans:
