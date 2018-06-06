@@ -25,7 +25,7 @@ class Logs:
 	@checks.is_admin()
 	async def start_message_logs(self, ctx, channel: TextChannel):
 
-		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id VALUES ($1, $2)"
+		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET message_log_channel_id = $1 WHERE guild_id = $2"
 
 		try:
@@ -40,7 +40,7 @@ class Logs:
 	@checks.is_admin()
 	async def start_member_logs(self, ctx, channel: TextChannel):
 
-		insertquery = "INSERT INTO log_config (guild_id, member_log_channel_id VALUES ($1, $2)"
+		insertquery = "INSERT INTO log_config (guild_id, member_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET member_log_channel_id = $1 WHERE guild_id = $2"
 
 		try:
@@ -55,7 +55,7 @@ class Logs:
 	@checks.is_admin()
 	async def start_invite_logs(self, ctx, channel: TextChannel):
 
-		insertquery = "INSERT INTO log_config (guild_id, invite_log_channel_id VALUES ($1, $2)"
+		insertquery = "INSERT INTO log_config (guild_id, invite_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET invite_log_channel_id = $1 WHERE guild_id = $2"
 
 		try:
