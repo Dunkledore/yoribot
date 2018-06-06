@@ -119,7 +119,7 @@ class Logs:
 		guilds_id_with_logs = await self.bot.pool.fetch(query, member.id)
 		guilds_with_logs = []
 		for guild_id in guilds_id_with_logs:
-			guild = self.bot.get_guild(guild_id)
+			guild = self.bot.get_guild(guild_id["guild_id"])
 			if guild:
 				guilds_with_logs.append(guild)
 
