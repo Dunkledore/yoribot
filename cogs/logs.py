@@ -192,6 +192,8 @@ class Logs:
 		await log_channel.send(embed=embed)
 
 	async def on_message_edit(self, before, after):
+		if before.author is self.bot.user:
+			return
 		query = "UPDATE message_logs SET status = $1, content = $2 WHERE message_id = $3"
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
 
