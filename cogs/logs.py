@@ -286,6 +286,15 @@ class Logs:
 		except Forbidden:
 			return "No access to Audit Logs", "No access to Audit Logs"
 
+	# Temporary to for events
+
+	@commands.command()
+	@checks.is_developer()
+	async def fakeevent(self, ctx, event):
+		if event == "on_member_join":
+			func = getattr(self, "on_member_join")
+			await func(ctx.author)
+
 
 def setup(bot):
 	bot.add_cog(Logs(bot))
