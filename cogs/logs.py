@@ -125,7 +125,7 @@ class Logs:
 
 		if guilds_with_logs:
 			embed.add_field(name="Mod Logs", value="\n".join(
-				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id}' for guild in guilds_with_logs]))
+				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id})' for guild in guilds_with_logs]))
 
 		await log_channel.send(embed=embed)
 
