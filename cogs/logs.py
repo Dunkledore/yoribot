@@ -217,9 +217,10 @@ class Logs:
 		embed.add_field(name="Message History",
 		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id}) \n [View Member Logs]({self.bot.root_website}/logs/{guild.id}/{user.id})")
 
-		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE id = $3"
-		await self.bot.pool.execute(query, banner.id, reason, log_id)
-		await log_channel.send(embed=embed)
+		report_messgae = await log_channel.send(embed=embed)
+		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id WHERE id = $3"
+		await self.bot.pool.execute(query, banner.id, reason, report_message.id, log_id)
+
 
 	async def on_member_unban(self, guild, user):
 		pass
