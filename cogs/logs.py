@@ -107,7 +107,7 @@ class Logs:
 			inviter = "Unknown"
 			no_uses = "Unknown"
 		else:
-			invite_code = "\n".join(invites)
+			invite_code = "\n".join([invite.code for invite in invites])
 			inviter = "\n".join([invite.inviter or "Widget" for invite in invites])
 			no_uses = "\n".join([invite.uses for invite in invites])
 		embed.add_field(name='Invite', value=invite_code)
