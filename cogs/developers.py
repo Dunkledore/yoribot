@@ -30,7 +30,7 @@ class Developers:
 		              "CREATE TABLE IF NOT EXISTS log_config (guild_id BIGINT PRIMARY KEY, member_log_channel_id BIGINT, "
 		              "message_log_channel_id BIGINT, invite_log_channel_id BIGINT, mod_participation BOOL)",
 		              "CREATE TABLE IF NOT EXISTS event_logs (id SERIAL, action TEXT, target_id BIGINT, "
-		              "user_id BIGINT, guild_id BIGINT, time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())",
+		              "user_id BIGINT, guild_id BIGINT, reason TEXT, report_message_id BIGINT, time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())",
 		              "CREATE TABLE IF NOT EXISTS message_logs (message_id BIGINT PRIMARY KEY, content TEXT, author_id "
 		              "BIGINT, "
 		              "channel_id BIGINT, guild_id BIGINT, status TEXT, time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW())"

@@ -66,6 +66,35 @@ class Logs:
 		await ctx.send(embed=self.bot.success(f'Now sending invite logs to {channel.mention}. To stop sending invite '
 		                                      'logs, delete the channel '))
 
+	@commands.command()
+	@checks.is_mod()
+	async def update_log(self, ctx, log_number, reason):
+		query = "SELECT * from event_logs WHERE id = $1"
+		report = await self.bot.pool.fetchrow(query, log_number)
+
+		if not report:
+			return await ctx.send(embed=self.bot.error("This is not a valid report"))
+
+		if report["guild_id"] != ctx.guild.id:
+			return await ctx.send(embed=self.bot.error("This report does not belong to this guild"))
+
+		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE log_id = $3"
+		await self.bot.pool.execute(query, ctx.author.id, reason, log_number)
+
+		log_report_message = await ctx.guild.get_message(report["report_message_id"])
+		if not log_report_message:
+			return
+
+		embed = log_report_message.embeds[0]
+		for field in embed.fields:
+			if field.name == "Banned By":
+				field.value = ctx.author.mention
+			if field.name == "Reason":
+				field.value = reason
+		await log_report_message.edit(embed=embed)
+
+
+
 	# Events
 
 	async def on_guild_channel_delete(self, channel):  # Kind of like and auto firing commands
@@ -177,12 +206,14 @@ class Logs:
 		embed.add_field(name="User ID", value=f'{user.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		banner, reason = await self.get_ban_info(guild, user)
-		embed.add_field(name="Banned by", value=banner)
+		embed.add_field(name="Banned by", value=banner.mention)
 		embed.add_field(name="Reason", value=reason)
 
 		embed.add_field(name="Message History",
-		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id})")
+		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id}) \n [View Member Logs]({self.bot.root_website}/logs/{guild.id}/{user.id})")
 
+		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE id = $3"
+		await self.bot.pool.execute(query, banner.id, reason, log_id)
 		await log_channel.send(embed=embed)
 
 	async def on_member_unban(self, guild, user):
@@ -300,7 +331,7 @@ class Logs:
 						ban_info.reason)
 				else:
 					reasonbanned = "No Reason Provided"
-			return banner.mention, reasonbanned
+			return banner, reasonbanned
 		except Forbidden:
 			return "No access to Audit Logs", "No access to Audit Logs"
 
