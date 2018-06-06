@@ -94,7 +94,7 @@ class Logs:
 		else:
 			colour = 0x53dda4
 
-		embed = Embed(title=f'User Joined - Mod Report #{log_id}', colour=colour)  # TODO Colour
+		embed = Embed(title=f'User Joined', colour=colour)
 		embed.add_field(name="User", value=member.mention)
 		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
@@ -143,19 +143,21 @@ class Logs:
 
 	async def on_member_remove(self, member):
 
+		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
+		log_id = await self.bot.pool.fetchval(query, "left", member.id, None, member.guild.id)
+
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
 		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
 
-		embed = Embed(color=0xFFA500, title="📤 Member Left")
+		embed = Embed(title=f'User Joined', colour=0xFFA500)
+		embed.add_field(name="User", value=member.mention)
+		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
+		embed.add_field(name="User ID", value=f'{member.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		embed.set_footer(text='Left')
-		embed.set_author(name=str(member), icon_url=member.avatar_url)
-		embed.add_field(name='ID', value=member.id)
-		embed.add_field(name='Member', value=member.mention)
-		embed.set_thumbnail(url=member.avatar_url)
 		await log_channel.send(embed=embed)
 
 	async def on_member_ban(self, guild, user):
@@ -307,6 +309,10 @@ class Logs:
 		if event == "on_member_join":
 			func = getattr(self, "on_member_join")
 			await func(ctx.author)
+		if event == "on_member_remove":
+			func = getattr(self, "on_member_remove")
+			await func(ctx.author)
+
 
 
 def setup(bot):
