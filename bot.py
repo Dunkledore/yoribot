@@ -13,7 +13,7 @@ from discord.ext import commands
 from cogs.utils import utils, dataIO
 from instance import token, new_server_hook, error_hook, db_uri, root_website
 
-initial_cogs = []
+initial_cogs = ["developers"]
 
 
 def _prefix_callable(bot, msg):
