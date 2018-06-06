@@ -68,7 +68,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_mod()
-	async def update_log(self, ctx, log_number, reason):
+	async def update_log(self, ctx, log_number : int, *, reason):
 		query = "SELECT * from event_logs WHERE id = $1"
 		report = await self.bot.pool.fetchrow(query, log_number)
 
