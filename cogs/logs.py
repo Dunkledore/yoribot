@@ -120,7 +120,8 @@ class Logs:
 		guilds_with_logs = []
 		for guild_id in guilds_id_with_logs:
 			guild = self.bot.get_guild(guild_id)
-			guilds_with_logs.append(guild)
+			if guild:
+				guilds_with_logs.append(guild)
 
 		if guilds_with_logs:
 			embed.add_field(name="Mod Logs", value="\n".join(
