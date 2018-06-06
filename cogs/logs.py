@@ -112,7 +112,7 @@ class Logs:
 			no_uses = "\n".join([invite.uses for invite in invites])
 		embed.add_field(name='Invite', value=invite_code)
 		embed.add_field(name="Inviter", value=inviter)
-		embed.add_field(name="Number of invite uses",value=no_uses)
+		embed.add_field(name="Number of invite uses", value=no_uses)
 
 
 
@@ -242,13 +242,13 @@ class Logs:
 					previous_invite = utils.get(previous_invites, code=new_invite.code)
 					if previous_invite:
 						if previous_invite.uses < new_invite.uses:
-							most_recent_used_invites.append(f'{new_invite.code} - {new_invite.inviter or "Widget"}')
+							most_recent_used_invites.append(new_invite)
 					elif new_invite.uses > 0:
-						most_recent_used_invites.append(f'{new_invite.code} - {new_invite.inviter or "Widget"}')
+						most_recent_used_invites.append(new_invite)
 
 			return most_recent_used_invites
 		except Forbidden:
-			return ["Unknown - Please enable the Manage Guild Permission"]
+			return []
 
 	async def get_yori_bans(self, user):
 		banned_in = []
