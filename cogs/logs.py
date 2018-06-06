@@ -174,7 +174,7 @@ class Logs:
 		query = "UPDATE message_logs SET status = $1 WHERE message_id = $2"
 		await self.bot.pool.execute(query, "deleted", message.id)
 
-		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
+		query = "SELECT message_log_channel_id FROM log_config WHERE guild_id = $1"
 		log_channel_id = await self.bot.pool.fetchval(query, message.channe.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
@@ -195,7 +195,7 @@ class Logs:
 		query = "UPDATE message_logs SET status = $1, content = $2 WHERE message_id = $3"
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
 
-		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
+		query = "SELECT message_log_channel_id FROM log_config WHERE guild_id = $1"
 		log_channel_id = await self.bot.pool.fetchval(query, before.channel.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
