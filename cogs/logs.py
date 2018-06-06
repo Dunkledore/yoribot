@@ -78,7 +78,7 @@ class Logs:
 		if report["guild_id"] != ctx.guild.id:
 			return await ctx.send(embed=self.bot.error("This report does not belong to this guild"))
 
-		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE log_id = $3"
+		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE id = $3"
 		await self.bot.pool.execute(query, ctx.author.id, reason, log_number)
 
 		log_report_message = await ctx.guild.get_message(report["report_message_id"])
