@@ -13,8 +13,7 @@ from discord.ext import commands
 from cogs.utils import utils, dataIO
 from instance import token, new_server_hook, error_hook, db_uri, root_website
 
-initial_cogs = ["logs",
-                "prefix",
+initial_cogs = ["prefix",
                 "utilities",
                 "developers", ]
 
