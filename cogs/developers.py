@@ -23,16 +23,18 @@ class Developers:
 	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def updatetables(self, ctx):
-		statements = ["CREATE TABLE IF NOT EXISTS guild_config (guild_id BIGINT PRIMARY_KEY, mod_role_id BIGINT, "
+		statements = ["CREATE TABLE IF NOT EXISTS guild_config (guild_id BIGINT PRIMARY KEY, mod_role_id BIGINT, "
 		              "admin_role_id BIGINT, greeter_role_id BIGINT",
 		              "CREATE TABLE IF NOT EXISTS statistics (id SERIAL, guild_id BIGINT, channel_id BIGINT, author_id "
 		              "BIGINT, time timestamp with time zone DEFAULT current_timestamp, prefix TEXT, command_name TEXT",
-		              "CREATE TABLE IF NOT EXISTS log_config (guild_id BIGINT PRIMARY_KEY, member_log_channel_id BIGINT, "
+		              "CREATE TABLE IF NOT EXISTS log_config (guild_id BIGINT PRIMARY KEY, member_log_channel_id BIGINT, "
 		              "message_log_channel_id BIGINT, invite_log_channel_id BIGINT, participatig BOOL)",
 		              "CREATE TABLE IF NOT EXISTS event_logs (id SERIAL, action TEXT, target_id BIGINT, "
 		              "user_id BIGINT, guild_id BIGINT, time timestamp with time zone DEFAULT current_timestamp)",
-		              "CREATE TABLE IF NOT EXISTS message_logs (message_id BIGINT PRIMARY KEY, content TEXT, author_id BIGINT, "
-		              "channel_id BIGINT, guild_id BIGINT, status TEXT, time timestamp with time zone DEFAULT current timestamp"
+		              "CREATE TABLE IF NOT EXISTS message_logs (message_id BIGINT PRIMARY KEY, content TEXT, author_id "
+		              "BIGINT, "
+		              "channel_id BIGINT, guild_id BIGINT, status TEXT, time timestamp with time zone DEFAULT current "
+		              "timestamp "
 		              ]
 
 		for statement in statements:
