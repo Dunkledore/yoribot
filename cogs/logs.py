@@ -265,7 +265,7 @@ class Logs:
 		await self.bot.pool.execute(query, "deleted", message.id)
 
 		query = "SELECT message_log_channel_id FROM log_config WHERE guild_id = $1"
-		log_channel_id = await self.bot.pool.fetchval(query, message.channe.guild.id)
+		log_channel_id = await self.bot.pool.fetchval(query, message.channel.guild.id)
 		log_channel = self.bot.get_channel(log_channel_id)
 		if not log_channel:
 			return
