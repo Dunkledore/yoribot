@@ -97,7 +97,7 @@ class Logs:
 				embed.set_field_at(counter, name="Banned by", value=ctx.author.mention)
 				field.value = ctx.author.mention
 			if field.name == "Reason":
-				embed.set_field_at(counter, name="Banned by", value=reason)
+				embed.set_field_at(counter, name="Reason", value=reason)
 		await log_report_message.edit(embed=embed)
 
 
