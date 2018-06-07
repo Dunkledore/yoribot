@@ -259,6 +259,12 @@ class Logs:
 		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
 		await self.bot.pool.execute(query, unbanner.id, unbanreason, report_message.id, log_id)
 
+	async def on_message(self, message):
+		if message.author is self.bot.user:
+			return
+		query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status) VALUES ($1, $2, $3, $4, $5, $6)"
+		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id, message.guild.id, "current")
+
 	async def on_message_delete(self, message):
 		if message.author is self.bot.user:
 			return
