@@ -12,6 +12,7 @@ def add_views(website : Quart, bot):
 		logs = await bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
 			return f"No logs for user {user_id}"
+		print(logs)
 		return pformat(logs)
 
 
