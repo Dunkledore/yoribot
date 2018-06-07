@@ -92,6 +92,7 @@ class Logs:
 
 		embed = log_report_message.embeds[0]
 		for field in embed.fields:
+			await ctx.send(str(field.name))
 			if field.name == "Banned By":
 				field.value = ctx.author.mention
 			if field.name == "Reason":
@@ -215,7 +216,7 @@ class Logs:
 		embed.add_field(name="Reason", value=reason)
 
 		embed.add_field(name="Message History",
-		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id}) \n [View Member Logs]({self.bot.root_website}/logs/{guild.id}/{user.id})")
+		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id})\n[View Member Logs]({self.bot.root_website}/logs/{guild.id}/{user.id})")
 
 		report_message = await log_channel.send(embed=embed)
 		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
