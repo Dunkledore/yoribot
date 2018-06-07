@@ -226,7 +226,6 @@ class Logs:
 		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
 		await self.bot.pool.execute(query, banner.id, reason, report_message.id, log_id)
 
-
 	async def on_member_unban(self, guild, user):
 
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
@@ -347,10 +346,38 @@ class Logs:
 		while True:
 			for guild in self.bot.guilds:
 				try:
-					self.invites[guild] = await guild.invites()
+					new_invites = await self.gather_new_invites(guild)
+					if new_invites:
+						self.invites[guild] = new_invites
 				except Forbidden:
 					pass
 			await asyncio.sleep(60)
+
+	async def gather_new_invites(self, guild):
+		new_invites = await guild.invites()
+		old_invites = self.invites.get(guild)
+		if old_invites:
+			query = "SELECT invite_log_channel_id FROM log_config WHERE guild_id = $1"
+			log_channel_id = await self.bot.pool.fetchval(query, guild.id)
+			log_channel = self.bot.get_channel(log_channel_id)
+			if log_channel:
+				created_invites = list(set(new_invites) - set(old_invites))
+				expired_invites = list(set(old_invites) - set(new_invites))
+				for invite in created_invites:
+					embed = Embed(title=f'Invited Created')
+					embed.add_field(name="Invite Code", value=invite.code)
+					embed.add_field(name="Created by", value=invite.inviter or "Widget")
+					embed.timestamp = datetime.datetime.utcnow()
+					await log_channel.send(embed=embed)
+				for invite in expired_invites:
+					embed = Embed(title=f'Invited expired')
+					embed.add_field(name="Invite Code", value=invite.code)
+					embed.add_field(name="Created by", value=invite.inviter or "Widget")
+					embed.add_field(name="Used", value=f'{invite.uses} times')
+					embed.timestamp = datetime.datetime.utcnow()
+					await log_channel.send(embed=embed)
+
+
 
 	async def get_ban_info(self, guild, user):
 		try:
