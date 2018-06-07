@@ -261,6 +261,8 @@ class Logs:
 		await self.bot.pool.execute(query, unbanner.id, unbanreason, report_message.id, log_id)
 
 	async def on_message_delete(self, message):
+		if message.author is self.bot.user:
+			return
 		query = "UPDATE message_logs SET status = $1 WHERE message_id = $2"
 		await self.bot.pool.execute(query, "deleted", message.id)
 
