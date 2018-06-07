@@ -220,7 +220,8 @@ class Logs:
 		embed.add_field(name="Reason", value=reason)
 
 		embed.add_field(name="Message History",
-		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id})\n[View Member Logs]({self.bot.root_website}/logs/{guild.id}/{user.id})")
+		                value=f"[View Message History]({self.bot.root_website}/messages/{guild.id}/{user.id})\n[View Member Logs]({self.bot.root_website}/logs/{guild.id}/{user.id})",
+		                inline=False)
 
 		report_message = await log_channel.send(embed=embed)
 		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
@@ -248,7 +249,7 @@ class Logs:
 		ban_info = await self.bot.pool.fetchrow(query, "ban", user.id, guild.id)
 		if ban_info:
 			banner = self.bot.get_user(ban_info["user_id"])
-			reason = ban_info.get("reason", "None Provided")
+			reason = dict(ban_info).get("reason", "None Provided")
 			embed.add_field(name="Originally banned by", value=banner.mention if banner else f"User with id: {ban_info['user_id']}")
 			embed.add_field(name="Original ban reason", value=reason)
 			embed.add_field(name="Originally banned", value=yoriutils.human_timedelta(ban_info["time"]))
