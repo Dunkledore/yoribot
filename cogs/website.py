@@ -11,7 +11,7 @@ def add_views(website : Quart, bot):
 		logs = await bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
 			return f"No logs for user {user_id}"
-		return "<br><br>".join([str(dict(record)) for record in logs])
+		return "<br><br>".join(["<br>".join([f'{key} : {value}' for key, value in record]) for record in logs])
 
 
 
