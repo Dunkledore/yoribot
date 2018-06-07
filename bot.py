@@ -56,7 +56,7 @@ class YoriBot(commands.AutoShardedBot):
 		self.root_website = root_website
 		self.website = Quart(__name__, static_folder="website/static", template_folder="website/templates")
 		self.website.config['SECRET_KEY'] = client_secret
-		add_views(self.website)
+		add_views(self.website, self)
 
 
 	def run_website(self):
