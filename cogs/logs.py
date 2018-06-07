@@ -31,7 +31,7 @@ class Logs:
 		try:
 			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
 		except asyncpg.UniqueViolationError:
-			await self.bot.pool.execute(alterquery, ctx.guild.id, channel.id)
+			await self.bot.pool.execute(alterquery, channel, ctx.guild.id)
 
 		await ctx.send(embed=self.bot.success(f'Now sending message logs to {channel.mention}. To stop sending message '
 		                                      'logs, delete the channel '))
