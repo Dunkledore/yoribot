@@ -93,7 +93,7 @@ class Logs:
 		embed = log_report_message.embeds[0]
 		for counter, field in enumerate(embed.fields):
 			await ctx.send(str(field.name))
-			if field.name == "Banned by" or "Unbanned by":
+			if field.name in ["Banned by", "Unbanned by"]:
 				embed.set_field_at(counter, name=field.name, value=ctx.author.mention)
 				field.value = ctx.author.mention
 			if field.name == "Reason":
