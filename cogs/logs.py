@@ -93,10 +93,11 @@ class Logs:
 		embed = log_report_message.embeds[0]
 		for field in embed.fields:
 			await ctx.send(str(field.name))
-			if field.name == "Banned By":
+			if field.name == "Banned by":
+				embed.set_field_at(field.index, name="Banned by", value=ctx.author.mention)
 				field.value = ctx.author.mention
 			if field.name == "Reason":
-				field.value = reason
+				embed.set_field_at(field.index, name="Banned by", value=reason)
 		await log_report_message.edit(embed=embed)
 
 
