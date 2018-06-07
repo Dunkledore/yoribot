@@ -247,7 +247,7 @@ class Logs:
 		banner, reason = await self.get_ban_info(guild, user)
 		embed.add_field(name="Originally banned by", value=banner.mention)
 		embed.add_field(name="Original ban reason", value=reason)
-		unbanner, unbanreason = await self.get_unban_info(self, guild, user)
+		unbanner, unbanreason = await self.get_unban_info(guild, user)
 		embed.add_field(name="Unbanned by", value=unbanner.mention)
 		embed.add_field(name="Reason", value=unbanreason)
 
