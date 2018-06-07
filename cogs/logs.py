@@ -103,7 +103,7 @@ class Logs:
 
 	# Events
 
-	async def on_guild_channel_delete(self, channel):  # Kind of like and auto firing commands
+	async def on_guild_channel_delete(self, channel):  # Kind of like and auto firing command
 		member_query = "UPDATE log_config SET member_log_channel_id = $1 WHERE member_log_channel_id = $2"
 		message_query = "UPDATE log_config SET message_log_channel_id = $1 WHERE message_log_channel_id = $2"
 		invite_query = "UPDATE log_config SET invite_log_channel_id = $1 WHERE invite_log_channel_id = $2"
@@ -307,6 +307,8 @@ class Logs:
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
+
+
 
 	# Utilities
 

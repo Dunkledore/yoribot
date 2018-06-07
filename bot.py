@@ -2,16 +2,19 @@ import datetime
 import os
 import sys
 import traceback
-import asyncpg
-from datetime import datetime
 import asyncio
+from datetime import datetime
+from threading import Thread
 
 import aiohttp
+import asyncpg
 from discord import Embed, Forbidden
 from discord.ext import commands
+from quart import Quart
+from cogs.website import add_views
 
 from cogs.utils import utils, dataIO
-from instance import token, new_server_hook, error_hook, db_uri, root_website
+from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port
 
 initial_cogs = ["developers",
                 "logs",
@@ -51,10 +54,18 @@ class YoriBot(commands.AutoShardedBot):
 		self.categories = {}
 
 		self.root_website = root_website
+		self.website = Quart(__name__, static_folder="website/static", template_folder="website/templates")
+		self.website.config['SECRET_KEY'] = client_secret
+		add_views(self.website)
+
+
+	def run_website(self):
+		asyncio.set_event_loop(self.loop)
+		self.website.run(host='0.0.0.0', port=port)
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:
@@ -92,6 +103,8 @@ class YoriBot(commands.AutoShardedBot):
 		if not hasattr(self, 'uptime'):
 			self.uptime = datetime.utcnow()
 		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
+		web_thread = Thread(target=self.run_website())
+		web_thread.start()
 
 	async def on_resumed(self):
 		await self.error_hook.send(embed=self.notice('Resumed...'))
