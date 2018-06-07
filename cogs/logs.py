@@ -244,8 +244,11 @@ class Logs:
 		embed.add_field(name="User ID", value=f'{user.id}')
 
 		embed.timestamp = datetime.datetime.utcnow()
-		banner, reason = await self.get_ban_info(guild, user)
-		embed.add_field(name="Originally banned by", value=banner.mention)
+		query = "SELECT user_id, reason FROM event_logs WHERE (action = $1) and (target_id = $2) and (guild_id = $3) ORDER BY id DESC LIMIT 1"
+		ban_info = await self.bot.pool.fetchrow(query, "ban", user.id, guild.id)
+		banner = self.bot.get_user(ban_info["user_id"])
+		reason = ban_info["reason"]
+		embed.add_field(name="Originally banned by", value=banner.mention if banner else f"User with id: {ban_info['user_id']}")
 		embed.add_field(name="Original ban reason", value=reason)
 		unbanner, unbanreason = await self.get_unban_info(guild, user)
 		embed.add_field(name="Unbanned by", value=unbanner.mention)
