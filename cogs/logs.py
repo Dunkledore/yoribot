@@ -384,6 +384,7 @@ class Logs:
 					embed.add_field(name="Used", value=f'{invite.uses} times')
 					embed.timestamp = datetime.datetime.utcnow()
 					await log_channel.send(embed=embed)
+		return new_invites
 
 
 
