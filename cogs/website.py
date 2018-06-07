@@ -1,5 +1,5 @@
 from quart import Quart
-import json
+from pprint import pformat
 
 def add_views(website : Quart, bot):
 	@website.route("/")
@@ -12,7 +12,7 @@ def add_views(website : Quart, bot):
 		logs = await bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
 			return f"No logs for user {user_id}"
-		return json.dumps(dict(logs), indent=4)
+		return pformat(logs)
 
 
 
