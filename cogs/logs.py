@@ -1,6 +1,6 @@
 from discord.ext import commands
 from .utils import checks, utils as yoriutils
-from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction
+from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction, Member
 import asyncpg
 import datetime
 import asyncio
@@ -17,7 +17,10 @@ class Logs:
 		elif type(self).__name__ not in self.bot.categories["Admin and Moderation"]:
 			self.bot.categories["Admin and Moderation"].append(type(self).__name__)
 
+		self.black_listed_channels = []
 		self.bot.loop.create_task(self.track_invites())
+		self.bot.loop.create_task(self.update_blacklist_cache())
+
 
 	# Commands
 
@@ -68,6 +71,59 @@ class Logs:
 
 	@commands.command()
 	@checks.is_mod()
+	async def warn(self, ctx, member : Member, reason):
+		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4) RETURNING ID"
+		log_id = await self.bot.pool.fetchval(query, "warn", member.id, ctx.author.id, ctx.guild.id, reason)
+
+		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
+
+		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
+		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
+		log_channel = self.bot.get_channel(log_channel_id)
+		if not log_channel:
+			return
+
+		embed = Embed(title=f'User Warned - Mod Report #{log_id}')  #TODO Colour
+		embed.add_field(name="User", value=member.mention)
+		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
+		embed.add_field(name="User ID", value=f'{member.id}')
+		embed.add_field(name="Warned by", value=member.mention)
+		embed.add_field(name="Reason", value=reason)
+		embed.timestamp = datetime.datetime.utcnow()
+
+		report_message = await log_channel.send(embed=embed)
+		query = "UPDATE event_logs SET report_message_id = $1 WHERE id = $2"
+		await self.bot.pool.execute(query, report_message.id, log_id)
+
+	@commands.command()
+	@checks.is_mod()
+	async def note(self, ctx, member: Member, reason):
+		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4) RETURNING ID"
+		log_id = await self.bot.pool.fetchval(query, "note", member.id, ctx.author.id, ctx.guild.id, reason)
+
+		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
+
+		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
+		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
+		log_channel = self.bot.get_channel(log_channel_id)
+		if not log_channel:
+			return
+
+		embed = Embed(title=f'User Noted - Mod Report #{log_id}')  # TODO Colour
+		embed.add_field(name="User", value=member.mention)
+		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
+		embed.add_field(name="User ID", value=f'{member.id}')
+		embed.add_field(name="Noted by", value=member.mention)
+		embed.add_field(name="Reason", value=reason)
+		embed.timestamp = datetime.datetime.utcnow()
+
+		report_message = await log_channel.send(embed=embed)
+		query = "UPDATE event_logs SET report_message_id = $1 WHERE id = $2"
+		await self.bot.pool.execute(query, report_message.id, log_id)
+
+
+	@commands.command()
+	@checks.is_mod()
 	async def update_log(self, ctx, log_number : int, *, reason):
 		query = "SELECT * from event_logs WHERE id = $1"
 		report = await self.bot.pool.fetchrow(query, log_number)
@@ -80,6 +136,7 @@ class Logs:
 
 		query = "UPDATE event_logs SET user_id = $1, reason = $2 WHERE id = $3"
 		await self.bot.pool.execute(query, ctx.author.id, reason, log_number)
+		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
 		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
 		log_channel_id = await self.bot.pool.fetchval(query, ctx.guild.id)
 		channel = self.bot.get_channel(log_channel_id)
@@ -92,12 +149,29 @@ class Logs:
 
 		embed = log_report_message.embeds[0]
 		for counter, field in enumerate(embed.fields):
-			if field.name in ["Banned by", "Unbanned by"]:
+			if field.name in ["Banned by", "Unbanned by", "Warned by", "Noted by"]:
 				embed.set_field_at(counter, name=field.name, value=ctx.author.mention)
 				field.value = ctx.author.mention
 			if field.name == "Reason":
 				embed.set_field_at(counter, name="Reason", value=reason)
 		await log_report_message.edit(embed=embed)
+
+	@commands.command()
+	@checks.is_admin()
+	async def blacklist(self, ctx, channel: TextChannel):
+		"""Prevent logs being recorded for this channel. Note this will also remove previous logs for this channel"""
+		query = "SELECT guild_id, blacklist FROM log_config WHERE guild_id = $1"
+		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
+		if not config:
+			query = "INSERT INTO log_config (guild_id, blacklist) VALUES ($1, $2)"
+			await self.bot.pool.execute(query, ctx.guild.id, [channel.id])
+		else:
+			blacklist = dict(config).get("blacklist")
+			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
+			await self.bot.pool.execute(query, blacklist or [] + [channel.id])
+		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
+
+
 
 
 
@@ -262,11 +336,15 @@ class Logs:
 	async def on_message(self, message):
 		if message.author is self.bot.user:
 			return
+		if message.channel.id in self.blacklist:
+			return
 		query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status) VALUES ($1, $2, $3, $4, $5, $6)"
 		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id, message.guild.id, "current")
 
 	async def on_message_delete(self, message):
 		if message.author is self.bot.user:
+			return
+		if message.channel.id in self.blacklist:
 			return
 		query = "UPDATE message_logs SET status = $1 WHERE message_id = $2"
 		await self.bot.pool.execute(query, "deleted", message.id)
@@ -290,6 +368,8 @@ class Logs:
 
 	async def on_message_edit(self, before, after):
 		if self.bot.user in [before.author, after.author]:
+			return
+		if after.channel.id in self.blacklist:
 			return
 		query = "UPDATE message_logs SET status = $1, content = $2 WHERE message_id = $3"
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
@@ -386,8 +466,6 @@ class Logs:
 					await log_channel.send(embed=embed)
 		return new_invites
 
-
-
 	async def get_ban_info(self, guild, user):
 		try:
 			timestamp = datetime.datetime.utcnow()
@@ -435,10 +513,17 @@ class Logs:
 					reasonunbanned = "{}".format(
 						unban_info.reason)
 				else:
-					reasonbanned = "No Reason Provided"
+					reasonunbanned = "No Reason Provided"
 			return unbanner, reasonunbanned
 		except Forbidden:
 			return "No access to Audit Logs", "No access to Audit Logs"
+
+	async def update_blacklist_cache(self):
+		query = "SELECT blacklist FROM log_config"
+		results = await self.bot.fetch(query)
+		for guild in results:
+			if guild["blacklist"]:
+				self.black_listed_channels += guild["blacklist"]
 
 	# Temporary to for events
 
