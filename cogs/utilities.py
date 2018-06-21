@@ -78,7 +78,7 @@ class Utilities:
 				if cog:
 					pager = await HelpPaginator.from_cog(ctx, cog)
 				else:
-					command = self.bot.get_command()
+					command = self.bot.get_command(cog_or_command_or_category)
 					pager = await HelpPaginator.from_command(ctx, command)
 
 		await pager.paginate()
