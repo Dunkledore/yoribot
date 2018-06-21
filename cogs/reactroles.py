@@ -37,7 +37,7 @@ class ReactRoles:
 				await original_message.edit(embed=embed)
 			else:
 				channel = message.channel_mentions[0]
-				await channel.delete()
+				await message.delete()
 
 		embed.add_field(name="Channel", value=f"{channel.mention}")
 
