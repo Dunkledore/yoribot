@@ -32,9 +32,8 @@ class Developers:
 		              "CREATE TABLE IF NOT EXISTS event_logs (id SERIAL, action TEXT, target_id BIGINT, "
 		              "user_id BIGINT, guild_id BIGINT, reason TEXT, report_message_id BIGINT, time TIMESTAMP NOT NULL DEFAULT (NOW() at time zone 'utc'))",
 		              "CREATE TABLE IF NOT EXISTS message_logs (message_id BIGINT PRIMARY KEY, content TEXT, author_id "
-		              "BIGINT,"
-		              "channel_id BIGINT, guild_id BIGINT, status TEXT, time TIMESTAMP NOT NULL DEFAULT (NOW() at time zone 'utc'))",
-		              "CREATE TABLE IF NOT EXISTS word_censor (guild_id BIGINT, word text, PRIMARY KEY (guild_id, word))",
+		              "BIGINT, channel_id BIGINT, guild_id BIGINT, status TEXT, time TIMESTAMP NOT NULL DEFAULT (NOW() at time zone 'utc'))",
+		              "CREATE TABLE IF NOT EXISTS word_censor (guild_id BIGINT, word TEXT, PRIMARY KEY (guild_id, word))",
 		              "CREATE TABLE IF NOT EXISTS mention_censor (guild_id BIGINT PRIMARY KEY, amount INT, time, INT)",
 		              "CREATE TABLE IF NOT EXISTS caps (guild_id BIGINT, toggle BOOL)",
 		              "create table react_roles (id SERIAL, message_id BIGINT, role_id BIGINT, emoji_id TEXT, guild_id BIGINT)"
