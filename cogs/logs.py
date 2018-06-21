@@ -336,7 +336,7 @@ class Logs:
 	async def on_message(self, message):
 		if message.author is self.bot.user:
 			return
-		if message.channel.id in self.blacklist:
+		if message.channel.id in self.black_listed_channels:
 			return
 		query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status) VALUES ($1, $2, $3, $4, $5, $6)"
 		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id, message.guild.id, "current")
@@ -344,7 +344,7 @@ class Logs:
 	async def on_message_delete(self, message):
 		if message.author is self.bot.user:
 			return
-		if message.channel.id in self.blacklist:
+		if message.channel.id in self.black_listed_channels:
 			return
 		query = "UPDATE message_logs SET status = $1 WHERE message_id = $2"
 		await self.bot.pool.execute(query, "deleted", message.id)
@@ -369,7 +369,7 @@ class Logs:
 	async def on_message_edit(self, before, after):
 		if self.bot.user in [before.author, after.author]:
 			return
-		if after.channel.id in self.blacklist:
+		if after.channel.id in self.black_listed_channels:
 			return
 		query = "UPDATE message_logs SET status = $1, content = $2 WHERE message_id = $3"
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
