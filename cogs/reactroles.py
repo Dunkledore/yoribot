@@ -58,20 +58,25 @@ class ReactRoles:
 					await original_message.edit(embed=embed)
 				else:
 					role = message.role_mentions[0]
-					emoji_from_bot = None
-					while not emoji_from_bot:
+					emoji_to_insert = None
+					while not emoji_to_insert:
 						embed.description = "Please react to this message with the emoji you wish to use"
 						await original_message.edit(embed=embed)
 						reaction, user = await self.bot.wait_for("reaction_add", check=react_channel_author_check,
 						                                         timeout=120.0)
 						emoji = reaction.emoji
-						emoji_from_bot = self.bot.get_emoji(emoji.id)
-						if not emoji_from_bot:
-							embed.description = "I can't find that emoji in any of my guilds. React with a new emoji"
-							await reaction.delete()
-							await original_message.edit(embed=embed)
+						if isinstance(emoji, str):
+							emoji_to_insert = emoji
 						else:
-							roles.append((role, emoji))
+							emoji_from_bot = self.bot.get_emoji(emoji.id)
+							if not emoji_from_bot:
+								embed.description = "I can't find emoji in any of the guilds I'm in"
+								await original_message.edit(embed=embed)
+							else:
+								emoji_to_insert = str(emoji.id)
+
+						if emoji_to_insert:
+							roles.append((role, emoji_to_insert))
 							embed.description = "Mention another role to add a role or type `done`"
 
 		if not roles:
@@ -113,7 +118,6 @@ class ReactRoles:
 			emoji = reaction.emoji
 			if isinstance(emoji, str):
 				emoji_to_insert = emoji
-				got_emoji = True
 			else:
 				emoji_from_bot = self.bot.get_emoji(emoji.id)
 				if not emoji_from_bot:
@@ -121,7 +125,6 @@ class ReactRoles:
 					return
 				else:
 					emoji_to_insert = str(emoji.id)
-					got_emoji = True
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, message_id, role.id, emoji_to_insert, ctx.guild.id)
