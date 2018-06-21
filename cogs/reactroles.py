@@ -61,6 +61,7 @@ class ReactRoles:
 					emoji_from_bot = None
 					while not emoji_from_bot:
 						embed.description = "Please react to this message with the emoji you wish to use"
+						await original_message.edit(embed=embed)
 						reaction, user = await self.bot.wait_for("reaction_add", check=react_channel_author_check,
 						                                         timeout=120.0)
 						emoji = reaction.emoji
