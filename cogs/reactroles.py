@@ -230,7 +230,11 @@ class ReactRoles:
 		await self.bot.pool.execute(query, message_id, role_id)
 		await ctx.send(embed=self.bot.success("ReactRole Removed"))
 
-	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
+	async def on_raw_reaction_add(self, payload):
+
+		emoji = payload.emoji
+		message_id = payload.message_id
+		user_id = payload.user_id
 
 		if emoji.is_custom_emoji():
 			compare_emoji = str(emoji.id)
@@ -252,7 +256,11 @@ class ReactRoles:
 					if role:
 						await member.add_roles(role)
 
-	async def on_raw_reaction_remove(self, emoji, message_id, channel_id, user_id):
+	async def on_raw_reaction_remove(self, payload):
+
+		emoji = payload.emoji
+		message_id = payload.message_id
+		user_id = payload.user_id
 
 		if emoji.is_custom_emoji():
 			compare_emoji = str(emoji.id)
