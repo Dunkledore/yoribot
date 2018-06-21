@@ -99,7 +99,7 @@ class ReactRoles:
 			role_message = await channel.send(embed=embed)
 			query = "INSERT INTO react_roles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 			for role in chunk:
-				await self.bot.pool.execute(query, role_message.id, role[0].id, role[1].id, ctx.guild.id)
+				await self.bot.pool.execute(query, role_message.id, role[0].id, role[1], ctx.guild.id)
 
 	@commands.command(aliases=['add_react_roles'])
 	@checks.is_admin()
