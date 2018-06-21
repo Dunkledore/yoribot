@@ -11,12 +11,6 @@ class ReactRoles:
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.command(name='list')
-	async def list(self, ctx):
-
-		await ctx.send(f"Connected on {len(self.bot.guilds)} servers:")
-		await ctx.send('\n'.join([guild.id for guild in self.bot.guilds]))
-
 	@commands.command()
 	@checks.is_admin()
 	async def rolewizard(self, ctx):
@@ -35,7 +29,7 @@ class ReactRoles:
 		channel = None
 
 		while not channel:
-			message = await self.bot.wait_for("on_message", check=message_channel_author_check, timeout=120.0)
+			message = await self.bot.wait_for("message", check=message_channel_author_check, timeout=120.0)
 
 			if not message.channel_mentions:
 				embed.description = "Invalid Channel. Please enter a valid channel"
@@ -54,7 +48,7 @@ class ReactRoles:
 		while not ended:
 			role = None
 			while not role:
-				message = await self.bot.wait_for("on_message", check=message_channel_author_check, timeout=120.0)
+				message = await self.bot.wait_for("message", check=message_channel_author_check, timeout=120.0)
 				if message.content in ["done", "Done"]:
 					ended = True
 					break
