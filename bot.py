@@ -21,6 +21,7 @@ initial_cogs = ["developers",
                 "prefix",
                 "statistics",
                 "utilities",
+                "reactroles"
                 ]
 
 
