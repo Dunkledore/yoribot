@@ -80,7 +80,8 @@ class Utilities:
 				else:
 					command = self.bot.get_command(cog_or_command_or_category)
 					if not command:
-						await ctx.send("Nothing found with that name")
+						await ctx.send(embed=self.bot.error("Nothing found with that name"))
+						return
 					pager = await HelpPaginator.from_command(ctx, command)
 
 		await pager.paginate()

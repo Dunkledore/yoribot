@@ -1,12 +1,9 @@
-from discord import Embed
+from discord import Embed, Role, utils
 from discord.ext import commands
 from .utils import checks
 import itertools
 import operator
-import traceback
 
-
-#
 
 class ReactRoles:
 	"""Use message reactions to manage selfroles"""
@@ -20,21 +17,20 @@ class ReactRoles:
 		await ctx.send(f"Connected on {len(self.bot.guilds)} servers:")
 		await ctx.send('\n'.join([guild.id for guild in self.bot.guilds]))
 
-
 	@commands.command()
 	@checks.is_admin()
 	async def rolewizard(self, ctx):
 		"""A wizard to guide you through the process of setting up self assignable roles"""
 
-		embed = Embed(title=f"React Roles for {ctx.guild.name}", description="Enter the #channel for the react roles to take place")
+		embed = Embed(title=f"React Roles for {ctx.guild.name}",
+		              description="Enter the #channel for the react roles to take place")
 		original_message = await ctx.send(embed=embed)
 
+		def message_channel_author_check(check_message):
+			return (check_message.channel is ctx.channel) and (check_message.author is ctx.author)
 
-		def message_channel_author_check(message):
-			return (message.channel is ctx.channel) and (message.author is ctx.author)
-
-		def react_channel_author_check(reaction, user):
-			return (reaction.message.channel is ctx.channel) and (user is ctx.author)
+		def react_channel_author_check(check_reaction, check_user):
+			return (check_reaction.message.channel is ctx.channel) and (check_user is ctx.author)
 
 		channel = None
 
@@ -59,7 +55,7 @@ class ReactRoles:
 			role = None
 			while not role:
 				message = await self.bot.wait_for("on_message", check=message_channel_author_check, timeout=120.0)
-				if message.content  in ["done", "Done"]:
+				if message.content in ["done", "Done"]:
 					ended = True
 					break
 				if not message.role_mentions:
@@ -71,7 +67,8 @@ class ReactRoles:
 					emoji_from_bot = None
 					while not emoji_from_bot:
 						embed.description = "Please react to this message with the emoji you wish to use"
-						reaction, user = await self.bot.wait_for("reaction_add", check=react_channel_author_check, timeout=120.0)
+						reaction, user = await self.bot.wait_for("reaction_add", check=react_channel_author_check,
+						                                         timeout=120.0)
 						emoji = reaction.emoji
 						emoji_from_bot = self.bot.get_emoji(emoji.id)
 						if not emoji_from_bot:
@@ -100,55 +97,18 @@ class ReactRoles:
 			for role in chunk:
 				await self.bot.pool.execute(query, role_message.id, role[0].id, role[1].id, ctx.guild.id)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	@commands.command(aliases=['add_react_roles'])
 	@checks.is_admin()
-	async def add_react_role(self, ctx, message_id: int, role: discord.Role):
+	async def add_react_role(self, ctx, message_id: int, role: Role):
 		"""Add a ReactRole. Provide the message ID of the message to be reacted to and the role of the one you want to grant"""
 
 		got_emoji = False
 		while not got_emoji:
-			embed = discord.Embed(color=ctx.message.author.color,
-			                      title="❕ Notice",
-			                      description='React to this message with the desired emoji for {}'.format(
-				                      role.mention))
-			reaction_request_message = await ctx.send(embed=embed)
+			reaction_request_message = await ctx.send(
+				embed=self.bot.notice(f'React to this message with the desired emoji for {role.mention}'))
 
-			def react_check(reaction, user):
-				return (reaction.message.id == reaction_request_message.id and user == ctx.author)
+			def react_check(check_reaction, check_user):
+				return (check_reaction.message.id == reaction_request_message.id) and (check_user == ctx.author)
 
 			try:
 				reaction, user = await self.bot.wait_for('reaction_add', check=react_check, timeout=120.0)
@@ -162,10 +122,7 @@ class ReactRoles:
 			else:
 				emoji_from_bot = self.bot.get_emoji(emoji.id)
 				if not emoji_from_bot:
-					embed = discord.Embed(color=ctx.message.author.color,
-					                      title="⚠ Error",
-					                      description="I can't find emoji in any of the guilds I'm in")
-					await ctx.send(embed=embed)
+					await ctx.send(embed=self.bot.error("I can't find emoji in any of the guilds I'm in"))
 					return
 				else:
 					emoji_to_insert = str(emoji.id)
@@ -173,10 +130,7 @@ class ReactRoles:
 
 		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, message_id, role.id, emoji_to_insert, ctx.guild.id)
-		embed = discord.Embed(color=ctx.message.author.color,
-		                      title="✅ Success",
-		                      description="Emoji set to {} for {}".format(emoji, role.name))
-		await ctx.send(embed=embed)
+		await ctx.send(embed=self.bot.success(f"Emoji set to {emoji} for {role.name}"))
 
 	@commands.command(aliases=['view_react_role'])
 	@checks.is_admin()
@@ -191,7 +145,7 @@ class ReactRoles:
 		for key, items in itertools.groupby(results, operator.itemgetter('message_id')):
 			react_role_dict[key] = list(items)
 
-		embed = discord.Embed(title="Reaction Roles for {}".format(ctx.guild), description=discord.Embed.Empty)
+		embed = Embed(title="Reaction Roles for {}".format(ctx.guild))
 		for message_id, reactroles in react_role_dict.items():
 			items_string = ""
 			for reactrole in reactroles:
@@ -203,7 +157,7 @@ class ReactRoles:
 						emoji_string = "EMOJI NOT FOUND"
 				except ValueError as e:
 					emoji_string = reactrole['emoji_id']
-				role = discord.utils.get(ctx.guild.roles, id=reactrole["role_id"])
+				role = utils.get(ctx.guild.roles, id=reactrole["role_id"])
 				if role:
 					role = role.mention
 				else:
@@ -228,8 +182,8 @@ class ReactRoles:
 
 		counter = 1
 		delete_temp = []
-		embed = discord.Embed(title="Reaction Roles for {}".format(ctx.guild),
-		                      description="Reply with the number of the ReactRole you would like to remove")
+		embed = Embed(title="Reaction Roles for {}".format(ctx.guild),
+		              description="Reply with the number of the ReactRole you would like to remove")
 		for message_id, reactroles in react_role_dict.items():
 			items_string = ""
 			for reactrole in reactroles:
@@ -241,7 +195,7 @@ class ReactRoles:
 						emoji_string = "EMOJI NOT FOUND"
 				except ValueError as e:
 					emoji_string = reactrole['emoji_id']
-				role = discord.utils.get(ctx.guild.roles, id=reactrole["role_id"])
+				role = utils.get(ctx.guild.roles, id=reactrole["role_id"])
 				if role:
 					role = role.mention
 				else:
@@ -264,10 +218,7 @@ class ReactRoles:
 		try:
 			chosen_delete = delete_temp[int(choice.content)-1]
 		except Exception as e:
-			embed = discord.Embed(color=ctx.message.author.color,
-			                      title="⚠ Error",
-			                      description='Invalid response... closing... ')
-			await ctx.send(embed=embed)
+			await ctx.send(embed=self.bot.error('Invalid response... closing... '))
 			return
 
 		message_id = chosen_delete["message_id"]
@@ -275,10 +226,7 @@ class ReactRoles:
 
 		query = "DELETE FROM reactroles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
 		await self.bot.pool.execute(query, message_id, role_id)
-		embed = discord.Embed(color=ctx.message.author.color,
-		                      title="✅ Success",
-		                      description='ReactRole Removed')
-		await ctx.send(embed=embed)
+		await ctx.send(embed=self.bot.success("ReactRole Removed"))
 
 	async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
 
@@ -298,7 +246,7 @@ class ReactRoles:
 				guild = self.bot.get_guild(result['guild_id'])
 				member = guild.get_member(user_id)
 				if member:
-					role = discord.utils.get(guild.roles, id=result["role_id"])
+					role = utils.get(guild.roles, id=result["role_id"])
 					if role:
 						await member.add_roles(role)
 
@@ -320,7 +268,7 @@ class ReactRoles:
 				guild = self.bot.get_guild(result['guild_id'])
 				member = guild.get_member(user_id)
 				if member:
-					role = discord.utils.get(guild.roles, id=result["role_id"])
+					role = utils.get(guild.roles, id=result["role_id"])
 					if role:
 						await member.remove_roles(role)
 
