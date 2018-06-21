@@ -37,6 +37,7 @@ class ReactRoles:
 				await original_message.edit(embed=embed)
 			else:
 				channel = message.channel_mentions[0]
+				await channel.delete()
 
 		embed.add_field(name="Channel", value=f"{channel.mention}")
 
@@ -58,6 +59,7 @@ class ReactRoles:
 					await original_message.edit(embed=embed)
 				else:
 					role = message.role_mentions[0]
+					await message.delete()
 					emoji_to_insert = None
 					while not emoji_to_insert:
 						embed.description = "Please react to this message with the emoji you wish to use"
@@ -78,6 +80,8 @@ class ReactRoles:
 						if emoji_to_insert:
 							roles.append((role, emoji_to_insert))
 							embed.description = "Mention another role to add a role or type `done`"
+							await original_message.clear_reactions()
+							await original_message.edit(embed=embed)
 
 		if not roles:
 			embed.description = "No roles added. I will now exit"
