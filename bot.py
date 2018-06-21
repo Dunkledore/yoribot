@@ -119,10 +119,11 @@ class YoriBot(commands.AutoShardedBot):
 			await ctx.author.send('This command cannot be used in private messages.')
 		elif isinstance(error, commands.DisabledCommand):
 			await ctx.author.send('Sorry. This command is disabled and cannot be used.')
+		elif isinstance(error, Forbidden):
+			await ctx.send(embed=self.error("I don't have permissions to do this"))
 		elif not isinstance(error, (commands.CheckFailure,
 		                            commands.CommandNotFound,
-		                            commands.UserInputError,
-		                            Forbidden)):
+		                            commands.UserInputError)):
 			e = Embed(title='Command Error', colour=0xcc3366)
 			e.add_field(name='Command Name', value=ctx.command.qualified_name)
 			e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')

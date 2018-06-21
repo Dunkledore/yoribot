@@ -49,3 +49,8 @@ def human_timedelta(dt, *, source=None):
 		return f'{output[0]} and {output[1]}{suffix}'
 	else:
 		return f'{output[0]}, {output[1]} and {output[2]}{suffix}'
+
+def check_hierarchy(user, target):
+	return target.top_role < user.top_role
+
+
