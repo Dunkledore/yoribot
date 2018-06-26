@@ -170,6 +170,7 @@ class ReactRoles:
 		await ctx.send(embed=embed)
 
 	@commands.command(aliases=['delete_react_roles'])
+	@commands.guild_only()
 	@checks.is_admin()
 	async def delete_react_role(self, ctx):
 		"""Delete a ReactRole"""

@@ -11,6 +11,7 @@ def require_login(function_):
 		return await function_(*args, **kwargs)
 	return wrapper
 
+
 def add_views(website : Quart, bot):
 	@website.route("/")
 	async def index():
