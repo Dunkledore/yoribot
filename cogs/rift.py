@@ -11,7 +11,11 @@ class Rift:
 		self.bot = bot
 		self.rift_name_cache = {}
 		self.rift_channel_cache = {}
-		self.bot.loop.create_task(self.update_cache())
+		self.cache_task = self.bot.loop.create_task(self.update_cache())
+
+	def __unload(self):
+		self.cache_task.cancel()
+
 
 	@staticmethod
 	def formatembed(message):

@@ -18,8 +18,12 @@ class Logs:
 			self.bot.categories["Admin and Moderation"].append(type(self).__name__)
 
 		self.black_listed_channels = []
-		self.bot.loop.create_task(self.track_invites())
-		self.bot.loop.create_task(self.update_blacklist_cache())
+		self.invite_task = self.bot.loop.create_task(self.track_invites())
+		self.blacklist_task = self.bot.loop.create_task(self.update_blacklist_cache())
+
+	def __unload(self):
+		self.invite_task.cancel()
+		self.blacklist_task.cancel()
 
 
 	# Commands

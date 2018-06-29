@@ -9,11 +9,16 @@ class Automod:
 	def __init__(self, bot):
 		self.bot = bot
 		self.censor_cache = {}
-		self.bot.loop.create_task(self.update_censor_cache())
+		self.censor_task = self.bot.loop.create_task(self.update_censor_cache())
 		self.mention_cache = {}
-		self.bot.loop.create_task(self.update_mention_cache())
+		self.mention_task = self.bot.loop.create_task(self.update_mention_cache())
 		self.image_cache = {}
-		self.bot.loop.create_task(self.update_image_cache())
+		self.image_task = self.bot.loop.create_task(self.update_image_cache())
+
+	def __unload(self):
+		self.censor_task.cancel()
+		self.mention_task.cancel()
+		self.image_task.cancel()
 
 	# Censor
 

@@ -1,24 +1,102 @@
 from .utils import checks
 from discord.ext import commands
 import asyncio
-from discord import Embed, File, Game
+from discord import File, Game
 from prettytable import PrettyTable
 import time
 import io
 import traceback
 import textwrap
 from contextlib import redirect_stdout
+from subprocess import Popen, PIPE, STDOUT
 
-
-class Developers:
+class Developers():
 
 	def __init__(self, bot):
 		self.bot = bot
 		self.divisor = 1
-		self.bot.loop.create_task(self.error())
-		self.bot.loop.create_task(self.statuses())
+		self.error_task = self.bot.loop.create_task(self.error())
+		self.status_task = self.bot.loop.create_task(self.statuses())
+
+	def __unload(self):
+		self.error_task.cancel()
+		self.status_task.cancel()
 
 	# Database #
+
+
+	@commands.command()
+	@checks.is_developer()
+	async def load(self, ctx, extension):
+		try:
+			self.bot.load_extension(extension)
+		except Exception as e:
+			await ctx.send(embed=self.bot.error(f"```py\n{traceback.format_exc()}\n```"))
+			return
+		await ctx.message.add_reaction("✅")
+
+	@commands.command()
+	@checks.is_developer()
+	async def unload(self, ctx, extension):
+		try:
+			self.bot.unload_extension(extension)
+		except Exception as e:
+			await ctx.send(embed=self.bot.error(f"```py\n{traceback.format_exc()}\n```"))
+			return
+		await ctx.message.add_reaction("✅")
+
+	@commands.command()
+	@checks.is_developer()
+	async def reload(self, ctx, extension):
+		try:
+			self.bot.unload_extension(extension)
+			self.bot.load_extension(extension)
+		except Exception as e:
+			await ctx.send(embed=self.bot.error(f"```py\n{traceback.format_exc()}\n```"))
+			return
+		await ctx.message.add_reaction("✅")
+
+
+
+
+
+
+	@commands.command(aliases=["terminal"])
+	@checks.is_developer()
+	async def cmd(self, ctx, *, command):
+
+		try:
+			output = Popen(command, shell=True, stdout=PIPE, stderr=STDOUT).communicate()[0].decode("utf_8")
+		except:
+			await ctx.send(self.bot.error("Command execution failed"))
+			return
+
+		await ctx.send(f"```py\n{output}\n```")
+
+	@commands.command()
+	@checks.is_developer()
+	async def pull(self, ctx):
+		try:
+			output = Popen("git pull", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[0].decode("utf_8")
+		except:
+			await ctx.send(self.bot.error("Command execution failed"))
+			return
+
+		await ctx.send(f"```py\n{output}\n```")
+
+	@commands.command()
+	@checks.is_developer()
+	async def kill(self, ctx, ):
+		"""Ideally you should get no message back from this command"""
+		try:
+			output = Popen(f"systemctl restart {ctx.me.name.lower()}", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[0].decode("utf_8")
+		except:
+			await ctx.send(embed=self.bot.error("Restart failed"))
+
+		await ctx.send(f"```py\n{output}\n```")
+
+
+
 
 	@commands.command(hidden=True)
 	@checks.is_developer()
@@ -98,17 +176,6 @@ class Developers:
 	async def toolong(self, ctx):
 		await ctx.send(",".join([str(x) for x in range(1, 2001)]))
 
-	# Bot Management #
-
-	@commands.command(hidden=True)
-	@checks.is_developer()
-	async def leave(self, ctx, id: int):
-		for guild in self.bot.guilds:
-			if id == guild.id:
-				await guild.leave()
-				return
-		await ctx.send(embed=self.bot.error("You are not in that guild"))
-
 	async def error(self):
 		await self.bot.wait_until_ready()
 		while True:
@@ -135,6 +202,18 @@ class Developers:
 			func2()
 
 		func1()
+
+	# Bot Management #
+
+	@commands.command(hidden=True)
+	@checks.is_developer()
+	async def leave(self, ctx, id: int):
+		for guild in self.bot.guilds:
+			if id == guild.id:
+				await guild.leave()
+				return
+		await ctx.send(embed=self.bot.error("You are not in that guild"))
+
 
 	# Other #
 
@@ -212,3 +291,4 @@ class Developers:
 def setup(bot):
 	n = Developers(bot)
 	bot.add_cog(n)
+
