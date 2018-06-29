@@ -1,7 +1,9 @@
 from discord.ext import commands
 from discord import TextChannel, Embed
 from .utils import checks
+from .utils.paginator import FieldPages
 import re
+
 
 class Rift:
 
@@ -37,6 +39,14 @@ class Rift:
 				if channel.id in self.rift_channel_cache:
 					self.rift_channel_cache[channel.id].append(result["rift_name"])
 
+	@commands.command()
+	async def rift_list(self, ctx):
+		rifts = []
+		for rift_name, rift in self.rift_name_cache.items():
+			rifts.append((rift_name, str(self.bot.get_user(rift["owner"]))))
+		pager = FieldPages(ctx, entries=rifts)
+		await pager.paginate()
+
 	@checks.is_admin()
 	@commands.command()
 	async def create_rift(self, ctx, rift_name, initial_channel: TextChannel = None):
@@ -58,8 +68,6 @@ class Rift:
 		if owners_rifts > 2:
 			await ctx.send(embed=self.bot.error("You have too many rifts. The maximum is 3. Please contact the support server to request more"))
 			return
-
-
 
 		query = "INSERT INTO rift (rift_name, owner, channels) VALUES ($1, $2, $3)"
 		await self.bot.pool.execute(query, rift_name, rift_owner, [initial_channel])
@@ -110,19 +118,72 @@ class Rift:
 		await self.bot.pool.execute(query, self.rift_name_cache[rift_name]["channels"], rift_name)
 		await channel.send(self.bot.success(f"This channel is now connected to {rift_name}"))
 
+	@commands.command()
+	@checks.is_admin()
+	async def leave_rift(self, ctx, rift, channel: TextChannel = None):
+		if not channel:
+			channel = ctx.channel
+
+		actual_rift = self.rift_name_cache.get(rift)
+		if not actual_rift:
+			await ctx.send(embed=self.bot.error("This is not a valid rift"))
+			return
+
+		if channel.id not in actual_rift["channels"]:
+			await ctx.send(embed=self.bot.error(f"{channel.mention} is not in the rift"))
+
+		self.rift_name_cache[rift]["channels"].remove(channel.id)
+		query = "UPDATE rift SET channels = $1 WHERE rift_name = $2"
+		await self.bot.pool.execute(query, self.rift_name_cache[rift]["channels"], rift)
+		await ctx.send(embed=self.bot.success(f"{channel.mention} has been removed from the rift"))
+
+
+	@commands.command()
+	@checks.is_mod()
+	async def rift_mute(self, ctx, user_id, rift_name):
+		if not user_id.isdigit():
+			await ctx.send(embed=self.bot.error("Please enter the user's id"))
+			return
+
+		user = self.bot.get_user(user_id)
+		if not user:
+			await ctx.send(embed=self.bot.error("This user was not found"))
+			return
+
+		if rift_name not in self.rift_name_cache:
+			await ctx.send(embed=self.bot.error("This is not a rift"))
+			return
+
+		channels = map(self.bot.get_channel, self.rift_name_cache[rift_name]["channels"])
+		guilds = [channel.guild for channel in channels]
+		if ctx.guild not in guilds:
+			await ctx.send(embed=self.bot.error("This guild is not in that rift"))
+			return
+
+		if self.rift_name_cache[rift_name]["blacklist"]:
+			self.rift_name_cache[rift_name]["blacklist"].append(user_id)
+		else:
+			self.rift_name_cache[rift_name]["blacklist"] = [user_id]
+
+		query = "UPDATE rift SET blacklist = $1 WHERE rift_name = $2"
+		await self.bot.pool.execute(query, self.rift_name_cache[rift_name]["blacklist"], rift_name)
+		await ctx.send(embed=self.bot.success(f"{user.name} has been muted"))
+
+
 	async def on_message(self, message):
 		if message.channel.id not in self.rift_channel_cache:
 			return
 
-		connected_rifts = self.rift_channel_cache.get(message.channe.id)
+		connected_rifts = self.rift_channel_cache.get(message.channel.id)
 		if not connected_rifts:
 			return
 
 		for rift in connected_rifts:
-			channels = self.rift_name_cache[rift]["channels"]
-			for channel in channels:
-				actual_channel = self.bot.get_channel(channel)
-				await actual_channel.send(embed=self.formatembed(message))
+			if message.author.id not in self.rift_name_cache[rift]["blacklist"]:
+				channels = self.rift_name_cache[rift]["channels"]
+				for channel in channels:
+					actual_channel = self.bot.get_channel(channel)
+					await actual_channel.send(embed=self.formatembed(message))
 
 	async def update_descriptions(self):
 		await self.bot.wait_until_ready

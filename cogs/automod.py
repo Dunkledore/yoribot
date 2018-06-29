@@ -237,31 +237,6 @@ class Automod:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def setup(bot):
 	cog = Automod(bot)
 	bot.add_cog(cog)
