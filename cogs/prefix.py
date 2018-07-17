@@ -30,7 +30,8 @@ class Prefix:
 			base_prefixes = [f"<@{self.bot.user.id}>"]
 			prefixes = self.bot.prefixes[str(ctx.guild.id)]
 			if not prefixes:
-				usable_prefixes = base_prefixes.append("*")
+				usable_prefixes = base_prefixes
+				usable_prefixes.append("*")
 			else:
 				usable_prefixes = base_prefixes + prefixes
 			embed = Embed(title=f"Prefixes for {ctx.guild.name}", description="\n".join(usable_prefixes))
