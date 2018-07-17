@@ -14,7 +14,7 @@ from quart import Quart
 
 from cogs.utils import utils, dataIO
 from cogs.website import add_views
-from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port
+from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port, client_id
 
 initial_cogs = ["developers"]
 

@@ -102,7 +102,7 @@ class Utilities:
 		perms.read_message_history = True
 		perms.attach_files = True
 		perms.add_reactions = True
-		await ctx.send(f'<{utils.oauth_url(self.bot.client_id, perms)}>')
+		await ctx.send(f'<{utils.oauth_url(self.bot.user.id, perms)}>')
 
 
 def setup(bot):
