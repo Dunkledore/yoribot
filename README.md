@@ -1,11 +1,11 @@
 ## Yori Bot
 
 A discord bot with:  
-Inter-Guild Moderation
-Inter_Guild Communication
-Role Management with or without Reactions
-Advanced logs with web downloads
-Detailed statistics of user data and commands
+Inter-Guild Moderation  
+Inter_Guild Communication  
+Role Management with or without Reactions  
+Advanced logs with web downloads  
+Detailed statistics of user data and commands  
 A local website
 
 ## Instrctions - Ubuntu

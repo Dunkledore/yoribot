@@ -100,7 +100,6 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def on_ready(self):
 		print("connected")
-		print(self.o)
 		if not hasattr(self, 'uptime'):
 			self.uptime = datetime.utcnow()
 		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
@@ -154,4 +153,4 @@ class YoriBot(commands.AutoShardedBot):
 			print(e)
 
 	def run(self):
-		super().run("MjM4NDk0NzU2NTIxMzc3Nzky.CunGFQ.wUILz7z6HoJzVeq6pyHPmVgQgV4", reconnect=True)
+		super().run(token, reconnect=True)
