@@ -113,7 +113,7 @@ class Developers():
 		              "CREATE TABLE IF NOT EXISTS mention_censor (guild_id BIGINT PRIMARY KEY, amount INT, time INT)",
 		              "CREATE TABLE IF NOT EXISTS caps (guild_id BIGINT, toggle BOOL)",
 		              "CREATE TABLE IF NOT EXISTS react_roles (id SERIAL, message_id BIGINT, role_id BIGINT, emoji_id TEXT, guild_id BIGINT)",
-		              "CREATE TABLE rift (rift_name TEXT PRIMARY KEY, owner BIGINT, channels BIGINT[], blacklist BIGINT[])"
+		              "CREATE TABLE IF NOT EXISTS rift (rift_name TEXT PRIMARY KEY, owner BIGINT, channels BIGINT[], blacklist BIGINT[])"
 		              ]
 
 		for statement in statements:
