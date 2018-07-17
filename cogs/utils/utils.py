@@ -1,6 +1,7 @@
 import traceback
 from dateutil.relativedelta import relativedelta
 import datetime
+from discord import Webhook, AsyncWebhookAdapter
 
 
 def traceback_from_exc(e, stack=4):
@@ -10,8 +11,8 @@ def traceback_from_exc(e, stack=4):
 def get_webhook(details, session):
 	wh_id = details["wh_id"]
 	wh_token = details["wh_token"]
-	hook = discord.Webhook.partial(id=int(wh_id), token=wh_token,
-	                               adapter=discord.AsyncWebhookAdapter(session))
+	hook = Webhook.partial(id=int(wh_id), token=wh_token,
+	                               adapter=AsyncWebhookAdapter(session))
 	return hook
 
 
