@@ -246,3 +246,4 @@ def setup(bot):
 	cog = Automod(bot)
 	bot.add_cog(cog)
 	bot.add_listenter("on_message", cog.censor_on_message())
+

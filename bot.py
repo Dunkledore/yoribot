@@ -1,8 +1,8 @@
+import asyncio
 import datetime
 import os
 import sys
 import traceback
-import asyncio
 from datetime import datetime
 from threading import Thread
 
@@ -11,9 +11,9 @@ import asyncpg
 from discord import Embed, Forbidden
 from discord.ext import commands
 from quart import Quart
-from cogs.website import add_views
 
 from cogs.utils import utils, dataIO
+from cogs.website import add_views
 from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port
 
 initial_cogs = ["developers",
@@ -21,7 +21,7 @@ initial_cogs = ["developers",
                 "prefix",
                 "statistics",
                 "utilities",
-                "reactroles"
+                "reactroles",
                 ]
 
 
@@ -58,7 +58,6 @@ class YoriBot(commands.AutoShardedBot):
 		self.website = Quart(__name__, static_folder="website/static", template_folder="website/templates")
 		self.website.config['SECRET_KEY'] = client_secret
 		add_views(self.website, self)
-
 
 	def run_website(self):
 		asyncio.set_event_loop(self.loop)
@@ -101,6 +100,7 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def on_ready(self):
 		print("connected")
+		print(self.o)
 		if not hasattr(self, 'uptime'):
 			self.uptime = datetime.utcnow()
 		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
@@ -154,4 +154,4 @@ class YoriBot(commands.AutoShardedBot):
 			print(e)
 
 	def run(self):
-		super().run(token, reconnect=True)
+		super().run("MjM4NDk0NzU2NTIxMzc3Nzky.CunGFQ.wUILz7z6HoJzVeq6pyHPmVgQgV4", reconnect=True)

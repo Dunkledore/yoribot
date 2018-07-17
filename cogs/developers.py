@@ -22,8 +22,7 @@ class Developers():
 		self.error_task.cancel()
 		self.status_task.cancel()
 
-	# Database #
-
+	# Cogs #
 
 	@commands.command()
 	@checks.is_developer()
@@ -56,9 +55,7 @@ class Developers():
 			return
 		await ctx.message.add_reaction("✅")
 
-
-
-
+	# Terminal #
 
 
 	@commands.command(aliases=["terminal"])
@@ -95,7 +92,7 @@ class Developers():
 
 		await ctx.send(f"```py\n{output}\n```")
 
-
+	# Database #
 
 
 	@commands.command(hidden=True)
@@ -203,7 +200,7 @@ class Developers():
 
 		func1()
 
-	# Bot Management #
+	# Guild Management #
 
 	@commands.command(hidden=True)
 	@checks.is_developer()
@@ -291,4 +288,5 @@ class Developers():
 def setup(bot):
 	n = Developers(bot)
 	bot.add_cog(n)
+
 

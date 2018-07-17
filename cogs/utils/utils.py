@@ -1,5 +1,4 @@
 import traceback
-import discord
 from dateutil.relativedelta import relativedelta
 import datetime
 
