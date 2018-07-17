@@ -10,6 +10,7 @@ import textwrap
 from contextlib import redirect_stdout
 from subprocess import Popen, PIPE, STDOUT
 
+
 class Developers():
 
 	def __init__(self, bot):
@@ -57,7 +58,6 @@ class Developers():
 
 	# Terminal #
 
-
 	@commands.command(aliases=["terminal"])
 	@checks.is_developer()
 	async def cmd(self, ctx, *, command):
@@ -86,14 +86,15 @@ class Developers():
 	async def kill(self, ctx, ):
 		"""Ideally you should get no message back from this command"""
 		try:
-			output = Popen(f"systemctl restart {ctx.me.name.lower()}", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[0].decode("utf_8")
+			output = \
+			Popen(f"systemctl restart {ctx.me.name.lower()}", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[
+				0].decode("utf_8")
 		except:
 			await ctx.send(embed=self.bot.error("Restart failed"))
 
 		await ctx.send(f"```py\n{output}\n```")
 
 	# Database #
-
 
 	@commands.command(hidden=True)
 	@checks.is_developer()
@@ -111,7 +112,7 @@ class Developers():
 		              "CREATE TABLE IF NOT EXISTS word_censor (guild_id BIGINT, word TEXT, PRIMARY KEY (guild_id, word))",
 		              "CREATE TABLE IF NOT EXISTS mention_censor (guild_id BIGINT PRIMARY KEY, amount INT, time INT)",
 		              "CREATE TABLE IF NOT EXISTS caps (guild_id BIGINT, toggle BOOL)",
-		              "CREATE TABLE react_roles (id SERIAL, message_id BIGINT, role_id BIGINT, emoji_id TEXT, guild_id BIGINT)"
+		              "CREATE TABLE IF NOT EXISTS react_roles (id SERIAL, message_id BIGINT, role_id BIGINT, emoji_id TEXT, guild_id BIGINT)",
 		              "CREATE TABLE rift (rift_name TEXT PRIMARY KEY, owner BIGINT, channels BIGINT[], blacklist BIGINT[])"
 		              ]
 
@@ -211,7 +212,6 @@ class Developers():
 				return
 		await ctx.send(embed=self.bot.error("You are not in that guild"))
 
-
 	# Other #
 
 	@commands.command(hidden=True)
@@ -288,5 +288,3 @@ class Developers():
 def setup(bot):
 	n = Developers(bot)
 	bot.add_cog(n)
-
-
