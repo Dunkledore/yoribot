@@ -130,7 +130,7 @@ class ReactRoles:
 				else:
 					emoji_to_insert = str(emoji.id)
 
-		query = "INSERT INTO reactroles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
+		query = "INSERT INTO react_roles (message_id, role_id, emoji_id, guild_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, message_id, role.id, emoji_to_insert, ctx.guild.id)
 		await ctx.send(embed=self.bot.success(f"Emoji set to {emoji} for {role.name}"))
 
@@ -139,7 +139,7 @@ class ReactRoles:
 	async def view_react_roles(self, ctx):
 		"""See all active ReactRoles"""
 
-		query = "SELECT * FROM reactroles WHERE guild_id = $1"
+		query = "SELECT * FROM react_roles WHERE guild_id = $1"
 		results = await self.bot.pool.fetch(query, ctx.guild.id)
 		results = list(results)
 
@@ -175,7 +175,7 @@ class ReactRoles:
 	async def delete_react_role(self, ctx):
 		"""Delete a ReactRole"""
 
-		query = "SELECT * FROM reactroles WHERE guild_id = $1"
+		query = "SELECT * FROM react_roles WHERE guild_id = $1"
 		results = await self.bot.pool.fetch(query, ctx.guild.id)
 		results = list(results)
 
@@ -227,7 +227,7 @@ class ReactRoles:
 		message_id = chosen_delete["message_id"]
 		role_id = chosen_delete["role_id"]
 
-		query = "DELETE FROM reactroles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
+		query = "DELETE FROM react_roles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
 		await self.bot.pool.execute(query, message_id, role_id)
 		await ctx.send(embed=self.bot.success("ReactRole Removed"))
 
@@ -242,7 +242,7 @@ class ReactRoles:
 		else:
 			compare_emoji = emoji.name
 
-		query = "SELECT * FROM reactroles WHERE message_id = $1"
+		query = "SELECT * FROM react_roles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
 
 		if not results:
@@ -268,7 +268,7 @@ class ReactRoles:
 		else:
 			compare_emoji = emoji.name
 
-		query = "SELECT * FROM reactroles WHERE message_id = $1"
+		query = "SELECT * FROM react_roles WHERE message_id = $1"
 		results = await self.bot.pool.fetch(query, message_id)
 
 		if not results:

@@ -16,13 +16,7 @@ from cogs.utils import utils, dataIO
 from cogs.website import add_views
 from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port
 
-initial_cogs = ["developers",
-                "logs",
-                "prefix",
-                "statistics",
-                "utilities",
-                "reactroles",
-                ]
+initial_cogs = ["developers"]
 
 
 def _prefix_callable(bot, msg):
