@@ -245,5 +245,7 @@ class Automod:
 def setup(bot):
 	cog = Automod(bot)
 	bot.add_cog(cog)
-	bot.add_listenter("on_message", cog.censor_on_message())
+	bot.add_listener(cog.censor_on_message, "on_message")
+	bot.add_listener(cog.mention_on_message, "on_message")
+	bot.add_listener(cog.image_on_message, "on_message")
 

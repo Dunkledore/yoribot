@@ -209,6 +209,7 @@ class Developers():
 		for guild in self.bot.guilds:
 			if id == guild.id:
 				await guild.leave()
+				await ctx.message.add_reaction("✅")
 				return
 		await ctx.send(embed=self.bot.error("You are not in that guild"))
 
