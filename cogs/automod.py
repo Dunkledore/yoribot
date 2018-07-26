@@ -83,6 +83,7 @@ class Automod:
 		proxy_ctx = Object(id=None)
 		proxy_ctx.guild = message.guild
 		proxy_ctx.author = message.author
+		proxy_ctx.bot = self.bot
 		if await checks.has_level(proxy_ctx, "mod"):
 			return
 
