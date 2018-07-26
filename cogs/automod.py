@@ -34,18 +34,21 @@ class Automod:
 	@commands.command(aliases=["censor_add"])
 	@checks.is_admin()
 	async def add_censor(self, ctx, word):
-		"""Add a wored to be censored. Note this looks for this word by itself and ignores if it is contained within another word. Censor will ignore case"""
+		"""Add a word to be censored. Note this looks for this word by itself and ignores if it is contained within another word. Censor will ignore case"""
 		query = "INSERT into word_censor (guild_id, word) VALUES ($1, $2)"
 
 		try:
 			await self.bot.pool.execute(query, ctx.guild.id, word.lower())
 			self.update_censor_cache()
+			await ctx.send(embed=self.bot.error("Word added"))
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("This is already a censored word"))
+
 
 	@commands.command(aliases=["delete_censor", "censor_delete"])
 	@checks.is_admin()
 	async def remove_censor(self, ctx, word):
+		"""Remove a word from being censored"""
 		query = "SELECT word FROM censor WHERE (guild_id = $1) and (word = $2)"
 		in_db = await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
 
@@ -55,15 +58,16 @@ class Automod:
 
 		query = "DELETE FROM word_censor WHERE (guild_id = $1) and (word = $2)"
 		await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
-		await ctx.send(embed=self.bot.succes("Word removed"))
 		self.update_censor_cache()
+		await ctx.send(embed=self.bot.succes("Word removed"))
 
 
 	@commands.command()
 	@checks.is_admin()
 	async def censor_list(self, ctx):
+		"""Show all words currently censored"""
 		query = "SELECT word FROM word_censor WHERE guild_id = $1"
-		words = await self.bot.pool.fetch(query, ctx.guil.id)
+		words = await self.bot.pool.fetch(query, ctx.guild.id)
 
 		embed = Embed(title=f"Censor Words for {ctx.guild.name}",
 		              description="\n".join([word["word"] for word in words]))
