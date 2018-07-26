@@ -24,7 +24,7 @@ class Automod:
 
 	async def update_censor_cache(self):
 		query = "SELECT * FROM word_censor"
-		results = self.bot.pool.fetch(query)
+		results = await self.bot.pool.fetch(query)
 		for result in results:
 			if result["guild_id"] not in self.censor_cache:
 				self.censor_cache[result["guild_id"]] = [result["word"]]
@@ -39,7 +39,7 @@ class Automod:
 
 		try:
 			await self.bot.pool.execute(query, ctx.guild.id, word.lower())
-			self.update_censor_cache()
+			await self.update_censor_cache()
 			await ctx.send(embed=self.bot.error("Word added"))
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("This is already a censored word"))
@@ -58,7 +58,7 @@ class Automod:
 
 		query = "DELETE FROM word_censor WHERE (guild_id = $1) and (word = $2)"
 		await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
-		self.update_censor_cache()
+		await self.update_censor_cache()
 		await ctx.send(embed=self.bot.success("Word removed"))
 
 
