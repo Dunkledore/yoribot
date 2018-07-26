@@ -59,7 +59,7 @@ class Automod:
 		query = "DELETE FROM word_censor WHERE (guild_id = $1) and (word = $2)"
 		await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
 		self.update_censor_cache()
-		await ctx.send(embed=self.bot.succes("Word removed"))
+		await ctx.send(embed=self.bot.success("Word removed"))
 
 
 	@commands.command()
