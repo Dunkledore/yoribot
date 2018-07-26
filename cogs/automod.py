@@ -49,7 +49,7 @@ class Automod:
 	@checks.is_admin()
 	async def remove_censor(self, ctx, word):
 		"""Remove a word from being censored"""
-		query = "SELECT word FROM censor WHERE (guild_id = $1) and (word = $2)"
+		query = "SELECT word FROM word_censor WHERE (guild_id = $1) and (word = $2)"
 		in_db = await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
 
 		if not in_db:
@@ -211,10 +211,10 @@ class Automod:
 		if not message.guild:
 			return
 
-		if not message.attatchements:
+		if not message.attachments:
 			return
 
-		number_of_images = len([image for image in message.attatchements if image.height])
+		number_of_images = len([image for image in message.attachments if image.height])
 		if number_of_images < 1:
 			return
 
