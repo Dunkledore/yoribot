@@ -26,6 +26,15 @@ class Automod:
 	# Censor
 
 	async def update_censor_cache(self):
+		""" Set a class attribute containing the regexes per guild
+
+		Looks something like this
+		{
+			372581201195565056: re.compile('\\b(clown)|(pleb)\\b'),
+			472348120139456505: re.compile('\\b(fool)|(idiot)\\b')
+		}
+
+		"""
 		query = "SELECT * FROM word_censor"
 		results = await self.bot.pool.fetch(query)
 		results.sort(key=lambda result: result["guild_id"])
@@ -41,7 +50,7 @@ class Automod:
 		try:
 			await self.bot.pool.execute(query, ctx.guild.id, word.lower())
 			await self.update_censor_cache()
-			await ctx.send(embed=self.bot.error("Word added"))
+			await ctx.send(embed=self.bot.success("Word added"))
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("This is already a censored word"))
 
@@ -97,6 +106,7 @@ class Automod:
 		for result in results:
 			self.mention_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
+	@commands.command()
 	async def mention_rate(self, ctx, amount: int, time: int):
 		"""Set the max mention rate. For sample 3,4 would be a max of 3 mentions in a time of 4 seconds"""
 
@@ -150,6 +160,7 @@ class Automod:
 
 	# Caps filter
 
+	@commands.command()
 	async def toggle_anticaps(self, ctx):
 		"""Toggles whether to delete messages with over 50% of the message in caps"""
 
@@ -185,6 +196,7 @@ class Automod:
 		for result in results:
 			self.image_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
+	@commands.command()
 	async def image_rate(self, ctx, amount: int, time: int):
 		"""Set the max image rate. For sample 3,4 would be a max of 3 images in a time of 4 seconds"""
 
