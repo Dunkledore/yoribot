@@ -3,6 +3,9 @@ from discord import Embed, Object
 import asyncpg
 from .utils import checks
 from .utils import cooldown
+from itertools import groupby
+import re
+
 
 class Automod:
 
@@ -25,11 +28,9 @@ class Automod:
 	async def update_censor_cache(self):
 		query = "SELECT * FROM word_censor"
 		results = await self.bot.pool.fetch(query)
-		for result in results:
-			if result["guild_id"] not in self.censor_cache:
-				self.censor_cache[result["guild_id"]] = [result["word"]]
-			else:
-				self.censor_cache[result["guild_id"]].append(result["word"])
+		sorted_results = results.sort(key=lambda result: result["guild_id"])
+		for k, v in groupby(sorted_results, key=lambda result: result["guild_id"]):
+			self.censor_cache[k] = re.compile("\\b"+"|".join([f"({result['word']})" for result in list(v)])+"\\b")
 
 	@commands.command(aliases=["censor_add"])
 	@checks.is_admin()
@@ -43,7 +44,6 @@ class Automod:
 			await ctx.send(embed=self.bot.error("Word added"))
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("This is already a censored word"))
-
 
 	@commands.command(aliases=["delete_censor", "censor_delete"])
 	@checks.is_admin()
@@ -60,7 +60,6 @@ class Automod:
 		await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
 		await self.update_censor_cache()
 		await ctx.send(embed=self.bot.success("Word removed"))
-
 
 	@commands.command()
 	@checks.is_admin()
@@ -87,10 +86,8 @@ class Automod:
 		if await checks.has_level(proxy_ctx, "mod"):
 			return
 
-		for word in self.censor_cache[message.guild.id]:
-			if f" {word} " in message.content:
-				await message.delete()
-
+		if self.censor_cache[message.guild.id].search(message.content):
+			await message.delete()
 
 	# Mention Censor
 
@@ -98,7 +95,7 @@ class Automod:
 		query = "SELECT * FROM mention_censor"
 		results = self.bot.pool.fetch(query)
 		for result in results:
-				self.mention_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
+			self.mention_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
 	async def mention_rate(self, ctx, amount: int, time: int):
 		"""Set the max mention rate. For sample 3,4 would be a max of 3 mentions in a time of 4 seconds"""
@@ -117,7 +114,6 @@ class Automod:
 			if key not in ["amount", "time"]:
 				self.mention_cache[ctx.guild.id].pop(key)
 
-
 	async def mention_on_message(self, message):
 		if not message.guild:
 			return
@@ -126,7 +122,7 @@ class Automod:
 
 		user_mentions = len(message.mentions)
 		role_mentions = len(message.role_mentions)
-		total_mentions = user_mentions + role_mentions
+		total_mentions = user_mentions+role_mentions
 
 		if total_mentions < 1:
 			return
@@ -167,7 +163,6 @@ class Automod:
 
 		await ctx.send(embed=self.bot.success(f"Anticaps set to {caps}"))
 
-
 	async def caps_on_message(self, message):
 		if not message.guild:
 			return
@@ -183,13 +178,12 @@ class Automod:
 			if letter.isupper():
 				number_of_caps += 1
 
-
 	# Image spam
 	async def update_image_cache(self):
 		query = "SELECT * FROM image_censor"
 		results = self.bot.pool.fetch(query)
 		for result in results:
-				self.image_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
+			self.image_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
 	async def image_rate(self, ctx, amount: int, time: int):
 		"""Set the max image rate. For sample 3,4 would be a max of 3 images in a time of 4 seconds"""
@@ -222,8 +216,6 @@ class Automod:
 		if message.guild.id not in self.image_cache:
 			return
 
-
-
 		proxy_ctx = Object(id=None)
 		proxy_ctx.guild = message.guild
 		proxy_ctx.author = message.author
@@ -246,11 +238,9 @@ class Automod:
 				await message.delete()
 
 
-
 def setup(bot):
 	cog = Automod(bot)
 	bot.add_cog(cog)
 	bot.add_listener(cog.censor_on_message, "on_message")
 	bot.add_listener(cog.mention_on_message, "on_message")
 	bot.add_listener(cog.image_on_message, "on_message")
-
