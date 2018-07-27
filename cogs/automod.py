@@ -28,8 +28,8 @@ class Automod:
 	async def update_censor_cache(self):
 		query = "SELECT * FROM word_censor"
 		results = await self.bot.pool.fetch(query)
-		sorted_results = results.sort(key=lambda result: result["guild_id"])
-		for k, v in groupby(sorted_results, key=lambda result: result["guild_id"]):
+		results.sort(key=lambda result: result["guild_id"])
+		for k, v in groupby(results, key=lambda result: result["guild_id"]):
 			self.censor_cache[k] = re.compile("\\b"+"|".join([f"({result['word']})" for result in list(v)])+"\\b")
 
 	@commands.command(aliases=["censor_add"])
