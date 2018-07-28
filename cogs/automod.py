@@ -179,15 +179,13 @@ class Automod:
 			return
 
 		number_of_caps = sum(1 for letter in message.content if letter.isupper())
-		for letter in message.content:
-			if number_of_caps >= len(message.content)/2:
-				proxy_ctx = Object(id=None)
-				proxy_ctx.guild = message.guild
-				proxy_ctx.author = message.author
-				if not await checks.has_level(proxy_ctx, "mod"):
-					await message.delete()
-			if letter.isupper():
-				number_of_caps += 1
+		if number_of_caps >= len(message.content)/2:
+			proxy_ctx = Object(id=None)
+			proxy_ctx.guild = message.guild
+			proxy_ctx.author = message.author
+			if not await checks.has_level(proxy_ctx, "mod"):
+				await message.delete()
+
 
 	# Image spam
 	async def update_image_cache(self):
@@ -256,3 +254,4 @@ def setup(bot):
 	bot.add_listener(cog.censor_on_message, "on_message")
 	bot.add_listener(cog.mention_on_message, "on_message")
 	bot.add_listener(cog.image_on_message, "on_message")
+	bot.add_listener(cog.caps_on_message, "on_message")
