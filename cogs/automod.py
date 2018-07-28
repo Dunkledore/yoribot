@@ -120,9 +120,12 @@ class Automod:
 
 		await ctx.send(embed=self.bot.success(f"I will allow a max of {amount} mentions in {time}s"))
 
-		for key in list(self.mention_cache[ctx.guild.id]):  # Reset cooldowns
-			if key not in ["amount", "time"]:
-				self.mention_cache[ctx.guild.id].pop(key)
+		if ctx.guild.id in self.mention_cache:
+			for key in list(self.mention_cache[ctx.guild.id]):  # Reset cooldowns
+				if key not in ["amount", "time"]:
+					self.mention_cache[ctx.guild.id].pop(key)
+
+		await self.update_mention_cache()
 
 	async def mention_on_message(self, message):
 		if not message.guild:
