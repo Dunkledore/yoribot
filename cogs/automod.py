@@ -155,7 +155,7 @@ class Automod:
 		user_cooldown = self.mention_cache[message.guild.id][message.author]
 		user_cooldown.check_reset()
 
-		for mention in range(0, total_mentions):
+		for mention in range(0, total_mentions+1):
 			user_cooldown.increment()
 			if user_cooldown.is_allowed():
 				pass
@@ -195,7 +195,7 @@ class Automod:
 	# Image spam
 	async def update_image_cache(self):
 		query = "SELECT * FROM image_censor"
-		results = self.bot.pool.fetch(query)
+		results = await self.bot.pool.fetch(query)
 		for result in results:
 			self.image_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
@@ -213,9 +213,12 @@ class Automod:
 
 		await ctx.send(embed=self.bot.success(f"I will allow a max of {amount} images in {time}s"))
 
-		for key in list(self.image_cache[ctx.guild.id]):  # Reset cooldowns
-			if key not in ["amount", "time"]:
-				self.image_cache[ctx.guild.id].pop(key)
+		if ctx.guild.id in self.image_cache:
+			for key in list(self.image_cache[ctx.guild.id]):  # Reset cooldowns
+				if key not in ["amount", "time"]:
+					self.image_cache[ctx.guild.id].pop(key)
+
+		await self.update_image_cache()
 
 	async def image_on_message(self, message):
 		if not message.guild:
@@ -234,6 +237,7 @@ class Automod:
 		proxy_ctx = Object(id=None)
 		proxy_ctx.guild = message.guild
 		proxy_ctx.author = message.author
+		proxy_ctx.bot = self.bot
 		if await checks.has_level(proxy_ctx, "mod"):
 			return
 
@@ -245,7 +249,7 @@ class Automod:
 		user_cooldown = self.image_cache[message.guild.id][message.author]
 		user_cooldown.check_reset()
 
-		for mention in range(0, number_of_images):
+		for mention in range(0, number_of_images+1):
 			user_cooldown.increment()
 			if user_cooldown.is_allowed():
 				pass
