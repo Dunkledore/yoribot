@@ -155,7 +155,7 @@ class Automod:
 		user_cooldown = self.mention_cache[message.guild.id][message.author]
 		user_cooldown.check_reset()
 
-		for mention in range(0, total_mentions+1):
+		for mention in range(0, total_mentions):
 			user_cooldown.increment()
 			if user_cooldown.is_allowed():
 				pass
@@ -249,7 +249,7 @@ class Automod:
 		user_cooldown = self.image_cache[message.guild.id][message.author]
 		user_cooldown.check_reset()
 
-		for mention in range(0, number_of_images+1):
+		for mention in range(0, number_of_images):
 			user_cooldown.increment()
 			if user_cooldown.is_allowed():
 				pass
