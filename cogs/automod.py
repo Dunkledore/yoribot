@@ -110,8 +110,8 @@ class Automod:
 	async def mention_rate(self, ctx, amount: int, time: int):
 		"""Set the max mention rate. For sample 3,4 would be a max of 3 mentions in a time of 4 seconds"""
 
-		insertquery = "INSERT into word_censor (guild_id, amount, time) VALUES ($1, $2, $3)"
-		updatequery = "UPDATE word_censor SET amount = $1, time = $2 WHERE guild_id = $3"
+		insertquery = "INSERT into mention_censor (guild_id, amount, time) VALUES ($1, $2, $3)"
+		updatequery = "UPDATE mention_censor SET amount = $1, time = $2 WHERE guild_id = $3"
 
 		try:
 			await self.bot.pool.execute(insertquery, ctx.guild.id, amount, time)
@@ -140,6 +140,7 @@ class Automod:
 		proxy_ctx = Object(id=None)
 		proxy_ctx.guild = message.guild
 		proxy_ctx.author = message.author
+		proxy_ctx.bot = self.bot
 		if await checks.has_level(proxy_ctx, "mod"):
 			return
 
