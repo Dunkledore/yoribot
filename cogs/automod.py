@@ -102,7 +102,7 @@ class Automod:
 
 	async def update_mention_cache(self):
 		query = "SELECT * FROM mention_censor"
-		results = self.bot.pool.fetch(query)
+		results = await self.bot.pool.fetch(query)
 		for result in results:
 			self.mention_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
