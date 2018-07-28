@@ -178,7 +178,7 @@ class Automod:
 		if not message.guild:
 			return
 
-		number_of_caps = 0
+		number_of_caps = sum(1 for letter in message.content if letter.isupper())
 		for letter in message.content:
 			if number_of_caps >= len(message.content)/2:
 				proxy_ctx = Object(id=None)
