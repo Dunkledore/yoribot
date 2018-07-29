@@ -355,6 +355,7 @@ class HelpPaginator(Pages):
 		self.title = f'{cog_name} Commands'
 		self.description = inspect.getdoc(cog)
 		self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
+		self.per_page = 10
 
 
 		return self
