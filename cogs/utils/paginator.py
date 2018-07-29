@@ -336,7 +336,7 @@ def _command_signature(cmd):
 
 
 class HelpPaginator(Pages):
-	def __init__(self, ctx, entries, *, per_page=4):
+	def __init__(self, ctx, entries, *, per_page=10):
 		super().__init__(ctx, entries=entries, per_page=per_page)
 		self.reaction_emojis.append(('\N{WHITE QUESTION MARK ORNAMENT}', self.show_bot_help))
 		self.total = len(entries)
@@ -355,7 +355,6 @@ class HelpPaginator(Pages):
 		self.title = f'{cog_name} Commands'
 		self.description = inspect.getdoc(cog)
 		self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
-		self.per_page = 10
 
 
 		return self
