@@ -181,6 +181,8 @@ class Automod:
 	async def caps_on_message(self, message):
 		if not message.guild:
 			return
+		if not message.content:
+			return
 
 		number_of_caps = sum(1 for letter in message.content if letter.isupper())
 		if number_of_caps >= len(message.content)/2:
@@ -254,8 +256,7 @@ class Automod:
 			if user_cooldown.is_allowed():
 				pass
 			else:
-				pass
-				#await message.delete()
+				await message.delete()
 
 
 def setup(bot):
