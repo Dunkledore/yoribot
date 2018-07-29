@@ -10,6 +10,10 @@ class ReactRoles:
 
 	def __init__(self, bot):
 		self.bot = bot
+		if "Role Management" not in self.bot.categories:
+			self.bot.categories["Role Management"] = [type(self).__name__]
+		elif type(self).__name__ not in self.bot.categories["Role Management"]:
+			self.bot.categories["Role Management"].append(type(self).__name__)
 
 	@commands.command()
 	@checks.is_admin()

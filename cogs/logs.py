@@ -12,10 +12,10 @@ class Logs:
 		self.bot = bot
 		self.invites = {}
 
-		if "Admin and Moderation" not in self.bot.categories:
-			self.bot.categories["Admin and Moderation"] = [type(self).__name__]
-		elif type(self).__name__ not in self.bot.categories["Admin and Moderation"]:
-			self.bot.categories["Admin and Moderation"].append(type(self).__name__)
+		if "Admin" not in self.bot.categories:
+			self.bot.categories["Admin"] = [type(self).__name__]
+		elif type(self).__name__ not in self.bot.categories["Admin"]:
+			self.bot.categories["Admin"].append(type(self).__name__)
 
 		self.black_listed_channels = []
 		self.invite_task = self.bot.loop.create_task(self.track_invites())

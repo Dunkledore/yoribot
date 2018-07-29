@@ -12,6 +12,10 @@ class Rift:
 		self.rift_name_cache = {}
 		self.rift_channel_cache = {}
 		self.cache_task = self.bot.loop.create_task(self.update_cache())
+		if "Guild Communication" not in self.bot.categories:
+			self.bot.categories["Guild Communication"] = [type(self).__name__]
+		elif type(self).__name__ not in self.bot.categories["Admin and Moderation"]:
+			self.bot.categories["Guild Communication"].append(type(self).__name__)
 
 	def __unload(self):
 		self.cache_task.cancel()
