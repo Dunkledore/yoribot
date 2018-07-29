@@ -55,7 +55,10 @@ class YoriBot(commands.AutoShardedBot):
 
 	def run_website(self):
 		asyncio.set_event_loop(self.loop)
-		self.website.run(host='0.0.0.0', port=port)
+		try:
+			self.website.run(host='0.0.0.0', port=port)
+		except:
+			pass
 
 	async def __ainit__(self):
 
