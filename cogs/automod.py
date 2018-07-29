@@ -8,6 +8,7 @@ import re
 
 
 class Automod:
+	"""Command that will delete spam type messages. The types are words, caps, mention and image. Config requires admin. Mod is exempt from censor"""
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -41,9 +42,9 @@ class Automod:
 		for k, v in groupby(results, key=lambda result: result["guild_id"]):
 			self.censor_cache[k] = re.compile("\\b"+"|".join([f"({result['word']})" for result in list(v)])+"\\b")
 
-	@commands.command(aliases=["censor_add"])
+	@commands.command(aliases=["add_censor"])
 	@checks.is_admin()
-	async def add_censor(self, ctx, word):
+	async def censor_add(self, ctx, word):
 		"""Add a word to be censored. Note this looks for this word by itself and ignores if it is contained within another word. Censor will ignore case"""
 		query = "INSERT into word_censor (guild_id, word) VALUES ($1, $2)"
 
@@ -54,9 +55,9 @@ class Automod:
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("This is already a censored word"))
 
-	@commands.command(aliases=["delete_censor", "censor_delete"])
+	@commands.command(aliases=["delete_censor", "censor_delete", "remove_censor"])
 	@checks.is_admin()
-	async def remove_censor(self, ctx, word):
+	async def censor_remove(self, ctx, word):
 		"""Remove a word from being censored"""
 		query = "SELECT word FROM word_censor WHERE (guild_id = $1) and (word = $2)"
 		in_db = await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
@@ -70,7 +71,7 @@ class Automod:
 		await self.update_censor_cache()
 		await ctx.send(embed=self.bot.success("Word removed"))
 
-	@commands.command()
+	@commands.command(aliases=["censorlist","listcensor","list_censor"])
 	@checks.is_admin()
 	async def censor_list(self, ctx):
 		"""Show all words currently censored"""
@@ -85,6 +86,10 @@ class Automod:
 	async def censor_on_message(self, message):
 		if not message.guild:
 			return
+
+		if message.author.bot:
+			return
+
 		if message.guild.id not in self.censor_cache:
 			return
 
@@ -130,6 +135,10 @@ class Automod:
 	async def mention_on_message(self, message):
 		if not message.guild:
 			return
+
+		if message.author.bot:
+			return
+
 		if message.guild.id not in self.mention_cache:
 			return
 
@@ -181,6 +190,10 @@ class Automod:
 	async def caps_on_message(self, message):
 		if not message.guild:
 			return
+
+		if message.author.bot:
+			return
+
 		if not message.content:
 			return
 
@@ -224,6 +237,9 @@ class Automod:
 
 	async def image_on_message(self, message):
 		if not message.guild:
+			return
+
+		if message.author.bot:
 			return
 
 		if not message.attachments:
