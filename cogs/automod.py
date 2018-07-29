@@ -133,8 +133,8 @@ class Automod:
 		if message.guild.id not in self.mention_cache:
 			return
 
-		user_mentions = len(message.mentions)
-		role_mentions = len(message.role_mentions)
+		user_mentions = len(message.raw_mentions)
+		role_mentions = len(message.raw_role_mentions)
 		total_mentions = user_mentions+role_mentions
 
 		if total_mentions < 1:
@@ -227,7 +227,7 @@ class Automod:
 		if not message.attachments:
 			return
 
-		number_of_images = len([image for image in message.attachments if image.height])
+		number_of_images = sum([1 for image in message.attachments if image.height])
 		if number_of_images < 1:
 			return
 

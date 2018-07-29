@@ -25,3 +25,4 @@ class Cooldown:
 
 	def increment(self):
 		self.current_amount += 1
+y.
