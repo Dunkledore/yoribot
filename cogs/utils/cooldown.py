@@ -13,7 +13,7 @@ class Cooldown:
 		self.last_check = datetime.utcnow()
 
 	def is_allowed(self):
-		return self.current_amount < self.amount
+		return self.current_amount <= self.amount
 
 	def reset_current_amount(self):
 		self.current_amount = 0
