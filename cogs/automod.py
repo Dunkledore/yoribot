@@ -254,7 +254,8 @@ class Automod:
 			if user_cooldown.is_allowed():
 				pass
 			else:
-				await message.delete()
+				pass
+				#await message.delete()
 
 
 def setup(bot):
