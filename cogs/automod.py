@@ -103,7 +103,7 @@ class Automod:
 		ban_strikes = strikes[f"{offence}_ban"]
 		mute_strikes = strikes[f"{offence}_mute"]
 
-		insertquery = f"INSERT strikes (guild_id, user_id, {offence}_strikes) VALUES ($1, $2, $3)"
+		insertquery = f"INSERT INTO strikes (guild_id, user_id, {offence}_strikes) VALUES ($1, $2, $3)"
 		updatequery = f"UPDATE strikes SET {offence}_strikes = {offence}_strikes + 1 WHERE (guild_id = $1) and (user_id = $2) RETURNING {offence}_strikes"
 		try:
 			await self.bot.pool.execute(insertquery, member.guild.id, member.id, 1)
