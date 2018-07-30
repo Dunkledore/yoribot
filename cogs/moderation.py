@@ -8,10 +8,10 @@ class Moderation:
 
 	def __init__(self, bot):
 		self.bot = bot
-		if "Moderation" not in self.bot.categories:
-			self.bot.categories["Moderation"] = [type(self).__name__]
-		elif type(self).__name__ not in self.bot.categories["Moderation"]:
-			self.bot.categories["Moderation"].append(type(self).__name__)
+		if "Moderation" not in bot.categories:
+			bot.categories["Moderation"] = [type(self).__name__]
+		elif type(self).__name__ not in bot.categories["Moderation"]:
+			bot.categories["Moderation"].append(type(self).__name__)
 
 	# Commands #
 

@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Embed, Object
+from discord import Embed, Object, TextChannel
 import asyncpg
 from .utils import checks
 from .utils import cooldown
@@ -11,10 +11,10 @@ class Automod:
 	"""Command that will delete spam type messages. The types are words, caps, mention and image. Config requires admin. Mod is exempt from censor"""
 
 	def __init__(self, bot):
-		if "Moderation" not in self.bot.categories:
-			self.bot.categories["Moderation"] = [type(self).__name__]
-		elif type(self).__name__ not in self.bot.categories["Moderation"]:
-			self.bot.categories["Moderation"].append(type(self).__name__)
+		if "Moderation" not in bot.categories:
+			bot.categories["Moderation"] = [type(self).__name__]
+		elif type(self).__name__ not in bot.categories["Moderation"]:
+			bot.categories["Moderation"].append(type(self).__name__)
 		self.bot = bot
 		self.censor_cache = {}
 		self.censor_task = self.bot.loop.create_task(self.update_censor_cache())
@@ -23,10 +23,102 @@ class Automod:
 		self.image_cache = {}
 		self.image_task = self.bot.loop.create_task(self.update_image_cache())
 
+
 	def __unload(self):
 		self.censor_task.cancel()
 		self.mention_task.cancel()
 		self.image_task.cancel()
+
+	# Strikes
+
+	@commands.group()
+	@checks.is_admin()
+	async def strikes(self, ctx):
+		"""ADVANCED: Group of commands for muting and banning for repeat automod offences"""
+		if not ctx.invoked_subcommand:
+			await ctx.send(embed=self.bot.error(f"Please specify which mode you wish to use. {ctx.prefix}strike caps/image/mention/censor/channel"))
+
+	async def strike_config(self, guild_id, _type, action, strikes):
+		insertquery = f"INSERT INTO strike_config (guild_id, {_type}_{action} VALUES ($1, $2)"
+		updatequery = f"UPDATE strike_config SET {_type}_{action} = $1 WHERE guild_id = $2"
+
+		try:
+			await self.bot.pool.execute(insertquery, guild_id, strikes)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.execute(updatequery, strikes, guild_id)
+
+	@strikes.command()
+	@checks.is_amdmin
+	async def caps(self, ctx, action, strikes : int):
+		action = action.lower()
+		if action not in ["mute", "ban"]:
+			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
+			return
+
+		await self.strike_config(ctx.guild.id, "caps", "action", strikes)
+		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} caps offences"))
+
+	@strikes.command()
+	@checks.is_admin()
+	async def mention(self, ctx, action, strikes : int):
+		action = action.lower()
+		if action not in ["mute", "ban"]:
+			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
+			return
+
+		await self.strike_config(ctx.guild.id, "caps", "action", strikes)
+		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} mention offences"))
+
+	@strikes.group()
+	@checks.is_admin()
+	async def image(self, ctx, action, strikes : int):
+		action = action.lower()
+		if action not in ["mute", "ban"]:
+			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
+			return
+
+		await self.strike_config(ctx.guild.id, "caps", "action", strikes)
+		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} image offences"))
+
+	@strikes.group()
+	@checks.is_admin()
+	async def censor(self, ctx, action, strikes : int):
+		action = action.lower()
+		if action not in ["mute", "ban"]:
+			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
+			return
+
+		await self.strike_config(ctx.guild.id, "caps", "action", strikes)
+		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} censor offences"))
+
+	async def on_member_strike(self, member, offence, reason):
+		query = f"SELECT {offence}_ban, f{offence}_mute FROM strike_config WHERE guild_id = $1"
+		strikes = await self.bot.pool.fetch(query, member.guild.id)
+		if not strikes:
+			return
+		ban_strikes = strikes[f"{offence}_ban"]
+		mute_strikes = strikes[f"{offence}_mute"]
+
+		insertquery = f"INSERT strikes (guild_id, user_id, {offence}_strikes) VALUES ($1, $2, $3)"
+		updatequery = f"UPDATE strikes SET {offence}_strikes = {offence}_strikes + 1 WHERE (guild_id = $1) and (user_id = $2) RETURNING {offence}_strikes"
+		try:
+			await self.bot.pool.execute(insertquery, member.guild.id, member.id, 1)
+			strikes = 1
+		except asyncpg.UniqueViolationError:
+			strikes = await self.bot.pool.fetchval(updatequery, member.guild.id, member.id)
+
+		if strikes >= ban_strikes:
+			await member.ban(reason = f"Triggered automod on {offence} {strikes} times")
+			query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
+			await self.bot.pool.execute(query, 0, member.guild.id, member.id)
+			return
+
+		if strikes == mute_strikes:
+			for tchan in member.guild.text_channels:
+				reason = f"Triggered automod on {offence} {strikes} times"
+				await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times", send_messages=False)
+			self.bot.dispatch("member_mute", member, reason, self.bot.user)
+
 
 	# Censor
 
@@ -106,6 +198,7 @@ class Automod:
 
 		if self.censor_cache[message.guild.id].search(message.content):
 			await message.delete()
+			self.bot.dispatch("member_strike", message.author, "censor", message.content)
 
 	# Mention Censor
 
@@ -174,6 +267,7 @@ class Automod:
 				pass
 			else:
 				await message.delete()
+				self.bot.dispatch("member_strike", message.author, "mention", message.content)
 
 	# Caps filter
 
@@ -209,6 +303,7 @@ class Automod:
 			proxy_ctx.bot = self.bot
 			if not await checks.has_level(proxy_ctx, "mod"):
 				await message.delete()
+				self.bot.dispatch("member_strike", message.author, "caps", message.content)
 
 
 	# Image spam
@@ -277,6 +372,7 @@ class Automod:
 				pass
 			else:
 				await message.delete()
+				self.bot.dispatch("member_strike", message.author, "image", "\n".join(attachment.url for attachment in message.attachments))
 
 
 def setup(bot):

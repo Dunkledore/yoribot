@@ -12,10 +12,10 @@ class Logs:
 		self.bot = bot
 		self.invites = {}
 
-		if "Admin" not in self.bot.categories:
-			self.bot.categories["Admin"] = [type(self).__name__]
-		elif type(self).__name__ not in self.bot.categories["Admin"]:
-			self.bot.categories["Admin"].append(type(self).__name__)
+		if "Admin" not in bot.categories:
+			bot.categories["Admin"] = [type(self).__name__]
+		elif type(self).__name__ not in bot.categories["Admin"]:
+			bot.categories["Admin"].append(type(self).__name__)
 
 		self.black_listed_channels = []
 		self.invite_task = self.bot.loop.create_task(self.track_invites())
@@ -71,6 +71,21 @@ class Logs:
 			await self.bot.pool.execute(alterquery, channel.id, ctx.guild.id)
 
 		await ctx.send(embed=self.bot.success(f'Now sending invite logs to {channel.mention}. To stop sending invite '
+		                                      'logs, delete the channel '))
+
+	@commands.command()
+	@checks.is_admin()
+	async def start_strike_logs(self, ctx, channel: TextChannel):
+
+		insertquery = "INSERT INTO log_config (guild_id, strike_log_channel_id) VALUES ($1, $2)"
+		alterquery = "UPDATE log_config SET stike_log_channel_id = $1 WHERE guild_id = $2"
+
+		try:
+			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.execute(alterquery, channel.id, ctx.guild.id)
+
+		await ctx.send(embed=self.bot.success(f'Now sending strikes logs to {channel.mention}. To stop sending strike '
 		                                      'logs, delete the channel '))
 
 	@commands.command()
@@ -153,7 +168,7 @@ class Logs:
 
 		embed = log_report_message.embeds[0]
 		for counter, field in enumerate(embed.fields):
-			if field.name in ["Banned by", "Unbanned by", "Warned by", "Noted by"]:
+			if field.name in ["Banned by", "Unbanned by", "Warned by", "Noted by", "Muted by"]:
 				embed.set_field_at(counter, name=field.name, value=ctx.author.mention)
 				field.value = ctx.author.mention
 			if field.name == "Reason":
@@ -176,19 +191,18 @@ class Logs:
 		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
 
 
-
-
-
 	# Events
 
-	async def on_guild_channel_delete(self, channel):  # Kind of like and auto firing command
+	async def on_guild_channel_delete(self, channel):  # Kind of like an auto firing command
 		member_query = "UPDATE log_config SET member_log_channel_id = $1 WHERE member_log_channel_id = $2"
 		message_query = "UPDATE log_config SET message_log_channel_id = $1 WHERE message_log_channel_id = $2"
 		invite_query = "UPDATE log_config SET invite_log_channel_id = $1 WHERE invite_log_channel_id = $2"
+		strike_query = "UPDATE log_config SET strike_log_channel_id = $1 WHERE strike_log_channel_id = $2"
 
 		await self.bot.pool.execute(member_query, None, channel.id)
 		await self.bot.pool.execute(message_query, None, channel.id)
 		await self.bot.pool.execute(invite_query, None, channel.id)
+		await self.bot.pool.execute(strike_query, None, channel.id)
 
 	async def on_member_join(self, member):
 
@@ -276,6 +290,28 @@ class Logs:
 		embed.add_field(name='Was a member since', value=yoriutils.human_timedelta(member.joined_at), inline=False)
 		await log_channel.send(embed=embed)
 
+
+	async def on_member_mute(self, member, reason, muter):
+		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
+		log_id = await self.bot.pool.fetchval(query, "mute", member.id, None, member.guild.id)
+
+		query = "SELECT member_log_channel_id FROM log_config WHERE guild_id = $1"
+		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
+		log_channel = self.bot.get_channel(log_channel_id)
+		if not log_channel:
+			return
+
+		embed = Embed(title=f'User Muted - Mod Report #{log_id}', colour=0xFFA500)
+		embed.add_field(name="User", value=member.mention)
+		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
+		embed.add_field(name="User ID", value=f'{member.id}')
+		embed.add_field(name="Muted by", value=muter.mention)
+		embed.add_field(name="Reason", value=reason)
+		embed.timestamp = datetime.datetime.utcnow()
+		report_message = await log_channel.send(embed=embed)
+		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
+		await self.bot.pool.execute(query, muter.id, reason, report_message.id, log_id)
+
 	async def on_member_ban(self, guild, user):
 
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
@@ -337,6 +373,24 @@ class Logs:
 		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
 		await self.bot.pool.execute(query, unbanner.id, unbanreason, report_message.id, log_id)
 
+	async def on_member_strike(self, member, offence, reason):
+		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4, $5) RETURNING ID"
+		log_id = await self.bot.pool.fetchval(query, offence, member.id, self.bot.user.id, member.guild.id, reason)
+
+		query = "SELECT strike_log_channel_id FROM log_config WHERE guild_id = $1"
+		log_channel_id = await self.bot.pool.fetchval(query, member.guild.id)
+		log_channel = self.bot.get_channel(log_channel_id)
+		if not log_channel:
+			return
+
+		embed = Embed(title=f'User Strike', colour=0xFFA500)
+		embed.add_field(name="User", value=member.mention)
+		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
+		embed.add_field(name="User ID", value=f'{member.id}')
+		embed.timestamp = datetime.datetime.utcnow()
+		embed.add_field(name="Striked for", value=reason, inline=False)
+		await log_channel.send(embed=embed)
+
 	async def on_message(self, message):
 		if message.author is self.bot.user:
 			return
@@ -397,7 +451,6 @@ class Logs:
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
-
 
 
 	# Utilities
