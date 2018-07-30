@@ -97,7 +97,7 @@ class Automod:
 
 	async def on_member_strike(self, member, offence, reason):
 		query = f"SELECT {offence}_ban, {offence}_mute FROM strike_config WHERE guild_id = $1"
-		strikes = await self.bot.pool.fetch(query, member.guild.id)
+		strikes = await self.bot.pool.fetchrow(query, member.guild.id)
 		if not strikes:
 			return
 		ban_strikes = strikes[f"{offence}_ban"]
