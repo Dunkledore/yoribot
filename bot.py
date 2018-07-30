@@ -134,6 +134,9 @@ class YoriBot(commands.AutoShardedBot):
 			e.timestamp = datetime.utcnow()
 			hook = self.error_hook
 			await hook.send(embed=e)
+		elif isinstance(error, commands.CommandOnCooldown):
+			if not hasattr(ctx.command, 'on_error'):
+				await ctx.send(embed=self.error('You are on cooldown. Try again in {:.2f}s'.format(error.retry_after)))
 
 	async def on_error(self, event_method, *args, **kwargs):
 		print("error")

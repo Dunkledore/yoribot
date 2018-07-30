@@ -3,7 +3,6 @@ from .utils import checks
 from discord import Object
 from datetime import datetime, timedelta
 
-
 class Clear:
 	"""Commands to delete messages, invites and redundant permissions. Requires mod perms"""
 
@@ -39,10 +38,17 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.cooldown(1, 20, commands.cooldowns.BucketType.guild)
 	async def clearbefore(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in before a given message id"""
 
 		await ctx.channel.purge(limit=number_to_delete, before=Object(id=message_id))
+
+	@clearbefore.error
+	async def clearbeforeerror(self, ctx, error):
+		if isinstance(error, commands.CommandOnCooldown):
+			if checks.has_level(ctx, "developer"):
+				await ctx.reinvoke()
 
 	@commands.command()
 	@checks.is_mod()
@@ -53,6 +59,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.cooldown(1, 20, commands.cooldowns.BucketType.guild)
 	async def clearbot(self, ctx, number_to_delete: int = 2000):
 		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
 
@@ -61,8 +68,15 @@ class Clear:
 
 		await ctx.channel.purge(limit=number_to_delete, check=check)
 
+	@clearbot.error
+	async def clearboterror(self, ctx, error):
+		if isinstance(error, commands.CommandOnCooldown):
+			if checks.has_level(ctx, "developer"):
+				await ctx.reinvoke()
+
 	@commands.command()
 	@checks.is_mod()
+	@commands.cooldown(1, 300, commands.cooldowns.BucketType.guild)
 	async def cleargone(self, ctx):
 		"""Clear all messages in all channels (up to 2000 per channel) from members no longer in the guild """
 
@@ -71,6 +85,12 @@ class Clear:
 
 		for channel in ctx.guild.text_channels:
 			await channel.purge(limit=2000, check=check)
+
+	@cleargone.error
+	async def cleargoneerror(self, ctx, error):
+		if isinstance(error, commands.CommandOnCooldown):
+			if checks.has_level(ctx, "developer"):
+				await ctx.reinvoke()
 
 	@commands.command(aliases=["clearperms", "cleanperms"])
 	@checks.is_mod()
