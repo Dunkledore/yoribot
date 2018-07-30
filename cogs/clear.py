@@ -69,7 +69,7 @@ class Clear:
 		def check(message):
 			return message.author in message.guild.members
 
-		for channel in ctx.guild.textchannels:
+		for channel in ctx.guild.text_channels:
 			await channel.purge(limit=2000, check=check)
 
 	@commands.command(aliases=["clearperms", "cleanperms"])
