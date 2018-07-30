@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Embed, Object
+from discord import Embed, Object, Member
 from .utils import checks
 from .utils import cooldown
 from itertools import groupby
@@ -31,12 +31,11 @@ class Automod:
 	# Strikes
 
 	@commands.group(invoke_without_command=True)
-	@checks.is_admin()
+	@checks.is_mod()
 	async def strikes(self, ctx):
 		"""ADVANCED: Group of commands for muting and banning for repeat automod offences"""
 		if not ctx.invoked_subcommand:
-			await ctx.send(embed=self.bot.error(
-				f"Please specify which mode you wish to use. {ctx.prefix}strike caps/image/mention/censor/channel"))
+			await ctx.send(embed=self.bot.error(f"Please specify which mode you wish to use. \n{ctx.prefix}strike mode\nSee {ctx.prefix}help strikes"))
 
 	async def strike_config(self, guild_id, _type, action, strikes):
 		insertquery = f"INSERT INTO strike_config (guild_id, {_type}_{action}) VALUES ($1, $2)"
@@ -46,6 +45,52 @@ class Automod:
 			await self.bot.pool.execute(insertquery, guild_id, strikes)
 		except asyncpg.UniqueViolationError:
 			await self.bot.pool.execute(updatequery, strikes, guild_id)
+
+	@strikes.command()
+	@checks.is_admin()
+	async def config(self, ctx):
+		query = "SELECT * FROM strikes_config WHERE guild_id = $1"
+		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
+		if not config:
+			await ctx.send(embed=self.bot.error("Strikes not setup on this guild"))
+		else:
+			caps_ban = config["caps_ban"]
+			caps_mute = config["caps_mute"]
+			mention_mute = config["mention_mute"]
+			mention_ban = config["mention_ban"]
+			image_ban = config["image_ban"]
+			image_mute = config["image_mute"]
+			censor_ban = config["censor_ban"]
+			censor_mute = config["censor_mute"]
+			embed = Embed(title=f"Strike Config for {ctx.guild.name}")
+			embed.add_field(name="Caps", value=f"Ban at: {caps_ban or 'Never'}\nMute at: {caps_mute or 'Never'}")
+			embed.add_field(name="Mention", value=f"Ban at: {mention_ban or 'Never'}\nMute at: {mention_mute or 'Never'}")
+			embed.add_field(name="Image", value=f"Ban at: {image_ban or 'Never'}\nMute at: {image_mute or 'Never'}")
+			embed.add_field(name="Censor", value=f"Ban at: {censor_ban or 'Never'}\nMute at: {censor_mute or 'Never'}")
+			await ctx.send(embed=embed)
+
+	@strikes.command()
+	@checks.is_mod()
+	async def member(self, ctx, member: Member):
+		"""See the amount of strikes a certain member has"""
+
+		query = "SELECT * FROM strikes WHERE (user_id = $1) and (guild_id = $2)"
+		strikes = await self.bot.pool.fetchrow(query, member.id, ctx.guild.id)
+		if not strikes:
+			caps = 0
+			mention = 0
+			image = 0
+			censor = 0
+		else:
+			caps = strikes["caps_strikes"]
+			mention = strikes["mention_strikes"]
+			image = strikes["image_strikes"]
+			censor = strikes["censor_strikes"]
+		embed = Embed(title=f"Strikes for {member.mention}")
+		embed.add_field(name="Caps", value=caps)
+		embed.add_field(name="Mention", value=mention)
+		embed.add_field(name="Image", value=image)
+		embed.add_field(name="Censor", value=censor)
 
 	@strikes.command()
 	@checks.is_admin()
@@ -125,6 +170,10 @@ class Automod:
 					await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times",
 					                            send_messages=False)
 				self.bot.dispatch("member_mute", member, reason, self.bot.user)
+				if not ban_strikes:
+					query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
+					await self.bot.pool.execute(query, 0, member.guild.id, member.id)
+
 
 	# Censor
 
