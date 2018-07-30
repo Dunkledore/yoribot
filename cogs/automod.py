@@ -30,7 +30,7 @@ class Automod:
 
 	# Strikes
 
-	@commands.group()
+	@commands.group(invoke_without_command=True)
 	@checks.is_admin()
 	async def strikes(self, ctx):
 		"""ADVANCED: Group of commands for muting and banning for repeat automod offences"""
@@ -39,7 +39,7 @@ class Automod:
 				f"Please specify which mode you wish to use. {ctx.prefix}strike caps/image/mention/censor/channel"))
 
 	async def strike_config(self, guild_id, _type, action, strikes):
-		insertquery = f"INSERT INTO strike_config (guild_id, {_type}_{action} VALUES ($1, $2)"
+		insertquery = f"INSERT INTO strike_config (guild_id, {_type}_{action}) VALUES ($1, $2)"
 		updatequery = f"UPDATE strike_config SET {_type}_{action} = $1 WHERE guild_id = $2"
 
 		try:
@@ -50,6 +50,7 @@ class Automod:
 	@strikes.command()
 	@checks.is_admin()
 	async def caps(self, ctx, action, strikes: int):
+		"""Set a caps threshold for action. (action can be ban or mute)"""
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -61,6 +62,7 @@ class Automod:
 	@strikes.command()
 	@checks.is_admin()
 	async def mention(self, ctx, action, strikes: int):
+		"""Set a mention threshold for action. (action can be ban or mute)"""
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -72,6 +74,7 @@ class Automod:
 	@strikes.group()
 	@checks.is_admin()
 	async def image(self, ctx, action, strikes: int):
+		"""Set an image threshold for action. (action can be ban or mute)"""
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -83,6 +86,7 @@ class Automod:
 	@strikes.group()
 	@checks.is_admin()
 	async def censor(self, ctx, action, strikes: int):
+		"""Set a censor threshold for action. (action can be ban or mute)"""
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -271,8 +275,8 @@ class Automod:
 
 	# Caps filter
 
-	@commands.command()
-	async def toggle_anticaps(self, ctx):
+	@commands.command(aliases=["toggle_anticaps"])
+	async def anticaps_toggle(self, ctx):
 		"""Toggles whether to delete messages with over 50% of the message in caps"""
 
 		insertquery = "INSERT INTO caps (guild_id, toggle) VALUES ($1, $2) RETURNING toggle"
