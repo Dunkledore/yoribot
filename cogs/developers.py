@@ -116,7 +116,7 @@ class Developers():
 		              "CREATE TABLE IF NOT EXISTS react_roles (id SERIAL, message_id BIGINT, role_id BIGINT, emoji_id TEXT, guild_id BIGINT)",
 		              "CREATE TABLE IF NOT EXISTS rift (rift_name TEXT PRIMARY KEY, owner BIGINT, channels BIGINT[], blacklist BIGINT[])",
 		              "CREATE TABLE IF NOT EXISTS strike_config (guild_id BIGINT PRIMARY KEY, caps_ban INT, caps_mute INT, mention_ban INT, mention_mute INT, image_ban INT, image_mute INT, censor_ban INT, censor_mute INT)",
-		              "CREATE TABLE IF NOT EXISTS strikes (user_id BIGINT, guild_id BIGINT, caps_strikes, mention_strikes, censor_strikes, image_strikes, PRIMARY KEY (guild_id, user_id))"
+		              "CREATE TABLE IF NOT EXISTS strikes (user_id BIGINT, guild_id BIGINT, caps_strikes INT, mention_strikes INT, censor_strikes INT, image_strikes INT, PRIMARY KEY (guild_id, user_id))"
 		              ]
 
 		for statement in statements:
