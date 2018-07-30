@@ -388,7 +388,8 @@ class Logs:
 		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 		embed.timestamp = datetime.datetime.utcnow()
-		embed.add_field(name="Striked for", value=reason, inline=False)
+		embed.add_field(name="Triggered Automod", value=reason, inline=False)
+		embed.add_field(name="Offending message", value=offence)
 		await log_channel.send(embed=embed)
 
 	async def on_message(self, message):
