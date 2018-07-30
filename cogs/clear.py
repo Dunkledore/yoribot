@@ -47,7 +47,7 @@ class Clear:
 	@clearbefore.error
 	async def clearbeforeerror(self, ctx, error):
 		if isinstance(error, commands.CommandOnCooldown):
-			if checks.has_level(ctx, "developer"):
+			if await checks.has_level(ctx, "developer"):
 				await ctx.reinvoke()
 
 	@commands.command()
@@ -71,7 +71,7 @@ class Clear:
 	@clearbot.error
 	async def clearboterror(self, ctx, error):
 		if isinstance(error, commands.CommandOnCooldown):
-			if checks.has_level(ctx, "developer"):
+			if await checks.has_level(ctx, "developer"):
 				await ctx.reinvoke()
 
 	@commands.command()
@@ -89,7 +89,7 @@ class Clear:
 	@cleargone.error
 	async def cleargoneerror(self, ctx, error):
 		if isinstance(error, commands.CommandOnCooldown):
-			if checks.has_level(ctx, "developer"):
+			if await checks.has_level(ctx, "developer"):
 				await ctx.reinvoke()
 
 	@commands.command(aliases=["clearperms", "cleanperms"])
