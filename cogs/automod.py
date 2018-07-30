@@ -111,18 +111,20 @@ class Automod:
 		except asyncpg.UniqueViolationError:
 			strikes = await self.bot.pool.fetchval(updatequery, member.guild.id, member.id)
 
-		if strikes >= ban_strikes:
-			await member.ban(reason=f"Triggered automod on {offence} {strikes} times")
-			query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
-			await self.bot.pool.execute(query, 0, member.guild.id, member.id)
-			return
+		if ban_strikes:
+			if strikes >= ban_strikes:
+				await member.ban(reason=f"Triggered automod on {offence} {strikes} times")
+				query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
+				await self.bot.pool.execute(query, 0, member.guild.id, member.id)
+				return
 
-		if strikes == mute_strikes:
-			for tchan in member.guild.text_channels:
-				reason = f"Triggered automod on {offence} {strikes} times"
-				await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times",
-				                            send_messages=False)
-			self.bot.dispatch("member_mute", member, reason, self.bot.user)
+		if mute_strikes:
+			if strikes == mute_strikes:
+				for tchan in member.guild.text_channels:
+					reason = f"Triggered automod on {offence} {strikes} times"
+					await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times",
+					                            send_messages=False)
+				self.bot.dispatch("member_mute", member, reason, self.bot.user)
 
 	# Censor
 
