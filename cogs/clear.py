@@ -1,5 +1,6 @@
 from discord.ext import commands
 from .utils import checks
+from discord import Object
 from datetime import datetime, timedelta
 
 
@@ -34,21 +35,21 @@ class Clear:
 	async def clearafter(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in after a given message id"""
 
-		await ctx.channel.purge(limit=number_to_delete, after=message_id)
+		await ctx.channel.purge(limit=number_to_delete, after=Object(id=message_id))
 
 	@commands.command()
 	@checks.is_mod()
 	async def clearbefore(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in before a given message id"""
 
-		await ctx.channel.purge(limit=number_to_delete, before=message_id)
+		await ctx.channel.purge(limit=number_to_delete, before=Object(id=message_id))
 
 	@commands.command()
 	@checks.is_mod()
 	async def clearbetween(self, ctx, before_message_id: int, after_message_id: int):
 		"""Clear all messages (up to 2000) in the channel the command is run in between 2 given message ids"""
 
-		await ctx.channel.purge(limit=2000, before=before_message_id, after=after_message_id)
+		await ctx.channel.purge(limit=2000, before=Object(id=before_message_id), after=Object(id=after_message_id))
 
 	@commands.command()
 	@checks.is_mod()
