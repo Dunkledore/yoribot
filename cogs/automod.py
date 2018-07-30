@@ -49,7 +49,7 @@ class Automod:
 	@strikes.command()
 	@checks.is_admin()
 	async def config(self, ctx):
-		query = "SELECT * FROM strikes_config WHERE guild_id = $1"
+		query = "SELECT * FROM strike_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
 		if not config:
 			await ctx.send(embed=self.bot.error("Strikes not setup on this guild"))
@@ -91,6 +91,7 @@ class Automod:
 		embed.add_field(name="Mention", value=mention)
 		embed.add_field(name="Image", value=image)
 		embed.add_field(name="Censor", value=censor)
+		await ctx.send(embed=embed)
 
 	@strikes.command()
 	@checks.is_admin()
