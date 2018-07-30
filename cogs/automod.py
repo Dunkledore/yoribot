@@ -68,7 +68,7 @@ class Automod:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
 			return
 
-		await self.strike_config(ctx.guild.id, "caps", action, strikes)
+		await self.strike_config(ctx.guild.id, "mention", action, strikes)
 		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} mention offences"))
 
 	@strikes.group()
@@ -80,7 +80,7 @@ class Automod:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
 			return
 
-		await self.strike_config(ctx.guild.id, "caps", action, strikes)
+		await self.strike_config(ctx.guild.id, "image", action, strikes)
 		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} image offences"))
 
 	@strikes.group()
@@ -92,7 +92,7 @@ class Automod:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
 			return
 
-		await self.strike_config(ctx.guild.id, "caps", action, strikes)
+		await self.strike_config(ctx.guild.id, "censor", action, strikes)
 		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} censor offences"))
 
 	async def on_member_strike(self, member, offence, reason):
