@@ -49,6 +49,7 @@ class Automod:
 	@strikes.command()
 	@checks.is_admin()
 	async def config(self, ctx):
+		"""Strike config for the guild"""
 		query = "SELECT * FROM strike_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
 		if not config:
@@ -63,16 +64,16 @@ class Automod:
 			censor_ban = config["censor_ban"]
 			censor_mute = config["censor_mute"]
 			embed = Embed(title=f"Strike Config for {ctx.guild.name}")
-			embed.add_field(name="Caps", value=f"Ban at: {caps_ban or 'Never'}\nMute at: {caps_mute or 'Never'}")
-			embed.add_field(name="Mention", value=f"Ban at: {mention_ban or 'Never'}\nMute at: {mention_mute or 'Never'}")
-			embed.add_field(name="Image", value=f"Ban at: {image_ban or 'Never'}\nMute at: {image_mute or 'Never'}")
-			embed.add_field(name="Censor", value=f"Ban at: {censor_ban or 'Never'}\nMute at: {censor_mute or 'Never'}")
+			embed.add_field(name="Caps", inline=False, value=f"Ban at: {caps_ban or 'Never'}\nMute at: {caps_mute or 'Never'}")
+			embed.add_field(name="Mention", inline=False, value=f"Ban at: {mention_ban or 'Never'}\nMute at: {mention_mute or 'Never'}")
+			embed.add_field(name="Image", inline=False, value=f"Ban at: {image_ban or 'Never'}\nMute at: {image_mute or 'Never'}")
+			embed.add_field(name="Censor", inline=False, value=f"Ban at: {censor_ban or 'Never'}\nMute at: {censor_mute or 'Never'}")
 			await ctx.send(embed=embed)
 
 	@strikes.command()
 	@checks.is_mod()
 	async def member(self, ctx, member: Member):
-		"""See the amount of strikes a certain member has"""
+		"""Amount of strikes a certain member has"""
 
 		query = "SELECT * FROM strikes WHERE (user_id = $1) and (guild_id = $2)"
 		strikes = await self.bot.pool.fetchrow(query, member.id, ctx.guild.id)
@@ -87,10 +88,10 @@ class Automod:
 			image = strikes["image_strikes"]
 			censor = strikes["censor_strikes"]
 		embed = Embed(title=f"Strikes for {member.mention}")
-		embed.add_field(name="Caps", value=caps)
-		embed.add_field(name="Mention", value=mention)
-		embed.add_field(name="Image", value=image)
-		embed.add_field(name="Censor", value=censor)
+		embed.add_field(name="Caps", inline=False, value=caps)
+		embed.add_field(name="Mention", inline=False, value=mention)
+		embed.add_field(name="Image", inline=False, value=image)
+		embed.add_field(name="Censor", inline=False, value=censor)
 		await ctx.send(embed=embed)
 
 	@strikes.command()
