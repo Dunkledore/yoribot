@@ -1,10 +1,10 @@
 from discord.ext import commands
-from discord import Embed, Object, TextChannel
-import asyncpg
+from discord import Embed, Object
 from .utils import checks
 from .utils import cooldown
 from itertools import groupby
 import re
+import asyncpg
 
 
 class Automod:
@@ -23,7 +23,6 @@ class Automod:
 		self.image_cache = {}
 		self.image_task = self.bot.loop.create_task(self.update_image_cache())
 
-
 	def __unload(self):
 		self.censor_task.cancel()
 		self.mention_task.cancel()
@@ -36,7 +35,8 @@ class Automod:
 	async def strikes(self, ctx):
 		"""ADVANCED: Group of commands for muting and banning for repeat automod offences"""
 		if not ctx.invoked_subcommand:
-			await ctx.send(embed=self.bot.error(f"Please specify which mode you wish to use. {ctx.prefix}strike caps/image/mention/censor/channel"))
+			await ctx.send(embed=self.bot.error(
+				f"Please specify which mode you wish to use. {ctx.prefix}strike caps/image/mention/censor/channel"))
 
 	async def strike_config(self, guild_id, _type, action, strikes):
 		insertquery = f"INSERT INTO strike_config (guild_id, {_type}_{action} VALUES ($1, $2)"
@@ -48,8 +48,8 @@ class Automod:
 			await self.bot.pool.execute(updatequery, strikes, guild_id)
 
 	@strikes.command()
-	@checks.is_amdmin
-	async def caps(self, ctx, action, strikes : int):
+	@checks.is_admin()
+	async def caps(self, ctx, action, strikes: int):
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -60,7 +60,7 @@ class Automod:
 
 	@strikes.command()
 	@checks.is_admin()
-	async def mention(self, ctx, action, strikes : int):
+	async def mention(self, ctx, action, strikes: int):
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -71,7 +71,7 @@ class Automod:
 
 	@strikes.group()
 	@checks.is_admin()
-	async def image(self, ctx, action, strikes : int):
+	async def image(self, ctx, action, strikes: int):
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -82,7 +82,7 @@ class Automod:
 
 	@strikes.group()
 	@checks.is_admin()
-	async def censor(self, ctx, action, strikes : int):
+	async def censor(self, ctx, action, strikes: int):
 		action = action.lower()
 		if action not in ["mute", "ban"]:
 			await ctx.send(embed=self.bot.error("Not a valid action. Please select either mute or ban"))
@@ -108,7 +108,7 @@ class Automod:
 			strikes = await self.bot.pool.fetchval(updatequery, member.guild.id, member.id)
 
 		if strikes >= ban_strikes:
-			await member.ban(reason = f"Triggered automod on {offence} {strikes} times")
+			await member.ban(reason=f"Triggered automod on {offence} {strikes} times")
 			query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
 			await self.bot.pool.execute(query, 0, member.guild.id, member.id)
 			return
@@ -116,9 +116,9 @@ class Automod:
 		if strikes == mute_strikes:
 			for tchan in member.guild.text_channels:
 				reason = f"Triggered automod on {offence} {strikes} times"
-				await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times", send_messages=False)
+				await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times",
+				                            send_messages=False)
 			self.bot.dispatch("member_mute", member, reason, self.bot.user)
-
 
 	# Censor
 
@@ -167,7 +167,7 @@ class Automod:
 		await self.update_censor_cache()
 		await ctx.send(embed=self.bot.success("Word removed"))
 
-	@commands.command(aliases=["censorlist","listcensor","list_censor"])
+	@commands.command(aliases=["censorlist", "listcensor", "list_censor"])
 	@checks.is_admin()
 	async def censor_list(self, ctx):
 		"""Show all words currently censored"""
@@ -305,7 +305,6 @@ class Automod:
 				await message.delete()
 				self.bot.dispatch("member_strike", message.author, "caps", message.content)
 
-
 	# Image spam
 	async def update_image_cache(self):
 		query = "SELECT * FROM image_censor"
@@ -372,7 +371,8 @@ class Automod:
 				pass
 			else:
 				await message.delete()
-				self.bot.dispatch("member_strike", message.author, "image", "\n".join(attachment.url for attachment in message.attachments))
+				self.bot.dispatch("member_strike", message.author, "image",
+				                  "\n".join(attachment.url for attachment in message.attachments))
 
 
 def setup(bot):
