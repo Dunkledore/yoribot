@@ -15,7 +15,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
-	async def clear(self, ctx, amount_to_delete):
+	async def clear(self, ctx, amount_to_delete: int):
 		"""Clear a specified amount of messages from the channel the command is run in"""
 		if amount_to_delete > 2000:
 			await ctx.send(embed=self.bot.erorr("Too many messages to delete"))
@@ -31,28 +31,28 @@ class Clear:
 
 	@commands.command(aliases=["clear_after"])
 	@checks.is_mod()
-	async def clearafter(self, ctx, message_id, number_to_delete=2000):
+	async def clearafter(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in after a given message id"""
 
 		await ctx.channel.purge(limit=number_to_delete, after=message_id)
 
 	@commands.command()
 	@checks.is_mod()
-	async def clearbefore(self, ctx, message_id, number_to_delete=2000):
+	async def clearbefore(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in before a given message id"""
 
 		await ctx.channel.purge(limit=number_to_delete, before=message_id)
 
 	@commands.command()
 	@checks.is_mod()
-	async def clearbetween(self, ctx, before_message_id, after_message_id):
+	async def clearbetween(self, ctx, before_message_id: int, after_message_id: int):
 		"""Clear all messages (up to 2000) in the channel the command is run in between 2 given message ids"""
 
 		await ctx.channel.purge(limit=2000, before=before_message_id, after=after_message_id)
 
 	@commands.command()
 	@checks.is_mod()
-	async def clearbot(self, ctx, number_to_delete=2000):
+	async def clearbot(self, ctx, number_to_delete: int = 2000):
 		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
 
 		def check(message):
