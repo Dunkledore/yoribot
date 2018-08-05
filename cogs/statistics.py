@@ -30,12 +30,11 @@ class Statistics:
 
 			channel_id = stat['channel_id']
 			if channel_id in channel_stats:
-				author_stats[channel_id] += 1
+				channel_stats[channel_id] += 1
 			else:
-				author_stats[channel_id] = 1
+				channel_stats[channel_id] = 1
 
-
-		for author in author_stats.keys():
+		for author in list(author_stats.keys()):
 			member = self.bot.get_user(author)
 			if member:
 				member = member.mention
@@ -43,20 +42,21 @@ class Statistics:
 				member = f'User : {author}'
 			author_stats[member] = author_stats.pop(author)
 
-		for channel_id in channel_stats.keys():
+		for channel_id in list(channel_stats.keys()):
 			channel = self.bot.get_channel(channel_id)
 			if channel:
 				channel = channel.mention
 			else:
 				channel = f'Channel : {channel_id}'
-			channel_stats[channel] = author_stats.pop(channel_id)
+			channel_stats[channel] = channel_stats.pop(channel_id)
 
-		embed = Embed(title=f'Stats for {command} in {ctx.guild.name}')
-		embed.add_field(name="Members", value='\n'.join([f'{mention} - {uses}' for mention, uses in author_stats.items()]))
-		embed.add_field(name="Channels", value='\n'.join([f'{channel} - {uses}' for channel, uses in channel_stats.items()]))
+		embed = Embed(title=f'Stats for prefix in {ctx.guild.name}')
+		embed.add_field(name="Members",
+		                value='\n'.join([f'{mention} - {uses}' for mention, uses in author_stats.items()]))
+		embed.add_field(name="Channels",
+		                value='\n'.join([f'{channel} - {uses}' for channel, uses in channel_stats.items()]))
 
 		await ctx.send(embed=embed)
-
 
 
 def setup(bot):
