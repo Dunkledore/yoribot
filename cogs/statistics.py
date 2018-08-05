@@ -18,7 +18,7 @@ class Statistics:
 	@commands.command()
 	async def commands_stats(self, ctx, command):
 		query = "SELECT author_id, channel_id FROM statistics WHERE (guild_id = $1) and (command_name = $2)"
-		stats = await self.bot.pool.execute(query, ctx.guild.id, command)
+		stats = await self.bot.pool.fetch(query, ctx.guild.id, command)
 		author_stats = {}
 		channel_stats = {}
 		for stat in stats:

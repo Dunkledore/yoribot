@@ -18,7 +18,8 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
-	async def ban(self, ctx, user: Member, reason=None):
+	async def ban(self, ctx, user: Member, *, reason=None):
+		"""Ban a member from the guild"""
 		if not check_hierarchy(ctx.author, user):
 			return await ctx.send(embed=self.bot.error("You can't ban someone with a higher rank than you"))
 		if not reason:
@@ -29,7 +30,8 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
-	async def unban(self, ctx, user: str, reason=None):
+	async def unban(self, ctx, user: str, *, reason=None):
+		"""Unban a member from the guild"""
 		bans = await ctx.guild.bans()
 		if user.isdigit():  # This part checks to see if the user is banned and avoids us having to create a proxy member
 			user_objs = [banned_user.user for banned_user in bans if banned_user.user.id == user.id]
@@ -46,21 +48,23 @@ class Moderation:
 	@commands.command()
 	@checks.is_mod()
 	async def tempban(self, ctx, user: Member, reason=None):  # TODO
+		"""Temporarily ban a member from the guild"""
 		pass
 
 	@commands.command()
 	@checks.is_mod()
 	async def softban(self, ctx, user: Member, reason):  # TODO
+		"""A ban a then an immediate unbam. The same as a kick but also deletes messages"""
 		pass
 
 	@commands.command()
 	@checks.is_mod()
-	async def kick(self, ctx, user: Member, reason):
+	async def kick(self, ctx, user: Member, *, reason=None):
+		"""Kicks a member from the guild"""
 		if not check_hierarchy(ctx.author, user):
 			return await ctx.send(embed=self.bot.error("You can't kick someone with a higher rank than you"))
 		if not reason:
 			reason = f"Kicked by {ctx.author.name}"
-
 		await user.kick(reason=reason)
 		await ctx.send(embed=self.bot.success(f'Member {user.name} kicked'))
 
@@ -69,6 +73,8 @@ class Moderation:
 	@checks.is_mod()
 	async def mute(self, ctx, user: Member, channel: TextChannel = None, *, reason=None):
 		"""Mutes a user in the specified channel, if not specified, in the channel the command is used from."""
+		if not check_hierarchy(ctx.author, user):
+			return await ctx.send(embed=self.bot.error("You can't mute someone with a higher rank than you"))
 		if channel is None:
 			channel = ctx.channel
 		await channel.set_permissions(user, reason=reason, send_messages=False)
@@ -88,6 +94,8 @@ class Moderation:
 	@checks.is_mod()
 	async def muteall(self, ctx, user: Member, reason=None):
 		"""Mutes a user in all channels of this server."""
+		if not check_hierarchy(ctx.author, user):
+			return await ctx.send(embed=self.bot.error("You can't kick someone with a higher rank than you"))
 		for tchan in ctx.guild.text_channels:
 			await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
 		await ctx.send(embed=self.bot.success(f'Member {user.name} muted in this guild'))
