@@ -36,7 +36,7 @@ class Statistics:
 
 
 		for author in author_stats.keys():
-			member = ctx.guild.get_user(author)
+			member = self.bot.get_user(author)
 			if member:
 				member = member.mention
 			else:
@@ -44,7 +44,7 @@ class Statistics:
 			author_stats[member] = author_stats.pop(author)
 
 		for channel_id in channel_stats.keys():
-			channel = ctx.guild.get_channel(channel_id)
+			channel = self.bot.get_channel(channel_id)
 			if channel:
 				channel = channel.mention
 			else:
