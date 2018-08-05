@@ -38,7 +38,7 @@ class Moderation:
 		if user_obj:
 			if not reason:
 				reason = f"Unbanned by {ctx.author.name}"
-			await user_obj.unban(reason=reason)
+			await ctx.guild.unban(user_obj, reason=reason)
 			await ctx.send(embed=self.bot.success(f"Member {user_obj.name} unbanned"))
 		else:
 			await ctx.send(embed=self.bot.error("This is not a banned user"))
