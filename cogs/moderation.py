@@ -32,14 +32,14 @@ class Moderation:
 	async def unban(self, ctx, user: str, reason=None):
 		bans = await ctx.guild.bans()
 		if user.isdigit():  # This part checks to see if the user is banned and avoids us having to create a proxy member
-			user = [banned_user[0] for banned_user in bans if banned_user.user.id == user.id][0]
+			user_obj = [banned_user.user for banned_user in bans if banned_user.user.id == user.id][0]
 		else:
-			user = [banned_user[0] for banned_user in bans if banned_user.user.name == user][0]
-		if user:
+			user_obj = [banned_user.user for banned_user in bans if banned_user.user.name == user][0]
+		if user_obj:
 			if not reason:
 				reason = f"Unbanned by {ctx.author.name}"
-			await user.unban(reason=reason)
-			await ctx.send(embed=self.bot.success(f"Member {user.name} unbanned"))
+			await user_obj.unban(reason=reason)
+			await ctx.send(embed=self.bot.success(f"Member {user_obj.name} unbanned"))
 		else:
 			await ctx.send(embed=self.bot.error("This is not a banned user"))
 
