@@ -1,8 +1,9 @@
 from .utils import checks
 from .utils.utils import check_hierarchy
 from discord.ext import commands
-from discord import Member, utils, TextChannel
+from discord import Member, TextChannel
 from datetime import datetime, timedelta
+
 
 class Moderation:
 
@@ -17,7 +18,7 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
-	async def ban(self, ctx, user : Member, reason=None):
+	async def ban(self, ctx, user: Member, reason=None):
 		if not check_hierarchy(ctx.author, user):
 			return await ctx.send(embed=self.bot.error("You can't ban someone with a higher rank than you"))
 		if not reason:
@@ -30,12 +31,10 @@ class Moderation:
 	@checks.is_mod()
 	async def unban(self, ctx, user: str, reason=None):
 		bans = await ctx.guild.bans()
-		if user.isdigit(): # This part checks to see if the user is banned and avoids us having to create a proxy member
-			user = [banned_user[0] for banned_user in bans if banned_user[0].id == user][0]
+		if user.isdigit():  # This part checks to see if the user is banned and avoids us having to create a proxy member
+			user = [banned_user[0] for banned_user in bans if banned_user[0].user.id == user.id][0]
 		else:
-			user = [banned_user[0] for banned_user in bans if banned_user[0].name == user][0]
-			if not user:
-				user = [banned_user[0] for banned_user in bans if str(banned_user[0]) == user][0]
+			user = [banned_user[0] for banned_user in bans if banned_user[0].user.name == user][0]
 		if user:
 			if not reason:
 				reason = f"Unbanned by {ctx.author.name}"
@@ -44,59 +43,55 @@ class Moderation:
 		else:
 			await ctx.send(embed=self.bot.error("This is not a banned user"))
 
-
 	@commands.command()
 	@checks.is_mod()
-	async def tempban(self, ctx, user : Member, reason=None):  # TODO
+	async def tempban(self, ctx, user: Member, reason=None):  # TODO
 		pass
 
-
 	@commands.command()
 	@checks.is_mod()
-	async def softban(self, ctx, user : Member, reason):  # TODO
+	async def softban(self, ctx, user: Member, reason):  # TODO
 		pass
 
-
 	@commands.command()
 	@checks.is_mod()
-	async def kick(self, ctx, user : Member, reason):
+	async def kick(self, ctx, user: Member, reason):
 		if not check_hierarchy(ctx.author, user):
 			return await ctx.send(embed=self.bot.error("You can't kick someone with a higher rank than you"))
 		if not reason:
 			reason = f"Kicked by {ctx.author.name}"
 
-		await user.kick(reason=reason, delete_message_days=7)
+		await user.kick(reason=reason)
 		await ctx.send(embed=self.bot.success(f'Member {user.name} kicked'))
 
 	@commands.command()
 	@commands.guild_only()
 	@checks.is_mod()
-	async def mute(self, ctx, user: Member, channel: TextChannel = None, reason = None):
+	async def mute(self, ctx, user: Member, channel: TextChannel = None, *, reason=None):
 		"""Mutes a user in the specified channel, if not specified, in the channel the command is used from."""
 		if channel is None:
 			channel = ctx.channel
-		await channel.set_permissions(user, reason=reason or f"Mute by {ctx.author}", send_messages=False)
+		await channel.set_permissions(user, reason=reason, send_messages=False)
 		await ctx.send(embed=self.bot.success(f'Member {user.name} muted in this channel'))
+		self.bot.dispatch("member_mute", user, reason, ctx.author)
 
 	@commands.command()
 	@checks.is_mod()
-	async def unmute(self, ctx, user : Member, reason):
-		async def mute(self, ctx, user: Member, channel: TextChannel = None, reason=None):
-			"""Unmutes a user in the specified channel, if not specified, in the channel the command is used from."""
-			if channel is None:
-				channel = ctx.channel
-			await channel.set_permissions(user, reason=reason or f"Unmute by {ctx.author}", send_messages=None)
-			await ctx.send(embed=self.bot.success(f'Member {user.name} Unmuted in this channel'))
-
+	async def unmute(self, ctx, user: Member, channel: TextChannel = None, *, reason=None):
+		"""Unmutes a user in the specified channel, if not specified, in the channel the command is used from."""
+		if channel is None:
+			channel = ctx.channel
+		await channel.set_permissions(user, reason=reason or f"Unmute by {ctx.author}", send_messages=None)
+		await ctx.send(embed=self.bot.success(f'Member {user.name} Unmuted in this channel'))
 
 	@commands.command()
 	@checks.is_mod()
-	async def muteall(self, ctx, user: Member):
+	async def muteall(self, ctx, user: Member, reason=None):
 		"""Mutes a user in all channels of this server."""
 		for tchan in ctx.guild.text_channels:
 			await tchan.set_permissions(user, reason=f"Mute in all channels by {ctx.author}", send_messages=False)
 		await ctx.send(embed=self.bot.success(f'Member {user.name} muted in this guild'))
-
+		self.bot.dispatch("member_mute", user, reason, ctx.author)
 
 	@commands.command()
 	@checks.is_mod()
@@ -117,7 +112,8 @@ class Moderation:
 				if overwrite[1].is_empty():
 					await tchan.set_permissions(overwrite[0], overwrite=None)
 					count += 1
-		await ctx.send(embed=self.bot.success("No channel permission overwrites to clean up." if count == 0 else f"Cleaned up {count} channel permission overwrites."))
+		await ctx.send(embed=self.bot.success(
+			"No channel permission overwrites to clean up." if count == 0 else f"Cleaned up {count} channel permission overwrites."))
 
 	@commands.command()
 	@checks.is_mod()
@@ -131,10 +127,11 @@ class Moderation:
 			await ctx.send(embed=self.bot.notice('I didn\'t find any invites matching your criteria'))
 			return
 
-		message = await ctx.send(embed=self.bot.success('Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
-			                                             len(invites),
-			                                             len({i.inviter.id for i in invites}),
-			                                             sum(i.uses for i in invites))))
+		message = await ctx.send(embed=self.bot.success(
+			'Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
+				len(invites),
+				len({i.inviter.id for i in invites}),
+				sum(i.uses for i in invites))))
 
 		await message.add_reaction('✅')
 		await message.add_reaction('❌')
@@ -166,7 +163,6 @@ class Moderation:
 			await invite.delete()
 		await ctx.send(embed=self.bot.success("Invites cleared"))
 		await message.clear_reactions()
-
 
 
 def setup(bot):
