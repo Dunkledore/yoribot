@@ -7,10 +7,7 @@ class Prefix:
 
 	def __init__(self, bot):
 		self.bot = bot
-		if "Admin" not in bot.categories:
-			bot.categories["Admin"] = [type(self).__name__]
-		elif type(self).__name__ not in bot.categories["Admin"]:
-			bot.categories["Admin"].append(type(self).__name__)
+		self.category = "Admin and Moderation"
 
 
 	async def __local_check(self, ctx):

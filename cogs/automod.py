@@ -11,11 +11,8 @@ class Automod:
 	"""Command that will delete spam type messages. The types are words, caps, mention and image. Config requires admin. Mod is exempt from censor"""
 
 	def __init__(self, bot):
-		if "Moderation" not in bot.categories:
-			bot.categories["Moderation"] = [type(self).__name__]
-		elif type(self).__name__ not in bot.categories["Moderation"]:
-			bot.categories["Moderation"].append(type(self).__name__)
 		self.bot = bot
+		self.category ="Admin and Moderation"
 		self.censor_cache = {}
 		self.censor_task = self.bot.loop.create_task(self.update_censor_cache())
 		self.mention_cache = {}

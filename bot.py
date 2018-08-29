@@ -5,16 +5,17 @@ import sys
 import traceback
 from datetime import datetime
 from threading import Thread
+import inspect
+from discord.ext.commands import Command
 
 import aiohttp
 import asyncpg
 from discord import Embed, Forbidden
 from discord.ext import commands
-from quart import Quart
 
 from cogs.utils import utils, dataIO
-from cogs.website import add_views
-from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port
+from cogs.website import Website
+from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port, client_id, redirect
 
 initial_cogs = ["developers"]
 
@@ -49,20 +50,18 @@ class YoriBot(commands.AutoShardedBot):
 		self.categories = {}
 
 		self.root_website = root_website
-		self.website = Quart(__name__, static_folder="website/static", template_folder="website/templates")
-		self.website.config['SECRET_KEY'] = client_secret
-		add_views(self.website, self)
+		self.website = Website(client_secret, client_id, redirect, port, self)
 
 	def run_website(self):
 		asyncio.set_event_loop(self.loop)
 		try:
-			self.website.run(host='0.0.0.0', port=port)
-		except:
-			pass
+			self.website.run()
+		except Exception as e:
+			print(e)
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:
@@ -118,6 +117,9 @@ class YoriBot(commands.AutoShardedBot):
 			await ctx.author.send('Sorry. This command is disabled and cannot be used.')
 		elif isinstance(error, Forbidden):
 			await ctx.send(embed=self.error("I don't have permissions to do this"))
+		elif isinstance(error, commands.CommandOnCooldown):
+			if not hasattr(ctx.command, 'on_error'):
+				await ctx.send(embed=self.error('You are on cooldown. Try again in {:.2f}s'.format(error.retry_after)))
 		elif not isinstance(error, (commands.CheckFailure,
 		                            commands.CommandNotFound,
 		                            commands.UserInputError)):
@@ -134,9 +136,6 @@ class YoriBot(commands.AutoShardedBot):
 			e.timestamp = datetime.utcnow()
 			hook = self.error_hook
 			await hook.send(embed=e)
-		elif isinstance(error, commands.CommandOnCooldown):
-			if not hasattr(ctx.command, 'on_error'):
-				await ctx.send(embed=self.error('You are on cooldown. Try again in {:.2f}s'.format(error.retry_after)))
 
 	async def on_error(self, event_method, *args, **kwargs):
 		print("error")
@@ -151,6 +150,94 @@ class YoriBot(commands.AutoShardedBot):
 			await hook.send(embed=e)
 		except Exception as e:
 			print(e)
+
+	def add_cog(self, cog):  # This has only been overwritten for the sake of adding cog categories
+		self.cogs[type(cog).__name__] = cog
+
+		try:
+			check = getattr(cog, '_{.__class__.__name__}__global_check'.format(cog))
+		except AttributeError:
+			pass
+		else:
+			self.add_check(check)
+
+		try:
+			check = getattr(cog, '_{.__class__.__name__}__global_check_once'.format(cog))
+		except AttributeError:
+			pass
+		else:
+			self.add_check(check, call_once=True)
+
+		try:
+			category = getattr(cog, "category")
+			if category in self.categories:
+				self.categories.append(type(cog).__name__)
+			else:
+				self.categories = [type(cog).__name__]
+		except AttributeError:
+			pass
+
+		members = inspect.getmembers(cog)
+		for name, member in members:
+			# register commands the cog has
+			if isinstance(member, Command):
+				if member.parent is None:
+					self.add_command(member)
+				continue
+
+			# register event listeners the cog has
+			if name.startswith('on_'):
+				self.add_listener(member, name)
+
+	def remove_cog(self, name):
+
+		cog = self.cogs.pop(name, None)
+		if cog is None:
+			return
+
+		members = inspect.getmembers(cog)
+		for name, member in members:
+			# remove commands the cog has
+			if isinstance(member, Command):
+				if member.parent is None:
+					self.remove_command(member.name)
+				continue
+
+			# remove event listeners the cog has
+			if name.startswith('on_'):
+				self.remove_listener(member)
+
+		try:
+			check = getattr(cog, '_{0.__class__.__name__}__global_check'.format(cog))
+		except AttributeError:
+			pass
+		else:
+			self.remove_check(check)
+
+		try:
+			check = getattr(cog, '_{0.__class__.__name__}__global_check_once'.format(cog))
+		except AttributeError:
+			pass
+		else:
+			self.remove_check(check)
+
+		try:
+			category = getattr(cog, "category")
+			self.categories[category].remove(type(cog).__name__)
+			if not self.categories[category]:
+				self.categories.pop(category)
+		except AttributeError:
+			pass
+
+		unloader_name = '_{0.__class__.__name__}__unload'.format(cog)
+		try:
+			unloader = getattr(cog, unloader_name)
+		except AttributeError:
+			pass
+		else:
+			unloader()
+
+		del cog
 
 	def run(self):
 		super().run(token, reconnect=True)

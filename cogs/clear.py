@@ -8,10 +8,7 @@ class Clear:
 
 	def __init__(self, bot):
 		self.bot = bot
-		if "Moderation" not in bot.categories:
-			bot.categories["Moderation"] = [type(self).__name__]
-		elif type(self).__name__ not in bot.categories["Moderation"]:
-			bot.categories["Moderation"].append(type(self).__name__)
+		self.category = "Admin and Moderation"
 
 	@commands.command()
 	@checks.is_mod()

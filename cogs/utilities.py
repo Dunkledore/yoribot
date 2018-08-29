@@ -7,10 +7,7 @@ class Utilities:
 	def __init__(self, bot):
 		self.bot = bot
 		self.bot.remove_command("help")
-		if "Other" not in self.bot.categories:
-			self.bot.categories["Other"] = [type(self).__name__]
-		elif type(self).__name__ not in self.bot.categories["Other"]:
-			self.bot.categories["Other"].append(type(self).__name__)
+		self.category = "Misc"
 
 
 	@commands.command()
