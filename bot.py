@@ -171,9 +171,9 @@ class YoriBot(commands.AutoShardedBot):
 		try:
 			category = getattr(cog, "category")
 			if category in self.categories:
-				self.categories.append(type(cog).__name__)
+				self.categories[category].append(type(cog).__name__)
 			else:
-				self.categories = [type(cog).__name__]
+				self.categories[category] = [type(cog).__name__]
 		except AttributeError:
 			pass
 

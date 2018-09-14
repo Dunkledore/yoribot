@@ -34,7 +34,7 @@ def is_greeter():
 async def has_level(ctx, level):
 	# OWNER #
 	author = ctx.author
-	if ctx.bot.is_owner(author):
+	if await ctx.bot.is_owner(author):
 		return True
 
 	# DEVELOPER #
