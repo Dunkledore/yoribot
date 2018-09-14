@@ -75,7 +75,7 @@ class Logs:
 	async def start_strike_logs(self, ctx, channel: TextChannel):
 
 		insertquery = "INSERT INTO log_config (guild_id, strike_log_channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE log_config SET stike_log_channel_id = $1 WHERE guild_id = $2"
+		alterquery = "UPDATE log_config SET strike_log_channel_id = $1 WHERE guild_id = $2"
 
 		try:
 			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
