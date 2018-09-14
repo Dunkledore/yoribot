@@ -34,7 +34,7 @@ class Prefix:
 			embed = Embed(title=f"Prefixes for {ctx.guild.name}", description="\n".join(usable_prefixes))
 			await ctx.send(embed=embed)
 
-	@commands.command(aliases=['prefix_add'])
+	@commands.command(aliases=['prefix_add','addprefix','prefixadd'])
 	@commands.guild_only()
 	@checks.is_mod()
 	async def add_prefix(self, ctx, *, prefix):
