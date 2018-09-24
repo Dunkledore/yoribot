@@ -417,13 +417,13 @@ class Logs:
 		embed.add_field(name="User ID", value=f'{message.author.id}')
 		embed.add_field(name="Channel", value=f'{message.channel.mention}')
 		embed.add_field(name="Channel ID", value=f'{message.channel.id}')
-		embed.add_field(name="Message Content", value=message.content, inline=False)
+		embed.add_field(name="Message Content", value=message.content if message.content else "*empty*", inline=False)
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
 
 	async def on_message_edit(self, before, after):
-		if self.bot.user in [before.author, after.author]:
+		if before.author.bot:
 			return
 		if after.channel.id in self.black_listed_channels:
 			return
@@ -466,10 +466,10 @@ class Logs:
 							most_recent_used_invites.append(new_invite)
 					elif new_invite.uses > 0:
 						most_recent_used_invites.append(new_invite)
-
 			return most_recent_used_invites
 		except Forbidden:
 			return []
+
 
 	async def get_yori_bans(self, user):
 		banned_in = []

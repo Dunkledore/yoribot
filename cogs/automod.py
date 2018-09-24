@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Embed, Object, Member
+from discord import Embed, Object, Member, Forbidden
 from .utils import checks
 from .utils import cooldown
 from itertools import groupby
@@ -251,7 +251,10 @@ class Automod:
 			return
 
 		if self.censor_cache[message.guild.id].search(message.content):
-			await message.delete()
+			try:
+				await message.delete()
+			except Forbidden:
+				pass
 			self.bot.dispatch("member_strike", message.author, "censor", message.content)
 
 	# Mention Censor
@@ -320,7 +323,10 @@ class Automod:
 			if user_cooldown.is_allowed():
 				pass
 			else:
-				await message.delete()
+				try:
+					await message.delete()
+				except Forbidden:
+					pass
 				self.bot.dispatch("member_strike", message.author, "mention", message.content)
 
 	# Caps filter
@@ -350,13 +356,16 @@ class Automod:
 			return
 
 		number_of_caps = sum(1 for letter in message.content if letter.isupper())
-		if number_of_caps >= len(message.content)/2:
+		if (number_of_caps >= len(message.content)*0.6) and (len(message.split()) > 1):
 			proxy_ctx = Object(id=None)
 			proxy_ctx.guild = message.guild
 			proxy_ctx.author = message.author
 			proxy_ctx.bot = self.bot
 			if not await checks.has_level(proxy_ctx, "mod"):
-				await message.delete()
+				try:
+					await message.delete()
+				except Forbidden:
+					pass
 				self.bot.dispatch("member_strike", message.author, "caps", message.content)
 
 	# Image spam
@@ -424,7 +433,10 @@ class Automod:
 			if user_cooldown.is_allowed():
 				pass
 			else:
-				await message.delete()
+				try:
+					await message.delete()
+				except Forbidden:
+					pass
 				self.bot.dispatch("member_strike", message.author, "image",
 				                  "\n".join(attachment.url for attachment in message.attachments))
 

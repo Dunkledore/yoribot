@@ -30,7 +30,7 @@ This is `pip install -U -r requirements.txt`
 Install postgres `apt-get install postgresql postgresql-contrib`  
 Start postgres on boot `update-rc.d postgresql enable`  
 Start the postgres service `service postgresql start`  
-Login to the postgres user `sudo su - postgres`  
+Login to the postgres user `su - postgres`  
 Open sql tool `psql`  
 Create role and database
 ```sql
@@ -57,6 +57,29 @@ For more information on the webhooks see below
 5 - **Configuration of database**
 
 The bot will begin to throw errors until one of the developers has run the `updatetables` command
+
+6 - **Running the bot as a service**
+In order to have the bot run indefinitely you need run it in a service manager. There are many available but this tutorial will follow using systemd.
+
+Create service file with the information to running the bot `nano /etc/systemd/system/yoribot.service`
+Paste in the following information and save
+```py
+[Unit]
+Description=My Miscellaneous Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=PATH_TO_BOT_HERE
+ExecStart=PATH_TO_ENV_HERE PATH_TO_RUN_HERE
+Restart=on-failure # or always, on-abort, etc
+
+[Install]
+WantedBy=multi-user.target
+```
+Enable the service which will allow it to run on boot. `systemctl enable yoribot`  
+Start the service `systemctl start yoribot`
 
 
 ## Webhooks
