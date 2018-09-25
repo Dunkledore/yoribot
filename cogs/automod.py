@@ -140,8 +140,10 @@ class Automod:
 		await ctx.send(embed=self.bot.success(f"I will now {action} on after {strikes} censor offences"))
 
 	async def on_member_strike(self, member, offence, reason):
+		await self.bot.error_hook.send(f"{member}{offence}{reason}")
 		query = f"SELECT {offence}_ban, {offence}_mute FROM strike_config WHERE guild_id = $1"
 		strikes = await self.bot.pool.fetchrow(query, member.guild.id)
+		await self.bot.error_hook.send(str(strikes))
 		if not strikes:
 			return
 		ban_strikes = strikes[f"{offence}_ban"]
@@ -157,7 +159,10 @@ class Automod:
 
 		if ban_strikes:
 			if strikes >= ban_strikes:
-				await member.ban(reason=f"Triggered automod on {offence} {strikes} times")
+				try:
+					await member.ban(reason=f"Triggered automod on {offence} {strikes} times")
+				except Forbidden:
+					return
 				query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
 				await self.bot.pool.execute(query, 0, member.guild.id, member.id)
 				return
