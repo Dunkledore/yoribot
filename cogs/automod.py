@@ -364,7 +364,7 @@ class Automod:
 			return
 
 		number_of_caps = sum(1 for letter in message.content if letter.isupper())
-		if (number_of_caps >= len(message.content)*0.6) and (len(message.split()) > 1):
+		if (number_of_caps >= len(message.content)*0.6) and (len(message.content.split()) > 1):
 			proxy_ctx = Object(id=None)
 			proxy_ctx.guild = message.guild
 			proxy_ctx.author = message.author
