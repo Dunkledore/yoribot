@@ -56,12 +56,12 @@ class YoriBot(commands.AutoShardedBot):
 		asyncio.set_event_loop(self.loop)
 		try:
 			self.website.run()
-		except Exception as e:
-			print(e)
+		except Exception as error:
+			print(error)
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		for extension in initial_cogs:
 			try:

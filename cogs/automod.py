@@ -166,8 +166,11 @@ class Automod:
 			if strikes == mute_strikes:
 				for tchan in member.guild.text_channels:
 					reason = f"Triggered automod on {offence} {strikes} times"
-					await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times",
-					                            send_messages=False)
+					try:
+						await tchan.set_permissions(member, reason=f"Triggered automod on {offence} {strikes} times",
+					                                send_messages=False)
+					except Forbidden:
+						pass
 				self.bot.dispatch("member_mute", member, reason, self.bot.user)
 				if not ban_strikes:
 					query = f"UPDATE strikes SET {offence}_strikes = $1 WHERE (guild_id = $2) and (user_id = $3)"
