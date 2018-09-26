@@ -81,7 +81,7 @@ class Weather:
 
 	async def update_key(self):
 		query = "SELECT key FROM weather"
-		key = self.bot.pool.fetchval(query)
+		key = await self.bot.pool.fetchval(query)
 		self.key = key
 		return key
 
