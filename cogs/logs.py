@@ -326,7 +326,7 @@ class Logs:
 		embed.add_field(name="User ID", value=f'{user.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		banner, reason = await self.get_ban_info(guild, user)
-		embed.add_field(name="Banned by", value=banner.mention)
+		embed.add_field(name="Banned by", value=str(banner))
 		embed.add_field(name="Reason", value=reason)
 
 		embed.add_field(name="Message History",
