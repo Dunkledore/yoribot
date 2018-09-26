@@ -12,7 +12,7 @@ class Automod:
 
 	def __init__(self, bot):
 		self.bot = bot
-		self.category ="Admin and Moderation"
+		self.category = "Admin and Moderation"
 		self.censor_cache = {}
 		self.censor_task = self.bot.loop.create_task(self.update_censor_cache())
 		self.mention_cache = {}

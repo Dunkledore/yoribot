@@ -7,6 +7,7 @@ import asyncio
 
 
 class Logs:
+	"""Commands related to logging of events"""
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -28,6 +29,7 @@ class Logs:
 	@commands.command()
 	@checks.is_admin()
 	async def start_message_logs(self, ctx, channel: TextChannel):
+		"""Starts sending logs about message edits and deletes to the given channel"""
 
 		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET message_log_channel_id = $1 WHERE guild_id = $2"
@@ -43,6 +45,7 @@ class Logs:
 	@commands.command()
 	@checks.is_admin()
 	async def start_member_logs(self, ctx, channel: TextChannel):
+		"""Starts sending logs about member join, leaves, bans and unbans to the given channel. N.B. It will also send member mute information but only if the member was muted through Yori"""
 
 		insertquery = "INSERT INTO log_config (guild_id, member_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET member_log_channel_id = $1 WHERE guild_id = $2"
@@ -58,6 +61,7 @@ class Logs:
 	@commands.command()
 	@checks.is_admin()
 	async def start_invite_logs(self, ctx, channel: TextChannel):
+		"""Starts sending logs about invite creations, deletion and expirations to the given channel"""
 
 		insertquery = "INSERT INTO log_config (guild_id, invite_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET invite_log_channel_id = $1 WHERE guild_id = $2"
@@ -73,6 +77,7 @@ class Logs:
 	@commands.command()
 	@checks.is_admin()
 	async def start_strike_logs(self, ctx, channel: TextChannel):
+		"""Starts sending logs about member strikes to the given channel. N.B. Strikes must be setup from within Automod before any logs will be send"""
 
 		insertquery = "INSERT INTO log_config (guild_id, strike_log_channel_id) VALUES ($1, $2)"
 		alterquery = "UPDATE log_config SET strike_log_channel_id = $1 WHERE guild_id = $2"
@@ -141,6 +146,7 @@ class Logs:
 	@commands.command()
 	@checks.is_mod()
 	async def update_log(self, ctx, log_number : int, *, reason):
+		"""Update a log to include a new reason. N.B. This will also change the user who did this action to be you"""
 		query = "SELECT * from event_logs WHERE id = $1"
 		report = await self.bot.pool.fetchrow(query, log_number)
 
@@ -184,7 +190,7 @@ class Logs:
 		else:
 			blacklist = dict(config).get("blacklist")
 			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
-			await self.bot.pool.execute(query, blacklist or [] + [channel.id])
+			await self.bot.pool.execute(query, (blacklist or []) + [channel.id])
 		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
 
 
@@ -580,20 +586,7 @@ class Logs:
 			if guild["blacklist"]:
 				self.black_listed_channels += guild["blacklist"]
 
-	# Temporary to for events
 
-	@commands.command()
-	@checks.is_developer()
-	async def fake(self, ctx, event):
-		if event == "on_member_join":
-			func = getattr(self, "on_member_join")
-			await func(ctx.author)
-		if event == "on_member_remove":
-			func = getattr(self, "on_member_remove")
-			await func(ctx.author)
-		if event == "on_member_ban":
-			func = getattr(self, "on_member_ban")
-			await func(ctx.guild, ctx.author)
 
 
 

@@ -84,7 +84,7 @@ class Developers():
 	@commands.command()
 	@checks.is_developer()
 	async def kill(self, ctx, ):
-		"""Ideally you should get no message back from this command"""
+		"""Ideally you should get an empty message back from this command"""
 		try:
 			output = \
 			Popen(f"systemctl restart {ctx.me.name.lower()}", shell=True, stdout=PIPE, stderr=STDOUT).communicate()[
