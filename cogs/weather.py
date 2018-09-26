@@ -120,9 +120,9 @@ class Weather:
 			embed.add_field(name="**Temperature**",
 			                value=f"{celsius:.1f}°C\n{fahrenheit:.1f}°F")
 			embed.add_field(name="**Wind**",
-			                value=f"{wind_kmh:.1f}km/h\n{wind_mph:.1f}mph")
-			embed.add_field(name="**Pressure*",
-			                value=f"{pressure}hPa")
+			                value=f"{wind_kmh:.1f} km/h\n{wind_mph:.1f} mph")
+			embed.add_field(name="**Pressure**",
+			                value=f"{pressure} hPa")
 			embed.add_field(name="**Humidity**",
 			                value=f"{humidity}%")
 			embed.set_image(url=f"https://openweathermap.org/img/w/{icon}.png")
