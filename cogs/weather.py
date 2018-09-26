@@ -134,10 +134,10 @@ class Weather:
 	@checks.is_developer()
 	async def weatherkey(self, ctx, key: str):
 		"""Acquire a key from  http://openweathermap.org/"""
-		query = "DELETE FROM weather;"
+		query = "DELETE FROM weather"
 		insertquery = "INSERT INTO weather (key) VALUES ($1)"
 		await self.bot.pool.execute(query)
-		await self.bot.pool.execute(query, key)
+		await self.bot.pool.execute(insertquery, key)
 		await ctx.send(embed=self.bot.success("Key saved! It might take a minute or ten before the key is active if you just registered it."))
 
 
