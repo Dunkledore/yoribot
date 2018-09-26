@@ -138,6 +138,7 @@ class Weather:
 		insertquery = "INSERT INTO weather (key) VALUES ($1)"
 		await self.bot.pool.execute(query)
 		await self.bot.pool.execute(insertquery, key)
+		await self.update_key()
 		await ctx.send(embed=self.bot.success("Key saved! It might take a minute or ten before the key is active if you just registered it."))
 
 
