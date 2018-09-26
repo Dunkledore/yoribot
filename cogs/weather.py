@@ -88,7 +88,7 @@ class Weather:
 	@commands.command(aliases=['temp', 'temperature'])
 	async def weather(self, ctx, *, location: str):
 		"""Get the weather"""
-		if not self.key():
+		if not self.key:
 			await ctx.send(embed=self.bot.error("No API key set"))
 			return
 
