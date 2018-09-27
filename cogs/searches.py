@@ -39,7 +39,7 @@ class Searches:
 		async with aiohttp.ClientSession() as cs:
 			url = 'https://icanhazdadjoke.com/'
 			headers = {'Accept': 'text/plain'}
-			async with cs.get(url, headers=headers):
+			async with cs.get(url, headers=headers) as r:
 				joke = await r.text()
 				head, sep, tail = joke.partition('?' or '.')
 				await ctx.send(embed=make_embed(head))
