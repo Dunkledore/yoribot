@@ -1,7 +1,7 @@
 from discord.ext import commands
 from .utils import checks
 import aiohttp
-import discord
+from discord import Embed
 
 
 
@@ -114,7 +114,7 @@ class Weather:
 			country = self.countries.get(data['sys']['country'], '')
 			city_id = data['id']
 
-			embed = discord.Embed(color=ctx.message.author.color,
+			embed = Embed(color=ctx.message.author.color,
 			                      title=f"{clouds} in {place}, {country}",
 			                      url=f"https://openweathermap.org/city/{city_id}")
 			embed.add_field(name="**Temperature**",
