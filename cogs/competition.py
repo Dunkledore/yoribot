@@ -33,7 +33,7 @@ class Competition:
 
 		candidates = []
 		async for message in channel.history(limit=5000, after=created):
-			if message.attachements:
+			if message.attachments:
 				if message.attachments[0].height:
 					candidates.append(message)
 
