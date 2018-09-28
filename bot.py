@@ -21,7 +21,8 @@ initial_cogs = ["developers",
                 "logs",
                 "automod",
                 "prefix",
-                "utilities",]
+                "utilities",
+                "weather",]
 
 
 def _prefix_callable(bot, msg):
