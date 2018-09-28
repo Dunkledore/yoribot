@@ -1,4 +1,5 @@
 from discord import TextChannel
+from discord.ext import commands
 import asyncpg
 
 
@@ -7,6 +8,7 @@ class Competition:
 	def __init__(self, bot):
 		self.bot = bot
 
+	@commands.command()
 	async def start_competiton(self, ctx, name, channel: TextChannel):
 		"""Start a competition in the given channel"""
 		query = "INSERT INTO competition (channel_id, name) VALUES ($1, $2)"
@@ -19,6 +21,7 @@ class Competition:
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("There is already a competition happening in this channel"))
 
+	@commands.command()
 	async def end_competition(self, ctx, channel: TextChannel):
 		"""End an already running competition"""
 
