@@ -44,7 +44,7 @@ class Searches:
 				head, sep, tail = joke.partition('?' or '.')
 				await ctx.send(embed=make_embed(head))
 				if tail:
-					asyncio.sleep(5)
+					await asyncio.sleep(5)
 					await ctx.send(embed=make_embed(tail))
 
 def setup(bot):

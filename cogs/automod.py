@@ -84,7 +84,7 @@ class Automod:
 			mention = strikes["mention_strikes"]
 			image = strikes["image_strikes"]
 			censor = strikes["censor_strikes"]
-		embed = Embed(title=f"Strikes for {member.mention}")
+		embed = Embed(title=f"Strikes for {member.name}")
 		embed.add_field(name="Caps", inline=False, value=caps)
 		embed.add_field(name="Mention", inline=False, value=mention)
 		embed.add_field(name="Image", inline=False, value=image)
@@ -363,6 +363,10 @@ class Automod:
 
 		number_of_caps = sum(1 for letter in message.content if letter.isupper())
 		if (number_of_caps >= len(message.content)*0.6) and (len(message.content.split()) > 1):
+			query = "SELECT toggle FROM caps WHERE guild_id = $1"
+			caps = await self.bot.pool.fetchval(query, message.guild.id)
+			if not caps:
+				return
 			proxy_ctx = Object(id=None)
 			proxy_ctx.guild = message.guild
 			proxy_ctx.author = message.author

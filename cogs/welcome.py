@@ -1,6 +1,7 @@
 import asyncpg
 import discord
 from discord.ext import commands
+import asyncio
 
 from .utils import checks
 
@@ -149,6 +150,7 @@ class Welcome:
 		embed = discord.Embed(title=' ', colour=discord.Colour.blurple())
 		embed.set_author(name='Welcome to '+member.guild.name+' '+member.name, icon_url=member.guild.icon_url)
 		embed.set_thumbnail(url=member.avatar_url)
+		welcome_message = None
 
 		welcome_fields = await self.bot.pool.fetch(query, member.guild.id)
 		for fields in welcome_fields:
@@ -165,7 +167,18 @@ class Welcome:
 			if config["text_message"]:
 				await welcome_channel.send(config["text_message"].format(member))
 			if welcome_fields:
-				await welcome_channel.send(embed=embed)
+				welcome_message = await welcome_channel.send(embed=embed)
+
+		def check(left_member):
+			return left_member.id == member.id
+		try:
+			member = await self.bot.wait_for("member_remove", check=check, timeout=7200)
+		except asyncio.TimeoutError:
+			if welcome_message:
+				embed.color = discord.Color.red()
+				await welcome_message.edit(embed=embed)
+
+
 
 
 def setup(bot):

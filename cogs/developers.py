@@ -118,6 +118,8 @@ class Developers():
 		              "CREATE TABLE IF NOT EXISTS strike_config (guild_id BIGINT PRIMARY KEY, caps_ban INT, caps_mute INT, mention_ban INT, mention_mute INT, image_ban INT, image_mute INT, censor_ban INT, censor_mute INT)",
 		              "CREATE TABLE IF NOT EXISTS strikes (user_id BIGINT, guild_id BIGINT, caps_strikes INT DEFAULT 0, mention_strikes INT DEFAULT 0, censor_strikes INT DEFAULT 0, image_strikes INT DEFAULT 0, PRIMARY KEY (guild_id, user_id))",
 		              "CREATE TABLE IF NOT EXISTS weather (key TEXT)"
+		              "CREATE TABLE IF NOT EXISTS welcome_config (guild_id BIGINT PRIMARY KEY, channel_id BIGINT, text_message TEXT, whisper BOOL DEFAULT False)",
+		              "CREATE TABLE IF NOT EXISTS welcome(id SERIAL, guild_id BIGINT, name TEXT, value Text)"
 		              ]
 
 		for statement in statements:
