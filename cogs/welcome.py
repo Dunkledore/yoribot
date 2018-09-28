@@ -173,10 +173,10 @@ class Welcome:
 			return left_member.id == member.id
 		try:
 			member = await self.bot.wait_for("member_remove", check=check, timeout=7200)
+			embed.colour = discord.Color.red()
+			await welcome_message.edit(embed=embed)
 		except asyncio.TimeoutError:
-			if welcome_message:
-				embed.color = discord.Color.red()
-				await welcome_message.edit(embed=embed)
+			pass
 
 
 
