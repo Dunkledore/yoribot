@@ -51,7 +51,7 @@ class Competition:
 		for message in sorted(candidates_votes, key=candidates_votes.get, reverse=True):
 			ordered.append({message: candidates_votes[message]})
 
-		await ctx.send(embed=self.bot.success(f"And the winnder is {ordered[0].author.name}"))
+		await ctx.send(embed=self.bot.success(f"And the winnder is {list(ordered[0].keys())[0].author.name}"))
 
 
 def setup(bot):
