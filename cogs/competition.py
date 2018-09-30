@@ -9,8 +9,9 @@ class Competition:
 		self.bot = bot
 
 	@commands.command()
-	async def start_competiton(self, ctx, name, channel: TextChannel):
+	async def start_competiton(self, ctx, name, channel: TextChannel, end_in : int, start_in: int = 0):
 		"""Start a competition in the given channel"""
+		if
 		query = "INSERT INTO competition (channel_id, name) VALUES ($1, $2)"
 		try:
 			await self.bot.pool.execute(query, channel.id, name)

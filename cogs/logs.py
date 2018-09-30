@@ -1,6 +1,6 @@
 from discord.ext import commands
 from .utils import checks, utils as yoriutils
-from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction, Member
+from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction, Member, Object
 import asyncpg
 import datetime
 import asyncio
@@ -314,6 +314,24 @@ class Logs:
 		report_message = await log_channel.send(embed=embed)
 		query = "UPDATE event_logs SET user_id = $1, reason = $2, report_message_id = $3 WHERE id = $4"
 		await self.bot.pool.execute(query, muter.id, reason, report_message.id, log_id)
+		await report_message.add_reaction("🔊")
+
+		async def check(reaction, user):
+			if reaction.emoji != "🔊":
+				return False
+
+			if reaction.message is not report_message:
+				return False
+			return True
+
+		reaction, user = await self.bot.wait_for("reaction_add", check=check)
+
+		proxy_ctx = self.bot.get_context(report_message)
+		proxy_ctx.author = user
+		await proxy_ctx.invoke(self.bot.get_command("unmuteall"), user=member)
+
+
+
 
 	async def on_member_ban(self, guild, user):
 
