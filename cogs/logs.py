@@ -326,7 +326,7 @@ class Logs:
 
 		reaction, user = await self.bot.wait_for("reaction_add", check=check)
 
-		proxy_ctx = self.bot.get_context(report_message)
+		proxy_ctx = await self.bot.get_context(report_message)
 		proxy_ctx.author = user
 		await proxy_ctx.invoke(self.bot.get_command("unmuteall"), user=member)
 
