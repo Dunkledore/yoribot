@@ -8,7 +8,7 @@ import asyncpg
 
 
 class Automod:
-	"""Command that will delete spam type messages. The types are words, caps, mention and image. Config requires admin. Mod is exempt from censor"""
+	"""Command that will delete spam type messages. The types are words, caps, mention and image. Config requires admin. Mod is exempt from censor."""
 
 	def __init__(self, bot):
 		self.bot = bot
