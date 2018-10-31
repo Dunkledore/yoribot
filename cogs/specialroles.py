@@ -60,6 +60,7 @@ class SpecialRoles:
 	@is_admin()
 	@commands.guild_only()
 	async def delete_special_role(self, ctx, name):
+		"""Remove a special role"""
 		query = "DELETE FROM special_roles WHERE (guild_id = $1) and (name = $2)"
 		deleted = await self.bot.pool.fetchval(query, ctx.guild.id, name)
 		if not deleted:
@@ -72,6 +73,7 @@ class SpecialRoles:
 	@is_admin()
 	@commands.guild_only()
 	async def view_special_roles(self, ctx):
+		"""View all special roles"""
 		query = "SELECT * FROM special_roles WHERE guild_id = $1"
 		roles = await self.bot.pool.fetch(query, ctx.guild.id)
 		if not roles:
@@ -104,6 +106,7 @@ class SpecialRoles:
 	@commands.guild_only()
 	async def create_special_role(self, ctx, name=None, role_to_be_applied: Role = None,
 	                              able_to_give_role: Role = None):
+		"""Open a wizard to create special roles"""
 		def check(message):
 			return (message.channel is ctx.channel) and (message.author is ctx.author)
 
