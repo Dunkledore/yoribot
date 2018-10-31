@@ -1,4 +1,5 @@
 from discord.ext import commands
+import discord
 
 
 def is_developer():
@@ -67,13 +68,11 @@ async def has_level(ctx, level):
 			                 "greeter", ]
 
 	# MOD #
-	query = "SELECT mod_role_id FROM guild_config WHERE guild_id = $1"
-	mod_role_id = await ctx.bot.pool.fetchval(query, ctx.guild.id)
-	for role in ctx.author.roles:
-		if role.id == mod_role_id:
-			return level in ["mod",
-			                 "greeter", ]
-
+	mod_roles = ["mod", "moderator"]
+	member_mod_roles = [role for role in ctx.author.roles if role.name in mod_roles]
+	if member_mod_roles:
+		return level in ["mod",
+		                 "greeter"]
 	# GREETER #
 	query = "SELECT greeter_role_id FROM guild_config WHERE guild_id = $1"
 	greeter_role_id = await ctx.bot.pool.fetchval(query, ctx.guild.id)

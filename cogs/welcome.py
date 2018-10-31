@@ -17,7 +17,7 @@ class Welcome:
 	@commands.guild_only()
 	@checks.is_mod()
 	async def welcome(self, ctx):
-		"""Will send the welcome message as if the caller just joined"""
+		"""Test your welcome message"""
 
 		member = ctx.author
 		channel = ctx.message.channel

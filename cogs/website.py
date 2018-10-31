@@ -32,6 +32,7 @@ class Website(Quart):
 		self.port = port
 		self.bot = bot
 		self.add_url_rule("/", "index", self.index)
+		self.add_url_rule("/index", "index", self.index)
 		self.add_url_rule("/me", "me", self.profile)
 		self.add_url_rule("/callback", "callback", self.callback)
 		self.add_url_rule("/login", "login", self.login)
