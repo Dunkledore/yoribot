@@ -15,7 +15,7 @@ class SpecialRoles:
 		if not message.guild:
 			return
 
-		ctx = self.bot.get_context(message)
+		ctx = await self.bot.get_context(message)
 		if not ctx.prefix:
 			return
 
@@ -55,7 +55,7 @@ class SpecialRoles:
 			await ctx.send(embed=self.bot.success(f"Special Role {name} deleted"))
 
 
-	@commands.command(aliases=["special_roles", "view_special_roles"])
+	@commands.command(aliases=["special_roles", "special_roles_view"])
 	@is_admin()
 	@commands.guild_only()
 	async def view_special_roles(self, ctx):
