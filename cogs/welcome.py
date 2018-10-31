@@ -25,7 +25,7 @@ class Welcome:
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, member.guild.id)
 		if not config:
-			await ctx.send(emebd=self.bot.error("Welcome settings not setup for this guild"))
+			await ctx.send(embed=self.bot.error("Welcome settings not setup for this guild"))
 			return
 
 		query = "SELECT * FROM welcome_fields WHERE guild_id = $1;"
