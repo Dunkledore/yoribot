@@ -1,5 +1,6 @@
 from discord import Role, Embed
 from discord.ext import commands
+from discord.ext.commands.errors import BadArgument
 import asyncio
 from .utils.checks import is_admin
 from prettytable import PrettyTable
@@ -15,11 +16,23 @@ class SpecialRoles:
 		if not message.guild:
 			return
 
+		if not message.content:
+			return
+
 		ctx = await self.bot.get_context(message)
 		if not ctx.prefix:
 			return
 
-		name = message.content.replace(ctx.prefix, "").split()[0]
+		name = message.content.replace(ctx.prefix, "", 1).split()[0]
+		if not name:
+			return
+
+		member_pre_convert = message.content.replace(ctx.prefix,"", 1).replace(name, "", 1).strip()
+		try:
+			member_to_give = await commands.MemberConverter().convert(ctx, member_pre_convert)
+		except BadArgument:
+			return
+
 
 		query = "SELECT * FROM special_roles WHERE (guild_id = $1) and (name = $2)"
 		roles = await self.bot.pool.fetch(query, message.guild.id, name)
@@ -41,7 +54,7 @@ class SpecialRoles:
 				return
 			roles_to_add.append(role)
 
-		await message.author.add_roles(*roles_to_add)
+		await member_to_give.add_roles(*roles_to_add)
 
 	@commands.command(aliases=["remove_special_role", "special_role_delete", "special_role_remove"])
 	@is_admin()
