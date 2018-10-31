@@ -27,12 +27,11 @@ class SpecialRoles:
 		if not name:
 			return
 
-		member_pre_convert = message.content.replace(ctx.prefix,"", 1).replace(name, "", 1).strip()
+		member_pre_convert = message.content.replace(ctx.prefix, "", 1).replace(name, "", 1).strip()
 		try:
 			member_to_give = await commands.MemberConverter().convert(ctx, member_pre_convert)
 		except BadArgument:
 			return
-
 
 		query = "SELECT * FROM special_roles WHERE (guild_id = $1) and (name = $2)"
 		roles = await self.bot.pool.fetch(query, message.guild.id, name)
@@ -62,12 +61,8 @@ class SpecialRoles:
 	async def delete_special_role(self, ctx, name):
 		"""Remove a special role"""
 		query = "DELETE FROM special_roles WHERE (guild_id = $1) and (name = $2)"
-		deleted = await self.bot.pool.fetchval(query, ctx.guild.id, name)
-		if not deleted:
-			await ctx.send(embed=self.bot.error(f"Special Role {name} not found"))
-		else:
-			await ctx.send(embed=self.bot.success(f"Special Role {name} deleted"))
-
+		await self.bot.pool.fetchval(query, ctx.guild.id, name)
+		await ctx.send(embed=self.bot.error(f"Any special roles names {name} were deleted"))
 
 	@commands.command(aliases=["special_roles", "special_roles_view"])
 	@is_admin()
@@ -80,7 +75,7 @@ class SpecialRoles:
 			await ctx.send(embed=self.bot.error("No special roles for this guild"))
 			return
 
-		table = PrettyTable(field_names=["Name", "Role To Be Applied", "Role Able To Give"])
+		table = PrettyTable(field_names=["Name", "Role To Apply", "Role Able To Give"])
 		for role in roles:
 			name = role["name"]
 
@@ -107,6 +102,7 @@ class SpecialRoles:
 	async def create_special_role(self, ctx, name=None, role_to_be_applied: Role = None,
 	                              able_to_give_role: Role = None):
 		"""Open a wizard to create special roles"""
+
 		def check(message):
 			return (message.channel is ctx.channel) and (message.author is ctx.author)
 
