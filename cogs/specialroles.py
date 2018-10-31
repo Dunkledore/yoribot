@@ -19,7 +19,7 @@ class SpecialRoles:
 		if not ctx.prefix:
 			return
 
-		name = message.context.replace(ctx.prefix, "").split()[0]
+		name = message.content.replace(ctx.prefix, "").split()[0]
 
 		query = "SELECT * FROM special_roles WHERE (guild_id = $1) and (name = $2)"
 		roles = await self.bot.pool.fetch(query, message.guild.id, name)
