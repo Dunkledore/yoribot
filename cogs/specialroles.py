@@ -69,13 +69,13 @@ class SpecialRoles:
 		for role in roles:
 			name = role["name"]
 
-			applied_role = await ctx.guild.get_role(role["applied_role_id"])
+			applied_role = ctx.guild.get_role(role["applied_role_id"])
 			if not applied_role:
 				applied_role = "Deleted Role"
 			else:
 				applied_role = applied_role.name
 
-			give_role = await ctx.guild.get_role(role["give_role_id"])
+			give_role = ctx.guild.get_role(role["give_role_id"])
 			if not give_role:
 				give_role = "Deleted Role"
 			else:
@@ -125,7 +125,7 @@ class SpecialRoles:
 
 		query = "INSERT INTO special_roles (guild_id, name, applied_role_id, give_role_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, ctx.guild.id, name, role_to_be_applied.id, able_to_give_role.id)
-		await ctx.send(embe=self.bot.success(f"Speical role made. Example usage `{ctx.prefix}{name} {ctx.me.mention}"))
+		await ctx.send(embed=self.bot.success(f"Speical role made. Example usage `{ctx.prefix}{name} {ctx.me.mention}"))
 
 
 def setup(bot):
