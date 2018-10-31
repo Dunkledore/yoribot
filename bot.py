@@ -56,9 +56,10 @@ class YoriBot(commands.AutoShardedBot):
 
 		self.root_website = root_website
 		self.website = Website(client_secret, client_id, redirect, port, self)
+		web_thread = Thread(target=self.run_website())
+		web_thread.start()
 
 	def run_website(self):
-		asyncio.set_event_loop(self.loop)
 		try:
 			self.website.run()
 		except Exception as error:
@@ -66,7 +67,9 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
+
+		print("started")
 
 		for extension in initial_cogs:
 			try:
@@ -104,8 +107,6 @@ class YoriBot(commands.AutoShardedBot):
 		if not hasattr(self, 'uptime'):
 			self.uptime = datetime.utcnow()
 		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
-		web_thread = Thread(target=self.run_website())
-		web_thread.start()
 
 	async def on_resumed(self):
 		await self.error_hook.send(embed=self.notice('Resumed...'))

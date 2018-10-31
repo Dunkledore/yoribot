@@ -1,8 +1,10 @@
-from quart import Quart, session, flash, redirect, request, render_template
-from functools import wraps
 import os
-from requests_oauthlib import OAuth2Session
+from functools import wraps
+
 from discord import Object
+from quart import Quart, session, redirect, request
+from requests_oauthlib import OAuth2Session
+
 from .utils import checks
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
