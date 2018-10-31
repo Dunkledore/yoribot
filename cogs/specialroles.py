@@ -49,7 +49,7 @@ class SpecialRoles:
 	async def delete_special_role(self, ctx, name):
 		query = "DELETE FROM special_roles WHERE (guild_id = $1) and (name = $2)"
 		deleted = await self.bot.pool.fetchval(query, ctx.guild.id, name)
-		if deleted == 0:
+		if not deleted:
 			await ctx.send(embed=self.bot.error(f"Special Role {name} not found"))
 		else:
 			await ctx.send(embed=self.bot.success(f"Special Role {name} deleted"))
@@ -60,9 +60,10 @@ class SpecialRoles:
 	@commands.guild_only()
 	async def view_special_roles(self, ctx):
 		query = "SELECT * FROM special_roles WHERE guild_id = $1"
-		roles = await self.bot.fetch(query, ctx.guild.id)
+		roles = await self.bot.pool.fetch(query, ctx.guild.id)
 		if not roles:
 			await ctx.send(embed=self.bot.error("No special roles for this guild"))
+			return
 
 		table = PrettyTable(field_names=["Name", "Role To Be Applied", "Role Able To Give"])
 		for role in roles:
@@ -112,7 +113,7 @@ class SpecialRoles:
 					await ctx.send(embed=self.bot.error("No roles were mentioned"))
 			while not able_to_give_role:
 				await ctx.send(embed=self.bot.notice(
-					f"Mention the role you would like to able to give {role.mention} when {ctx.prefix}{name}"
+					f"Mention the role you would like to able to give {role_to_be_applied.mention} when {ctx.prefix}{name}"
 					" is executed"))
 				role_message = await self.bot.wait_for("message", check=check, timeout=60.0)
 				if role_message.role_mentions:
