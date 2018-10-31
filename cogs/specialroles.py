@@ -41,7 +41,7 @@ class SpecialRoles:
 				return
 			roles_to_add.append(role)
 
-		await message.author.add_roles(roles_to_add)
+		await message.author.add_roles(role for role in roles_to_add)
 
 	@commands.command(aliases=["remove_special_role", "special_role_delete", "special_role_remove"])
 	@is_admin()
@@ -82,7 +82,7 @@ class SpecialRoles:
 				give_role = give_role.name
 
 			table.add_row([name, applied_role, give_role])
-		embed = Embed(title=f"Special Roles for {ctx.guild.name}", description=str(table))
+		embed = Embed(title=f"Special Roles for {ctx.guild.name}", description=f"```{table}```")
 
 		await ctx.send(embed=embed)
 
