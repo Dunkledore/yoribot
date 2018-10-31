@@ -111,8 +111,8 @@ class SpecialRoles:
 		try:
 			if not name:
 				await ctx.send(
-					embed=self.bot.notice("What would you like the name of the special role ot be?\n N.B. This "
-					                      "name will be used to give the role. For example if the name is `under18` the"
+					embed=self.bot.notice("What would you like the name of the special role ot be?\nThis "
+					                      "name will be used to give the role. For example if the name is `under18` the "
 					                      f"role will then be given with the command `{ctx.prefix}under18`"))
 				name_message = await self.bot.wait_for("message", check=check, timeout=60.0)
 				name = name_message.content
