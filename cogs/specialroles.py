@@ -53,7 +53,10 @@ class SpecialRoles:
 				return
 			roles_to_add.append(role)
 
+
 		await member_to_give.add_roles(*roles_to_add)
+		fmt = ",".join(roles_to_add)
+		await ctx.send(embed=self.bot.success(f"{member_to_give.name} given {fmt}"))
 
 	@commands.command(aliases=["remove_special_role", "special_role_delete", "special_role_remove"])
 	@is_admin()
@@ -93,7 +96,6 @@ class SpecialRoles:
 
 			table.add_row([name, applied_role, give_role])
 		embed = Embed(title=f"Special Roles for {ctx.guild.name}", description=f"```{table}```")
-
 		await ctx.send(embed=embed)
 
 	@commands.command(aliases=["add_special_role", "special_role_add", "special_role_create"])
@@ -137,7 +139,7 @@ class SpecialRoles:
 
 		query = "INSERT INTO special_roles (guild_id, name, applied_role_id, give_role_id) VALUES ($1, $2, $3, $4)"
 		await self.bot.pool.execute(query, ctx.guild.id, name, role_to_be_applied.id, able_to_give_role.id)
-		await ctx.send(embed=self.bot.success(f"Speical role made. Example usage `{ctx.prefix}{name} {ctx.me.mention}"))
+		await ctx.send(embed=self.bot.success(f"Speical role made. Example usage {ctx.prefix}{name} {ctx.me.mention}"))
 
 
 def setup(bot):
