@@ -55,7 +55,7 @@ class SpecialRoles:
 
 
 		await member_to_give.add_roles(*roles_to_add)
-		fmt = ",".join(roles_to_add)
+		fmt = ",".join(role.name for role in roles_to_add)
 		await ctx.send(embed=self.bot.success(f"{member_to_give.name} given {fmt}"))
 
 	@commands.command(aliases=["remove_special_role", "special_role_delete", "special_role_remove"])
@@ -65,7 +65,7 @@ class SpecialRoles:
 		"""Remove a special role"""
 		query = "DELETE FROM special_roles WHERE (guild_id = $1) and (name = $2)"
 		await self.bot.pool.fetchval(query, ctx.guild.id, name)
-		await ctx.send(embed=self.bot.error(f"Any special roles names {name} were deleted"))
+		await ctx.send(embed=self.bot.success(f"Any special roles names {name} were deleted"))
 
 	@commands.command(aliases=["special_roles", "special_roles_view"])
 	@is_admin()
