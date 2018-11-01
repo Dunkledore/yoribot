@@ -42,6 +42,11 @@ class Website(Quart):
 		self.add_url_rule('/messages/<int:guild_id>/<int:user_id>', "message_logs", self.messages_for_user)
 		self.add_url_rule('/logout',"logout", self.logout)
 
+	async def errorhandler(self, error):
+		webhook = self.bot.error_hook
+		await webhook.send(str(error))
+
+
 
 	def make_session(self, token=None, state=None, scope=None):
 		return OAuth2Session(

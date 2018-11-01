@@ -23,7 +23,8 @@ If future packages are needed to be installed this should be activated and then 
 
 2 - **Install dependencies**
 
-This is `pip install -U -r requirements.txt`
+This bot requires a modified library to enable the website part to work. Feel free to install the requirements manually but ensure hypercorn is installed from the git repo found in requirements 
+TLDR: `pip install -U -r requirements`
 
 3 - **Create the database in PostgreSQL**
 
