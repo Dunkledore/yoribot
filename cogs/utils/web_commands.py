@@ -75,3 +75,14 @@ def get_categories(bot):
 	print(to_return)
 	return to_return
 
+def get_commands(bot):
+	def key(c):
+		return c.name
+
+	entries = sorted(bot.commands, key=key)
+
+	display_commands = []
+	for command in entries:
+		display_commands.append({"signature" : get_command_signature(command), "description" : command.short_doc})
+
+	return display_commands

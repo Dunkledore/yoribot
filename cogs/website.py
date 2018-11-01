@@ -70,6 +70,7 @@ class Website(Quart):
 		self.add_url_rule('/logout',"logout", self.logout)
 		self.add_url_rule('/about', "about", self.about)
 		self.add_url_rule("/commands", "commands", self.commands)
+		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
@@ -131,6 +132,10 @@ class Website(Quart):
 	async def commands(self):
 		categories = web_commands.get_categories(self.bot)
 		return await render_template('commands.html', categories=categories)
+
+	async def commands_list(self):
+		commands = web_commands.get_commands(self.bot)
+		return await render_template('commands_list.html', commands=commands)
 
 	async def callback(self):
 		if request.args.get('error'):
