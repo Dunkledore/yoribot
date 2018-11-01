@@ -55,6 +55,13 @@
     <script src="{{ url_for('static', filename='js/nivo-lightbox.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/custom.js')}}"></script>
     <script src="{{ url_for('static', filename='js/counter.js')}}"></script>
+    {% if active_page == "commands" %}
+        <script src="{{ url_for('static', filename='js/yori.js')}}"></script>
+        <script>
+			document.getElementById("defaultOpen").click();
+		</script>
+
+    {% endif %}
 
 
 
