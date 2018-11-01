@@ -65,10 +65,12 @@ class Website(Quart):
 	def token_updater(self, token):
 		session['oauth2_token'] = token
 
-	async def is_mod_in_guild(self, guild, user):
+	async def is_mod_in_guild(self, guild):
 		proxy_ctx = Object(id=None)
 		proxy_ctx.guild = guild
-		proxy_ctx.author = self.bot.get_user(session["user"]["id"])
+		proxy_ctx.author = guild.get_member(int(session["user"]["id"]))
+		if not proxy_ctx.author:
+			return
 		proxy_ctx.bot = self.bot
 		if await checks.has_level(proxy_ctx, "mod"):
 			return
