@@ -1,7 +1,6 @@
     {% if not session['user'] %}
         {% set pages = [{'href' : '/', 'name' : 'index', 'display_name' : 'Home'},
                         {'href' : '/commands', 'name' : 'commands', 'display_name' : 'Commands'},
-                        {'href' : '/server', 'name' : 'server', 'display_name' : 'Server'},
                         {'href' : '/about', 'name' : 'about', 'display_name' : 'About'},
                         {'href' : '/login', 'name' : 'login', 'display_name' : 'Login'}
                         ]%}
@@ -9,7 +8,6 @@
     {% if session['user'] %}
         {% set pages = [{'href' : '/', 'name' : 'index', 'display_name' : 'Home'},
                         {'href' : '/commands', 'name' : 'commands', 'display_name' : 'Commands'},
-                        {'href' : '/server', 'name' : 'server', 'display_name' : 'Server'},
                         {'href' : '/about', 'name' : 'about', 'display_name' : 'About'},
                         {'href' : '/me', 'name' : 'profile', 'display_name' : 'profile'},
                         {'href' : '/logout', 'name' : 'logout', 'display_name' : 'Logout'}

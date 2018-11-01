@@ -10,7 +10,7 @@ class Weather:
 
 	def __init__(self, bot):
 		self.bot = bot
-		self.catagory = "Utilities"
+		self.category = "Utilities"
 		self.key = None
 		self.bot.loop.create_task(self.update_key())
 		self.countries = {'AF': 'Afghanistan', 'AL': 'Albania', 'DZ': 'Algeria', 'AS': 'American Samoa',

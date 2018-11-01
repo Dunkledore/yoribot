@@ -25,7 +25,7 @@ class Developers():
 
 	# Cogs #
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def load(self, ctx, extension):
 		try:
@@ -35,7 +35,7 @@ class Developers():
 			return
 		await ctx.message.add_reaction("✅")
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def unload(self, ctx, extension):
 		try:
@@ -45,7 +45,7 @@ class Developers():
 			return
 		await ctx.message.add_reaction("✅")
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def reload(self, ctx, extension):
 		try:
@@ -58,7 +58,7 @@ class Developers():
 
 	# Terminal #
 
-	@commands.command(aliases=["terminal"])
+	@commands.command(aliases=["terminal"], hidden=True)
 	@checks.is_developer()
 	async def cmd(self, ctx, *, command):
 
@@ -70,7 +70,7 @@ class Developers():
 
 		await ctx.send(f"```py\n{output}\n```")
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def pull(self, ctx):
 		try:
@@ -81,7 +81,7 @@ class Developers():
 
 		await ctx.send(f"```py\n{output}\n```")
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def kill(self, ctx, ):
 		"""Ideally you should get an empty message back from this command"""

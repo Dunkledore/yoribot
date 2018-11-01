@@ -17,13 +17,18 @@ from cogs.utils import utils, dataIO
 from cogs.website import Website
 from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port, client_id, redirect
 
-initial_cogs = ["developers",
+initial_cogs = ["automod",
+                "clear",
+                "developers",
                 #"logs",
-                #"automod",
-                #"prefix",
-                #"utilities",
-                #"weather",
-				]
+                "moderation",
+                "prefix",
+                "reactroles",
+                "specialroles",
+                "utilities",
+                "weather",
+                "welcome"
+                ]
 
 
 def _prefix_callable(bot, msg):
@@ -70,7 +75,7 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		print("started")
 

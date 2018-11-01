@@ -5,6 +5,7 @@ from discord import Object
 from quart import Quart, session, redirect, request, render_template
 from requests_oauthlib import OAuth2Session
 from .utils import checks
+from .utils import web_commands
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL+'/oauth2/authorize'
@@ -20,6 +21,32 @@ def require_login(function_):
 			return redirect('/login')
 		return await function_(*args, **kwargs)
 	return wrapper
+
+def get_command_signature(cmd):  #taken from rdanny
+	result = [cmd.qualified_name]
+	if cmd.usage:
+		result.append(cmd.usage)
+		return ' '.join(result)
+
+	params = cmd.clean_params
+	if not params:
+		return ' '.join(result)
+
+	for name, param in params.items():
+		if param.default is not param.empty:
+			# We don't want None or '' to trigger the [name=value] case and instead it should
+			# do [name] since [name=None] or [name=] are not exactly useful for the user.
+			should_print = param.default if isinstance(param.default, str) else param.default is not None
+			if should_print:
+				result.append(f'[{name}={param.default!r}]')
+			else:
+				result.append(f'[{name}]')
+		elif param.kind == param.VAR_POSITIONAL:
+			result.append(f'[{name}...]')
+		else:
+			result.append(f'<{name}>')
+
+	return ' '.join(result)
 
 
 class Website(Quart):
@@ -41,6 +68,8 @@ class Website(Quart):
 		self.add_url_rule('/logs/<int:guild_id>/<int:user_id>', "user_logs", self.logs_for_user)
 		self.add_url_rule('/messages/<int:guild_id>/<int:user_id>', "message_logs", self.messages_for_user)
 		self.add_url_rule('/logout',"logout", self.logout)
+		self.add_url_rule('/about', "about", self.about)
+		self.add_url_rule("/commands", "commands", self.commands)
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
@@ -76,12 +105,19 @@ class Website(Quart):
 			return True
 
 
-
 	async def index(self):
 		return await render_template("index.html")
 
+	@require_login
 	async def profile(self):
-		return "profile"
+		return await render_template("profile.html")
+
+	async def about(self):
+		return await render_template("about.html")
+
+	async def commands(self):
+		categories = web_commands.get_categories(self.bot)
+		return await render_template('commands.html', categories=categories)
 
 	async def callback(self):
 		if request.args.get('error'):
@@ -108,7 +144,7 @@ class Website(Quart):
 
 	async def logout(self):
 		session.clear()
-		return "done"
+		return redirect("/")
 
 	@require_login
 	async def logs_for_user(self, guild_id, user_id):

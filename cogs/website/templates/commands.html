@@ -9,22 +9,36 @@
 			</div>
 			<div class="row">
 				<div class="wow fadeInRight" data-wow-delay="0.3s">
-					{% for cog in cogs %}
-						<div class="box">
-							<h5>{{cog['name']}}</h5>
-							<p>{{cog['description']}}</p>
-						
-							{% for command in cog['commands'] %}
-								<div class="col-md-6 nopadding">
-									<h5>{{command['signature']}}</h5>
-									<p>{{command['description']}}</p>
-								</div>
-							{% endfor %}
-						</div>
+					<div class="tab">
+						{% for category in categories[:1] %}
+							<button id="defaultOpen" class="tablinks" onclick="openCategory(event, '{{category["name"]}}')">{{category["name"]}}</button>
+						{% endfor %}
+						{% for category in categories[1:] %}
+  							<button class="tablinks" onclick="openCategory(event, '{{category["name"]}}')">{{category["name"]}}</button>
+  						{% endfor %}
+					</div>
+					{% for category in categories %}
+					<div id="{{category["name"]}}" class="tabcontent">
+  						<h3>{{category["name"]}}</h3>
+						{% for cog in category["cogs"] %}
+							<div class="box">
+								<h5>{{cog['name']}}</h5>
+								<p>{{cog['description']}}</p>
+
+								{% for command in cog['commands'] %}
+									<div class="col-md-6 nopadding">
+										<h5>{{command['signature']}}</h5>
+										<p>{{command['description']}}</p>
+									</div>
+								{% endfor %}
+							</div>
+						{% endfor %}
+					</div>
 					{% endfor %}
 					</div>
 				</div>
 			</div>
+			<br>
 			<div class="row text-center">
 				<div class="col-md-12">
 					<div class="wow lightSpeedIn" data-wow-delay="0.1s">
@@ -32,6 +46,11 @@
 					</div>
 				</div>
 			</div>
+		<script src="{{ url_for('static', filename='js/yori.js')}}"></script>
+		<script>
+			document.getElementById("defaultOpen").click();
+		</script>
+
 
 	</section>
 {% endblock %}

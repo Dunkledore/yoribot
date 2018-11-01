@@ -11,6 +11,7 @@ class SpecialRoles:
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.category = "Roles"
 
 	async def on_message(self, message):
 		if not message.guild:
