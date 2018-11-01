@@ -120,54 +120,6 @@ class Moderation:
 		await ctx.send(embed=self.bot.success(
 			"No channel permission overwrites to clean up." if count == 0 else f"Cleaned up {count} channel permission overwrites."))
 
-	@commands.command()
-	@checks.is_mod()
-	async def clearinvites(self, ctx, uses=1):
-		"""Deletes invites from the invite list that have been used less than the number provided by uses. Will not delete any invite less than 1 hour old."""
-		all_invites = await ctx.guild.invites()
-
-		invites = [i for i in all_invites if i.uses <= uses and i.created_at < (datetime.utcnow()-timedelta(hours=1))]
-
-		if not invites:
-			await ctx.send(embed=self.bot.notice('I didn\'t find any invites matching your criteria'))
-			return
-
-		message = await ctx.send(embed=self.bot.success(
-			'Ok, a total of {} invites created by {} users with {} total uses would be pruned.'.format(
-				len(invites),
-				len({i.inviter.id for i in invites}),
-				sum(i.uses for i in invites))))
-
-		await message.add_reaction('✅')
-		await message.add_reaction('❌')
-
-		def check(reaction, user):
-			if user is None or user.id != ctx.author.id:
-				return False
-
-			if reaction.message.id != message.id:
-				return False
-
-			if reaction.emoji not in ['❌', '✅']:
-				return False
-			return True
-
-		try:
-			reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=120.0)
-		except Exception as e:
-			await ctx.send(embed=self.bot.success(str(e)))
-			await message.clear_reactions()
-			return
-
-		if reaction.emoji != '✅':
-			await ctx.send(embed=self.bot.error("Invites not cleared"))
-			await message.clear_reactions()
-			return
-
-		for invite in invites:
-			await invite.delete()
-		await ctx.send(embed=self.bot.success("Invites cleared"))
-		await message.clear_reactions()
 
 
 def setup(bot):
