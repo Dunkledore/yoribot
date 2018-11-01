@@ -4,7 +4,7 @@ from functools import wraps
 from discord import Object
 from quart import Quart, session, redirect, request, render_template
 from requests_oauthlib import OAuth2Session
-from .utils import checks
+from .utils import checks, utils
 from .utils import web_commands
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
@@ -162,6 +162,21 @@ class Website(Quart):
 
 	@require_login
 	async def messages_for_user(self, guild_id, user_id):
+		guild = self.bot.get_guild(guild_id)
+		if not guild:
+			return "Guild not found"
+		if not (await self.is_mod_in_guild(guild)):
+			return "Not authorized"
+		requesting_member = guild.get_member(session["user"]["id"])
+		if not requesting_member:
+			return "You are not in this guild"
+		target_member = guild.get_member(user_id)
+		if target_member:
+			if not utils.check_hierarchy(target_member, requesting_member):
+				return "This person is higher than you in the hierarchy"
+		
+
+
 		query = "SELECT * FROM message_logs WHERE (guild_id = $1) and (author_id = $2)"
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
