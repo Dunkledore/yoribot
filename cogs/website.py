@@ -70,10 +70,10 @@ class Website(Quart):
 		proxy_ctx.guild = guild
 		proxy_ctx.author = guild.get_member(int(session["user"]["id"]))
 		if not proxy_ctx.author:
-			return
+			return False
 		proxy_ctx.bot = self.bot
 		if await checks.has_level(proxy_ctx, "mod"):
-			return
+			return True
 
 
 
@@ -115,7 +115,7 @@ class Website(Quart):
 		guild = self.bot.get_guild(guild_id)
 		if not guild:
 			return "Guild not found"
-		if not self.is_mod_in_guild(guild):
+		if not (await self.is_mod_in_guild(guild)):
 			return "Not authorized"
 
 		query = "SELECT * FROM event_logs WHERE (guild_id = $1) and (target_id = $2)"
