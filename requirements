@@ -1,6 +1,7 @@
 aiohttp
 asyncpg
 git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
+git+git://github.com/Dunkledore/hypercorn.git
 quart
 python-dateutil
 prettytable

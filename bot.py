@@ -22,7 +22,8 @@ initial_cogs = ["developers",
                 #"automod",
                 #"prefix",
                 #"utilities",
-                "weather",]
+                #"weather",
+				]
 
 
 def _prefix_callable(bot, msg):
@@ -56,20 +57,23 @@ class YoriBot(commands.AutoShardedBot):
 
 		self.root_website = root_website
 		self.website = Website(client_secret, client_id, redirect, port, self)
-		web_thread = Thread(target=self.run_website())
-		web_thread.start()
+		self.loop.create_task(self.start_app())
 
-	def run_website(self):
-		try:
-			self.website.run()
-		except Exception as error:
-			print(error)
+	def run_site(self):
+		asyncio.set_event_loop(self.loop)
+		self.website.run()
+
+	async def start_app(self):
+		thread = Thread(target=self.run_site)
+		thread.start()
+
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		print("started")
+
 
 		for extension in initial_cogs:
 			try:
@@ -77,6 +81,7 @@ class YoriBot(commands.AutoShardedBot):
 			except Exception as e:
 				print(f'Failed to load extension {extension}.', file=sys.stderr)
 				traceback.print_exc()
+
 
 	def save_prefixes(self):
 		dataIO.save_json("data/prefixes/prefixes.json", self.prefixes)
@@ -107,6 +112,7 @@ class YoriBot(commands.AutoShardedBot):
 		if not hasattr(self, 'uptime'):
 			self.uptime = datetime.utcnow()
 		await self.error_hook.send(embed=self.notice(f'Ready: {self.user} (ID: {self.user.id})'))
+
 
 	async def on_resumed(self):
 		await self.error_hook.send(embed=self.notice('Resumed...'))
