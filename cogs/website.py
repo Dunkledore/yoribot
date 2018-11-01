@@ -128,7 +128,7 @@ class Website(Quart):
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
 			return f"No logs for user {user_id}"
-		return "<br><br>".join(["<br>".join([f'{key} : {value}' for key, value in record.ites()]) for record in logs])
+		return "<br><br>".join(["<br>".join([f'{key} : {value}' for key, value in record.items()]) for record in logs])
 
 	def run(self):
 		super().run(host='0.0.0.0', port=self.port)
