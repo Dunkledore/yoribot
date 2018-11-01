@@ -2,7 +2,7 @@ import os
 from functools import wraps
 
 from discord import Object
-from quart import Quart, session, redirect, request
+from quart import Quart, session, redirect, request, render_template
 from requests_oauthlib import OAuth2Session
 from .utils import checks
 
@@ -78,7 +78,7 @@ class Website(Quart):
 
 
 	async def index(self):
-		return "Index"
+		return await render_template("index.html")
 
 	async def profile(self):
 		return "profile"
