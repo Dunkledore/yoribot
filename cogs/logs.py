@@ -186,7 +186,7 @@ class Logs:
 		"""ADVANCED: Group of commands for controlling blacklisted channel"""
 		embed = Embed(title=f"Settings for {ctx.guild.name}")
 		query = "SELECT whitelist, blacklist FROM log_config WHERE guild_id = $1"
-		results = await self.bot.pool.fetch(query, ctx.guild.id)
+		results = await self.bot.pool.fetchrow(query, ctx.guild.id)
 		if results["whitelist"]:
 			embed.description = "Guild currently setup as a whitelist. Only the listed channnels below will be recorded "
 		else:
@@ -264,34 +264,6 @@ class Logs:
 			else:
 				await ctx.send(self.bot.error(f"{channel.mention} not in the blacklist"))
 
-
-
-
-
-
-
-
-
-
-
-
-
-	@commands.command()
-	@checks.is_admin()
-	async def log_blacklist(self, ctx, channel: TextChannel=None):
-		"""Prevent message logs being recorded for this channel. Note this will also remove previous logs for this channel"""
-		query = "SELECT guild_id, blacklist FROM log_config WHERE guild_id = $1"
-		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
-		if not config:
-			query = "INSERT INTO log_config (guild_id, blacklist) VALUES ($1, $2)"
-			await self.bot.pool.execute(query, ctx.guild.id, [channel.id])
-		else:
-			blacklist = dict(config).get("blacklist")
-			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
-			await self.bot.pool.execute(query, (blacklist or []) + [channel.id])
-		query = "DELETE FROM message_logs WHERE channel_id = $1"
-		await self.bot.pool.execute(query, channel.id)
-		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
 
 
 	# Events
