@@ -178,10 +178,108 @@ class Logs:
 				embed.set_field_at(counter, name="Reason", value=reason)
 		await log_report_message.edit(embed=embed)
 
+
+	@commands.group(invoke_without_command=True)
+	@commands.guild_only()
+	@checks.is_admin()
+	async def blacklist(self, ctx):
+		"""ADVANCED: Group of commands for controlling blacklisted channel"""
+		embed = Embed(title=f"Settings for {ctx.guild.name}")
+		query = "SELECT whitelist, blacklist FROM log_config WHERE guild_id = $1"
+		results = await self.bot.pool.fetch(query, ctx.guild.id)
+		if results["whitelist"]:
+			embed.description = "Guild currently setup as a whitelist. Only the listed channnels below will be recorded "
+		else:
+			embed.description = "Guild currently setup as a blacklist. Only the list channels below will not be recorded"
+		channels = [self.bot.get_channel(channel_id) for channel_id in results["blacklist"]]
+		channels = [channel.name for channel in channels if channel is not None]
+		embed.add_field(name="Channels", value=("\n".join(channel.name for channel in channels) if channels else "No channels"))
+
+	@blacklist.command()
+	@commands.guild_only()
+	@checks.is_admin()
+	async def whitelist(self, ctx):
+		"""Toggles between blacklist and whitelist"""
+		updatequery = "UPDATE log_config SET whitelist = NOT whitelist WHERE guild_id = $1 RETURNING whitelist"
+		insertquery = "INSERT into log_config (guild_id, whitelist) VALUES ($1, $2) RETURNING whitelist"
+		try:
+			whitelist = await self.bot.pool.fetchval(insertquery, ctx.guild.id, True)
+		except asyncpg.UniqueViolationError:
+			whitelist = await self.bot.pool.fetchval(updatequery, ctx.guild.id)
+
+		if whitelist:
+			await ctx.send(embed=self.bot.success("Whitelist is now on. Only messages in whitelisted channels will be recorded"))
+		else:
+			await ctx.send(emebd=self.bot.success("Whitelist not off. Only messages in blacklisted channels will be recorded"))
+
+	@blacklist.command()
+	@commands.guild_only()
+	@checks.is_admin()
+	async def add(self, ctx, channel: TextChannel):
+		"""Adds a channel to the blacklist and delete the message history for this channel. If whitelist has been enabled this will add the channel to the whitelist instead"""
+		query  = "SELECT * FROM log_config WHERE guild_id = $1"
+		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
+		if not config:
+			query = "INSERT INTO log_config (guild_id, blacklist) VALUES ($1, $2)"
+			await self.bot.pool.execute(query, ctx.guild.id, [channel.id])
+		else:
+			blacklist = config["blacklist"]
+			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
+			await self.bot.pool.execute(query, (blacklist or []).extend([channel.id]))
+
+		if not config["whitelist"]:
+			query = "DELETE FROM message_logs WHERE channel_id = $1"
+			await self.bot.pool.execute(query, channel.id)
+			await ctx.send(embed=self.bot.success(f"{channel.mention} added to the blacklist and all message logs deleted"))
+		else:
+			await ctx.send(
+				embed=self.bot.success(f"{channel.mention} added to the whitelist"))
+
+	@blacklist.command()
+	@commands.guild_only()
+	@checks.is_admin()
+	async def remove(self, ctx, channel: TextChannel):
+		"""Removes a channel from the blacklist. If whitelist has been enabled this will remove the channel from the whitelist and delete the message logs instead"""
+		query = "SELECT * FROM log_config WHERE guild_id = $1"
+		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
+		if not config:
+			await ctx.send(embed=self.bot.error("Channel not in the blacklist"))
+			return
+
+		channel_list = config["blacklist"] or []
+
+		if channel.id in channel_list:
+			channel_list = [channel for channel in channel_list if channel != channel.id]
+			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
+			await self.bot.pool.execute(query, channel_list, ctx.guild.id)
+			if config["whitelist"]:
+				query = "DELETE FROM message_logs WHERE channel_id = $1"
+				await self.bot.pool.execute(query)
+				await ctx.send(embed=self.bot.success(f"{channel.mention} removed from the whitelist and all message logs deleted"))
+			else:
+				await ctx.send(embed=self.bot.success(f"{channel.members} removed from the blacklist"))
+		else:
+			if config["whitelist"]:
+				await ctx.send(self.bot.error(f"{channel.mention} not in the whitelist"))
+			else:
+				await ctx.send(self.bot.error(f"{channel.mention} not in the blacklist"))
+
+
+
+
+
+
+
+
+
+
+
+
+
 	@commands.command()
 	@checks.is_admin()
-	async def blacklist(self, ctx, channel: TextChannel):
-		"""Prevent logs being recorded for this channel. Note this will also remove previous logs for this channel"""
+	async def log_blacklist(self, ctx, channel: TextChannel=None):
+		"""Prevent message logs being recorded for this channel. Note this will also remove previous logs for this channel"""
 		query = "SELECT guild_id, blacklist FROM log_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
 		if not config:
@@ -191,6 +289,8 @@ class Logs:
 			blacklist = dict(config).get("blacklist")
 			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
 			await self.bot.pool.execute(query, (blacklist or []) + [channel.id])
+		query = "DELETE FROM message_logs WHERE channel_id = $1"
+		await self.bot.pool.execute(query, channel.id)
 		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
 
 

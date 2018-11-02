@@ -12,8 +12,8 @@ class ReactRoles:
 		self.bot = bot
 		self.category = "Roles"
 
-	@commands.command()
-	@checks.is_admin()
+	@commands.command(hidden=True)
+	@checks.is_developer()
 	async def rolewizard(self, ctx):
 		"""A wizard to guide you through the process of setting up self assignable roles"""
 

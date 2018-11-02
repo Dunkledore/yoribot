@@ -104,7 +104,7 @@ class Developers():
 		              "CREATE TABLE IF NOT EXISTS statistics (id SERIAL, guild_id BIGINT, channel_id BIGINT, author_id "
 		              "BIGINT, time TIMESTAMP NOT NULL DEFAULT (NOW() at time zone 'utc'), prefix TEXT, command_name TEXT)",
 		              "CREATE TABLE IF NOT EXISTS log_config (guild_id BIGINT PRIMARY KEY, member_log_channel_id BIGINT, "
-		              "message_log_channel_id BIGINT, invite_log_channel_id BIGINT, strike_log_channel_id BIGINT, mod_participation BOOL, blacklist BIGINT[])",
+		              "message_log_channel_id BIGINT, invite_log_channel_id BIGINT, strike_log_channel_id BIGINT, blacklist BIGINT[], whitelist BOOL DEFAULT False)",
 		              "CREATE TABLE IF NOT EXISTS event_logs (id SERIAL, action TEXT, target_id BIGINT, "
 		              "user_id BIGINT, guild_id BIGINT, reason TEXT, report_message_id BIGINT, time TIMESTAMP NOT NULL DEFAULT (NOW() at time zone 'utc'))",
 		              "CREATE TABLE IF NOT EXISTS message_logs (message_id BIGINT PRIMARY KEY, content TEXT, author_id "
