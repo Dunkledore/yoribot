@@ -3,32 +3,30 @@ import discord
 
 
 def is_developer():
+	"developer"
 	def check(ctx):
 		return has_level(ctx, "developer")
 	return commands.check(check)
 
 
 def is_guild_owner():
+	"guild_owner"
 	def check(ctx):
 		return has_level(ctx, "guild_owner")
 	return commands.check(check)
 
 
 def is_admin():
+	"""admin"""
 	def check(ctx):
 		return has_level(ctx, "admin")
 	return commands.check(check)
 
 
 def is_mod():
+	"""mod"""
 	def check(ctx):
 		return has_level(ctx, "mod")
-	return commands.check(check)
-
-
-def is_greeter():
-	def check(ctx):
-		return has_level(ctx, "greeter")
 	return commands.check(check)
 
 
