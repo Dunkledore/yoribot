@@ -226,7 +226,7 @@ class Logs:
 		else:
 			blacklist = config["blacklist"]
 			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
-			await self.bot.pool.execute(query, (blacklist or []).extend([channel.id]), ctx.guild.id)
+			await self.bot.pool.execute(query, (blacklist or [])+[channel.id], ctx.guild.id)
 
 		if not config["whitelist"]:
 			query = "DELETE FROM message_logs WHERE channel_id = $1"
