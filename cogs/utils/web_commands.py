@@ -78,7 +78,6 @@ def get_categories(bot):
 			categories[cog["category"]] = [cog]
 
 	to_return = [{"name": category, "cogs": cogs} for category, cogs in categories.items()]
-	print(to_return)
 	return to_return
 
 def get_commands(bot):
