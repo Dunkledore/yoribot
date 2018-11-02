@@ -66,6 +66,14 @@ html {
 	padding: 9.5px;
 }
 
+.is_mod {
+    color: blue;
+}
+
+.is_admin {
+    color: red
+}
+
 .commandspadding {
    padding: 10px;
    margin: 10px;

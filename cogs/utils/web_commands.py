@@ -60,7 +60,13 @@ def get_categories(bot):
 		for command in non_hidden:
 			sig = (get_command_signature(command))
 			desc = command.short_doc or "No help given"
-			detailed_commands.append({"signature": sig, "description": desc})
+			try:
+				perm = command.checks[0].__qualname__.split(".")[0]
+				perm = perm.replace("guild_only", "")
+			except IndexError:
+				perm = None
+
+			detailed_commands.append({"signature": sig, "description": desc, "permission": perm})
 
 		display_commands.append(
 			{"name": cog, "description": description, "commands": detailed_commands, "category": category})

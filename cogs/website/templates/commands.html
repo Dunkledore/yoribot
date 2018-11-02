@@ -27,7 +27,7 @@
 
 								{% for command in cog['commands'] %}
 									<div class="col-md-6 commandspadding">
-										<h5>{{command['signature']}}</h5>
+										<h5 class="{{command['permission'}}">{{command['signature']}}</h5>
 										<p>{{command['description']}}</p>
 									</div>
 								{% endfor %}
