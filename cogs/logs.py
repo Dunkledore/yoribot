@@ -256,7 +256,7 @@ class Logs:
 			await self.bot.pool.execute(query, channel_list, ctx.guild.id)
 			if config["whitelist"]:
 				query = "DELETE FROM message_logs WHERE channel_id = $1"
-				await self.bot.pool.execute(query)
+				await self.bot.pool.execute(query, rem_channel.id)
 				await ctx.send(embed=self.bot.success(
 					f"{rem_channel.mention} removed from the whitelist and all message logs deleted"))
 			else:
