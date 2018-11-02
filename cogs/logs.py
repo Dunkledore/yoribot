@@ -211,7 +211,7 @@ class Logs:
 				embed=self.bot.success("Whitelist is now on. Only messages in whitelisted channels will be recorded"))
 		else:
 			await ctx.send(
-				embed=self.bot.success("Whitelist not off. Only messages in blacklisted channels will be recorded"))
+				embed=self.bot.success("Whitelist now off. Only messages in blacklisted channels will not recorded"))
 
 	@blacklist.command()
 	@commands.guild_only()
@@ -226,7 +226,7 @@ class Logs:
 		else:
 			blacklist = config["blacklist"]
 			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
-			await self.bot.pool.execute(query, (blacklist or []).extend([channel.id]))
+			await self.bot.pool.execute(query, (blacklist or []).extend([channel.id]), ctx.guild.id)
 
 		if not config["whitelist"]:
 			query = "DELETE FROM message_logs WHERE channel_id = $1"
