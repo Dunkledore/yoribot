@@ -23,7 +23,6 @@ class Logs:
 		self.invite_task.cancel()
 		self.blacklist_task.cancel()
 
-
 	# Commands
 
 	@commands.command()
@@ -92,7 +91,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_mod()
-	async def warn(self, ctx, member : Member, reason):
+	async def warn(self, ctx, member: Member, reason):
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4) RETURNING ID"
 		log_id = await self.bot.pool.fetchval(query, "warn", member.id, ctx.author.id, ctx.guild.id, reason)
 
@@ -104,9 +103,9 @@ class Logs:
 		if not log_channel:
 			return
 
-		embed = Embed(title=f'User Warned - Mod Report #{log_id}')  #TODO Colour
+		embed = Embed(title=f'User Warned - Mod Report #{log_id}')  # TODO Colour
 		embed.add_field(name="User", value=member.mention)
-		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
+		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 		embed.add_field(name="Warned by", value=member.mention)
 		embed.add_field(name="Reason", value=reason)
@@ -142,10 +141,9 @@ class Logs:
 		query = "UPDATE event_logs SET report_message_id = $1 WHERE id = $2"
 		await self.bot.pool.execute(query, report_message.id, log_id)
 
-
 	@commands.command()
 	@checks.is_mod()
-	async def update_log(self, ctx, log_number : int, *, reason):
+	async def update_log(self, ctx, log_number: int, *, reason):
 		"""Update a log to include a new reason. N.B. This will also change the user who did this action to be you"""
 		query = "SELECT * from event_logs WHERE id = $1"
 		report = await self.bot.pool.fetchrow(query, log_number)
@@ -178,7 +176,6 @@ class Logs:
 				embed.set_field_at(counter, name="Reason", value=reason)
 		await log_report_message.edit(embed=embed)
 
-
 	@commands.group(invoke_without_command=True)
 	@commands.guild_only()
 	@checks.is_admin()
@@ -188,12 +185,13 @@ class Logs:
 		query = "SELECT whitelist, blacklist FROM log_config WHERE guild_id = $1"
 		results = await self.bot.pool.fetchrow(query, ctx.guild.id)
 		if results["whitelist"]:
-			embed.description = "Guild currently setup as a whitelist. Only the listed channnels below will be recorded "
+			embed.description = "Guild currently setup as a whitelist. Only the listed channels below will be recorded "
 		else:
 			embed.description = "Guild currently setup as a blacklist. Only the list channels below will not be recorded"
-		channels = [self.bot.get_channel(channel_id) for channel_id in results["blacklist"]]
+		channels = [self.bot.get_channel(channel_id) for channel_id in (results["blacklist"] or [])]
 		channels = [channel.name for channel in channels if channel is not None]
-		embed.add_field(name="Channels", value=("\n".join(channel.name for channel in channels) if channels else "No channels"))
+		embed.add_field(name="Channels",
+		                value=("\n".join(channel.name for channel in channels) if channels else "No channels"))
 
 	@blacklist.command()
 	@commands.guild_only()
@@ -208,16 +206,18 @@ class Logs:
 			whitelist = await self.bot.pool.fetchval(updatequery, ctx.guild.id)
 
 		if whitelist:
-			await ctx.send(embed=self.bot.success("Whitelist is now on. Only messages in whitelisted channels will be recorded"))
+			await ctx.send(
+				embed=self.bot.success("Whitelist is now on. Only messages in whitelisted channels will be recorded"))
 		else:
-			await ctx.send(emebd=self.bot.success("Whitelist not off. Only messages in blacklisted channels will be recorded"))
+			await ctx.send(
+				emebd=self.bot.success("Whitelist not off. Only messages in blacklisted channels will be recorded"))
 
 	@blacklist.command()
 	@commands.guild_only()
 	@checks.is_admin()
 	async def add(self, ctx, channel: TextChannel):
 		"""Adds a channel to the blacklist and delete the message history for this channel. If whitelist has been enabled this will add the channel to the whitelist instead"""
-		query  = "SELECT * FROM log_config WHERE guild_id = $1"
+		query = "SELECT * FROM log_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
 		if not config:
 			query = "INSERT INTO log_config (guild_id, blacklist) VALUES ($1, $2)"
@@ -230,7 +230,8 @@ class Logs:
 		if not config["whitelist"]:
 			query = "DELETE FROM message_logs WHERE channel_id = $1"
 			await self.bot.pool.execute(query, channel.id)
-			await ctx.send(embed=self.bot.success(f"{channel.mention} added to the blacklist and all message logs deleted"))
+			await ctx.send(
+				embed=self.bot.success(f"{channel.mention} added to the blacklist and all message logs deleted"))
 		else:
 			await ctx.send(
 				embed=self.bot.success(f"{channel.mention} added to the whitelist"))
@@ -255,7 +256,8 @@ class Logs:
 			if config["whitelist"]:
 				query = "DELETE FROM message_logs WHERE channel_id = $1"
 				await self.bot.pool.execute(query)
-				await ctx.send(embed=self.bot.success(f"{channel.mention} removed from the whitelist and all message logs deleted"))
+				await ctx.send(embed=self.bot.success(
+					f"{channel.mention} removed from the whitelist and all message logs deleted"))
 			else:
 				await ctx.send(embed=self.bot.success(f"{channel.members} removed from the blacklist"))
 		else:
@@ -263,8 +265,6 @@ class Logs:
 				await ctx.send(self.bot.error(f"{channel.mention} not in the whitelist"))
 			else:
 				await ctx.send(self.bot.error(f"{channel.mention} not in the blacklist"))
-
-
 
 	# Events
 
@@ -298,7 +298,7 @@ class Logs:
 
 		embed = Embed(title=f'User Joined', colour=colour)
 		embed.add_field(name="User", value=member.mention)
-		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
+		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 
 		embed.timestamp = datetime.datetime.utcnow()
@@ -330,7 +330,7 @@ class Logs:
 
 		query = "SELECT guild_id FROM log_config WHERE mod_participation = $1"
 		participating_guilds = await self.bot.pool.fetch(query, True)
-		participating_guilds = [participating_guild["guild_id"] for participating_guild in participating_guilds] + [0]
+		participating_guilds = [participating_guild["guild_id"] for participating_guild in participating_guilds]+[0]
 		query = f'SELECT DISTINCT guild_id FROM event_logs WHERE (target_id = $1) and (guild_id in {tuple(participating_guilds)})'
 		guilds_id_with_logs = await self.bot.pool.fetch(query, member.id)
 		guilds_with_logs = []
@@ -341,7 +341,8 @@ class Logs:
 
 		if guilds_with_logs:
 			embed.add_field(name="Mod Logs", value="\n".join(
-				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id})' for guild in guilds_with_logs]), inline=False)
+				[f'[{guild.name}]({self.bot.root_website}/logs/{guild.id}/{member.id})' for guild in guilds_with_logs]),
+			                inline=False)
 
 		embed.add_field(name='Created', value=yoriutils.human_timedelta(member.created_at), inline=False)
 		await log_channel.send(embed=embed)
@@ -359,12 +360,11 @@ class Logs:
 
 		embed = Embed(title=f'User Left', colour=0xFFA500)
 		embed.add_field(name="User", value=member.mention)
-		embed.add_field(name="Username", value =f'{member.name}#{member.discriminator}')
+		embed.add_field(name="Username", value=f'{member.name}#{member.discriminator}')
 		embed.add_field(name="User ID", value=f'{member.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		embed.add_field(name='Was a member since', value=yoriutils.human_timedelta(member.joined_at), inline=False)
 		await log_channel.send(embed=embed)
-
 
 	async def on_member_mute(self, member, reason, muter):
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
@@ -402,9 +402,6 @@ class Logs:
 		proxy_ctx.author = user
 		await proxy_ctx.invoke(self.bot.get_command("unmuteall"), user=member)
 
-
-
-
 	async def on_member_ban(self, guild, user):
 
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id) VALUES ($1, $2, $3, $4) RETURNING ID"
@@ -418,7 +415,7 @@ class Logs:
 
 		embed = Embed(title=f'User Banned - Mod Report #{log_id}', color=0xdf2a2a)
 		embed.add_field(name="User", value=user.mention)
-		embed.add_field(name="Username", value =f'{user.name}#{user.discriminator}')
+		embed.add_field(name="Username", value=f'{user.name}#{user.discriminator}')
 		embed.add_field(name="User ID", value=f'{user.id}')
 		embed.timestamp = datetime.datetime.utcnow()
 		banner, reason = await self.get_ban_info(guild, user)
@@ -446,7 +443,7 @@ class Logs:
 
 		embed = Embed(title=f'Unbanned Banned - Mod Report #{log_id}')
 		embed.add_field(name="User", value=user.mention)
-		embed.add_field(name="Username", value =f'{user.name}#{user.discriminator}')
+		embed.add_field(name="Username", value=f'{user.name}#{user.discriminator}')
 		embed.add_field(name="User ID", value=f'{user.id}')
 
 		embed.timestamp = datetime.datetime.utcnow()
@@ -455,7 +452,8 @@ class Logs:
 		if ban_info:
 			banner = self.bot.get_user(ban_info["user_id"])
 			reason = dict(ban_info).get("reason", "None Provided")
-			embed.add_field(name="Originally banned by", value=banner.mention if banner else f"User with id: {ban_info['user_id']}")
+			embed.add_field(name="Originally banned by",
+			                value=banner.mention if banner else f"User with id: {ban_info['user_id']}")
 			embed.add_field(name="Original ban reason", value=reason)
 			embed.add_field(name="Originally banned", value=yoriutils.human_timedelta(ban_info["time"]))
 		unbanner, unbanreason = await self.get_unban_info(guild, user)
@@ -491,7 +489,8 @@ class Logs:
 		if message.channel.id in self.black_listed_channels:
 			return
 		query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status) VALUES ($1, $2, $3, $4, $5, $6)"
-		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id, message.guild.id, "current")
+		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id,
+		                            message.guild.id, "current")
 
 	async def on_message_delete(self, message):
 		if message.author is self.bot.user:
@@ -546,7 +545,6 @@ class Logs:
 
 		await log_channel.send(embed=embed)
 
-
 	# Utilities
 
 	async def get_most_recent_used_invites_for_guild(self, guild):
@@ -565,7 +563,6 @@ class Logs:
 			return most_recent_used_invites
 		except Forbidden:
 			return []
-
 
 	async def get_yori_bans(self, user):
 		banned_in = []
@@ -600,8 +597,8 @@ class Logs:
 			log_channel_id = await self.bot.pool.fetchval(query, guild.id)
 			log_channel = self.bot.get_channel(log_channel_id)
 			if log_channel:
-				created_invites = list(set(new_invites) - set(old_invites))
-				expired_invites = list(set(old_invites) - set(new_invites))
+				created_invites = list(set(new_invites)-set(old_invites))
+				expired_invites = list(set(old_invites)-set(new_invites))
 				for invite in created_invites:
 					embed = Embed(title=f'Invited Created')
 					embed.add_field(name="Invite Code", value=invite.code)
@@ -675,9 +672,6 @@ class Logs:
 		for guild in results:
 			if guild["blacklist"]:
 				self.black_listed_channels += guild["blacklist"]
-
-
-
 
 
 def setup(bot):
