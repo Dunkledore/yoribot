@@ -86,6 +86,7 @@ class Weather:
 		return key
 
 	@commands.command(aliases=['temp', 'temperature'])
+	@commands.guild_only()
 	async def weather(self, ctx, *, location: str):
 		"""Get the weather"""
 		if not self.key:

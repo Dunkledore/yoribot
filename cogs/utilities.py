@@ -12,6 +12,7 @@ class Utilities:
 
 
 	@commands.command()
+	@commands.guild_only()
 	async def help(self, ctx, *, cog_or_command_or_category=None):
 		"""Show's a list of cogs, or information about a cog, or information about a command"""
 
@@ -85,6 +86,7 @@ class Utilities:
 		await pager.paginate()
 
 	@commands.command(aliases=['invite'])
+	@commands.guild_only()
 	async def join(self, ctx):
 		"""Provides the bot invite link."""
 		perms = Permissions.none()

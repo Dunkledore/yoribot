@@ -29,6 +29,7 @@ class Automod:
 
 	@commands.group(invoke_without_command=True)
 	@checks.is_mod()
+	@commands.guild_only()
 	async def strikes(self, ctx):
 		"""ADVANCED: Group of commands for muting and banning for repeat automod offences"""
 		if not ctx.invoked_subcommand:
@@ -45,6 +46,7 @@ class Automod:
 
 	@strikes.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def config(self, ctx):
 		"""Strike config for the guild"""
 		query = "SELECT * FROM strike_config WHERE guild_id = $1"
@@ -69,6 +71,7 @@ class Automod:
 
 	@strikes.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def member(self, ctx, member: Member):
 		"""Amount of strikes a certain member has"""
 
@@ -93,6 +96,7 @@ class Automod:
 
 	@strikes.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def caps(self, ctx, action, strikes: int):
 		"""Set a caps threshold for action. (action can be ban or mute)"""
 		action = action.lower()
@@ -105,6 +109,7 @@ class Automod:
 
 	@strikes.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def mention(self, ctx, action, strikes: int):
 		"""Set a mention threshold for action. (action can be ban or mute)"""
 		action = action.lower()
@@ -117,6 +122,7 @@ class Automod:
 
 	@strikes.group()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def image(self, ctx, action, strikes: int):
 		"""Set an image threshold for action. (action can be ban or mute)"""
 		action = action.lower()
@@ -129,6 +135,7 @@ class Automod:
 
 	@strikes.group()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def censor(self, ctx, action, strikes: int):
 		"""Set a censor threshold for action. (action can be ban or mute)"""
 		action = action.lower()
@@ -200,6 +207,7 @@ class Automod:
 
 	@commands.command(aliases=["add_censor"])
 	@checks.is_admin()
+	@commands.guild_only()
 	async def censor_add(self, ctx, word):
 		"""Add a word to be censored. Note this looks for this word by itself and ignores if it is contained within another word. Censor will ignore case"""
 		query = "INSERT into word_censor (guild_id, word) VALUES ($1, $2)"
@@ -213,6 +221,7 @@ class Automod:
 
 	@commands.command(aliases=["delete_censor", "censor_delete", "remove_censor"])
 	@checks.is_admin()
+	@commands.guild_only()
 	async def censor_remove(self, ctx, word):
 		"""Remove a word from being censored"""
 		query = "SELECT word FROM word_censor WHERE (guild_id = $1) and (word = $2)"
@@ -229,6 +238,7 @@ class Automod:
 
 	@commands.command(aliases=["censorlist", "listcensor", "list_censor"])
 	@checks.is_admin()
+	@commands.guild_only()
 	async def censor_list(self, ctx):
 		"""Show all words currently censored"""
 		query = "SELECT word FROM word_censor WHERE guild_id = $1"
@@ -272,6 +282,8 @@ class Automod:
 			self.mention_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
 	@commands.command()
+	@checks.is_admin()
+	@commands.guild_only()
 	async def mention_rate(self, ctx, amount: int, time: int):
 		"""Set the max mention rate. For sample 3,4 would be a max of 3 mentions in a time of 4 seconds"""
 
@@ -338,6 +350,8 @@ class Automod:
 	# Caps filter
 
 	@commands.command(aliases=["toggle_anticaps"])
+	@checks.is_admin()
+	@commands.guild_only()
 	async def anticaps_toggle(self, ctx):
 		"""Toggles whether to delete messages with over 50% of the message in caps"""
 
@@ -386,6 +400,8 @@ class Automod:
 			self.image_cache[result["guild_id"]] = {"amount": result["amount"], "time": result["time"]}
 
 	@commands.command()
+	@checks.is_admin()
+	@commands.guild_only()
 	async def image_rate(self, ctx, amount: int, time: int):
 		"""Set the max image rate. For sample 3,4 would be a max of 3 images in a time of 4 seconds"""
 

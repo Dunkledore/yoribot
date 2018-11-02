@@ -12,7 +12,7 @@ class ReactRoles:
 		self.bot = bot
 		self.category = "Roles"
 
-	@commands.command(hidden=True)
+	@commands.command(hidden=True) #Under development
 	@checks.is_developer()
 	async def rolewizard(self, ctx):
 		"""A wizard to guide you through the process of setting up self assignable roles"""
@@ -104,6 +104,7 @@ class ReactRoles:
 
 	@commands.command(aliases=['add_react_roles'])
 	@checks.is_admin()
+	@commands.guild_only()
 	async def add_react_role(self, ctx, message_id: int, role: Role):
 		"""Add a ReactRole. Provide the message ID of the message to be reacted to and the role of the one you want to grant"""
 
@@ -137,6 +138,7 @@ class ReactRoles:
 
 	@commands.command(aliases=['view_react_role'])
 	@checks.is_admin()
+	@commands.guild_only()
 	async def view_react_roles(self, ctx):
 		"""See all active ReactRoles"""
 
@@ -171,8 +173,8 @@ class ReactRoles:
 		await ctx.send(embed=embed)
 
 	@commands.command(aliases=['delete_react_roles'])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def delete_react_role(self, ctx):
 		"""Delete a ReactRole"""
 

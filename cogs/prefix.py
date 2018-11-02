@@ -16,8 +16,8 @@ class Prefix:
 		return True
 
 	@commands.group()
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def prefix(self, ctx):
 		"""See the prefixes for the guild"""
 		if str(ctx.guild.id) not in self.bot.prefixes:
@@ -35,8 +35,8 @@ class Prefix:
 			await ctx.send(embed=embed)
 
 	@commands.command(aliases=['prefix_add','addprefix','prefixadd'])
-	@commands.guild_only()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def add_prefix(self, ctx, *, prefix):
 		"""Adds a guild prefix"""
 

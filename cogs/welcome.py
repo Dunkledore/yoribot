@@ -14,8 +14,8 @@ class Welcome:
 		self.category = "Admin and Moderation"
 
 	@commands.command()
-	@commands.guild_only()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def welcome(self, ctx):
 		"""Test your welcome message"""
 
@@ -49,8 +49,8 @@ class Welcome:
 			await channel.send(embed=embed)
 
 	@commands.command(aliases=['welcome_add', 'add_welcome', "addwelcome"])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def welcomeadd(self, ctx, title=None, *, content=None):
 		"""Adds a section with a title to your welcome message - for titles with more than one word use quotation marks."""
 
@@ -69,8 +69,8 @@ class Welcome:
 			await ctx.send(embed=self.bot.success(f'Field {title} successfully created.'))
 
 	@commands.command(aliases=["welcome_remove", "remove_welcome", "removewelcome"])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def welcomeremove(self, ctx, *, section_title):
 		"""Removes a section from the welcome message"""
 		query = "DELETE FROM welcome_fields WHERE (guild_id =$1) AND (name = $2) RETURNING *"
@@ -81,8 +81,8 @@ class Welcome:
 			await ctx.send(embed=self.bot.error("No section with that title"))
 
 	@commands.command(aliases=["set_welcome_channel","welcome_channel_set", "welcomechannelset"])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def setwelcomechannel(self, ctx, channel: discord.TextChannel):
 		"""Select the channel you wish the welcome message to appear in"""
 
@@ -96,8 +96,8 @@ class Welcome:
 		await ctx.send(embed=self.bot.success('Channel set'))
 
 	@commands.command(aliases=["welcome_text"])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def welcometext(self, ctx, *, text=None):
 		"""Set a non-embed welcome message - this can be combined with the embed so you can use mentions. Use {0.mention} to mention the user joining and {0.name} to simply say their name. Leave text blank to remove the text"""
 
@@ -115,8 +115,8 @@ class Welcome:
 			await ctx.send(embed=self.bot.success('Message removed'))
 
 	@commands.command(aliases=['no_welcome', 'stop_welcome', 'welcome_stop'])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def nowelcome(self, ctx):
 		"""Stop welcome messages entirely."""
 
@@ -125,8 +125,8 @@ class Welcome:
 		await ctx.send(embed=self.bot.success(f"Welcome message will now no longer send when a member joins"))
 
 	@commands.command(aliases=["welcome_whisper", "whisperwelcome", "whisper_welcome"])
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def welcomewhisper(self, ctx):
 		"""Toggle sending a direct message to the member on join"""
 		alterquery = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"

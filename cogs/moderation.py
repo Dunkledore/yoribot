@@ -15,6 +15,7 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def ban(self, ctx, user: Member, *, reason=None):
 		"""Ban a member from the guild"""
 		if not check_hierarchy(ctx.author, user):
@@ -27,6 +28,7 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def unban(self, ctx, user: str, *, reason=None):
 		"""Unban a member from the guild"""
 		bans = await ctx.guild.bans()
@@ -44,18 +46,21 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def tempban(self, ctx, user: Member, reason=None):  # TODO
 		"""Temporarily ban a member from the guild"""
 		pass
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def softban(self, ctx, user: Member, reason):  # TODO
 		"""A ban a then an immediate unbam. The same as a kick but also deletes messages"""
 		pass
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def kick(self, ctx, user: Member, *, reason=None):
 		"""Kicks a member from the guild"""
 		if not check_hierarchy(ctx.author, user):
@@ -66,8 +71,8 @@ class Moderation:
 		await ctx.send(embed=self.bot.success(f'Member {user.name} kicked'))
 
 	@commands.command()
-	@commands.guild_only()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def mute(self, ctx, user: Member, channel: TextChannel = None, *, reason=None):
 		"""Mutes a user in the specified channel, if not specified, in the channel the command is used from."""
 		if not check_hierarchy(ctx.author, user):
@@ -80,6 +85,7 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def unmute(self, ctx, user: Member, channel: TextChannel = None, *, reason=None):
 		"""Unmutes a user in the specified channel, if not specified, in the channel the command is used from."""
 		if channel is None:
@@ -89,6 +95,7 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def muteall(self, ctx, user: Member, reason=None):
 		"""Mutes a user in all channels of this server."""
 		if not check_hierarchy(ctx.author, user):
@@ -100,6 +107,7 @@ class Moderation:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def unmuteall(self, ctx, user: Member):
 		"""Unmutes a user in all channels of this server."""
 		for tchan in ctx.guild.text_channels:
@@ -109,6 +117,7 @@ class Moderation:
 
 	@commands.command(aliases=["cleanperms", "clearperms"])
 	@checks.is_admin()
+	@commands.guild_only()
 	async def pruneperms(self, ctx):
 		"""Removes empty user-specific permission overrides from the server (manual channel permissions) ."""
 		count = 0

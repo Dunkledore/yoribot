@@ -12,6 +12,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def clear(self, ctx, amount_to_delete: int):
 		"""Clear a specified amount of messages from the channel the command is run in"""
 		if amount_to_delete > 2000:
@@ -21,6 +22,7 @@ class Clear:
 
 	@commands.command(hidden=True)
 	@checks.is_mod()
+	@commands.guild_only()
 	async def nuke(self, ctx):
 		"""Clear 100 messages from the channel command is run in"""
 
@@ -28,6 +30,7 @@ class Clear:
 
 	@commands.command(aliases=["clear_after"])
 	@checks.is_mod()
+	@commands.guild_only()
 	async def clearafter(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in after a given message id"""
 
@@ -35,6 +38,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	@commands.cooldown(1, 20, commands.cooldowns.BucketType.guild)
 	async def clearbefore(self, ctx, message_id: int, number_to_delete: int = 2000):
 		"""Clear all messages (up to 2000) in the channel the command is run in before a given message id"""
@@ -49,6 +53,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def clearbetween(self, ctx, before_message_id: int, after_message_id: int):
 		"""Clear all messages (up to 2000) in the channel the command is run in between 2 given message ids"""
 
@@ -56,6 +61,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	@commands.cooldown(1, 20, commands.cooldowns.BucketType.guild)
 	async def clearbot(self, ctx, number_to_delete: int = 2000):
 		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
@@ -73,6 +79,7 @@ class Clear:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	@commands.cooldown(1, 300, commands.cooldowns.BucketType.guild)
 	async def cleargone(self, ctx):
 		"""Clear all messages in all channels (up to 2000 per channel) from members no longer in the guild """
@@ -91,6 +98,7 @@ class Clear:
 
 	@commands.command(aliases=["clearperms", "cleanperms"])
 	@checks.is_mod()
+	@commands.guild_only()
 	async def pruneperms(self, ctx):
 		"""Removes empty user-specific permission overrides from the server (manual channel permissions) ."""
 		count = 0
@@ -105,6 +113,7 @@ class Clear:
 
 	@commands.command(aliases=["cleaninvites", "pruneinvites"])
 	@checks.is_mod()
+	@commands.guild_only()
 	async def clearinvites(self, ctx, uses=1):
 		"""Deletes invites from the invite list that have been used less than the number provided by uses. Will not delete any invite less than 1 hour old."""
 		all_invites = await ctx.guild.invites()

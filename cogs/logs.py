@@ -27,6 +27,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def start_message_logs(self, ctx, channel: TextChannel):
 		"""Starts sending logs about message edits and deletes to the given channel"""
 
@@ -43,6 +44,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def start_member_logs(self, ctx, channel: TextChannel):
 		"""Starts sending logs about member join, leaves, bans and unbans to the given channel. N.B. It will also send member mute information but only if the member was muted through Yori"""
 
@@ -59,6 +61,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def start_invite_logs(self, ctx, channel: TextChannel):
 		"""Starts sending logs about invite creations, deletion and expirations to the given channel"""
 
@@ -75,6 +78,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def start_strike_logs(self, ctx, channel: TextChannel):
 		"""Starts sending logs about member strikes to the given channel. N.B. Strikes must be setup from within Automod before any logs will be send"""
 
@@ -91,6 +95,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guguild_only()
 	async def warn(self, ctx, member: Member, reason):
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4) RETURNING ID"
 		log_id = await self.bot.pool.fetchval(query, "warn", member.id, ctx.author.id, ctx.guild.id, reason)
@@ -117,6 +122,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def note(self, ctx, member: Member, reason):
 		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4) RETURNING ID"
 		log_id = await self.bot.pool.fetchval(query, "note", member.id, ctx.author.id, ctx.guild.id, reason)
@@ -143,6 +149,7 @@ class Logs:
 
 	@commands.command()
 	@checks.is_mod()
+	@commands.guild_only()
 	async def update_log(self, ctx, log_number: int, *, reason):
 		"""Update a log to include a new reason. N.B. This will also change the user who did this action to be you"""
 		query = "SELECT * from event_logs WHERE id = $1"
@@ -177,8 +184,8 @@ class Logs:
 		await log_report_message.edit(embed=embed)
 
 	@commands.group(invoke_without_command=True)
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def blacklist(self, ctx):
 		"""ADVANCED: Group of commands for controlling blacklisted channel"""
 		embed = Embed(title=f"Settings for {ctx.guild.name}")
@@ -195,8 +202,8 @@ class Logs:
 		await ctx.send(embed=embed)
 
 	@blacklist.command()
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def whitelist(self, ctx):
 		"""Toggles between blacklist and whitelist"""
 		updatequery = "UPDATE log_config SET whitelist = NOT whitelist WHERE guild_id = $1 RETURNING whitelist"
@@ -215,8 +222,8 @@ class Logs:
 		await self.update_blacklist_cache()
 
 	@blacklist.command()
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def add(self, ctx, channel: TextChannel):
 		"""Adds a channel to the blacklist and delete the message history for this channel. If whitelist has been enabled this will add the channel to the whitelist instead"""
 		query = "SELECT * FROM log_config WHERE guild_id = $1"
@@ -240,8 +247,8 @@ class Logs:
 		await self.update_blacklist_cache()
 
 	@blacklist.command()
-	@commands.guild_only()
 	@checks.is_admin()
+	@commands.guild_only()
 	async def remove(self, ctx, rem_channel: TextChannel):
 		"""Removes a channel from the blacklist. If whitelist has been enabled this will remove the channel from the whitelist and delete the message logs instead"""
 		query = "SELECT * FROM log_config WHERE guild_id = $1"
