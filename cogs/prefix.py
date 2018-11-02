@@ -35,7 +35,7 @@ class Prefix:
 			await ctx.send(embed=embed)
 
 	@commands.command(aliases=['prefix_add','addprefix','prefixadd'])
-	@checks.is_mod()
+	@checks.is_admin()
 	@commands.guild_only()
 	async def add_prefix(self, ctx, *, prefix):
 		"""Adds a guild prefix"""

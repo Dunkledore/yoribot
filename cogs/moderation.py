@@ -1,11 +1,12 @@
+from discord import Member, TextChannel
+from discord.ext import commands
+
 from .utils import checks
 from .utils.utils import check_hierarchy
-from discord.ext import commands
-from discord import Member, TextChannel
-from datetime import datetime, timedelta
 
 
 class Moderation:
+	"""Commands related to moderating users"""
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -114,21 +115,6 @@ class Moderation:
 			if tchan.overwrites_for(user) and not tchan.overwrites_for(user).is_empty():
 				await tchan.set_permissions(user, reason=f"Unmute in all channels by {ctx.author}", send_messages=None)
 		await ctx.send(embed=self.bot.success(f'Member {user.name} unmuted in this guild'))
-
-	@commands.command(aliases=["cleanperms", "clearperms"])
-	@checks.is_admin()
-	@commands.guild_only()
-	async def pruneperms(self, ctx):
-		"""Removes empty user-specific permission overrides from the server (manual channel permissions) ."""
-		count = 0
-		for tchan in ctx.guild.text_channels:
-			for overwrite in tchan.overwrites:
-				if overwrite[1].is_empty():
-					await tchan.set_permissions(overwrite[0], overwrite=None)
-					count += 1
-		await ctx.send(embed=self.bot.success(
-			"No channel permission overwrites to clean up." if count == 0 else f"Cleaned up {count} channel permission overwrites."))
-
 
 
 def setup(bot):

@@ -14,7 +14,7 @@ class Welcome:
 		self.category = "Admin and Moderation"
 
 	@commands.command()
-	@checks.is_mod()
+	@checks.is_admin()
 	@commands.guild_only()
 	async def welcome(self, ctx):
 		"""Test your welcome message"""

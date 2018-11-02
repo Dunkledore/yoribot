@@ -67,7 +67,7 @@ async def has_level(ctx, level):
 
 	# MOD #
 	mod_roles = ["mod", "moderator"]
-	member_mod_roles = [role for role in ctx.author.roles if role.name in mod_roles]
+	member_mod_roles = [role for role in ctx.author.roles if role.name.lower() in mod_roles]
 	if member_mod_roles:
 		return level in ["mod",
 		                 "greeter"]
