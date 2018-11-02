@@ -192,6 +192,7 @@ class Logs:
 		channels = [channel.name for channel in channels if channel is not None]
 		embed.add_field(name="Channels",
 		                value=("\n".join(channel.name for channel in channels) if channels else "No channels"))
+		await ctx.send(embed=embed)
 
 	@blacklist.command()
 	@commands.guild_only()
