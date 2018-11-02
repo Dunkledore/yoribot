@@ -188,10 +188,10 @@ class Logs:
 			embed.description = "Guild currently setup as a whitelist. Only the listed channels below will be recorded "
 		else:
 			embed.description = "Guild currently setup as a blacklist. Only the list channels below will not be recorded"
-		channels = [self.bot.get_channel(channel_id) for channel_id in (results["blacklist"] or [])]
-		channels = [channel.name for channel in channels if channel is not None]
+		channels = [self.bot.get_channel(channel_id) for channel_id in ((results["blacklist"] or []))]
+		channels = [channel for channel in channels if channel is not None]
 		embed.add_field(name="Channels",
-		                value=("\n".join(channel.name for channel in channels) if channels else "No channels"))
+		                value=("\n".join(channel.mention for channel in channels) if channels else "No channels"))
 		await ctx.send(embed=embed)
 
 	@blacklist.command()
