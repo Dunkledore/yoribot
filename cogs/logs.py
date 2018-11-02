@@ -240,7 +240,7 @@ class Logs:
 	@blacklist.command()
 	@commands.guild_only()
 	@checks.is_admin()
-	async def remove(self, ctx, channel: TextChannel):
+	async def remove(self, ctx, rem_channel: TextChannel):
 		"""Removes a channel from the blacklist. If whitelist has been enabled this will remove the channel from the whitelist and delete the message logs instead"""
 		query = "SELECT * FROM log_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, ctx.guild.id)
@@ -250,22 +250,22 @@ class Logs:
 
 		channel_list = config["blacklist"] or []
 
-		if channel.id in channel_list:
-			channel_list = [channel for channel in channel_list if channel != channel.id]
+		if rem_channel.id in channel_list:
+			channel_list = [channel for channel in channel_list if channel != rem_channel.id]
 			query = "UPDATE log_config SET blacklist = $1 WHERE guild_id = $2"
 			await self.bot.pool.execute(query, channel_list, ctx.guild.id)
 			if config["whitelist"]:
 				query = "DELETE FROM message_logs WHERE channel_id = $1"
 				await self.bot.pool.execute(query)
 				await ctx.send(embed=self.bot.success(
-					f"{channel.mention} removed from the whitelist and all message logs deleted"))
+					f"{rem_channel.mention} removed from the whitelist and all message logs deleted"))
 			else:
-				await ctx.send(embed=self.bot.success(f"{channel.members} removed from the blacklist"))
+				await ctx.send(embed=self.bot.success(f"{rem_channel.mention} removed from the blacklist"))
 		else:
 			if config["whitelist"]:
-				await ctx.send(self.bot.error(f"{channel.mention} not in the whitelist"))
+				await ctx.send(self.bot.error(f"{rem_channel.mention} not in the whitelist"))
 			else:
-				await ctx.send(self.bot.error(f"{channel.mention} not in the blacklist"))
+				await ctx.send(self.bot.error(f"{rem_channel.mention} not in the blacklist"))
 
 	# Events
 
