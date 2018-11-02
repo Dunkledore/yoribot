@@ -211,7 +211,7 @@ class Logs:
 				embed=self.bot.success("Whitelist is now on. Only messages in whitelisted channels will be recorded"))
 		else:
 			await ctx.send(
-				emebd=self.bot.success("Whitelist not off. Only messages in blacklisted channels will be recorded"))
+				embed=self.bot.success("Whitelist not off. Only messages in blacklisted channels will be recorded"))
 
 	@blacklist.command()
 	@commands.guild_only()
