@@ -35,4 +35,14 @@ function openCategory(evt, category) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(category).style.display = "block";
     evt.currentTarget.className += " active";
+
 }
+
+$(document).ready(function () {
+  $('.group').hide();
+  $('#guildSelector').change(function () {
+    $('.group').hide();
+    $('#'+$(this).val()).show();
+  })
+});
+

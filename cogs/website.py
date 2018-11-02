@@ -71,6 +71,7 @@ class Website(Quart):
 		self.add_url_rule('/about', "about", self.about)
 		self.add_url_rule("/commands", "commands", self.commands)
 		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
+		self.add_url_rule("/servers", "servers", self.guilds)
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
@@ -136,6 +137,18 @@ class Website(Quart):
 	async def commands_list(self):
 		commands = web_commands.get_commands(self.bot)
 		return await render_template('commands_list.html', commands=commands)
+
+	@require_login
+	async def guilds(self):
+		guilds = session['guilds']
+		for counter, guild in enumerate(list(guilds)):
+			actual_guild = self.bot.get_guild(int(guild["id"]))
+			if actual_guild:
+				guilds[counter]["has_bot"] = True
+				guilds[counter]["member_count"] = len(actual_guild.members)
+				guilds[counter]["text_channels"] = len(actual_guild.text_channels)
+				guilds[counter]["voice_channels"] = len(actual_guild.voice_channels)
+		return await render_template('guilds.html', guilds=guilds)
 
 	async def callback(self):
 		if request.args.get('error'):

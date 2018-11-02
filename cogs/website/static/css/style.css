@@ -2,6 +2,36 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600,700,800|Lato:100,400,300,700');
 /* --- pe-icon-7-stroke --- */
 
+.guild-icon {
+    border-radius: 50%;
+    width: 6em;
+    float: left;
+    margin-right: 10px;
+}
+
+.select-style {
+    border: 1px solid #ccc;
+    width: 250px;
+    border-radius: 3px;
+    overflow: hidden;
+    float: right;
+}
+
+.select-style select {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+}
+
+
+
+
 /* Style the tab */
 .tab {
     overflow: hidden;
