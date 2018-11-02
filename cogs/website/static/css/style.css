@@ -66,9 +66,9 @@ html {
 	padding: 9.5px;
 }
 
-.nopadding {
-   padding: 0 !important;
-   margin: 0 !important;
+.commandspadding {
+   padding: 10px;
+   margin: 10px;
 }
 
 .developer-img {

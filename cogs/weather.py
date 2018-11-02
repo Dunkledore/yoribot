@@ -130,7 +130,7 @@ class Weather:
 			                 icon_url='http://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/icons/logo_16x16.png')
 			await ctx.send(embed=embed)
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_developer()
 	async def weatherkey(self, ctx, key: str):
 		"""Acquire a key from  http://openweathermap.org/"""

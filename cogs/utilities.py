@@ -4,6 +4,7 @@ from discord import Permissions, utils
 
 
 class Utilities:
+	"""Random useful commands"""
 	def __init__(self, bot):
 		self.bot = bot
 		self.bot.remove_command("help")
