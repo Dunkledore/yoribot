@@ -1,7 +1,7 @@
 {% set active_page = 'servers'%}
 {% extends "layout.html" %}
 {% block content %}
-<section id="content1" class="home-section">
+<div id="content1" class="home-section">
     <div class="container ">
         <div class="row heading">
             <h3>Manage Guilds</h3>
@@ -15,7 +15,7 @@
             </select>
         </div>
         {% for guild in guilds %}
-            <div id="guild{{loop.index}}" class="group">
+            <div class="group row guild{{loop.index}}">
                 <div class="col-sm-2">
                     <img class="guild-icon" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
                 </div>
@@ -23,6 +23,8 @@
                     <h5>{{guild["name"]}}</h5>
                     {% if not guild["has_bot"] %}
                         <a href="https://discordapp.com/oauth2/authorize?client_id=378073671014809612&scope=bot&permissions=268823638" class="btn btn-success btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Add Yori<br /> <small>To your server</small></a>
+                        </div>
+                        </div>
                     {% endif %}
                     {% if guild["has_bot"] %}
                     <div>
@@ -33,10 +35,55 @@
                             Members : {{guild["member_count"]}}
                         </p>
                     </div>
+                    </div>
+                    </div>
+                    <div class="row heading group guild{{loop.index}}">
+                        <div class="col-sm-12">
+                            <h5>Guild Settings</h5>
+                        </div>
+                    </div>
+                    <div class="row heading group guild{{loop.index}}">
+                        <div class="col-sm-4">
+                            <h6>Prefixes</h6>
+                            <p>
+                            {% for prefix in guild["prefixes"] %}
+                            {{prefix}}<br>
+                            {% endfor %}
+                            </p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Administrators</h6>
+                            {% if not guild["admins"] %}
+                            <p>None</p>
+                            {% endif %}
+                            {% if guild["admins"] %}
+                                <p>
+                                    {% for admin in guild["admins"] %}
+                                        <img class="user-icon" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Moderators</h6>
+                            {% if not guild["mods"] %}
+                            <p>None</p>
+                            {% endif %}
+                            {% if guild["mods"] %}
+                            <p>
+                                {% for admin in guild["mods"] %}
+                                        <img class="user-icon" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
+                                {% endfor %}
+                            </p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
                     {% endif %}
-                </div>
-            </div>
+
         {% endfor %}
+</div>
     </section>
 
 

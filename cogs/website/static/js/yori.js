@@ -42,7 +42,7 @@ $(document).ready(function () {
   $('.group').hide();
   $('#guildSelector').change(function () {
     $('.group').hide();
-    $('#'+$(this).val()).show();
+    $('.'+$(this).val()).show();
   })
 });
 

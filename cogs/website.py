@@ -148,6 +148,24 @@ class Website(Quart):
 				guilds[counter]["member_count"] = len(actual_guild.members)
 				guilds[counter]["text_channels"] = len(actual_guild.text_channels)
 				guilds[counter]["voice_channels"] = len(actual_guild.voice_channels)
+				try:
+					guilds[counter]["prefixes"] = self.bot.prefixes[str(actual_guild.id)]
+				except KeyError: # No prefix set
+					guilds[counter]["prefixes"] = ["*"]
+				admins = [member for member in actual_guild.members if (member.guild_permissions.administrator and not member.bot)]
+				if not admins:
+					admins = None
+				mod_roles = [role for role in actual_guild.roles if role.name.lower() in ["mod", "moderator"]]
+				if mod_roles:
+					mods = [member for member in actual_guild.members if ((any(role in member.roles for role in mod_roles)) and member not in admins)]
+					if not mods:
+						mods = None
+				else:
+					mods = None
+				guilds[counter]["admins"] = admins
+				guilds[counter]["mods"] = mods
+
+
 		return await render_template('guilds.html', guilds=guilds)
 
 	async def callback(self):
