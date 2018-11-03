@@ -24,8 +24,11 @@ class SpecialRoles:
 		if not ctx.prefix:
 			return
 
-		name = message.content.replace(ctx.prefix, "", 1).split()[0]
-		if not name:
+		try:
+			name = message.content.replace(ctx.prefix, "", 1).split()[0]
+			if not name:
+				return
+		except IndexError:
 			return
 
 		member_pre_convert = message.content.replace(ctx.prefix, "", 1).replace(name, "", 1).strip()

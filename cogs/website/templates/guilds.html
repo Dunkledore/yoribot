@@ -16,28 +16,27 @@
         </div>
         {% for guild in guilds %}
             <div id="guild{{loop.index}}" class="group">
-                <img class="guild-icon" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
-                <h5>{{guild["name"]}}</h5>
-                {% if not guild["has_bot"] %}
-                    <a href="https://discordapp.com/oauth2/authorize?client_id=378073671014809612&scope=bot&permissions=268823638" class="btn btn-success btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Add Yori<br /> <small>To your server</small></a>
-                {% endif %}
-                {% if guild["has_bot"] %}
-                <div>
-                    <p>
-                        Members : {{guild["member_count"]}}<br>
-                        Text Channels : {{guild["text_channels"]}}<br>
-                        Voice Channels : {{guild["voice_channels"]}}<br>
-                        Members : {{guild["member_count"]}}
-                    </p>
+                <div class="col-sm-2">
+                    <img class="guild-icon" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
                 </div>
-                {% endif %}
-
+                <div class="col-sm-10">
+                    <h5>{{guild["name"]}}</h5>
+                    {% if not guild["has_bot"] %}
+                        <a href="https://discordapp.com/oauth2/authorize?client_id=378073671014809612&scope=bot&permissions=268823638" class="btn btn-success btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Add Yori<br /> <small>To your server</small></a>
+                    {% endif %}
+                    {% if guild["has_bot"] %}
+                    <div>
+                        <p>
+                            Members : {{guild["member_count"]}}<br>
+                            Text Channels : {{guild["text_channels"]}}<br>
+                            Voice Channels : {{guild["voice_channels"]}}<br>
+                            Members : {{guild["member_count"]}}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         {% endfor %}
-    </div>
-
-
-    </div>
     </section>
 
 
