@@ -25,10 +25,10 @@ class Logs:
 
 	# Commands
 
-	@commands.command()
+	@commands.command(laliases=["start_message_logs"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def start_message_logs(self, ctx, channel: TextChannel):
+	async def messagelogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about message edits and deletes to the given channel"""
 
 		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id) VALUES ($1, $2)"
@@ -42,10 +42,10 @@ class Logs:
 		await ctx.send(embed=self.bot.success(f'Now sending message logs to {channel.mention}. To stop sending message '
 		                                      'logs, delete the channel '))
 
-	@commands.command()
+	@commands.command(laliases=["start_memberlogs_logs"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def start_member_logs(self, ctx, channel: TextChannel):
+	async def memberlogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about member join, leaves, bans and unbans to the given channel. N.B. It will also send member mute information but only if the member was muted through Yori"""
 
 		insertquery = "INSERT INTO log_config (guild_id, member_log_channel_id) VALUES ($1, $2)"
@@ -59,10 +59,10 @@ class Logs:
 		await ctx.send(embed=self.bot.success(f'Now sending member logs to {channel.mention}. To stop sending message '
 		                                      'logs, delete the channel '))
 
-	@commands.command()
+	@commands.command(laliases=["start_invite_logs"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def start_invite_logs(self, ctx, channel: TextChannel):
+	async def invitelogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about invite creations, deletion and expirations to the given channel"""
 
 		insertquery = "INSERT INTO log_config (guild_id, invite_log_channel_id) VALUES ($1, $2)"
@@ -76,10 +76,10 @@ class Logs:
 		await ctx.send(embed=self.bot.success(f'Now sending invite logs to {channel.mention}. To stop sending invite '
 		                                      'logs, delete the channel '))
 
-	@commands.command()
+	@commands.command(laliases=["start_strike_logs"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def start_strike_logs(self, ctx, channel: TextChannel):
+	async def strikelogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about member strikes to the given channel. N.B. Strikes must be setup from within Automod before any logs will be send"""
 
 		insertquery = "INSERT INTO log_config (guild_id, strike_log_channel_id) VALUES ($1, $2)"
@@ -147,10 +147,10 @@ class Logs:
 		query = "UPDATE event_logs SET report_message_id = $1 WHERE id = $2"
 		await self.bot.pool.execute(query, report_message.id, log_id)
 
-	@commands.command()
+	@commands.command(laliases=["update_log"])
 	@checks.is_mod()
 	@commands.guild_only()
-	async def update_log(self, ctx, log_number: int, *, reason):
+	async def updatelog(self, ctx, log_number: int, *, reason):
 		"""Update a log to include a new reason. N.B. This will also change the user who did this action to be you"""
 		query = "SELECT * from event_logs WHERE id = $1"
 		report = await self.bot.pool.fetchrow(query, log_number)

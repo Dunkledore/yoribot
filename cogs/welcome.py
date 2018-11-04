@@ -48,7 +48,7 @@ class Welcome:
 		if welcome_fields:
 			await channel.send(embed=embed)
 
-	@commands.command(aliases=['welcome_add', 'add_welcome', "addwelcome"])
+	@commands.command(laliases=['welcome_add', 'add_welcome', "addwecome"])
 	@checks.is_admin()
 	@commands.guild_only()
 	async def welcomeadd(self, ctx, title=None, *, content=None):

@@ -8,7 +8,7 @@ import asyncpg
 
 
 class Automod:
-	"""Command that will delete spam type messages. The types are words, caps, mention and image. Config requires admin. Mod is exempt from automod."""
+	"""Settings to auto-moderate spam and profanity. The types are words, caps, mention, and image. Config requires admin. Mod is exempt from automod."""
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -205,10 +205,10 @@ class Automod:
 		for k, v in groupby(results, key=lambda result: result["guild_id"]):
 			self.censor_cache[k] = re.compile("\\b"+"|".join([f"({result['word']})" for result in list(v)])+"\\b")
 
-	@commands.command(aliases=["add_censor"])
+	@commands.command(aliases=["addcensor"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def censor_add(self, ctx, word):
+	async def censoraddd(self, ctx, word):
 		"""Add a word to be censored. Note this looks for this word by itself and ignores if it is contained within another word. Censor will ignore case"""
 		query = "INSERT into word_censor (guild_id, word) VALUES ($1, $2)"
 
@@ -219,10 +219,10 @@ class Automod:
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("This is already a censored word"))
 
-	@commands.command(aliases=["delete_censor", "censor_delete", "remove_censor"])
+	@commands.command(aliases=["deletecensor", "censordelete", "removecensor"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def censor_remove(self, ctx, word):
+	async def censorremove(self, ctx, word):
 		"""Remove a word from being censored"""
 		query = "SELECT word FROM word_censor WHERE (guild_id = $1) and (word = $2)"
 		in_db = await self.bot.pool.fetch(query, ctx.guild.id, word.lower())
@@ -236,10 +236,10 @@ class Automod:
 		await self.update_censor_cache()
 		await ctx.send(embed=self.bot.success("Word removed"))
 
-	@commands.command(aliases=["censorlist", "listcensor", "list_censor"])
+	@commands.command(aliases=["listcensor", "listcensor"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def censor_list(self, ctx):
+	async def censorlist(self, ctx):
 		"""Show all words currently censored"""
 		query = "SELECT word FROM word_censor WHERE guild_id = $1"
 		words = await self.bot.pool.fetch(query, ctx.guild.id)
@@ -284,7 +284,7 @@ class Automod:
 	@commands.command()
 	@checks.is_admin()
 	@commands.guild_only()
-	async def mention_rate(self, ctx, amount: int, time: int):
+	async def mentionrate(self, ctx, amount: int, time: int):
 		"""Set the max mention rate. For sample 3,4 would be a max of 3 mentions in a time of 4 seconds"""
 
 		insertquery = "INSERT into mention_censor (guild_id, amount, time) VALUES ($1, $2, $3)"
@@ -349,10 +349,10 @@ class Automod:
 
 	# Caps filter
 
-	@commands.command(aliases=["toggle_anticaps"])
+	@commands.command(aliases=["togglecaps", "capstoggle"])
 	@checks.is_admin()
 	@commands.guild_only()
-	async def anticaps_toggle(self, ctx):
+	async def anticaps(self, ctx):
 		"""Toggles whether to delete messages with over 50% of the message in caps"""
 
 		insertquery = "INSERT INTO caps (guild_id, toggle) VALUES ($1, $2) RETURNING toggle"
@@ -402,7 +402,7 @@ class Automod:
 	@commands.command()
 	@checks.is_admin()
 	@commands.guild_only()
-	async def image_rate(self, ctx, amount: int, time: int):
+	async def imagerate(self, ctx, amount: int, time: int):
 		"""Set the max image rate. For sample 3,4 would be a max of 3 images in a time of 4 seconds"""
 
 		insertquery = "INSERT into image_censor (guild_id, amount, time) VALUES ($1, $2, $3)"
