@@ -20,7 +20,7 @@ from instance import token, new_server_hook, error_hook, db_uri, root_website, c
 initial_cogs = ["automod",
                 "clear",
                 "developers",
-                #"logs",
+                "logs",
                 "moderation",
                 "prefix",
                 "reactroles",
