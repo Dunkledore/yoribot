@@ -15,6 +15,7 @@
             </select>
         </div>
         {% for guild in guilds %}
+        <form id="{{guilds['id']}}" method="POST">
             <div class="group row guild{{loop.index}}">
                 <div class="col-sm-2">
                     <img class="guild-icon" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
@@ -40,6 +41,7 @@
                     <div class="row heading group guild{{loop.index}}">
                         <div class="col-sm-12">
                             <h5>Guild Settings</h5>
+                            {{form.submit}}
                         </div>
                     </div>
                     <div class="row heading group guild{{loop.index}}">
@@ -47,7 +49,7 @@
                             <h6>Prefixes</h6>
                             <p>
                             {% for prefix in guild["prefixes"] %}
-                            {{prefix}}<br>
+                            <input id="prefix" name="prefix" type="text" value="{{prefix}}">
                             {% endfor %}
                             </p>
                         </div>
@@ -81,7 +83,7 @@
 
                     </div>
                     {% endif %}
-
+        </form>
         {% endfor %}
 </div>
     </section>

@@ -2,10 +2,12 @@ import os
 from functools import wraps
 
 from discord import Object
-from quart import Quart, session, redirect, request, render_template
+from quart import Quart, session, redirect, request, render_template, flask_patch
 from requests_oauthlib import OAuth2Session
 from .utils import checks, utils
 from .utils import web_commands
+from .utils import forms
+import copy
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL+'/oauth2/authorize'
@@ -71,7 +73,7 @@ class Website(Quart):
 		self.add_url_rule('/about', "about", self.about)
 		self.add_url_rule("/commands", "commands", self.commands)
 		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
-		self.add_url_rule("/servers", "servers", self.guilds)
+		self.add_url_rule("/servers", "servers", self.guilds, methods=["GET", "POST"])
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
@@ -140,7 +142,16 @@ class Website(Quart):
 
 	@require_login
 	async def guilds(self):
-		guilds = session['guilds']
+		if request.method == "POST":
+			print(await request.form)
+			form = forms.GuildForm(await request.form)
+		else:
+			form = forms.GuildForm()
+		print(form.is_submitted())
+		print(form.errors)
+		print(form.validate())
+		print(request.method)
+		guilds = copy.deepcopy(session['guilds'])
 		for counter, guild in enumerate(list(guilds)):
 			actual_guild = self.bot.get_guild(int(guild["id"]))
 			if actual_guild:
@@ -157,7 +168,7 @@ class Website(Quart):
 					admins = None
 				mod_roles = [role for role in actual_guild.roles if role.name.lower() in ["mod", "moderator"]]
 				if mod_roles:
-					mods = [member for member in actual_guild.members if ((any(role in member.roles for role in mod_roles)) and member not in admins)]
+					mods = [member for member in actual_guild.members if ((any(role in member.roles for role in mod_roles)) and (member not in admins))]
 					if not mods:
 						mods = None
 				else:
@@ -165,8 +176,7 @@ class Website(Quart):
 				guilds[counter]["admins"] = admins
 				guilds[counter]["mods"] = mods
 
-
-		return await render_template('guilds.html', guilds=guilds)
+		return await render_template('guilds.html', guilds=guilds, form=form)
 
 	async def callback(self):
 		if request.args.get('error'):
@@ -193,6 +203,7 @@ class Website(Quart):
 
 	async def logout(self):
 		session.clear()
+		print(session)
 		return redirect("/")
 
 	@require_login
