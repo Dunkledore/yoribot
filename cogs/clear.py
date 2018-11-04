@@ -18,7 +18,7 @@ class Clear:
 		if amount_to_delete > 2000:
 			await ctx.send(embed=self.bot.erorr("Too many messages to delete"))
 
-		await ctx.channel.purge(limit=100)
+		await ctx.channel.purge(limit=amount_to_delete)
 
 	@commands.command(hidden=True)
 	@checks.is_mod()
@@ -85,7 +85,7 @@ class Clear:
 		"""Clear all messages in all channels (up to 2000 per channel) from members no longer in the guild """
 
 		def check(message):
-			return message.author in message.guild.members
+			return message.author not in message.guild.members
 
 		for channel in ctx.guild.text_channels:
 			await channel.purge(limit=2000, check=check)
