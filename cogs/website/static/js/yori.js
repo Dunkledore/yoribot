@@ -46,3 +46,10 @@ $(document).ready(function () {
   })
 });
 
+$(document).ready(function () {
+  $('input[type=submit]').hide();
+  $('.prefix').on('input', function () {
+    $(this).closest("form").find(':submit').show("slow");
+  })
+});
+

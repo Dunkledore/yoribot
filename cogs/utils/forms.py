@@ -1,7 +1,8 @@
-from flask_wtf import Form
-from wtforms import StringField, SubmitField
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, HiddenField
 
 
-class GuildForm(Form):
-	prefix = StringField("prefix")
+class GuildForm(FlaskForm):
 	submit = SubmitField('Save')
+	guildID = HiddenField()
+

@@ -142,27 +142,21 @@ class Website(Quart):
 
 	@require_login
 	async def guilds(self):
-		if request.method == "POST":
-			print(await request.form)
-			form = forms.GuildForm(await request.form)
-		else:
-			form = forms.GuildForm()
-		print(form.is_submitted())
-		print(form.errors)
-		print(form.validate())
-		print(request.method)
-		guilds = copy.deepcopy(session['guilds'])
-		for counter, guild in enumerate(list(guilds)):
+		raw_guilds = copy.deepcopy(session['guilds'])
+		guilds = {}
+		for guild in raw_guilds:
+			guilds[int(guild["id"])] = guild
 			actual_guild = self.bot.get_guild(int(guild["id"]))
 			if actual_guild:
-				guilds[counter]["has_bot"] = True
-				guilds[counter]["member_count"] = len(actual_guild.members)
-				guilds[counter]["text_channels"] = len(actual_guild.text_channels)
-				guilds[counter]["voice_channels"] = len(actual_guild.voice_channels)
+				guild_id = actual_guild.id
+				guilds[guild_id]["has_bot"] = True
+				guilds[guild_id]["member_count"] = len(actual_guild.members)
+				guilds[guild_id]["text_channels"] = len(actual_guild.text_channels)
+				guilds[guild_id]["voice_channels"] = len(actual_guild.voice_channels)
 				try:
-					guilds[counter]["prefixes"] = self.bot.prefixes[str(actual_guild.id)]
+					guilds[guild_id]["prefixes"] = self.bot.prefixes[str(actual_guild.id)]
 				except KeyError: # No prefix set
-					guilds[counter]["prefixes"] = ["*"]
+					guilds[guild_id]["prefixes"] = ["*"]
 				admins = [member for member in actual_guild.members if (member.guild_permissions.administrator and not member.bot)]
 				if not admins:
 					admins = None
@@ -173,10 +167,18 @@ class Website(Quart):
 						mods = None
 				else:
 					mods = None
-				guilds[counter]["admins"] = admins
-				guilds[counter]["mods"] = mods
+				guilds[guild_id]["admins"] = admins
+				guilds[guild_id]["mods"] = mods
+		if request.method == "POST":
+			form = await request.form
+			guild_id = form["guild_id"]
+			if form.getlist("prefix") != self.bot.prefixes[guild_id]:
+				self.bot.prefixes[guild_id] = form.getlist("prefix")
+				self.bot.save_prefixes()
+				guilds[int(guild_id)]['prefixes'] = form.getlist("prefix")
 
-		return await render_template('guilds.html', guilds=guilds, form=form)
+
+		return await render_template('guilds.html', guilds=guilds)
 
 	async def callback(self):
 		if request.args.get('error'):

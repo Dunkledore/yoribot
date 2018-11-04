@@ -9,16 +9,18 @@
         <div class="select-style">
             <select name="guildSelector" id="guildSelector">
                 <option value="" disabled selected>Select Guild...</option>
-                {% for guild in guilds %}
+                {% for guild in guilds.values() %}
                     <option value="guild{{loop.index}}">{{guild["name"]}}</option>
                 {% endfor %}
             </select>
         </div>
-        {% for guild in guilds %}
-        <form id="{{guilds['id']}}" method="POST">
+        {% for guild in guilds.values() %}
+        <form id="{{guild['id']}}" method="POST" action="/servers">
             <div class="group row guild{{loop.index}}">
                 <div class="col-sm-2">
+                    {% if guild['icon'] %}
                     <img class="guild-icon" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
+                    {% endif %}
                 </div>
                 <div class="col-sm-10">
                     <h5>{{guild["name"]}}</h5>
@@ -40,8 +42,9 @@
                     </div>
                     <div class="row heading group guild{{loop.index}}">
                         <div class="col-sm-12">
-                            <h5>Guild Settings</h5>
-                            {{form.submit}}
+                            <h5 style="float: left">Guild Settings</h5>
+                            <input id="submit{{loop.index}}" name="submit" type="submit" value="Save">
+                            <input id="guild_id" name="guild_id" type="hidden" value="{{guild['id']}}">
                         </div>
                     </div>
                     <div class="row heading group guild{{loop.index}}">
@@ -49,7 +52,7 @@
                             <h6>Prefixes</h6>
                             <p>
                             {% for prefix in guild["prefixes"] %}
-                            <input id="prefix" name="prefix" type="text" value="{{prefix}}">
+                            <input class="prefix" id="prefix" name="prefix" type="text" value="{{prefix}}">
                             {% endfor %}
                             </p>
                         </div>
