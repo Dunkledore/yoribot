@@ -90,6 +90,8 @@ class Clear:
 		for channel in ctx.guild.text_channels:
 			await channel.purge(limit=2000, check=check)
 
+		await ctx.send(embed=self.bot.success("Clear all messages from non-members"))
+
 	@cleargone.error
 	async def cleargoneerror(self, ctx, error):
 		if isinstance(error, commands.CommandOnCooldown):
