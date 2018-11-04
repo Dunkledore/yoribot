@@ -6,3 +6,4 @@ quart
 python-dateutil
 prettytable
 requests_oauthlib
+flask_wtf
