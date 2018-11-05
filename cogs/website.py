@@ -184,8 +184,8 @@ class Website(Quart):
 				                             "LIMIT 1"
 				most_messages_member_id = await self.bot.pool.fetchval(most_messages_member_query, guild_id)
 				most_messages_channel_id = await self.bot.pool.fetchval(most_messages_channel_query, guild_id)
-				most_messages_member = await self.bot.get_user(most_messages_member_id)
-				most_messages_channel = await self.bot.get_channel(most_messages_channel_id)
+				most_messages_member = self.bot.get_user(most_messages_member_id)
+				most_messages_channel = self.bot.get_channel(most_messages_channel_id)
 				guilds[guild_id]["most_member"] = most_messages_member.display_name
 				guilds[guild_id]["most_channel"] = most_messages_channel.name
 		if request.method == "POST":
