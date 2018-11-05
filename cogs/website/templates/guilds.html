@@ -93,9 +93,15 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <h6>Prefixes</h6>
+                            <div>
+                                Prefixes
+                                <button type="button" class="prefix-add prefix-button">+</button>
+                            </div>
                             {% for prefix in guild["prefixes"] %}
-                            <input class="prefix" id="prefix" name="prefix" type="text" value="{{prefix}}">
+                            <div class="prefix-div">
+                                <input class="prefix" id="prefix" name="prefix" type="text" value="{{prefix}}">
+                                <button type="button" class="prefix-remove prefix-button">-</button>
+                            </div>
                             {% endfor %}
                         </div>
                     </div>

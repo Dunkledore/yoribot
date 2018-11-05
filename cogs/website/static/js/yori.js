@@ -15,7 +15,7 @@ function lockInput(inputId, glyphId) {
     var glpyhString = '<span id="' + glyphId + '" class="glyphicon glyphicon-pencil" onclick="editInput(\'' + inputId + '\', \''+ glyphId + '\')">'
     $(inputIdWithHash).replaceWith(inputString + glpyhString)
 }
-
+//Show the correct guild using a drop down
 function openCategory(evt, category) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -38,20 +38,43 @@ function openCategory(evt, category) {
 
 }
 
-
 $(document).ready(function () {
   $('.group').hide();
   $('#guildSelector').change(function () {
     $('.group').hide();
     $('.'+$(this).val()).show();
-  })
+  });
 });
 
+//Show the save button on prefix input
 $(document).ready(function () {
   $('input[type=submit]').hide();
   $('.prefix').on('input', function () {
     $(this).closest("form").find(':submit').show("normal");
-  })
+  });
+});
+
+$(document).ready(function() {
+    $(".prefix-remove").click(function() {
+        $(this).parent("div").remove();
+    });
+});
+
+$(document).ready(function() {
+    $(".prefix-add").click(function() {
+        var button = $("<button type=\"button\" class=\"prefix-remove prefix-button\">-</button>");
+        button.click(function() {
+            $(this).parent("div").remove();
+        });
+        var prefix = $("<input class=\"prefix\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
+        prefix.on('input', function () {
+            $(this).closest("form").find(':submit').show("normal");
+        });
+        var prefix_div = $("<div class=\"prefix-div\"/>");
+        prefix_div.append(prefix);
+        prefix_div.append(button);
+        $(this).parent("div").parent().append(prefix_div);
+    });
 });
 
 

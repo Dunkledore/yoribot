@@ -2,6 +2,25 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600,700,800|Lato:100,400,300,700');
 /* --- pe-icon-7-stroke --- */
 
+.prefix-button {
+	background-color:#4ACCD1;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:17px;
+	text-decoration:none;
+	border: 0;
+	border-radius: 20%;
+}
+.prefix-button:hover {
+	background-color:transparent;
+}
+.prefix-button:active {
+	position:relative;
+	top:1px;
+}
+
 
 .user-icon {
     border-radius: 50%;
