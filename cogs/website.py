@@ -171,15 +171,15 @@ class Website(Quart):
 				guilds[guild_id]["mods"] = mods
 				guilds[guild_id]["is_admin"] = await self.is_mod_in_guild(actual_guild)
 				most_messages_member_query = "SELECT user_id" \
-				                             "FROM message_logs" \
-				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days'))" \
-				                             "GROUP BY user_id" \
+				                             "FROM message_logs " \
+				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days')) " \
+				                             "GROUP BY user_id " \
 				                             "ORDER BY COUNT(*) DESC " \
 				                             "LIMIT 1"
-				most_messages_channel_query = "SELECT channel_id" \
-				                             "FROM message_logs" \
-				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days'))" \
-				                             "GROUP BY channel_id" \
+				most_messages_channel_query = "SELECT channel_id " \
+				                             "FROM message_logs " \
+				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days')) " \
+				                             "GROUP BY channel_id " \
 				                             "ORDER BY COUNT(*) DESC " \
 				                             "LIMIT 1"
 				most_messages_member_id = await self.bot.pool.fetchval(most_messages_member_query, guild_id)
