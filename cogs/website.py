@@ -170,7 +170,7 @@ class Website(Quart):
 				guilds[guild_id]["admins"] = admins
 				guilds[guild_id]["mods"] = mods
 				guilds[guild_id]["is_admin"] = await self.is_mod_in_guild(actual_guild)
-				most_messages_member_query = "SELECT user_id" \
+				most_messages_member_query = "SELECT user_id " \
 				                             "FROM message_logs " \
 				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days')) " \
 				                             "GROUP BY user_id " \
