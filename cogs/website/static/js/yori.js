@@ -38,6 +38,7 @@ function openCategory(evt, category) {
 
 }
 
+
 $(document).ready(function () {
   $('.group').hide();
   $('#guildSelector').change(function () {
@@ -49,7 +50,9 @@ $(document).ready(function () {
 $(document).ready(function () {
   $('input[type=submit]').hide();
   $('.prefix').on('input', function () {
-    $(this).closest("form").find(':submit').show("slow");
+    $(this).closest("form").find(':submit').show("normal");
   })
 });
+
+
 
