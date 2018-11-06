@@ -153,7 +153,7 @@ class Website(Quart):
 				guilds[guild_id]["member_count"] = len(actual_guild.members)
 				guilds[guild_id]["text_channels"] = len(actual_guild.text_channels)
 				guilds[guild_id]["voice_channels"] = len(actual_guild.voice_channels)
-				guilds[guild_id]["channel"] = actual_guild.text_channels
+				guilds[guild_id]["channels"] = actual_guild.text_channels
 				try:
 					guilds[guild_id]["prefixes"] = self.bot.prefixes[str(actual_guild.id)]
 				except KeyError: # No prefix set

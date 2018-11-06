@@ -113,7 +113,7 @@
                                     <option value="{{guild["message_log_channel"].id}}">{{guild["message_log_channel"].name}}</option>
                                     {% for channel in guild["channels"] %}
                                         {% if channel != guild["message_log_channel"] %}
-                                            <option value="{{channel.id}}">#{{channel.name}}</option>
+                                    <option value="{{channel.id}}">#{{channel.name}}</option>
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
