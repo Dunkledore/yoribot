@@ -37,6 +37,13 @@
   padding-top:10px;
 }
 
+.guild-image {
+  width:30px;
+  border-radius:100%;
+  margin-right:10px;
+  float:left;
+}
+
 
 
 .top5 { margin-top:5px; }
