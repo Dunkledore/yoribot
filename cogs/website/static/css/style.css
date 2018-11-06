@@ -12,6 +12,7 @@
   border-left-width:10px;
   border-left-style:solid;
   min-height:150px;
+  font-size:15px;
 
 }
 .no-padding {
@@ -30,7 +31,7 @@
 
 .field-value {
   color:#99AAB5;
-  font-size:15px;
+  font-size:8px;
 }
 
 .fields {
