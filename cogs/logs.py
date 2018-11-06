@@ -25,22 +25,34 @@ class Logs:
 
 	# Commands
 
+	async def start_message_logs(self, guild_id, channel_id):
+
+		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id) VALUES ($1, $2)"
+		alterquery = "UPDATE log_config SET message_log_channel_id = $1 WHERE guild_id = $2"
+
+		try:
+			await self.bot.pool.execute(insertquery, guild_id, channel_id)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.execute(alterquery, channel_id, guild_id)
+
 	@commands.command(laliases=["start_message_logs"])
 	@checks.is_admin()
 	@commands.guild_only()
 	async def messagelogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about message edits and deletes to the given channel"""
 
-		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE log_config SET message_log_channel_id = $1 WHERE guild_id = $2"
-
-		try:
-			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
-		except asyncpg.UniqueViolationError:
-			await self.bot.pool.execute(alterquery, channel.id, ctx.guild.id)
-
+		await self.start_message_logs(ctx.guild.id, channel.id)
 		await ctx.send(embed=self.bot.success(f'Now sending message logs to {channel.mention}. To stop sending message '
 		                                      'logs, delete the channel '))
+
+	async def start_member_logs(self, guild_id, channel_id):
+		insertquery = "INSERT INTO log_config (guild_id, member_log_channel_id) VALUES ($1, $2)"
+		alterquery = "UPDATE log_config SET member_log_channel_id = $1 WHERE guild_id = $2"
+
+		try:
+			await self.bot.pool.execute(insertquery, guild_id, channel_id)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.execute(alterquery, channel_id, guild_id)
 
 	@commands.command(laliases=["start_memberlogs_logs"])
 	@checks.is_admin()
@@ -48,16 +60,19 @@ class Logs:
 	async def memberlogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about member join, leaves, bans and unbans to the given channel. N.B. It will also send member mute information but only if the member was muted through Yori"""
 
-		insertquery = "INSERT INTO log_config (guild_id, member_log_channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE log_config SET member_log_channel_id = $1 WHERE guild_id = $2"
-
-		try:
-			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
-		except asyncpg.UniqueViolationError:
-			await self.bot.pool.execute(alterquery, channel.id, ctx.guild.id)
-
+		await self.start_member_logs(ctx.guild.id, channel.id)
 		await ctx.send(embed=self.bot.success(f'Now sending member logs to {channel.mention}. To stop sending message '
 		                                      'logs, delete the channel '))
+
+	async def start_invite_logs(self, guild_id, channel_id):
+
+		insertquery = "INSERT INTO log_config (guild_id, invite_log_channel_id) VALUES ($1, $2)"
+		alterquery = "UPDATE log_config SET invite_log_channel_id = $1 WHERE guild_id = $2"
+
+		try:
+			await self.bot.pool.execute(insertquery, guild_id, channel_id)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.execute(alterquery, channel_id, guild_id)
 
 	@commands.command(laliases=["start_invite_logs"])
 	@checks.is_admin()
@@ -65,14 +80,7 @@ class Logs:
 	async def invitelogson(self, ctx, channel: TextChannel):
 		"""Starts sending logs about invite creations, deletion and expirations to the given channel"""
 
-		insertquery = "INSERT INTO log_config (guild_id, invite_log_channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE log_config SET invite_log_channel_id = $1 WHERE guild_id = $2"
-
-		try:
-			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
-		except asyncpg.UniqueViolationError:
-			await self.bot.pool.execute(alterquery, channel.id, ctx.guild.id)
-
+		await self.start_invite_logs(ctx.guild.id, channel.id)
 		await ctx.send(embed=self.bot.success(f'Now sending invite logs to {channel.mention}. To stop sending invite '
 		                                      'logs, delete the channel '))
 
@@ -276,7 +284,6 @@ class Logs:
 				await ctx.send(self.bot.error(f"{rem_channel.mention} not in the whitelist"))
 			else:
 				await ctx.send(self.bot.error(f"{rem_channel.mention} not in the blacklist"))
-
 
 	# Events
 
@@ -575,8 +582,6 @@ class Logs:
 				return False
 			else:
 				return True
-
-
 
 	async def get_most_recent_used_invites_for_guild(self, guild):
 		try:

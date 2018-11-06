@@ -8,6 +8,7 @@ from .utils import checks, utils
 from .utils import web_commands
 from .utils import forms
 import copy
+import asyncpg
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL+'/oauth2/authorize'
@@ -203,12 +204,21 @@ class Website(Quart):
 				guilds[guild_id]["invite_log_channel"] = self.bot.get_channel(invite_log_channel_id)
 		if request.method == "POST":
 			form = await request.form
+
 			guild_id = form["guild_id"]
 			if form.getlist("prefix") != self.bot.prefixes[guild_id]:
 				self.bot.prefixes[guild_id] = form.getlist("prefix")
 				self.bot.save_prefixes()
 				guilds[int(guild_id)]['prefixes'] = form.getlist("prefix")
-			print(form)
+
+			log_cog = self.bot.get_cog("Logs")
+
+			selected_message_log_channel_id = form.get("message_log_channel")
+			selected_message_log_channel = self.bot.get_channel(int(selected_message_log_channel_id))
+			original_message_log_channel = guilds[int(guild_id)]["message_log_channel"]
+			if selected_message_log_channel and original_message_log_channel:
+				if selected_message_log_channel != original_message_log_channel:
+					await log_cog.start_message_logs(guild_id, selected_message_log_channel.id)
 
 
 		return await render_template('guilds.html', guilds=guilds)
