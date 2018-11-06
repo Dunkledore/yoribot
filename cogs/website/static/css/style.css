@@ -32,7 +32,8 @@
 
 .field-value {
   color:#99AAB5;
-  font-size:8px;
+  font-size:11px;
+  line-height 0.5em;
 }
 
 .fields {
