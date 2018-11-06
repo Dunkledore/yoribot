@@ -219,7 +219,7 @@ class Website(Quart):
 			if selected_message_log_channel and original_message_log_channel:
 				if selected_message_log_channel != original_message_log_channel:
 					await log_cog.start_message_logs(int(guild_id), selected_message_log_channel.id)
-					guilds[guild_id]["message_log_channel"] = selected_message_log_channel
+					guilds[int(guild_id)]["message_log_channel"] = selected_message_log_channel
 
 
 		return await render_template('guilds.html', guilds=guilds)
