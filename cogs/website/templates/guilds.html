@@ -99,7 +99,7 @@
                             </div>
                             {% for prefix in guild["prefixes"] %}
                             <div class="prefix-div">
-                                <input class="prefix" id="prefix" name="prefix" type="text" value="{{prefix}}">
+                                <input class="prefix guild-input" id="prefix" name="prefix" type="text" value="{{prefix}}">
                                 <button type="button" class="prefix-remove prefix-button">-</button>
                             </div>
                             {% endfor %}
@@ -108,7 +108,7 @@
                             <div>
                                 <h5>Logs</h5>
                                 <h6>Message Log channel</h6>
-                                <select class="log-selector">
+                                <select class="log-selector guild-input">
                                 {% if guild["message_log_channel"] %}
                                     <option value="{{guild["message_log_channel"].id}}">{{guild["message_log_channel"].name}}</option>
                                     {% for channel in guild["channels"] %}

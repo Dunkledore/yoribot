@@ -49,7 +49,7 @@ $(document).ready(function () {
 //Show the save button on prefix input
 $(document).ready(function () {
   $('input[type=submit]').hide();
-  $('.prefix').on('input', function () {
+  $('.guild-input').on('input', function () {
     $(this).closest("form").find(':submit').show("normal");
   });
 });
@@ -66,7 +66,7 @@ $(document).ready(function() {
         button.click(function() {
             $(this).parent("div").remove();
         });
-        var prefix = $("<input class=\"prefix\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
+        var prefix = $("<input class=\"prefix guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
         prefix.on('input', function () {
             $(this).closest("form").find(':submit').show("normal");
         });
