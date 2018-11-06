@@ -21,6 +21,7 @@
 }
 .welcome-image {
   float:right;
+  width:60px;
 }
 .welcome-guild-image {
   width:30px;
@@ -38,12 +39,6 @@
   padding-top:10px;
 }
 
-.guild-image {
-  width:30px;
-  border-radius:100%;
-  margin-right:10px;
-  float:left;
-}
 
 
 
