@@ -208,6 +208,7 @@ class Website(Quart):
 				self.bot.prefixes[guild_id] = form.getlist("prefix")
 				self.bot.save_prefixes()
 				guilds[int(guild_id)]['prefixes'] = form.getlist("prefix")
+			print(form["member_log_selector"])
 
 
 		return await render_template('guilds.html', guilds=guilds)
