@@ -85,7 +85,7 @@ $(document).ready(function() {
 $('body').on('click', '.welcome-text', function(){
 	var save_func = function(){
   	$heading = $("<p/>").text($(this).val())
-    $button = $("<button type=\"button\" class=\"welcome-text\"/>").text("Cogs")
+    $button = $("<button type=\"button\" class=\"welcome-text config-button\"/>").text("Cogs")
     $heading.append($button)
     $(this).replaceWith($heading)
   }
