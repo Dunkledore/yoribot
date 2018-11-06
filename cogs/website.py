@@ -153,6 +153,7 @@ class Website(Quart):
 				guilds[guild_id]["member_count"] = len(actual_guild.members)
 				guilds[guild_id]["text_channels"] = len(actual_guild.text_channels)
 				guilds[guild_id]["voice_channels"] = len(actual_guild.voice_channels)
+				guilds[guild_id]["channel"] = actual_guild.text_channels
 				try:
 					guilds[guild_id]["prefixes"] = self.bot.prefixes[str(actual_guild.id)]
 				except KeyError: # No prefix set
@@ -188,6 +189,9 @@ class Website(Quart):
 				#most_messages_channel = self.bot.get_channel(most_messages_channel_id)
 				guilds[guild_id]["most_member"] = "Me" #most_messages_member.display_name if most_messages_member else "Left"
 				guilds[guild_id]["most_channel"] = "Me" #most_messages_channel.name if most_messages_channel else "Deleted"
+				query = "SELECT message_log_channel_id FROM log_config WHERE guild_id = $1"
+				message_log_channel_id = await self.bot.pool.fetchval(query, actual_guild.id)
+				guilds[guild_id]["message_log_channel"] = self.bot.get_channel(message_log_channel_id)
 		if request.method == "POST":
 			form = await request.form
 			guild_id = form["guild_id"]

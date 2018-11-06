@@ -104,6 +104,21 @@
                             </div>
                             {% endfor %}
                         </div>
+                        <div class="col-sm-4">
+                            <div>
+                                <h5>Logs</h5>
+                                <h6>Message Log channel</h6>
+                                <select class="log-selector">
+                                {% if guild["message_log_channel"] %}
+                                    <option value="{{guild["message_log_channel"].id}}">{{guild["message_log_channel"].name}}</option>
+                                    {% for channel in guild["channels"] %}
+                                        {% if channel != guild["message_log_channel"] %}
+                                            <option value="{{channel.id}}">#{{channel.name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                </select>
+                            </div>
                     </div>
                     {% endif %}
                     {% endif %}
