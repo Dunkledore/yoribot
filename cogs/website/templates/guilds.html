@@ -140,6 +140,27 @@
                                 {% endif %}
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-sm-4">
+                            {% if guild['welcome_text'] %}
+                                <h3 class="text-message">{{guild['welcome_text']}}<button class="welcome-text">Cogs</button></h3>
+                            {% endif %}
+                            {% if guild['welcome_fields'] %}
+                            <div class="welcome-message">
+                                <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}.png?size=1024" class="welcome-image">
+                                <div>
+                                    <p class="no-padding">Welcome to {{guild['name']}}
+                                        <img class="guild-image"src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
+                                    </p>
+                                </div>
+                                <div class="fields">
+                                    {% for field in guild['welcome_fields'] %}
+                                    {{field['name']}}<br>
+                                    <span class="field-value">{{field['value']}}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
                     {% endif %}
                     {% endif %}

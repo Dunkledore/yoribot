@@ -55,12 +55,15 @@ $(document).ready(function () {
   });
 });
 
+//Remove the prefix div if they want one less
 $(document).ready(function() {
     $(".prefix-remove").click(function() {
         $(this).parent("div").remove();
     });
 });
 
+
+//Add the prefix div on click of add button
 $(document).ready(function() {
     $(".prefix-add").click(function() {
         var button = $("<button type=\"button\" class=\"prefix-remove prefix-button\">-</button>");
@@ -77,6 +80,23 @@ $(document).ready(function() {
         $(this).parent("div").parent().append(prefix_div);
     });
 });
+
+//welcome functions
+$('body').on('click', '.welcome-text', function(){
+	var save_func = function(){
+  	$heading = $("<h3/>").text($(this).val())
+    $button = $("<button class=\"welcome_text\"/>").text("Cogs")
+    $heading.append($button)
+    $(this).replaceWith($heading)
+  }
+  $heading = $(this).parent()
+  $(this).remove()
+  $input = $('<input/>').val($heading.text())
+  $input.one('blur', save_func).focus();
+  $heading.replaceWith($input)
+});
+
+
 
 
 

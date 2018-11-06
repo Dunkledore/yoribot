@@ -2,6 +2,43 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600,700,800|Lato:100,400,300,700');
 /* --- pe-icon-7-stroke --- */
 
+.welcome-message{
+  border-top-right-radius:20px;
+  border-bottom-right-radius:20px;
+  background-color:#2C2F33;
+  padding:20px;
+  color:white;
+  border-left-color:#4ACCD1;
+  border-left-width:10px;
+  border-left-style:solid;
+  min-height:150px;
+
+}
+.no-padding {
+  padding:0px;
+  margin:0px;
+}
+.welcome-image {
+  float:right;
+}
+.welcome-guild-image {
+  width:30px;
+  border-radius:100%;
+  margin-right:10px;
+  float:left;
+}
+
+.field-value {
+  color:#99AAB5;
+  font-size:15px;
+}
+
+.fields {
+  padding-top:10px;
+}
+
+
+
 .top5 { margin-top:5px; }
 .top7 { margin-top:7px; }
 .top10 { margin-top:10px; }

@@ -202,6 +202,16 @@ class Website(Quart):
 				query = "SELECT invite_log_channel_id FROM log_config WHERE guild_id = $1"
 				invite_log_channel_id = await self.bot.pool.fetchval(query, actual_guild.id)
 				guilds[guild_id]["invite_log_channel"] = self.bot.get_channel(invite_log_channel_id)
+
+				query = "SELECT text_message FROM welcome_config WHERE guild_id = $1"
+				text_message = await self.bot.pool.fetchval(query, guild_id)
+				guilds[guild_id]["welcome_text"] = text_message
+
+				query = "SELECT name, value FROM welcome_fields WHERE guild_id = $1"
+				fields = await self.bot.pool.fetch(query, guild_id)
+				guilds[guild_id]["welcome_fields"] = fields
+
+
 		if request.method == "POST":
 			form = await request.form
 
@@ -236,6 +246,8 @@ class Website(Quart):
 				if selected_invite_log_channel != original_invite_log_channel:
 					await log_cog.start_invite_logs(int(guild_id), selected_invite_log_channel.id)
 					guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
+
+
 
 
 		return await render_template('guilds.html', guilds=guilds)
