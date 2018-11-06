@@ -55,7 +55,7 @@
     font-weight: 500;
 }
 
-.prefix-button {
+.config-button {
 	background-color:#4ACCD1;
 	display:inline-block;
 	cursor:pointer;
@@ -66,10 +66,10 @@
 	border: 0;
 	border-radius: 20%;
 }
-.prefix-button:hover {
+.config-button:hover {
 	background-color:transparent;
 }
-.prefix-button:active {
+.config-button:active {
 	position:relative;
 	top:1px;
 }

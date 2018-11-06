@@ -66,7 +66,7 @@ $(document).ready(function() {
 //Add the prefix div on click of add button
 $(document).ready(function() {
     $(".prefix-add").click(function() {
-        var button = $("<button type=\"button\" class=\"prefix-remove prefix-button\">-</button>");
+        var button = $("<button type=\"button\" class=\"prefix-remove config-button\">-</button>");
         button.click(function() {
             $(this).parent("div").remove();
         });
