@@ -218,7 +218,7 @@ class Website(Quart):
 			original_message_log_channel = guilds[int(guild_id)]["message_log_channel"]
 			if selected_message_log_channel and original_message_log_channel:
 				if selected_message_log_channel != original_message_log_channel:
-					await log_cog.start_message_logs(guild_id, selected_message_log_channel.id)
+					await log_cog.start_message_logs(int(guild_id), selected_message_log_channel.id)
 
 
 		return await render_template('guilds.html', guilds=guilds)
