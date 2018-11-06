@@ -221,6 +221,22 @@ class Website(Quart):
 					await log_cog.start_message_logs(int(guild_id), selected_message_log_channel.id)
 					guilds[int(guild_id)]["message_log_channel"] = selected_message_log_channel
 
+			selected_member_log_channel_id = form.get("member-log-selector")
+			selected_member_log_channel = self.bot.get_channel(int(selected_member_log_channel_id))
+			original_member_log_channel = guilds[int(guild_id)]["member_log_channel"]
+			if selected_member_log_channel and original_member_log_channel:
+				if selected_member_log_channel != original_member_log_channel:
+					await log_cog.start_member_logs(int(guild_id), selected_member_log_channel.id)
+					guilds[int(guild_id)]["member_log_channel"] = selected_member_log_channel
+
+			selected_invite_log_channel_id = form.get("invite-log-selector")
+			selected_invite_log_channel = self.bot.get_channel(int(selected_invite_log_channel_id))
+			original_invite_log_channel = guilds[int(guild_id)]["invite_log_channel"]
+			if selected_invite_log_channel and original_invite_log_channel:
+				if selected_invite_log_channel != original_invite_log_channel:
+					await log_cog.start_invite_logs(int(guild_id), selected_invite_log_channel.id)
+					guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
+
 
 		return await render_template('guilds.html', guilds=guilds)
 
