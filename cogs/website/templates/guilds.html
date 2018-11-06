@@ -108,11 +108,33 @@
                             <div>
                                 <h5>Logs</h5>
                                 <h6>Message Log channel</h6>
-                                <select class="log-selector guild-input">
+                                <select class="message-log-selector guild-input">
                                 {% if guild["message_log_channel"] %}
                                     <option value="{{guild["message_log_channel"].id}}">{{guild["message_log_channel"].name}}</option>
                                     {% for channel in guild["channels"] %}
                                         {% if channel != guild["message_log_channel"] %}
+                                    <option value="{{channel.id}}">#{{channel.name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                </select>
+                                <h6>Member Log channel</h6>
+                                <select class="member-log-selector guild-input">
+                                {% if guild["member_log_channel"] %}
+                                    <option value="{{guild["member_log_channel"].id}}">{{guild["member_log_channel"].name}}</option>
+                                    {% for channel in guild["channels"] %}
+                                        {% if channel != guild["member_log_channel"] %}
+                                    <option value="{{channel.id}}">#{{channel.name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                </select>
+                                <h6>Invite Log channel</h6>
+                                <select class="invite-log-selector guild-input">
+                                {% if guild["invite_log_channel"] %}
+                                    <option value="{{guild["invite_log_channel"].id}}">{{guild["invite_log_channel"].name}}</option>
+                                    {% for channel in guild["channels"] %}
+                                        {% if channel != guild["invite_log_channel"] %}
                                     <option value="{{channel.id}}">#{{channel.name}}</option>
                                         {% endif %}
                                     {% endfor %}
