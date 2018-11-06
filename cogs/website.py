@@ -213,7 +213,7 @@ class Website(Quart):
 
 			log_cog = self.bot.get_cog("Logs")
 
-			selected_message_log_channel_id = form.get("message_log_channel")
+			selected_message_log_channel_id = form.get("member-log-selector")
 			selected_message_log_channel = self.bot.get_channel(int(selected_message_log_channel_id))
 			original_message_log_channel = guilds[int(guild_id)]["message_log_channel"]
 			if selected_message_log_channel and original_message_log_channel:
