@@ -9,7 +9,6 @@
             </div>
             <div class="select-style">
                 <select name="guildSelector" id="guildSelector">
-                    <option value="" disabled selected>Select Guild...</option>
                     {% for guild in guilds.values() %}
                         <option value="guild{{loop.index}}">{{guild["name"]}}</option>
                     {% endfor %}
