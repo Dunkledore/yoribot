@@ -44,6 +44,7 @@ $(document).ready(function () {
     $('.group').hide();
     $('.'+$(this).val()).show();
   });
+  $("#guildSelector").val($("#guildSelector option:first").val());
 });
 
 //Show the save button on prefix input
