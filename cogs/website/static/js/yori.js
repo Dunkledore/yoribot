@@ -62,6 +62,11 @@ $(document).ready(function() {
     });
 });
 
+$(document).read(function() {
+    $(".prefix-remove").click(function() {
+        $(this).closest("form").find(':submit').show("normal");
+    });
+});
 
 //Add the prefix div on click of add button
 $(document).ready(function() {
@@ -69,7 +74,6 @@ $(document).ready(function() {
         $(this).closest("form").find(':submit').show("normal");
         var button = $("<button type=\"button\" class=\"prefix-remove config-button\">-</button>");
         button.click(function() {
-            $(this).closest("form").find(':submit').show("normal");
             $(this).parent("div").remove();
         });
         var prefix = $("<input class=\"prefix guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
