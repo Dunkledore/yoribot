@@ -62,7 +62,7 @@ $(document).ready(function() {
     });
 });
 
-$(document).read(function() {
+$(document).ready(function() {
     $(".prefix-remove").click(function() {
         $(this).closest("form").find(':submit').show("normal");
     });
