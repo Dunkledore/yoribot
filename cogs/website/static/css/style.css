@@ -44,6 +44,10 @@
   line-height:1em;
 }
 
+.welcome-text {
+    padding: 1px 7px;
+}
+
 .prefix-title {
     font-size: 24px;
     font-weight: 500;
