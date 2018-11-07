@@ -55,6 +55,13 @@ $(document).ready(function () {
   });
 });
 
+
+$(document).ready(function() {
+    $(".prefix-remove").click(function() {
+        $(this).closest("form").find(':submit').show("normal");
+    });
+});
+
 //Remove the prefix div if they want one less
 $(document).ready(function() {
     $(".prefix-remove").click(function() {
@@ -62,11 +69,7 @@ $(document).ready(function() {
     });
 });
 
-$(document).ready(function() {
-    $(".prefix-remove").click(function() {
-        $(this).closest("form").find(':submit').show("normal");
-    });
-});
+
 
 //Add the prefix div on click of add button
 $(document).ready(function() {
