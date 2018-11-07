@@ -36,9 +36,9 @@ function add_validator() {
 //check for valid on inputs when submitting
 $('input[type=submit]').click(function(event){
     var error_free=true;
-    var form=$(this).closest("form").each(function(){
+    var form=$(this).closest("form").find(':input').each(function(){
         var invalid = $(this).hasClass("invalid")
-        if(!invalid) {
+        if(invalid) {
             error=free = false;
             $(this).addClass("input-error")
         }
