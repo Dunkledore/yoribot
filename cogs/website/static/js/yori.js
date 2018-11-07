@@ -79,7 +79,7 @@ $(document).ready(function() {
         button.click(function() {
             $(this).parent("div").remove();
         });
-        var prefix = $("<input class=\"btn btn-skin guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
+        var prefix = $("<input class=\"guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
         prefix.on('input', function () {
             $(this).closest("form").find(':submit').show("normal");
         });

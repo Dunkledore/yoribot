@@ -49,6 +49,10 @@
     font-weight: 500;
 }
 
+.prefix-remove {
+    padding: 1px 7px;
+}
+
 .guild-icon-big {
     border-radius: 50%;
     width: 6em;
