@@ -33,6 +33,22 @@ function add_validator() {
     }
 }
 
+//check for valid on inputs when submitting
+$('input[type=submit]').click(function(event){
+    var error_free=true;
+    var form=$(this).closest("form").each(function(){
+        var invalid = $(this).hasClass("invalid")
+        if(!invalid) {
+            error=free = false;
+            $(this).addClass("input-error")
+        }
+    });
+        if(!error_free){
+        event.preventDefault();
+        alert("Input's can not be blank")
+    }
+});
+
 $(document).ready(function () {
     $('input').on('input', add_validator);
 });
@@ -79,10 +95,11 @@ $(document).ready(function() {
         button.click(function() {
             $(this).parent("div").remove();
         });
-        var prefix = $("<input class=\"guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
+        var prefix = $("<input class=\"guild-input invalid\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
         prefix.on('input', function () {
             $(this).closest("form").find(':submit').show("normal");
         });
+        prefix.on('input', add_validator);
         var prefix_div = $("<div class=\"prefix-div\"/>");
         prefix_div.append(prefix);
         prefix_div.append(button);

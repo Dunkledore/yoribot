@@ -2,6 +2,10 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600,700,800|Lato:100,400,300,700');
 /* --- pe-icon-7-stroke --- */
 
+.input-error {
+    border: 1px solid #c00;
+}
+
 .top5 { margin-top:5px; }
 .top7 { margin-top:7px; }
 .top10 { margin-top:10px; }
