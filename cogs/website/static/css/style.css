@@ -49,25 +49,6 @@
     font-weight: 500;
 }
 
-.config-button {
-	background-color:#4ACCD1;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:17px;
-	text-decoration:none;
-	border: 0;
-	border-radius: 20%;
-}
-.config-button:hover {
-	background-color:transparent;
-}
-.config-button:active {
-	position:relative;
-	top:1px;
-}
-
 .guild-icon-big {
     border-radius: 50%;
     width: 6em;

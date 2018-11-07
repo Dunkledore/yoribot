@@ -75,11 +75,11 @@ $(document).ready(function() {
 $(document).ready(function() {
     $(".prefix-add").click(function() {
         $(this).closest("form").find(':submit').show("normal");
-        var button = $("<button type=\"button\" class=\"prefix-remove config-button\">-</button>");
+        var button = $("<button type=\"button\" class=\"prefix-remove btn btn-skin\">-</button>");
         button.click(function() {
             $(this).parent("div").remove();
         });
-        var prefix = $("<input class=\"prefix guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
+        var prefix = $("<input class=\"btn btn-skin guild-input\" id=\"prefix\" name=\"prefix\" type=\"text\"/>");
         prefix.on('input', function () {
             $(this).closest("form").find(':submit').show("normal");
         });
@@ -94,7 +94,7 @@ $(document).ready(function() {
 $('body').on('click', '.welcome-text', function(){
 	var save_func = function(){
   	$heading = $("<p/>").text($(this).val())
-    $button = $("<button type=\"button\" class=\"welcome-text config-button\"/>").
+    $button = $("<button type=\"button\" class=\"welcome-text btn btn-skin\"/>").
     $button.append('<span class=\"glyphicon glyphicon-cog\"></span>')
     $heading.append($button)
     $(this).replaceWith($heading)

@@ -94,12 +94,12 @@
                         <div class="col-sm-4">
                             <div>
                                 <span class="prefix-title">Prefixes</span>
-                                <button type="button" class="prefix-add config-button">+</button>
+                                <button type="button" class="prefix-add btn btn-skin">+</button>
                             </div>
                             {% for prefix in guild["prefixes"] %}
                             <div class="prefix-div">
-                                <input class="prefix guild-input" id="prefix" name="prefix" type="text" value="{{prefix}}">
-                                <button type="button" class="prefix-remove config-button">-</button>
+                                <input class="guild-input" id="prefix" name="prefix" type="text" value="{{prefix}}">
+                                <button type="button" class="prefix-remove btn btn-skin">-</button>
                             </div>
                             {% endfor %}
                         </div>
@@ -159,7 +159,7 @@
                         <div class="col-sm-4">
                             <h5>Welcome Message</h5>
                             {% if guild['welcome_text'] %}
-                                <p class="text-message">{{guild['welcome_text']}}<button type="button" class="welcome-text config-button"><span class="glyphicon glyphicon-cog"></span></button></p>
+                                <p class="text-message">{{guild['welcome_text']}}<button type="button" class="welcome-text btn btn-skin "><span class="glyphicon glyphicon-cog"></span></button></p>
                             {% endif %}
                             {% if guild['welcome_fields'] %}
                             <div class="welcome-message">
