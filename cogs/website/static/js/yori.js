@@ -1,21 +1,4 @@
-function editInput(inputId, glyphId) {
-    var inputIdWithHash = "#" + inputId;
-    var glpyhIdWithHash = "#" + glyphId;
-    var elementValue = $(inputIdWithHash).val();
-    $(inputIdWithHash).replaceWith('<input onfocusout="lockInput(\''+ inputId + '\',\'' + glyphId + '\')" name="test" id="' + inputId + '" value="' + elementValue + '">');
-    $(inputIdWithHash).focus();
-    $(glpyhIdWithHash).replaceWith('');
-}
-
-function lockInput(inputId, glyphId) {
-	var inputIdWithHash = "#" + inputId;
-    var glpyhIdWithHash = "#" + glyphId;
-    var elementValue = $(inputIdWithHash).val();
-    var inputString = '<input readonly id=' + inputId + ' value="' + elementValue + '">'
-    var glpyhString = '<span id="' + glyphId + '" class="glyphicon glyphicon-pencil" onclick="editInput(\'' + inputId + '\', \''+ glyphId + '\')">'
-    $(inputIdWithHash).replaceWith(inputString + glpyhString)
-}
-//Show the correct guild using a drop down
+//Tabs for commands
 function openCategory(evt, category) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -37,6 +20,28 @@ function openCategory(evt, category) {
     evt.currentTarget.className += " active";
 
 }
+				$('#contact_message').keyup(function(event) {
+					var input=$(this);
+					var message=$(this).val();
+					console.log(message);
+					if(message){input.removeClass("invalid").addClass("valid");}
+					else{input.removeClass("valid").addClass("invalid");}
+
+//validation function for inputs
+function add_validator() {
+    message = $(this).val()
+    if(message){
+        $(this).removeClass("invalid").addClass("valid")
+    }
+    else {
+        $(this).removeClass("valid").addClasd("invalid")
+    }
+}
+
+$(document).ready(function () {
+    $('input').on('input', add_validator);
+});
+
 
 $(document).ready(function () {
   $('.group').hide();
@@ -105,7 +110,6 @@ $('body').on('click', '.welcome-text', function(){
   $input.one('blur', save_func).focus();
   $heading.replaceWith($input)
 });
-
 
 
 
