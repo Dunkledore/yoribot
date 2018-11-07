@@ -20,12 +20,7 @@ function openCategory(evt, category) {
     evt.currentTarget.className += " active";
 
 }
-				$('#contact_message').keyup(function(event) {
-					var input=$(this);
-					var message=$(this).val();
-					console.log(message);
-					if(message){input.removeClass("invalid").addClass("valid");}
-					else{input.removeClass("valid").addClass("invalid");}
+
 
 //validation function for inputs
 function add_validator() {
