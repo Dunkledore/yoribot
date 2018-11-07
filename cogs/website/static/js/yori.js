@@ -35,15 +35,14 @@ function add_validator() {
 
 //check for valid on inputs when submitting
 $('input[type=submit]').click(function(event){
-    var error_free=true;
     var form=$(this).closest("form").find(':input').each(function(){
         var invalid = $(this).hasClass("invalid")
         if(invalid) {
-            error=free = false;
+            error_free = false;
             $(this).addClass("input-error")
         }
     });
-        if(!error_free){
+    if(!error_free){
         event.preventDefault();
         alert("Input's can not be blank")
     }
