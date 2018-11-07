@@ -34,7 +34,7 @@ function add_validator() {
         $(this).removeClass("invalid").addClass("valid")
     }
     else {
-        $(this).removeClass("valid").addClasd("invalid")
+        $(this).removeClass("valid").addClass("invalid")
     }
 }
 
