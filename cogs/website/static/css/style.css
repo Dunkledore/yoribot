@@ -2,6 +2,15 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600,700,800|Lato:100,400,300,700');
 /* --- pe-icon-7-stroke --- */
 
+.top5 { margin-top:5px; }
+.top7 { margin-top:7px; }
+.top10 { margin-top:10px; }
+.top15 { margin-top:15px; }
+.top17 { margin-top:17px; }
+.top30 { margin-top:30px; }
+.no-padding { padding:0px; margin:0px;}
+
+
 .welcome-message{
   border-top-right-radius:20px;
   border-bottom-right-radius:20px;
@@ -15,40 +24,25 @@
   font-size:15px;
 
 }
-.no-padding {
-  padding:0px;
-  margin:0px;
-}
 .welcome-image {
   float:right;
   width:60px;
 }
-.welcome-guild-image {
+.welcome-guild-logo {
   width:30px;
   border-radius:100%;
   margin-right:10px;
   float:left;
 }
-
-.field-value {
+.welcome-field-value {
   color:#99AAB5;
   font-size:11px;
 }
 
-.fields {
+.welcome-fields {
   padding-top:10px;
   line-height:1em;
 }
-
-
-
-
-.top5 { margin-top:5px; }
-.top7 { margin-top:7px; }
-.top10 { margin-top:10px; }
-.top15 { margin-top:15px; }
-.top17 { margin-top:17px; }
-.top30 { margin-top:30px; }
 
 .prefix-title {
     font-size: 24px;
@@ -74,18 +68,23 @@
 	top:1px;
 }
 
-
-.user-icon {
-    border-radius: 50%;
-    width: 40px;
-  }
-
-.guild-icon {
+.guild-icon-big {
     border-radius: 50%;
     width: 6em;
 }
 
-.select-style {
+.user-icon {
+    border-radius: 50%;
+    width: 150px;
+  }
+
+.user-icon-small {
+    border-radius: 50%;
+    width: 40px;
+  }
+
+
+.guild-select-style {
     border: 1px solid #ccc;
     width: 250px;
     border-radius: 3px;
@@ -93,7 +92,7 @@
     float: right;
 }
 
-.select-style select {
+.guild-select-style select {
     border: none;
     box-shadow: none;
     background: transparent;
@@ -101,7 +100,7 @@
     -webkit-appearance: none;
 }
 
-.select-style select:focus {
+.guild-select-style select:focus {
     outline: none;
 }
 

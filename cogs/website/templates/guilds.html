@@ -7,7 +7,7 @@
             <div class="row heading">
                 <h3>Manage Guilds</h3>
             </div>
-            <div class="select-style">
+            <div class="guild-select-style">
                 <select name="guildSelector" id="guildSelector">
                     {% for guild in guilds.values() %}
                         <option value="guild{{loop.index}}">{{guild["name"]}}</option>
@@ -21,7 +21,7 @@
                         <div class="row">
                         {% if guild['icon'] %}
                             <div class="col-sm-2">
-                                <img class="guild-icon" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
+                                <img class="guild-icon-big" src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">
                             </div>
                         {% endif %}
                             <div class="col-sm-10">
@@ -65,7 +65,7 @@
                             {% if guild["admins"] %}
                             <p>
                                 {% for admin in guild["admins"] %}
-                                <img class="user-icon" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
+                                <img class="user-icon-small" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
                                 {% endfor %}
                             </p>
                             {% endif %}
@@ -116,6 +116,11 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
+                                {% if not guild["message_log_channel"] %}
+                                    {% for channel in guild["channels"] %}
+                                        <option value="{{channel.id}}">#{{channel.name}}</option>
+                                    {% endfor %}
+                                {% endif %}
                                 </select>
                                 <h6>Member Log channel</h6>
                                 <select class="guild-input" name="member-log-selector">
@@ -127,6 +132,11 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
+                                {% if not guild["member_log_channel"] %}
+                                    {% for channel in guild["channels"] %}
+                                        <option value="{{channel.id}}">#{{channel.name}}</option>
+                                    {% endfor %}
+                                {% endif %}
                                 </select>
                                 <h6>Invite Log channel</h6>
                                 <select class="guild-input" name="invite-log-selector">
@@ -134,8 +144,13 @@
                                     <option value="{{guild["invite_log_channel"].id}}">{{guild["invite_log_channel"].name}}</option>
                                     {% for channel in guild["channels"] %}
                                         {% if channel != guild["invite_log_channel"] %}
-                                    <option value="{{channel.id}}">#{{channel.name}}</option>
+                                            <option value="{{channel.id}}">#{{channel.name}}</option>
                                         {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if not guild["invite_log_channel"] %}
+                                    {% for channel in guild["channels"] %}
+                                        <option value="{{channel.id}}">#{{channel.name}}</option>
                                     {% endfor %}
                                 {% endif %}
                                 </select>
@@ -151,13 +166,13 @@
                                 <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}.png?size=1024" class="welcome-image">
                                 <div>
                                     <p class="no-padding">
-                                        <img class="welcome-guild-image"src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">Welcome to {{guild['name']}}
+                                        <img class="welcome-guild-logo"src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">Welcome to {{guild['name']}}
                                     </p>
                                 </div>
-                                <div class="fields">
+                                <div class="welcome-fields">
                                     {% for field in guild['welcome_fields'] %}
                                     {{field['name']}}<br>
-                                    <span class="field-value">{{field['value']}}</span>
+                                    <span class="welcome-field-value">{{field['value']}}</span>
                                     {% endfor %}
                                 </div>
                             </div>
