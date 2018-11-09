@@ -66,6 +66,7 @@
     float: none;
     display: table-cell;
     vertical-align: top;
+    border-radius: 20%;
 }
 
 .welcome-field-value {
