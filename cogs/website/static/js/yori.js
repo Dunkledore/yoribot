@@ -81,7 +81,6 @@ $(document).ready(function() {
 //Remove the prefix div if they want one less
 $(document).ready(function() {
     $(".prefix-remove").click(function() {
-        $(this).removeClass('invalid')
         $(this).parent("div").remove();
     });
 });
@@ -108,5 +107,12 @@ $(document).ready(function() {
     });
 });
 
+
+$(document).ready(function() {
+    $(".welcome-field-remove-button").click(function() {
+        $(this).parent().parent().remove();
+        $(this).closest("form").find(':submit').show("normal");
+    });
+});
 
 

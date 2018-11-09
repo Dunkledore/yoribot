@@ -73,7 +73,7 @@ p input,textarea {
     display: table;
 }
 
-.welcome-field-remove-button {
+.welcome-field-button {
     float: none;
     display: table-cell;
     vertical-align: top;
@@ -83,9 +83,10 @@ p input,textarea {
     float: none;
     display: table-cell;
     vertical-align: top;
+    width: 100%;
 }
 
-.welcome-field-button {
+.welcome-field-remove-button {
     padding: 1px 7px;
 }
 

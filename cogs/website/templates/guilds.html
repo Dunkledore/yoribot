@@ -171,8 +171,8 @@
                             <div class="welcome-fields">
                                 {% for field in guild['welcome_fields'] %}
                                 <div class="welcome-field">
-                                    <div class="welcome-field-remove-button">
-                                        <button class="btn btn-skin-red welcome-field-button" type="button">
+                                    <div class="welcome-field-button">
+                                        <button class="btn btn-skin-red welcome-field-remove-button" type="button">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </div>
@@ -184,6 +184,7 @@
                                     </div>
                                 </div>
                                 {% endfor %}
+                                <button class="button btn btn-skin welcome-add" type="button">Add Field</button>
                             </div>
                         </div>
                         {% endif %}
