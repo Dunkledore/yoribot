@@ -3,7 +3,7 @@
 /* --- pe-icon-7-stroke --- */
 
 
-p input {
+p input,textarea {
   border: none;
   display: inline;
   font-family: inherit;

@@ -1,7 +1,7 @@
 {% set active_page = 'servers'%}
 {% extends "layout.html" %}
 {% block content %}
-<div class="hash" xmlns="http://www.w3.org/1999/html">
+<div class="hash" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <div id="content1" class="home-section">
         <div class="container ">
             <div class="row heading">
@@ -182,7 +182,7 @@
                                     <div class="welcome-field-values">
                                         <p>
                                             <input name="field-name" value="{{field['name']}}"><br>
-                                            <span class="welcome-field-value"><input name="field-value" value="{{field['value']}}"></span>
+                                            <span class="welcome-field-value"><textarea name="field-value">{{field['value']}}</textarea></span>
                                         </p>
                                     </div>
                                     {% endfor %}
