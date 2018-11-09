@@ -119,5 +119,28 @@ $(document).ready(function() {
     $(".welcome-field-remove-button").click(welcome_remove)
 });
 
+function welcome_add() {
+   var field_div = $("<div class=\"welcome-field\"/>");
+   var button_div = $("<div class=\"welcome-field-button\"/>");
+   var button = $("<div type=\"button\" class=\"btn btn-skin-red welcome-field-remove-button\"/>");
+   button.click(welcome_remove)
+   var glyph_span = $("<span class=\"glyphicon glyphicon-remove\"/>")
+   var welcome_field_values = $("<div class=\"welcome-field-values\"/>");
+   var field_name_input = $("<input name=\"field-name\" value=\"Enter field name here...\"/>");
+   var field_value_span = $("<span class=\"welcome-field-value\"/>");
+   var filed_value_textarea = $("<textarea class=\"welcome-field-value\" name=\"field-value\">Enter field value here...</textarea>");
+   var p = $("<p/>")
+   button.append(glyph_span);
+   button_div.append(button);
+   field_prefix_div.append(button_div);
+   field_value_span.append(filed_value_textarea);
+   p.append(field_name_input);
+   p.append(field_value_span);
+   welcome_field_values.append(p);
+   field_div.append(welcome_field_values);
+}
 
+$(document).ready(function() {
+    $(".welcome-add").click(welcome_add)
+});
 
