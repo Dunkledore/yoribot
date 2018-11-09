@@ -15,8 +15,8 @@
                 </select>
             </div>
             {% for guild in guilds.values() %}
-            <form id="{{guild['id']}}" class="group" method="POST" action="/servers">
-                <div class="row guild{{loop.index}}">
+            <form id="{{guild['id']}}" class="group guild{{loop.index}}" method="POST" action="/servers">
+                <div class="row">
                     <div class="col-sm-12">
                         <div class="row">
                         {% if guild['icon'] %}
