@@ -132,7 +132,7 @@ function welcome_add() {
    var p = $("<p/>")
    button.append(glyph_span);
    button_div.append(button);
-   field_prefix_div.append(button_div);
+   field_div.append(button_div);
    field_value_span.append(filed_value_textarea);
    p.append(field_name_input);
    p.append(field_value_span);
