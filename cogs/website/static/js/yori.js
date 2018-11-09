@@ -139,7 +139,8 @@ function welcome_add() {
    welcome_field_values.append(p);
    field_div.append(welcome_field_values);
    $(this).parent().append(field_div);
-   $(this).parent().append(this.clone());
+   cloney = $(this).clone()
+   $(this).parent().append(cloney);
    $(this).remove();
 }
 
