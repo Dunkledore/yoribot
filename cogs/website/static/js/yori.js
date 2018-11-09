@@ -33,6 +33,7 @@ function add_validator() {
         $(this).removeClass("valid").addClass("invalid")
     }
 }
+//add the above validator for all inputs on load
 $(document).ready(function () {
     $('input').on('input', add_validator);
 });
@@ -54,7 +55,7 @@ $('input[type=submit]').click(function(event){
     }
 });
 
-
+//Show the guild on select of it
 $(document).ready(function () {
   $('#guildSelector').change(function () {
     $('.group').hide();
@@ -70,7 +71,7 @@ $(document).ready(function () {
   });
 });
 
-
+//Show the save button on removal of a prefix
 $(document).ready(function() {
     $(".prefix-remove").click(function() {
         $(this).closest("form").find(':submit').show("normal");
@@ -91,7 +92,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $(".prefix-add").click(function() {
         $(this).closest("form").find(':submit').show("normal");
-        var button = $("<button type=\"button\" class=\"prefix-remove btn btn-skin\">-</button>");
+        var button = $("<button type=\"button\" class=\"prefix-remove prefix-remove-new btn btn-skin\">-</button>");
         button.click(function() {
             $(this).parent("div").remove();
         });
@@ -122,6 +123,8 @@ $('body').on('click', '.welcome-text', function(){
   $input.one('blur', save_func).focus();
   $heading.replaceWith($input)
 });
+
+
 
 
 

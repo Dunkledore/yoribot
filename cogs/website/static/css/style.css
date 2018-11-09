@@ -65,6 +65,10 @@
     padding: 1px 7px;
 }
 
+.prefix-remove-new {
+    margin: 4px;
+}
+
 .guild-icon-big {
     border-radius: 50%;
     width: 6em;
