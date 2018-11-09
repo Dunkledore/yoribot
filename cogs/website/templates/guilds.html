@@ -173,20 +173,17 @@
                                 <div class="welcome-field">
                                     <div class="welcome-field-remove-button">
                                         <button class="btn btn-skin-red welcome-field-button" type="button">
-                                            <span class="glyphicon glyphicon-cog">
-                                        </button>
-                                        <button class="btn btn-skin-red welcome-field-button" type="button">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </div>
                                     <div class="welcome-field-values">
                                         <p>
                                             <input name="field-name" value="{{field['name']}}"><br>
-                                            <span class="welcome-field-value"><textarea name="field-value">{{field['value']}}</textarea></span>
+                                            <span class="welcome-field-value"><textarea class="welcome-field-value" name="field-value">{{field['value']}}</textarea></span>
                                         </p>
-                                    </div>
-                                    {% endfor %}
+                                    </di>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                         {% endif %}
