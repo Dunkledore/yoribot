@@ -140,6 +140,7 @@ function welcome_add() {
    field_div.append(welcome_field_values);
    $(this).parent().append(field_div);
    cloney = $(this).clone()
+   cloney.click(welcome_add)
    $(this).parent().append(cloney);
    $(this).remove();
 }
