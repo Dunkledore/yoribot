@@ -1,7 +1,7 @@
 {% set active_page = 'servers'%}
 {% extends "layout.html" %}
 {% block content %}
-<section class="hash">
+<div class="hash">
     <div id="content1" class="home-section">
         <div class="container ">
             <div class="row heading">
@@ -26,14 +26,14 @@
                         {% endif %}
                             <div class="col-sm-10">
                                 <h5>{{guild["name"]}}</h5>
-                        {% if not guild["has_bot"] %}
+                {% if not guild["has_bot"] %}
                                 <a href="https://discordapp.com/oauth2/authorize?client_id=378073671014809612&scope=bot&permissions=268823638" class="btn btn-success btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Add Yori<br /> <small>To your server</small></a>
                             </div>
                         </div>
                     </div>
-
-                        {% endif %}
-                        {% if guild["has_bot"] %}
+                </div>
+                {% endif %}
+                {% if guild["has_bot"] %}
                                 <p>
                                     Members : {{guild["member_count"]}}<br>
                                     Text Channels : {{guild["text_channels"]}}<br>
@@ -43,145 +43,143 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row heading group guild{{loop.index}}">
-                        <div class="col-sm-12">
-                            <h5>Guild Settings</h5>
-                            <input id="guild_id" name="guild_id" type="hidden" value="{{guild['id']}}">
-                        </div>
+                </div>
+                <div class="row heading group guild{{loop.index}}">
+                    <div class="col-sm-12">
+                        <h5>Guild Settings</h5>
+                        <input id="guild_id" name="guild_id" type="hidden" value="{{guild['id']}}">
                     </div>
-                    <div class="row heading group guild{{loop.index}}">
-                        <div class="col-sm-4">
-                            <h6>Top</h6>
-                            <p>
-                                Most messages sent by: @{{guild["most_member"]}}<br>
-                                Most messages sent in: #{{guild["most_channel"]}}
-                            </p>
-                        </div>
-                        <div class="col-sm-4">
-                            <h6>Administrators</h6>
-                            {% if not guild["admins"] %}
-                            <p>None</p>
-                            {% endif %}
-                            {% if guild["admins"] %}
-                            <p>
-                                {% for admin in guild["admins"] %}
-                                <img class="user-icon-small" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
-                                {% endfor %}
-                            </p>
-                            {% endif %}
-                        </div>
-                        <div class="col-sm-4">
-                            <h6>Moderators</h6>
-                            {% if not guild["mods"] %}
-                            <p>None</p>
-                            {% endif %}
-                            {% if guild["mods"] %}
-                            <p>
-                                {% for admin in guild["mods"] %}
-                                <img class="user-icon-small" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
-                                {% endfor %}
-                            </p>
-                        </div>
-                            {% endif %}
+                </div>
+                <div class="row heading group guild{{loop.index}}">
+                    <div class="col-sm-4">
+                        <h6>Top</h6>
+                        <p>
+                            Most messages sent by: @{{guild["most_member"]}}<br>
+                            Most messages sent in: #{{guild["most_channel"]}}
+                        </p>
                     </div>
-                    {% if guild["is_admin"] %}
-                    <div class="row heading">
-                        <div class="col-sm-12">
-                            <h5 style="float: left">Admin Section</h5><input class="btn btn-skin btn-lg" id="submit{{loop.index}}" name="submit" type="submit" value="Save">
-                        </div>
+                    <div class="col-sm-4">
+                        <h6>Administrators</h6>
+                        {% if not guild["admins"] %}
+                        <p>None</p>
+                        {% endif %}
+                        {% if guild["admins"] %}
+                        <p>
+                            {% for admin in guild["admins"] %}
+                            <img class="user-icon-small" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
+                            {% endfor %}
+                        </p>
+                        {% endif %}
                     </div>
-                    <div class="row">
-                        <div class="col-sm-4">
+                    <div class="col-sm-4">
+                        <h6>Moderators</h6>
+                        {% if not guild["mods"] %}
+                        <p>None</p>
+                        {% endif %}
+                        {% if guild["mods"] %}
+                        <p>
+                            {% for admin in guild["mods"] %}
+                            <img class="user-icon-small" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
+                            {% endfor %}
+                        </p>
+                    </div>
+                        {% endif %}
+                </div>
+                {% if guild["is_admin"] %}
+                <div class="row heading">
+                    <div class="col-sm-12">
+                        <h5 style="float: left">Admin Section</h5><input class="btn btn-skin btn-lg" id="submit{{loop.index}}" name="submit" type="submit" value="Save">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div>
+                            <span class="prefix-title">Prefixes</span>
+                            <button type="button" class="prefix-add btn btn-skin">+</button>
+                        </div>
+                        {% for prefix in guild["prefixes"] %}
+                        <div class="prefix-div">
+                            <input class="guild-input" id="prefix" name="prefix" type="text" value="{{prefix}}">
+                            <button type="button" class="prefix-remove btn btn-skin">-</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-sm-4" class="logs">
+                        <h5>Logs</h5>
+                        <h6>Message Log channel</h6>
+                        <select class="guild-input" name="message-log-selector">
+                        {% if guild["message_log_channel"] %}
+                            <option value="{{guild["message_log_channel"].id}}">{{guild["message_log_channel"].name}}</option>
+                            {% for channel in guild["channels"] %}
+                                {% if channel != guild["message_log_channel"] %}
+                            <option value="{{channel.id}}">#{{channel.name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if not guild["message_log_channel"] %}
+                            {% for channel in guild["channels"] %}
+                                <option value="{{channel.id}}">#{{channel.name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                        </select>
+                        <h6>Member Log channel</h6>
+                        <select class="guild-input" name="member-log-selector">
+                        {% if guild["member_log_channel"] %}
+                            <option value="{{guild["member_log_channel"].id}}">{{guild["member_log_channel"].name}}</option>
+                            {% for channel in guild["channels"] %}
+                                {% if channel != guild["member_log_channel"] %}
+                            <option value="{{channel.id}}">#{{channel.name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if not guild["member_log_channel"] %}
+                            {% for channel in guild["channels"] %}
+                                <option value="{{channel.id}}">#{{channel.name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                        </select>
+                        <h6>Invite Log channel</h6>
+                        <select class="guild-input" name="invite-log-selector">
+                        {% if guild["invite_log_channel"] %}
+                            <option value="{{guild["invite_log_channel"].id}}">{{guild["invite_log_channel"].name}}</option>
+                            {% for channel in guild["channels"] %}
+                                {% if channel != guild["invite_log_channel"] %}
+                                    <option value="{{channel.id}}">#{{channel.name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if not guild["invite_log_channel"] %}
+                            {% for channel in guild["channels"] %}
+                                <option value="{{channel.id}}">#{{channel.name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                        </select>
+                    </div>
+                    <div class="col-sm-4" class="welcome">
+                        <h5>Welcome Message</h5>
+                        {% if guild['welcome_text'] %}
+                            <p class="text-message">{{guild['welcome_text']}}<button type="button" class="welcome-text btn btn-skin "><span class="glyphicon glyphicon-cog"></span></button></p>
+                        {% endif %}
+                        {% if guild['welcome_fields'] %}
+                        <div class="welcome-message">
+                            <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}.png?size=1024" class="welcome-image">
                             <div>
-                                <span class="prefix-title">Prefixes</span>
-                                <button type="button" class="prefix-add btn btn-skin">+</button>
+                                <p class="no-padding">
+                                    <img class="welcome-guild-logo"src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">Welcome to {{guild['name']}}
+                                </p>
                             </div>
-                            {% for prefix in guild["prefixes"] %}
-                            <div class="prefix-div">
-                                <input class="guild-input" id="prefix" name="prefix" type="text" value="{{prefix}}">
-                                <button type="button" class="prefix-remove btn btn-skin">-</button>
+                            <div class="welcome-fields">
+                                {% for field in guild['welcome_fields'] %}
+                                {{field['name']}}<br>
+                                <span class="welcome-field-value">{{field['value']}}</span>
                             </div>
                             {% endfor %}
                         </div>
-                        <div class="col-sm-4">
-                            <div>
-                                <h5>Logs</h5>
-                                <h6>Message Log channel</h6>
-                                <select class="guild-input" name="message-log-selector">
-                                {% if guild["message_log_channel"] %}
-                                    <option value="{{guild["message_log_channel"].id}}">{{guild["message_log_channel"].name}}</option>
-                                    {% for channel in guild["channels"] %}
-                                        {% if channel != guild["message_log_channel"] %}
-                                    <option value="{{channel.id}}">#{{channel.name}}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                {% if not guild["message_log_channel"] %}
-                                    {% for channel in guild["channels"] %}
-                                        <option value="{{channel.id}}">#{{channel.name}}</option>
-                                    {% endfor %}
-                                {% endif %}
-                                </select>
-                                <h6>Member Log channel</h6>
-                                <select class="guild-input" name="member-log-selector">
-                                {% if guild["member_log_channel"] %}
-                                    <option value="{{guild["member_log_channel"].id}}">{{guild["member_log_channel"].name}}</option>
-                                    {% for channel in guild["channels"] %}
-                                        {% if channel != guild["member_log_channel"] %}
-                                    <option value="{{channel.id}}">#{{channel.name}}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                {% if not guild["member_log_channel"] %}
-                                    {% for channel in guild["channels"] %}
-                                        <option value="{{channel.id}}">#{{channel.name}}</option>
-                                    {% endfor %}
-                                {% endif %}
-                                </select>
-                                <h6>Invite Log channel</h6>
-                                <select class="guild-input" name="invite-log-selector">
-                                {% if guild["invite_log_channel"] %}
-                                    <option value="{{guild["invite_log_channel"].id}}">{{guild["invite_log_channel"].name}}</option>
-                                    {% for channel in guild["channels"] %}
-                                        {% if channel != guild["invite_log_channel"] %}
-                                            <option value="{{channel.id}}">#{{channel.name}}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                {% if not guild["invite_log_channel"] %}
-                                    {% for channel in guild["channels"] %}
-                                        <option value="{{channel.id}}">#{{channel.name}}</option>
-                                    {% endfor %}
-                                {% endif %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <h5>Welcome Message</h5>
-                            {% if guild['welcome_text'] %}
-                                <p class="text-message">{{guild['welcome_text']}}<button type="button" class="welcome-text btn btn-skin "><span class="glyphicon glyphicon-cog"></span></button></p>
-                            {% endif %}
-                            {% if guild['welcome_fields'] %}
-                            <div class="welcome-message">
-                                <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}.png?size=1024" class="welcome-image">
-                                <div>
-                                    <p class="no-padding">
-                                        <img class="welcome-guild-logo"src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">Welcome to {{guild['name']}}
-                                    </p>
-                                </div>
-                                <div class="welcome-fields">
-                                    {% for field in guild['welcome_fields'] %}
-                                    {{field['name']}}<br>
-                                    <span class="welcome-field-value">{{field['value']}}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
-                    {% endif %}
                 </div>
+                {% endif %}
+                {% endif %}
             </form>
             {% endfor %}
         </div>
