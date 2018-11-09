@@ -171,9 +171,9 @@
                             <div class="welcome-fields">
                                 {% for field in guild['welcome_fields'] %}
                                 <div class="welcome-field">
-                                    <div class="welcome-field-remove-button">
-                                        X
-                                    </div>
+                                    <button class="welcome-field-remove-button">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
                                     <div class="welcome-field-values">
                                         {{field['name']}}<br>
                                         <span class="welcome-field-value">{{field['value']}}</span>
