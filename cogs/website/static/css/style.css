@@ -52,8 +52,9 @@
   line-height:1em;
 }
 
-.welcome-text {
+.welcome-text-button {
     padding: 1px 7px;
+    margin: 4px;
 }
 
 .prefix-title {

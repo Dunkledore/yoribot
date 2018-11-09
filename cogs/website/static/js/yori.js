@@ -109,10 +109,10 @@ $(document).ready(function() {
 });
 
 //welcome functions
-$('body').on('click', '.welcome-text', function(){
+$('body').on('click', '.welcome-text-button', function(){
 	var save_func = function(){
   	$heading = $("<p/>").text($(this).val())
-    $button = $("<button type=\"button\" class=\"welcome-text btn btn-skin\"/>")
+    $button = $("<button type=\"button\" class=\"welcome-text-button btn btn-skin\"/>")
     $button.append('<span class=\"glyphicon glyphicon-cog\"></span>')
     $heading.append($button)
     $(this).replaceWith($heading)
