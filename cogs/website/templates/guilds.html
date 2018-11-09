@@ -1,7 +1,7 @@
 {% set active_page = 'servers'%}
 {% extends "layout.html" %}
 {% block content %}
-<div class="hash">
+<div class="hash" xmlns="http://www.w3.org/1999/html">
     <div id="content1" class="home-section">
         <div class="container ">
             <div class="row heading">
@@ -158,7 +158,7 @@
                     <div class="col-sm-4" class="welcome">
                         <h5>Welcome Message</h5>
                         {% if guild['welcome_text'] %}
-                            <textarea class="welcome-text-message">{{guild['welcome_text']}}lyphicon-cog"></textarea>
+                            <textarea class="welcome-text-message">{{guild['welcome_text']}}"></textarea>
                         {% endif %}
                         {% if guild['welcome_fields'] %}
                         <div class="welcome-message">
@@ -180,8 +180,10 @@
                                         </button>
                                     </div>
                                     <div class="welcome-field-values">
-                                        {{field['name']}}<br>
-                                        <span class="welcome-field-value">{{field['value']}}</span>
+                                        <p>
+                                            <input>{{field['name']}}</p><br>
+                                        <span class="welcome-field-value"><input>{{field['value']}}</input></span>
+                                        </p>
                                     </div>
                                     {% endfor %}
                                 </div>
