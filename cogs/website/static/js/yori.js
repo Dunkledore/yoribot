@@ -108,11 +108,16 @@ $(document).ready(function() {
 });
 
 
+//Remove and save function for welcome fields
+function welcome_remove() {
+    $(this).closest("form").find(':submit').show("normal");
+    $(this).parent().parent().remove();
+}
+
+//Remove welcome if button is pressed and show save button
 $(document).ready(function() {
-    $(".welcome-field-remove-button").click(function() {
-        $(this).parent().parent().remove();
-        $(this).closest("form").find(':submit').show("normal");
-    });
+    $(".welcome-field-remove-button").click(welcome_remove)
 });
+
 
 
