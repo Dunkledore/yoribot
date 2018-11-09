@@ -138,6 +138,9 @@ function welcome_add() {
    p.append(field_value_span);
    welcome_field_values.append(p);
    field_div.append(welcome_field_values);
+   $(this).parent.append(field_div);
+   $(this).parent.append(this);
+   $(this).remove();
 }
 
 $(document).ready(function() {
