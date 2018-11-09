@@ -111,7 +111,7 @@ $(document).ready(function() {
 $('body').on('click', '.welcome-text', function(){
 	var save_func = function(){
   	$heading = $("<p/>").text($(this).val())
-    $button = $("<button type=\"button\" class=\"welcome-text btn btn-skin\"/>").
+    $button = $("<button type=\"button\" class=\"welcome-text btn btn-skin\"/>")
     $button.append('<span class=\"glyphicon glyphicon-cog\"></span>')
     $heading.append($button)
     $(this).replaceWith($heading)
