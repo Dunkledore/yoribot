@@ -65,7 +65,6 @@
     float: none;
     display: table-cell;
     vertical-align: top;
-    padding: 3px;
 }
 
 .welcome-field-value {
@@ -76,6 +75,7 @@
 
 .welcome-field-button {
     padding: 1px 7px;
+    margin-bottom: 1px;
 }
 
 .prefix-title {
