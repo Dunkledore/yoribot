@@ -24,6 +24,7 @@ function openCategory(evt, category) {
 
 //validation function for inputs
 function add_validator() {
+    $(this).removeClass("input-error")
     message = $(this).val()
     if(message){
         $(this).removeClass("invalid").addClass("valid")
@@ -35,6 +36,7 @@ function add_validator() {
 
 //check for valid on inputs when submitting
 $('input[type=submit]').click(function(event){
+    var error_free = true;
     var form=$(this).closest("form").find(':input').each(function(){
         var invalid = $(this).hasClass("invalid")
         if(invalid) {
@@ -80,6 +82,7 @@ $(document).ready(function() {
 //Remove the prefix div if they want one less
 $(document).ready(function() {
     $(".prefix-remove").click(function() {
+        $(this).removeClass('invalid')
         $(this).parent("div").remove();
     });
 });
