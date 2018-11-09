@@ -62,11 +62,9 @@
 }
 
 .welcome-field-remove-button {
-    background: #bf032c;
     float: none;
     display: table-cell;
     vertical-align: top;
-    border-radius: 20px;
     padding: 3px;
 }
 

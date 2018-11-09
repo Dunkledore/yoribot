@@ -27,6 +27,10 @@ a:focus {
   border-color: #4ACCD1;
 }
 
+.btn-skin-red {
+  background-color: #bf032c
+  border-color: #bf032c
+}
 
 /* menu */
 
