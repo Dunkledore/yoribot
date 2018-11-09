@@ -33,6 +33,10 @@ function add_validator() {
         $(this).removeClass("valid").addClass("invalid")
     }
 }
+$(document).ready(function () {
+    $('input').on('input', add_validator);
+});
+
 
 //check for valid on inputs when submitting
 $('input[type=submit]').click(function(event){
@@ -50,18 +54,12 @@ $('input[type=submit]').click(function(event){
     }
 });
 
-$(document).ready(function () {
-    $('input').on('input', add_validator);
-});
-
 
 $(document).ready(function () {
-  $('.group').hide();
   $('#guildSelector').change(function () {
     $('.group').hide();
     $('.'+$(this).val()).show();
   });
-  $("#guildSelector").val($("#guildSelector option:first").val());
 });
 
 //Show the save button on prefix input
