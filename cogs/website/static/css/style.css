@@ -74,6 +74,10 @@
     vertical-align: top;
 }
 
+.welcome-field-button {
+    padding: 1px 7px;
+}
+
 .prefix-title {
     font-size: 24px;
     font-weight: 500;
