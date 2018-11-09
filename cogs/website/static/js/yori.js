@@ -108,24 +108,5 @@ $(document).ready(function() {
     });
 });
 
-//welcome functions
-$('body').on('click', '.welcome-text-button', function(){
-	var save_func = function(){
-  	$heading = $("<p/>").text($(this).val())
-    $button = $("<button type=\"button\" class=\"welcome-text-button btn btn-skin\"/>")
-    $button.append('<span class=\"glyphicon glyphicon-cog\"></span>')
-    $heading.append($button)
-    $(this).replaceWith($heading)
-  }
-  $heading = $(this).parent()
-  $(this).remove()
-  $input = $('<input/>').val($heading.text())
-  $input.one('blur', save_func).focus();
-  $heading.replaceWith($input)
-});
-
-
-
-
 
 

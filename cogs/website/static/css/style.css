@@ -75,7 +75,11 @@
 
 .welcome-field-button {
     padding: 1px 7px;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
+}
+
+.welcome-text-message {
+    width: 100%;
 }
 
 .prefix-title {
