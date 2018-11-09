@@ -170,10 +170,17 @@
                             </div>
                             <div class="welcome-fields">
                                 {% for field in guild['welcome_fields'] %}
-                                {{field['name']}}<br>
-                                <span class="welcome-field-value">{{field['value']}}</span>
+                                <div class="welcome-field">
+                                    <div class="welcome-field-remove-button">
+                                        X
+                                    </div>
+                                    <div class="welcome-field-value">
+                                        {{field['name']}}<br>
+                                        <span class="welcome-field-value">{{field['value']}}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                            {% endfor %}
                         </div>
                         {% endif %}
                     </div>

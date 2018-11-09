@@ -57,6 +57,23 @@
     margin: 4px;
 }
 
+.welcome-field {
+    display: table;
+}
+
+.welcome-field-remove-button {
+    background: #bf032c;
+    float: none;
+    display: table-cell;
+    vertical-align: top;
+}
+
+.welcome-field-value {
+    float: none;
+    display: table-cell;
+    vertical-align: top;
+}
+
 .prefix-title {
     font-size: 24px;
     font-weight: 500;
