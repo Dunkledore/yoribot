@@ -1,7 +1,5 @@
-{% with messages = get_flashed_messages() %}
-   {% if messages %}
-      {% for message in messages %}
-         .toastr.info("{{ message }}")
-      {% endfor %}
-   {% endif %}
-{% endwith %}
+<script>
+{% for message in get_flashed_messages() %}
+    toastr.info("{{message}}")
+{% endfor %}
+</script>
