@@ -85,6 +85,7 @@ def get_commands(bot):
 		return c.name
 
 	entries = sorted(bot.commands, key=key)
+	entries = [entry for entry in entries if not entry.hidden]
 
 	display_commands = []
 	for command in entries:

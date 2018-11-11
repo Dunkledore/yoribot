@@ -149,7 +149,6 @@ class Website(Quart):
 
 	async def commands_list(self):
 		commands = web_commands.get_commands(self.bot)
-		commands = [cmd for cmd in commands if not cmd.hidden]
 		return await render_template('commands_list.html', commands=commands)
 
 	@require_login
