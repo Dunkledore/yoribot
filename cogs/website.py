@@ -231,6 +231,7 @@ class Website(Quart):
 					self.bot.prefixes[guild_id] = form.getlist("prefix")
 					self.bot.save_prefixes()
 					guilds[int(guild_id)]['prefixes'] = form.getlist("prefix")
+					await flash("Prefixes Updated")
 
 				log_cog = self.bot.get_cog("Logs")
 
@@ -241,6 +242,7 @@ class Website(Quart):
 					if selected_message_log_channel != original_message_log_channel:
 						await log_cog.start_message_logs(int(guild_id), selected_message_log_channel.id)
 						guilds[int(guild_id)]["message_log_channel"] = selected_message_log_channel
+						await flash("Message Log Channel Updated")
 
 				selected_member_log_channel_id = form.get("member-log-selector")
 				selected_member_log_channel = self.bot.get_channel(int(selected_member_log_channel_id))
@@ -249,6 +251,7 @@ class Website(Quart):
 					if selected_member_log_channel != original_member_log_channel:
 						await log_cog.start_member_logs(int(guild_id), selected_member_log_channel.id)
 						guilds[int(guild_id)]["member_log_channel"] = selected_member_log_channel
+						await flash("Member Log Channel Updated")
 
 				selected_invite_log_channel_id = form.get("invite-log-selector")
 				selected_invite_log_channel = self.bot.get_channel(int(selected_invite_log_channel_id))
@@ -257,6 +260,7 @@ class Website(Quart):
 					if selected_invite_log_channel != original_invite_log_channel:
 						await log_cog.start_invite_logs(int(guild_id), selected_invite_log_channel.id)
 						guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
+						await flash("Invite Log Channel Updated")
 
 				field_names = form.getlist("field-name")
 				field_values = form.getlist("field-value")
@@ -273,6 +277,7 @@ class Website(Quart):
 					query = "SELECT name, value FROM welcome_fields WHERE guild_id = $1"
 					fields = await self.bot.pool.fetch(query, int(guild_id))
 					guilds[int(guild_id)]["welcome_fields"] = fields
+					await flash("Welcome Message updated")
 			else:
 				await flash("You are not an admin on this server ")
 
