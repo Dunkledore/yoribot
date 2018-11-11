@@ -2,7 +2,7 @@ import os
 from functools import wraps
 
 from discord import Object
-from quart import Quart, session, redirect, request, render_template, flask_patch
+from quart import Quart, session, redirect, request, render_template, flask_patch, flash
 from requests_oauthlib import OAuth2Session
 from .utils import checks, utils
 from .utils import web_commands
@@ -109,6 +109,16 @@ class Website(Quart):
 		if await checks.has_level(proxy_ctx, "mod"):
 			return True
 
+	async def is_admin_in_guild(self, guild):
+		proxy_ctx = Object(id=None)
+		proxy_ctx.guild = guild
+		proxy_ctx.author = guild.get_member(int(session["user"]["id"]))
+		if not proxy_ctx.author:
+			return False
+		proxy_ctx.bot = self.bot
+		if await checks.has_level(proxy_ctx, "admin"):
+			return True
+
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
@@ -139,6 +149,7 @@ class Website(Quart):
 
 	async def commands_list(self):
 		commands = web_commands.get_commands(self.bot)
+		commands = [cmd for cmd in commands if not cmd.hidden]
 		return await render_template('commands_list.html', commands=commands)
 
 	@require_login
@@ -171,7 +182,7 @@ class Website(Quart):
 					mods = None
 				guilds[guild_id]["admins"] = admins
 				guilds[guild_id]["mods"] = mods
-				guilds[guild_id]["is_admin"] = await self.is_mod_in_guild(actual_guild)
+				guilds[guild_id]["is_admin"] = await self.is_admin_in_guild(actual_guild)
 				most_messages_member_query = "SELECT author_id " \
 				                             "FROM message_logs " \
 				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days')) " \
@@ -216,52 +227,55 @@ class Website(Quart):
 			form = await request.form
 
 			guild_id = form["guild_id"]
-			if form.getlist("prefix") != self.bot.prefixes[guild_id]:
-				self.bot.prefixes[guild_id] = form.getlist("prefix")
-				self.bot.save_prefixes()
-				guilds[int(guild_id)]['prefixes'] = form.getlist("prefix")
+			if guilds[int(guild_id)]["is_admin"]:
+				if form.getlist("prefix") != self.bot.prefixes[guild_id]:
+					self.bot.prefixes[guild_id] = form.getlist("prefix")
+					self.bot.save_prefixes()
+					guilds[int(guild_id)]['prefixes'] = form.getlist("prefix")
 
-			log_cog = self.bot.get_cog("Logs")
+				log_cog = self.bot.get_cog("Logs")
 
-			selected_message_log_channel_id = form.get("message-log-selector")
-			selected_message_log_channel = self.bot.get_channel(int(selected_message_log_channel_id))
-			original_message_log_channel = guilds[int(guild_id)]["message_log_channel"]
-			if selected_message_log_channel:
-				if selected_message_log_channel != original_message_log_channel:
-					await log_cog.start_message_logs(int(guild_id), selected_message_log_channel.id)
-					guilds[int(guild_id)]["message_log_channel"] = selected_message_log_channel
+				selected_message_log_channel_id = form.get("message-log-selector")
+				selected_message_log_channel = self.bot.get_channel(int(selected_message_log_channel_id))
+				original_message_log_channel = guilds[int(guild_id)]["message_log_channel"]
+				if selected_message_log_channel:
+					if selected_message_log_channel != original_message_log_channel:
+						await log_cog.start_message_logs(int(guild_id), selected_message_log_channel.id)
+						guilds[int(guild_id)]["message_log_channel"] = selected_message_log_channel
 
-			selected_member_log_channel_id = form.get("member-log-selector")
-			selected_member_log_channel = self.bot.get_channel(int(selected_member_log_channel_id))
-			original_member_log_channel = guilds[int(guild_id)]["member_log_channel"]
-			if selected_member_log_channel:
-				if selected_member_log_channel != original_member_log_channel:
-					await log_cog.start_member_logs(int(guild_id), selected_member_log_channel.id)
-					guilds[int(guild_id)]["member_log_channel"] = selected_member_log_channel
+				selected_member_log_channel_id = form.get("member-log-selector")
+				selected_member_log_channel = self.bot.get_channel(int(selected_member_log_channel_id))
+				original_member_log_channel = guilds[int(guild_id)]["member_log_channel"]
+				if selected_member_log_channel:
+					if selected_member_log_channel != original_member_log_channel:
+						await log_cog.start_member_logs(int(guild_id), selected_member_log_channel.id)
+						guilds[int(guild_id)]["member_log_channel"] = selected_member_log_channel
 
-			selected_invite_log_channel_id = form.get("invite-log-selector")
-			selected_invite_log_channel = self.bot.get_channel(int(selected_invite_log_channel_id))
-			original_invite_log_channel = guilds[int(guild_id)]["invite_log_channel"]
-			if selected_invite_log_channel:
-				if selected_invite_log_channel != original_invite_log_channel:
-					await log_cog.start_invite_logs(int(guild_id), selected_invite_log_channel.id)
-					guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
+				selected_invite_log_channel_id = form.get("invite-log-selector")
+				selected_invite_log_channel = self.bot.get_channel(int(selected_invite_log_channel_id))
+				original_invite_log_channel = guilds[int(guild_id)]["invite_log_channel"]
+				if selected_invite_log_channel:
+					if selected_invite_log_channel != original_invite_log_channel:
+						await log_cog.start_invite_logs(int(guild_id), selected_invite_log_channel.id)
+						guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
 
-			field_names = form.getlist("field-name")
-			field_values = form.getlist("field-value")
+				field_names = form.getlist("field-name")
+				field_values = form.getlist("field-value")
 
-			original_fields = [(field['name'], field['value']) for field in guilds[int(guild_id)]["welcome_fields"]]
-			new_fields = list(zip(field_names, field_values))
+				original_fields = [(field['name'], field['value']) for field in guilds[int(guild_id)]["welcome_fields"]]
+				new_fields = list(zip(field_names, field_values))
 
-			if new_fields != original_fields:
-				delete_query = "DELETE FROM welcome_fields WHERE guild_id = $1"
-				await self.bot.pool.execute(delete_query, int(guild_id))
-				insert_query = "INSERT INTO welcome_fields(guild_id, name, value) VALUES ($1, $2, $3)"
-				for pair in new_fields:
-					await self.bot.pool.execute(insert_query, int(guild_id), pair[0], pair[1])
-				query = "SELECT name, value FROM welcome_fields WHERE guild_id = $1"
-				fields = await self.bot.pool.fetch(query, int(guild_id))
-				guilds[int(guild_id)]["welcome_fields"] = fields
+				if new_fields != original_fields:
+					delete_query = "DELETE FROM welcome_fields WHERE guild_id = $1"
+					await self.bot.pool.execute(delete_query, int(guild_id))
+					insert_query = "INSERT INTO welcome_fields(guild_id, name, value) VALUES ($1, $2, $3)"
+					for pair in new_fields:
+						await self.bot.pool.execute(insert_query, int(guild_id), pair[0], pair[1])
+					query = "SELECT name, value FROM welcome_fields WHERE guild_id = $1"
+					fields = await self.bot.pool.fetch(query, int(guild_id))
+					guilds[int(guild_id)]["welcome_fields"] = fields
+			else:
+				await flash("You are not an admin on this server ")
 
 		return await render_template('guilds.html', guilds=guilds)
 
