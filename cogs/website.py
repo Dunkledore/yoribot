@@ -247,13 +247,27 @@ class Website(Quart):
 					await log_cog.start_invite_logs(int(guild_id), selected_invite_log_channel.id)
 					guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
 
+			field_names = form.getlist("field-name")
+			field_values = form.getlist("field-value")
 
+			original_fields = [(field['name'], field['value']) for field in guilds[int(guild_id)]["welcome_fields"]]
+			new_fields = list(zip(field_names, field_values))
 
+			if new_fields != original_fields:
+				delete_query = "DELETE FROM welcome_fields WHERE guild_id = $1"
+				await self.bot.pool.execute(delete_query, int(guild_id))
+				insert_query = "INSERT INTO welcome_fields(guild_id, name, value) VALUES ($1, $2, $3)"
+				for pair in new_fields:
+					await self.bot.pool.execute(insert_query, int(guild_id), pair[0], pair[1])
+				query = "SELECT name, value FROM welcome_fields WHERE guild_id = $1"
+				fields = await self.bot.pool.fetch(query, int(guild_id))
+				guilds[int(guild_id)]["welcome_fields"] = fields
 
 		return await render_template('guilds.html', guilds=guilds)
 
 	async def callback(self):
 		if request.args.get('error'):
+			print(request.args.get('error'))
 			return request.args['error']
 		discord = self.make_session(state=session.get('oauth2_state'))
 		token = discord.fetch_token(
