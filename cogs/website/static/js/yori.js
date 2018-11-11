@@ -129,14 +129,8 @@ function welcome_add() {
    var glyph_span = $("<span class=\"glyphicon glyphicon-remove\"/>");
    var welcome_field_values = $("<div class=\"welcome-field-values\"/>");
    var field_name_input = $("<input name=\"field-name\" value=\"Enter field name here...\"/>");
-   field_name_input.on('input', function () {
-        $(this).closest("form").find(':submit').show("normal");
-   });
    var field_value_span = $("<span class=\"welcome-field-value\"/>");
    var field_value_textarea = $("<textarea class=\"welcome-field-value\" name=\"field-value\">Enter field value here...</textarea>");
-   field_value_textarea.on('input', function () {
-        $(this).closest("form").find(':submit').show("normal");
-   });
    var p = $("<p/>");
    button.append(glyph_span);
    button_div.append(button);
@@ -150,8 +144,9 @@ function welcome_add() {
    cloney = $(this).clone()
    cloney.click(welcome_add)
    $(this).parent().append(cloney);
-   $(this).remove();
    $(this).closest("form").find(':submit').show("normal");
+   $(this).remove();
+
 }
 
 $(document).ready(function() {
