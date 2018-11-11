@@ -37,7 +37,6 @@
 
 
 <div id="wrapper">
-	{% include 'flashes.html' %}
     {% include 'nav.html' %}
     {% block content %}
     {% endblock %}
@@ -66,7 +65,7 @@
     {% endif %}
 
 
-
+{% include 'flashes.html' %}
 </body>
 
 </html>
