@@ -698,7 +698,7 @@ class Logs:
 
 	async def update_blacklist_cache(self):
 		query = "SELECT guild_id, blacklist, whitelist FROM log_config"
-		results = await self.bot.fetch(query)
+		results = await self.bot.pool.fetch(query)
 		self.black_list_cache = {}
 		for guild in results:
 			self.black_list_cache["guild_id"] = {"blacklist": guild["blacklist"], "whitelist": guild["whitelist"]}
