@@ -236,7 +236,7 @@ class Automod:
 		await self.update_censor_cache()
 		await ctx.send(embed=self.bot.success("Word removed"))
 
-	@commands.command(aliases=["listcensor", "listcensor"])
+	@commands.command(aliases=["listcensor", "list_censor", "censor_list"])
 	@checks.is_admin()
 	@commands.guild_only()
 	async def censorlist(self, ctx):

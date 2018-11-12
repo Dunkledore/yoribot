@@ -505,7 +505,7 @@ class Logs:
 	async def on_message(self, message):
 		if message.author is self.bot.user:
 			return
-		if not self.blacklist_check(message):
+		if not await self.blacklist_check(message):
 			return
 		query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status) VALUES ($1, $2, $3, $4, $5, $6)"
 		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id,
@@ -514,7 +514,7 @@ class Logs:
 	async def on_message_delete(self, message):
 		if message.author is self.bot.user:
 			return
-		if not self.blacklist_check(message):
+		if not await self.blacklist_check(message):
 			return
 		query = "UPDATE message_logs SET status = $1 WHERE message_id = $2"
 		await self.bot.pool.execute(query, "deleted", message.id)
@@ -539,7 +539,7 @@ class Logs:
 	async def on_message_edit(self, before, after):
 		if before.author.bot:
 			return
-		if not self.blacklist_check(before):
+		if not await self.blacklist_check(before):
 			return
 		query = "UPDATE message_logs SET status = $1, content = $2 WHERE message_id = $3"
 		await self.bot.pool.execute(query, "edited", after.content, after.id)
@@ -573,15 +573,9 @@ class Logs:
 			return True
 		config = self.black_list_cache[message.guild.id]
 		if config["whitelist"]:
-			if message.channel.id in config["blacklist"]:
-				return True
-			else:
-				return False
+			return message.channel.id in config["blacklist"]
 		else:
-			if message.channel.id in config["blacklist"]:
-				return False
-			else:
-				return True
+			return not(message.channel.id in config["blacklist"])
 
 	async def get_most_recent_used_invites_for_guild(self, guild):
 		try:
