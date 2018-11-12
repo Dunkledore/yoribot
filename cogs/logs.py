@@ -284,6 +284,7 @@ class Logs:
 				await ctx.send(self.bot.error(f"{rem_channel.mention} not in the whitelist"))
 			else:
 				await ctx.send(self.bot.error(f"{rem_channel.mention} not in the blacklist"))
+		await self.update_blacklist_cache()
 
 	# Events
 
