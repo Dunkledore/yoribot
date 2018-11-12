@@ -701,7 +701,7 @@ class Logs:
 		results = await self.bot.pool.fetch(query)
 		self.black_list_cache = {}
 		for guild in results:
-			self.black_list_cache["guild_id"] = {"blacklist": guild["blacklist"], "whitelist": guild["whitelist"]}
+			self.black_list_cache[int(guild["guild_id"])] = {"blacklist": guild["blacklist"], "whitelist": guild["whitelist"]}
 
 
 def setup(bot):
