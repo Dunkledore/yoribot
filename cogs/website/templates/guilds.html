@@ -1,6 +1,14 @@
 {% set active_page = 'servers'%}
 {% extends "layout.html" %}
 {% block content %}
+<div id="loading">
+  <img id="loading-image" src="images/ajax-loader.gif" alt="Loading..." />
+</div>
+<script language="javascript" type="text/javascript">
+     $(window).load(function() {
+     $('#loading').hide();
+  });
+</script>
 <div class="hash" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <div id="content1" class="home-section">
         <div class="container ">
