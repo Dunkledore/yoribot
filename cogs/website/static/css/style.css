@@ -16,7 +16,6 @@
 }
 
 #loading-image {
-  position: absolute;
   padding: 100px;
   z-index: 100;
 }
