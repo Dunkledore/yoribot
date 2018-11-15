@@ -120,7 +120,7 @@ $(document).ready(function() {
     $(".welcome-field-remove-button").click(welcome_remove)
 });
 
-
+//add a new field when the add button is pressed for welcome
 function welcome_add() {
    var field_div = $("<div class=\"welcome-field\"/>");
    var button_div = $("<div class=\"welcome-field-button\"/>");
@@ -148,11 +148,13 @@ function welcome_add() {
    $(this).remove();
 
 }
-
+//bind the add field fucntion to the button
 $(document).ready(function() {
     $(".welcome-add").click(welcome_add)
 });
 
+
+//flash options
 toastr.options = {
   "closeButton": true,
   "debug": false,
