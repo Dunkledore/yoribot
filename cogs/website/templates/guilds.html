@@ -157,6 +157,22 @@
                     </div>
                     <div class="col-sm-4" class="welcome">
                         <h5>Welcome Message</h5>
+                        <h6>Welcome channel</h6>
+                        <select class="guild-input" name="welcome-channel-selector">
+                        {% if guild["welcome_channel"] %}
+                            <option value="{{guild["welcome_channel"].id}}">{{guild["welcome_channel"].name}}</option>
+                            {% for channel in guild["channels"] %}
+                                {% if channel != guild["welcome_channel"] %}
+                                    <option value="{{channel.id}}">#{{channel.name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if not guild["welcome_channel"] %}
+                            {% for channel in guild["channels"] %}
+                                <option value="{{channel.id}}">#{{channel.name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                        </select>
                         {% if guild['welcome_text'] %}
                             <textarea class="welcome-text-message">{{guild['welcome_text']}}</textarea>
                         {% endif %}

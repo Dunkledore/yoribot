@@ -504,7 +504,7 @@ class Logs:
 		await log_channel.send(embed=embed)
 
 	async def on_message(self, message):
-		if message.author is self.bot.user:
+		if message.author.id == self.bot.user.id:
 			return
 		if not await self.blacklist_check(message):
 			return
