@@ -203,10 +203,10 @@
                                 {% endfor %}
                                 <button class="button btn btn-skin welcome-add" type="button">Add Field</button>
                             </div>
-                            <div class="welcome-whisper">
+                        </div>
+                        <div class="welcome-whisper">
                                 <h5>Welcome Whisper</h5>
-                                <input type="checkbox" name="whisper" value="Tick this box if you want to send the welcome message through a DM" {% if guild["whisper"] %}checked{% endif %}>
-                            </div>
+                                <input type="checkbox" name="whisper" {% if guild["whisper"] %}checked{% endif %}>Tick if you wish the welcome message to be sent in a DM to the joining user
                         </div>
                     </div>
                 </div>
