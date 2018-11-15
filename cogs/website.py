@@ -218,8 +218,9 @@ class Website(Quart):
 				if not welcome_config:
 					guilds[guild_id]["welcome_channel"] = None
 					guilds[guild_id]["welcome_whisper"] = False
-				guilds[guild_id]["welcome_channel"] = self.bot.get_channel(welcome_config["channel_id"])
-				guilds[guild_id]["welcome_whisper"] = self.bot.get_channel(welcome_config["whisper"])
+				else:
+					guilds[guild_id]["welcome_channel"] = self.bot.get_channel(welcome_config["channel_id"])
+					guilds[guild_id]["welcome_whisper"] = self.bot.get_channel(welcome_config["whisper"])
 
 
 				query = "SELECT text_message FROM welcome_config WHERE guild_id = $1"
