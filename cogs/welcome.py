@@ -141,7 +141,7 @@ class Welcome:
 	async def welcomewhisper(self, ctx):
 		"""Toggle sending a direct message to the member on join"""
 		whisper = await self.do_welcome_whisper(ctx.guild.id)
-		await ctx.send(embed=self.bot.succes(f"Whisper set to {whisper}"))
+		await ctx.send(embed=self.bot.success(f"Whisper set to {whisper}"))
 
 	async def on_member_join(self, member):
 
