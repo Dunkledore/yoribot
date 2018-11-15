@@ -74,7 +74,7 @@
                         {% if guild["admins"] %}
                         <p>
                             {% for admin in guild["admins"] %}
-                            <img class="user-icon-small" src="https://cdn.discordapp.com/avatars/{admin.id}/{admin.avatar}">{{admin.display_name}}<br>
+                            <img class="user-icon-small" src="https://cdn.discordapp.com/avatars/{{admin.id}}/{{admin.avatar}}">{{admin.display_name}}<br>
                             {% endfor %}
                         </p>
                         {% endif %}
@@ -187,7 +187,7 @@
                         {% endif %}
                         <h5>Welcome Embed</h5>
                         <div class="welcome-message">
-                            <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}.png?size=1024" class="welcome-image">
+                            <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}" class="welcome-image">
                             <div>
                                 <p class="no-padding">
                                     <img class="welcome-guild-logo"src="https://cdn.discordapp.com/icons/{{ guild['id']}}/{{ guild['icon']}}">Welcome to {{guild['name']}}
