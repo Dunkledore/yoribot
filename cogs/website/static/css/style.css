@@ -16,7 +16,7 @@
 }
 
 #loading-image {
-  padding: 100px;
+  transform: translateY(100%);
   z-index: 100;
 }
 
