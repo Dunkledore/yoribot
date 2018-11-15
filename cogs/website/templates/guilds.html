@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div id="loading">
-  <img id="loading-image" src="images/ajax-loader.gif" alt="Loading..." />
+  <img id="loading-image" src="{{ url_for('static',filename='img/spinner.svg')}}" alt="Loading..." />
 </div>
 <script language="javascript" type="text/javascript">
      $(window).load(function() {
