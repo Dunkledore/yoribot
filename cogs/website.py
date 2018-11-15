@@ -282,7 +282,7 @@ class Website(Quart):
 				if selected_welcome_channel:
 					if selected_welcome_channel != original_welcome_channel:
 						await welcome_cog.do_setwelcomechannel(int(guild_id), selected_welcome_channel.id)
-						guilds[int(guild_id)]["welcome_channel"] = selected_invite_log_channel
+						guilds[int(guild_id)]["welcome_channel"] = selected_welcome_channel
 						await flash("Welcome channel updated")
 
 
