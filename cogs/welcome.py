@@ -130,7 +130,7 @@ class Welcome:
 		try:
 			whisper = await self.bot.pool.fetchval(insertquery, guild_id)
 		except asyncpg.UniqueViolationError:
-			whisper = await self.bot.fetchval(alterquery, guild_id)
+			whisper = await self.bot.pool.fetchval(alterquery, guild_id)
 
 		return whisper
 
