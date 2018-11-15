@@ -209,9 +209,8 @@
                                 <input type="checkbox" class="guild-input" name="whisper" {% if guild["welcome_whisper"] %}checked{% endif %}>Tick if you wish the welcome message to be sent in a DM to the joining user
                         </div>
                     </div>
+                    <input class="btn btn-skin btn-lg" id="submit{{loop.index}}" name="submit" type="submit" value="Save">
                 </div>
-                <input class="btn btn-skin btn-lg" id="submit{{loop.index}}" name="submit" type="submit" value="Save">
-                    </div>
                 {% endif %}
                 {% endif %}
             </form>
