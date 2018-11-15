@@ -12,7 +12,6 @@ import aiohttp
 import asyncpg
 from discord import Embed, Forbidden
 from discord.ext import commands
-from htmlmin.middleware import HTMLMinMiddleware
 
 from cogs.utils import utils, dataIO
 from cogs.website import Website
@@ -62,7 +61,7 @@ class YoriBot(commands.AutoShardedBot):
 		self.categories = {}
 
 		self.root_website = root_website
-		self.website = HTMLMinMiddleware(Website(client_secret, client_id, redirect, port, self))
+		self.website = Website(client_secret, client_id, redirect, port, self)
 		self.loop.create_task(self.start_app())
 
 	def run_site(self):

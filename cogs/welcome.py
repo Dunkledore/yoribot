@@ -80,20 +80,25 @@ class Welcome:
 		else:
 			await ctx.send(embed=self.bot.error("No section with that title"))
 
+	async def do_setwelcomechannel(self, guild_id, channel):
+		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
+		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
+
+		try:
+			await self.bot.pool.execute(insertquery, guild_id, channel.id)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.execute(alterquery, guild_id, channel.id)
+
+
 	@commands.command(aliases=["set_welcome_channel","welcome_channel_set", "welcomechannelset"])
 	@checks.is_admin()
 	@commands.guild_only()
 	async def setwelcomechannel(self, ctx, channel: discord.TextChannel):
 		"""Select the channel you wish the welcome message to appear in"""
 
-		insertquery = "INSERT INTO welcome_config (guild_id, channel_id) VALUES ($1, $2)"
-		alterquery = "UPDATE welcome_config SET channel_id = $2 WHERE guild_id = $1"
-
-		try:
-			await self.bot.pool.execute(insertquery, ctx.guild.id, channel.id)
-		except asyncpg.UniqueViolationError:
-			await self.bot.pool.execute(alterquery, ctx.guild.id, channel.id)
+		await self.do_setwelcomechannel(ctx.guild.id, channel)
 		await ctx.send(embed=self.bot.success('Channel set'))
+
 
 	@commands.command(aliases=["welcome_text"])
 	@checks.is_admin()

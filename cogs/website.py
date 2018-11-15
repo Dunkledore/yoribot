@@ -275,6 +275,18 @@ class Website(Quart):
 						guilds[int(guild_id)]["invite_log_channel"] = selected_invite_log_channel
 						await flash("Invite Log Channel Updated")
 
+				welcome_cog = self.bot.get_cog("Welcome")
+				selected_welcome_channel_id = form.get("welcome-channel-selector")
+				selected_welcome_channel = self.bot.get_channel(int(selected_welcome_channel_id))
+				original_welcome_channel = guilds[int(guild_id)]["welcome_channel"]
+				if selected_welcome_channel:
+					if selected_welcome_channel != original_welcome_channel:
+						welcome_cog.do_setwelcomechannel(int(guild_id), selected_welcome_channel.id)
+						guilds[int(guild_id)]["welcome_channel"] = selected_invite_log_channel
+						await flash("Welcome channel updated")
+
+
+
 				field_names = form.getlist("field-name")
 				field_values = form.getlist("field-value")
 
@@ -295,8 +307,7 @@ class Website(Quart):
 				welcome_whisper = form.get("whisper")
 				welcome_whisper = True if welcome_whisper == "on" else False
 				if welcome_whisper != guilds[int(guild_id)]["welcome_whisper"]:
-					cog = self.bot.get_cog("Welcome")
-					await cog.do_welcome_whisper(int(guild_id))
+					await welcome_cog.do_welcome_whisper(int(guild_id))
 					await flash("Welcome whisper updated")
 					guilds[int(guild_id)]["welcome_whisper"] = welcome_whisper
 
