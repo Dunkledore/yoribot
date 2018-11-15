@@ -7,3 +7,4 @@ python-dateutil
 prettytable
 requests_oauthlib
 flask_wtf
+htmlmin

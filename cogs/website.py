@@ -9,6 +9,7 @@ from .utils import web_commands
 from .utils import forms
 import copy
 import asyncpg
+import htmlmin
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL+'/oauth2/authorize'
@@ -300,7 +301,7 @@ class Website(Quart):
 			else:
 				await flash("You are not an admin on this server ")
 
-		return await render_template('guilds.min.html', guilds=guilds)
+		return htmlmin.minify(await render_template('guilds.html', guilds=guilds))
 
 	async def callback(self):
 		if request.args.get('error'):
