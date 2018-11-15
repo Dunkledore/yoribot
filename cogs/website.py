@@ -213,9 +213,11 @@ class Website(Quart):
 				invite_log_channel_id = await self.bot.pool.fetchval(query, actual_guild.id)
 				guilds[guild_id]["invite_log_channel"] = self.bot.get_channel(invite_log_channel_id)
 
-				query = "SELECT channel_id FROM welcome_config WHERE guild_id = $1"
-				welcome_channel_id = await self.bot.pool.fetchval(query, actual_guild.id)
-				guilds[guild_id]["welcome_channel"] = self.bot.get_channel(welcome_channel_id)
+				query = "SELECT channel_id, whisper FROM welcome_config WHERE guild_id = $1"
+				welcome_config = await self.bot.pool.fetchrow(query, actual_guild.id)
+				guilds[guild_id]["welcome_whisper"] = self.bot.get_channel(welcome_config["channel_id"])
+				guilds[guild_id]["welcome_whisper"] = self.bot.get_channel(welcome_config["whisper"])
+
 
 				query = "SELECT text_message FROM welcome_config WHERE guild_id = $1"
 				text_message = await self.bot.pool.fetchval(query, guild_id)

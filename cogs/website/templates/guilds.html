@@ -156,7 +156,7 @@
                         </select>
                     </div>
                     <div class="col-sm-4" class="welcome">
-                        <h5>Welcome Message</h5>
+                        <h5>Welcome</h5>
                         <h6>Welcome channel</h6>
                         <select class="guild-input" name="welcome-channel-selector">
                         {% if guild["welcome_channel"] %}
@@ -173,10 +173,11 @@
                             {% endfor %}
                         {% endif %}
                         </select>
+                        <h5>Welcome Message</h5>
                         {% if guild['welcome_text'] %}
                             <textarea class="welcome-text-message">{{guild['welcome_text']}}</textarea>
                         {% endif %}
-                        {% if guild['welcome_fields'] %}
+                        <h5>Welcome Embed</h5>
                         <div class="welcome-message">
                             <img src="https://images.discordapp.net/avatars/{{ session['user']['id']}}/{{ session['user']['avatar']}}.png?size=1024" class="welcome-image">
                             <div>
@@ -199,9 +200,12 @@
                                         </p>
                                     </div>
                                 </div>
-                                {% endfor %}
                                 <button class="button btn btn-skin welcome-add" type="button">Add Field</button>
                             </div>
+                            <div class="welcome-whisper">
+                                <h5>Welcome Whisper</h5>
+                                <input type="checkbox" name="whisper" {% if guild["whisper"] %}checked{% endif %}>Tick this box if you want to send the welcome message through a DM<br>
+                                
                         </div>
                         {% endif %}
                     </div>
