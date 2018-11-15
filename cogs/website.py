@@ -215,7 +215,10 @@ class Website(Quart):
 
 				query = "SELECT channel_id, whisper FROM welcome_config WHERE guild_id = $1"
 				welcome_config = await self.bot.pool.fetchrow(query, actual_guild.id)
-				guilds[guild_id]["welcome_whisper"] = self.bot.get_channel(welcome_config["channel_id"])
+				if not welcome_config:
+					guilds[guild_id]["welcome_channel"] = None
+					guilds[guild_id]["welcome_whisper"] = False
+				guilds[guild_id]["welcome_channel"] = self.bot.get_channel(welcome_config["channel_id"])
 				guilds[guild_id]["welcome_whisper"] = self.bot.get_channel(welcome_config["whisper"])
 
 
