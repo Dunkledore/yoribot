@@ -124,18 +124,23 @@ class Welcome:
 		await self.bot.pool.execute(query, ctx.guild.id)
 		await ctx.send(embed=self.bot.success(f"Welcome message will now no longer send when a member joins"))
 
+	async def do_welcome_whisper(self, guild_id):
+		alterquery = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
+		insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True) RETURNING whisper"
+		try:
+			whisper = await self.bot.pool.fetchval(insertquery, guild_id)
+		except asyncpg.UniqueViolationError:
+			whisper = await self.bot.fetchval(alterquery, guild_id)
+
+		return whisper
+
+
 	@commands.command(aliases=["welcome_whisper", "whisperwelcome", "whisper_welcome"])
 	@checks.is_admin()
 	@commands.guild_only()
 	async def welcomewhisper(self, ctx):
 		"""Toggle sending a direct message to the member on join"""
-		alterquery = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
-		insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True) RETURNING whisper"
-		try:
-			whisper = await self.bot.pool.fetchval(insertquery, ctx.guild.id)
-		except asyncpg.UniqueViolationError:
-			whisper = await self.bot.fetchval(alterquery, ctx.guild.id)
-
+		whisper = await self.do_welcome_whisper(ctx.guild.id)
 		await ctx.send(embed=self.bot.succes(f"Whisper set to {whisper}"))
 
 	async def on_member_join(self, member):

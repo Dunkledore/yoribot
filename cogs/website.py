@@ -290,7 +290,13 @@ class Website(Quart):
 					await flash("Welcome Message updated")
 
 				welcome_whisper = form.get("whisper")
-				print(welcome_whisper)
+				welcome_whisper = True if welcome_whisper == "on" else False
+				if welcome_whisper != guilds[int(guild_id)]["welcome_whisper"]:
+					cog = self.bot.get_cog("Welcome")
+					await cog.do_welcome_whisper(int(guild_id))
+					await flash("Welcome whisper updated")
+					guilds[int(guild_id)]["welcome_whisper"] = welcome_whisper
+
 			else:
 				await flash("You are not an admin on this server ")
 
