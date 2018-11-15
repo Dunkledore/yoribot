@@ -87,7 +87,7 @@
                         {% if guild["mods"] %}
                         <p>
                             {% for mod in guild["mods"] %}
-                            <img class="user-icon-small" src="https://cdn.discordapp.com/avatars/{{mod.id}}/{{mod.avatar}}">{{admin.display_name}}<br>
+                            <img class="user-icon-small" src="https://cdn.discordapp.com/avatars/{{mod.id}}/{{mod.avatar}}">{{mod.display_name}}<br>
                             {% endfor %}
                         </p>
                         {% endif %}
