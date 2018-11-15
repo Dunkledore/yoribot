@@ -300,7 +300,7 @@ class Website(Quart):
 			else:
 				await flash("You are not an admin on this server ")
 
-		return await render_template('guilds.html', guilds=guilds)
+		return await render_template('guilds.min.html', guilds=guilds)
 
 	async def callback(self):
 		if request.args.get('error'):
