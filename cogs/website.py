@@ -288,6 +288,9 @@ class Website(Quart):
 					fields = await self.bot.pool.fetch(query, int(guild_id))
 					guilds[int(guild_id)]["welcome_fields"] = fields
 					await flash("Welcome Message updated")
+
+				welcome_whisper = form.get("whisper")
+				print(welcome_whisper)
 			else:
 				await flash("You are not an admin on this server ")
 
