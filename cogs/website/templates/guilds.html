@@ -74,7 +74,7 @@
                         {% if guild["admins"] %}
                         <p>
                             {% for admin in guild["admins"] %}
-                            <img class="user-icon-small" src="{{admin.avatar_url}}">{{admin.display_name}}<br>
+                            <img class="user-icon-small" src="https://cdn.discordapp.com/avatars/{admin.id}/{admin.avatar}">{{admin.display_name}}<br>
                             {% endfor %}
                         </p>
                         {% endif %}
