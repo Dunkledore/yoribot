@@ -1,17 +1,19 @@
-from .utils import checks
-from discord.ext import commands
 import asyncio
-from discord import File, Game, Embed
-from prettytable import PrettyTable
-import time
 import io
-import traceback
 import textwrap
+import time
+import traceback
 from contextlib import redirect_stdout
 from subprocess import Popen, PIPE, STDOUT
 
+from discord import File, Game, Embed
+from discord.ext import commands
+from prettytable import PrettyTable
 
-class Developers():
+from .utils import checks
+
+
+class Developers:
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -29,12 +31,12 @@ class Developers():
 		embed = Embed(title="New Guild", color=0x53dda4)
 		embed.add_field(name='Name', value=guild.name)
 		embed.add_field(name='ID', value=guild.id)
-		embed.add_field(name='Owner', value=f'{guild.owner} (ID: {guild.owner.id})')
+		embed.add_field(name='Owner', value=guild.owner.mention)
 		embed.add_field(name="Guilds Shared With Owner", value="\n".join([botguild.name for botguild in self.bot.guilds if guild.owner in botguild.members]))
 		bots = sum(m.bot for m in guild.members)
 		members = guild.member_count
 		embed.add_field(name='Members', value=str(members))
-		embed.add_field(name='Bot', value=str(bots))
+		embed.add_field(name='Bots', value=str(bots))
 		bot_percentage = bots/(bots+members)
 		if (bot_percentage >= 0.5) and (bots > 15):
 			await self.bot.new_server_hook.send("<@&381072362143219712> High percentage of bots")
@@ -44,7 +46,26 @@ class Developers():
 		if guild.me:
 			embed.timestamp = guild.me.joined_at
 
+		message = await self.bot.new_server_hook.send(embed=embed)
+		await message.add_reaction('❌')
+
+		def check(reaction, user):
+			return (not user.bot) and (reaction.message.id == message.id) and (reaction.emoji == '❌')
+
+		try:
+			reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=86400)
+			await guild.leave()
+		except asyncio.TimeoutError:
+			pass
+
+	async def on_guild_remove(self, guild):
+		embed = Embed(colour=0xdd5f53, title='Left Guild')
+		embed.add_field(name="Name", value=guild.name)
+		members = guild.member_count
+		embed.add_field(name="Members", value=members)
+		embed.add_field(name="Owner", value=guild.owner.mention)
 		await self.bot.new_server_hook.send(embed=embed)
+
 
 	@commands.command(hidden=True)
 	@checks.is_developer()
