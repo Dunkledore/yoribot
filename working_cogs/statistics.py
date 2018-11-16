@@ -93,7 +93,7 @@ class Statistics:
 		embed.add_field(name='Guilds', value=len(self.bot.guilds))
 		embed.add_field(name='Commands Run', value=(await self.bot.pool.fetchval("SELECT count(*) FROM statistics")))
 		embed.add_field(name='Website', value="[http://yoribot.com](http://yoribot.com)")
-		embed.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
+		embed.set_footer(text='Made with discord.py', icon_url='https://cdn.discordapp.com/icons/336642139381301249/3aa641b21acded468308a37eef43d7b3')
 		await ctx.send(embed=embed)
 
 
