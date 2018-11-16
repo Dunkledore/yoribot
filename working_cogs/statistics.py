@@ -91,7 +91,7 @@ class Statistics:
 		embed.add_field(name='Process', value=f'{memory_usage:.2f} MiB\n{cpu_usage:.2f}% CPU')
 
 		embed.add_field(name='Guilds', value=len(self.bot.guilds))
-		embed.add_field(name='Commands Run', value=sum(self.bot.command_stats.values()))
+		embed.add_field(name='Commands Run', value=(await self.bot.pool.fetchval("SELECT count(*) FROM statistics")))
 		embed.add_field(name='Website', value="[http://yoribot.com](http://yoribot.com)")
 		embed.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
 		await ctx.send(embed=embed)
