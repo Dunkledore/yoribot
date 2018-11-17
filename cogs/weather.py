@@ -120,7 +120,7 @@ class Weather:
 			                      url=f"https://openweathermap.org/city/{city_id}")
 			embed.add_field(name="**Temperature**",
 			                value=f"{celsius:.1f}°C\n{fahrenheit:.1f}°F")
-			embed.add_field(name="**Wind**",
+			embed.add_field(name="**Wind Speed**",
 			                value=f"{wind_kmh:.1f} km/h\n{wind_mph:.1f} mph")
 			embed.add_field(name="**Pressure**",
 			                value=f"{pressure} hPa")
