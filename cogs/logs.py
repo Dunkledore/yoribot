@@ -532,7 +532,8 @@ class Logs:
 		embed.add_field(name="User ID", value=f'{message.author.id}')
 		embed.add_field(name="Channel", value=f'{message.channel.mention}')
 		embed.add_field(name="Channel ID", value=f'{message.channel.id}')
-		embed.add_field(name="Message Content", value=message.content if message.content else "*empty*", inline=False)
+		embed.add_field(name="Message Content", value=f"{message.content[:1024]}" if message.content else "*empty*",
+		                inline=False)
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
@@ -558,9 +559,9 @@ class Logs:
 		embed.add_field(name="Channel", value=f'{after.channel.mention}')
 		embed.add_field(name="Channel ID", value=f'{after.channel.id}')
 		if before.content:
-			embed.add_field(name="Original Message Content", value=before.content, inline=False)
+			embed.add_field(name="Original Message Content", value=f"{before.content[:1024]}", inline=False)
 		if after.content:
-			embed.add_field(name="New Message Content", value=after.content, inline=False)
+			embed.add_field(name="New Message Content", value=f"{after.content[:1024]}", inline=False)
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
@@ -576,7 +577,7 @@ class Logs:
 		if config["whitelist"]:
 			return message.channel.id in config["blacklist"]
 		else:
-			return not(message.channel.id in config["blacklist"])
+			return not (message.channel.id in config["blacklist"])
 
 	async def get_most_recent_used_invites_for_guild(self, guild):
 		try:
@@ -702,7 +703,8 @@ class Logs:
 		results = await self.bot.pool.fetch(query)
 		self.black_list_cache = {}
 		for guild in results:
-			self.black_list_cache[int(guild["guild_id"])] = {"blacklist": guild["blacklist"], "whitelist": guild["whitelist"]}
+			self.black_list_cache[int(guild["guild_id"])] = {"blacklist": guild["blacklist"],
+			                                                 "whitelist": guild["whitelist"]}
 
 
 def setup(bot):
