@@ -377,7 +377,7 @@ class Website(Quart):
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
 			return f"No logs for user {user_id}"
-		table = "<table>{}</table"
+		table = "<table>{}</table>"
 		headers = """<tr>
 						<th>message_id</th>
 						<th>content</th>
@@ -387,11 +387,12 @@ class Website(Quart):
 						<th>status</th>
 						<th>time</th>
 					"""
-		rows = "<tr>"
+		rows = ""
 		for record in logs:
-			for item in record.items():
+			rows += "<tr>"
+			for item in record.values():
 				rows += f"<td>{item}</td>"
-		rows += "</tr>"
+			rows += "</tr>"
 		return table.format(headers+rows)
 
 
