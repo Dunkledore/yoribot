@@ -124,7 +124,7 @@ class Website(Quart):
 
 	async def stats(self):
 		query = """
-				?SELECT to_char(time, 'Mon YYYY') as m 
+				SELECT to_char(time, 'Mon YYYY') as m 
                     , count(*)
                 FROM message_logs 
                 WHERE guild_id = $1
