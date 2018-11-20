@@ -32,23 +32,24 @@
 
 </head>
 {% include 'nav.html' %}
-
-<table class="yori-table">
-    <tr>
-        <th>message_id</th>
-        <th>content</th>
-        <th>author_id</th>
-        <th>channel_id</th>
-        <th>guild_id</th>
-        <th>status</th>
-        <th>time</th>
-    </tr>
-    {% for record in logs %}
-    <tr>
-        {% for value in record.values() %}
-        <td>{{value}}</td>
+<div style="padding: 70px 0 70px;">
+    <table class="yori-table">
+        <tr>
+            <th>message_id</th>
+            <th>content</th>
+            <th>author_id</th>
+            <th>channel_id</th>
+            <th>guild_id</th>
+            <th>status</th>
+            <th>time</th>
+        </tr>
+        {% for record in logs %}
+        <tr>
+            {% for value in record.values() %}
+            <td>{{value}}</td>
+            {% endfor %}
+        </tr>
         {% endfor %}
-    </tr>
-    {% endfor %}
-</table>
+    </table>
+</div>
 {% include 'footer.html' %}

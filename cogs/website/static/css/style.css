@@ -276,6 +276,8 @@ html {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
 }
 
 .yori-table td, #yori-table th {
