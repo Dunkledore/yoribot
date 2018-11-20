@@ -1,5 +1,5 @@
 $(function () {
-	var totalRevenue = 2781450,
+	var totalRevenue = {{messages_for_month}},
 			totalVisitors = 883000;
 	
 
@@ -177,7 +177,7 @@ $(function () {
 	};
 	
 	// CanvasJS spline area chart to show revenue from Jan 2015 - Dec 2015
-	var revenueSplineAreaChart = new CanvasJS.Chart("revenue-spline-area-chart", {
+	var messageSplineAreaChart = new CanvasJS.Chart("messages-spline-area-chart", {
 		animationEnabled: true,
 		backgroundColor: "transparent",
 		axisX: {

@@ -125,7 +125,7 @@ class Website(Quart):
 
 
 	async def stats(self):
-		return await render_template("stats.html")
+		return await render_template("stats.html", points = [[1,2],[2,4],[3,5],[4,8]])
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
