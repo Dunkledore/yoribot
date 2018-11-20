@@ -112,7 +112,7 @@ var messageSplineAreaChart = new CanvasJS.Chart("messages-spline-area-chart", {
 				color: "#393f63",
 				markerSize: 0,
 				type: "splineArea",
-				dataPoints: [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}},{% endfor %}]
+				dataPoints: [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
 
 			}
 		]
