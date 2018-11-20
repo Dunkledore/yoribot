@@ -24,6 +24,7 @@
     <link href="{{ url_for('static',filename='css/toastr.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static',filename='css/style.css')}}" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/colResizable-1.6.min.js')}}"></script>
 
 
 	<!-- template skin -->
@@ -53,3 +54,7 @@
     </table>
 </div>
 {% include 'footer.html' %}
+
+<script>
+  $("table").colResizable();
+</script>
