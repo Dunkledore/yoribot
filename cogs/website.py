@@ -11,12 +11,11 @@ import copy
 import asyncpg
 import htmlmin
 
-#TODO Minfiy web returns
+# TODO Minfiy web returns
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
 AUTHORIZATION_BASE_URL = API_BASE_URL+'/oauth2/authorize'
 TOKEN_URL = API_BASE_URL+'/oauth2/token'
-
 
 
 def require_login(function_):
@@ -26,9 +25,11 @@ def require_login(function_):
 			session["path"] = request.path
 			return redirect('/login')
 		return await function_(*args, **kwargs)
+
 	return wrapper
 
-def get_command_signature(cmd):  #taken from rdanny
+
+def get_command_signature(cmd):  # taken from rdanny
 	result = [cmd.qualified_name]
 	if cmd.usage:
 		result.append(cmd.usage)
@@ -73,7 +74,7 @@ class Website(Quart):
 		self.add_url_rule("/login", "login", self.login)
 		self.add_url_rule('/logs/<int:guild_id>/<int:user_id>', "user_logs", self.logs_for_user)
 		self.add_url_rule('/messages/<int:guild_id>/<int:user_id>', "message_logs", self.messages_for_user)
-		self.add_url_rule('/logout',"logout", self.logout)
+		self.add_url_rule('/logout', "logout", self.logout)
 		self.add_url_rule('/about', "about", self.about)
 		self.add_url_rule("/commands", "commands", self.commands)
 		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
@@ -83,8 +84,6 @@ class Website(Quart):
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
 		await webhook.send(str(error))
-
-
 
 	def make_session(self, token=None, state=None, scope=None):
 		return OAuth2Session(
@@ -123,9 +122,8 @@ class Website(Quart):
 		if await checks.has_level(proxy_ctx, "admin"):
 			return True
 
-
 	async def stats(self):
-		return await render_template("stats.html", points = [[1,2],[2,4],[3,5],[4,8]])
+		return await render_template("stats.html", points="[{x:1,y:2},{x:2,y:4},{x:3,y:5},{x:4,y:8}]")
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
@@ -174,14 +172,16 @@ class Website(Quart):
 				guilds[guild_id]["channels"] = actual_guild.text_channels
 				try:
 					guilds[guild_id]["prefixes"] = self.bot.prefixes[str(actual_guild.id)]
-				except KeyError: # No prefix set
+				except KeyError:  # No prefix set
 					guilds[guild_id]["prefixes"] = ["*"]
-				admins = [member for member in actual_guild.members if (member.guild_permissions.administrator and not member.bot)]
+				admins = [member for member in actual_guild.members if
+				          (member.guild_permissions.administrator and not member.bot)]
 				if not admins:
 					admins = None
 				mod_roles = [role for role in actual_guild.roles if role.name.lower() in ["mod", "moderator"]]
 				if mod_roles:
-					mods = [member for member in actual_guild.members if ((any(role in member.roles for role in mod_roles)) and (member not in admins))]
+					mods = [member for member in actual_guild.members if
+					        ((any(role in member.roles for role in mod_roles)) and (member not in admins))]
 					if not mods:
 						mods = None
 				else:
@@ -196,17 +196,19 @@ class Website(Quart):
 				                             "ORDER BY COUNT(*) DESC " \
 				                             "LIMIT 1"
 				most_messages_channel_query = "SELECT channel_id " \
-				                             "FROM message_logs " \
-				                             "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days')) " \
-				                             "GROUP BY channel_id " \
-				                             "ORDER BY COUNT(*) DESC " \
-				                             "LIMIT 1"
-				#most_messages_member_id = await self.bot.pool.fetchval(most_messages_member_query, guild_id)
-				#most_messages_channel_id = await self.bot.pool.fetchval(most_messages_channel_query, guild_id)
-				#most_messages_member = self.bot.get_user(most_messages_member_id)
-				#most_messages_channel = self.bot.get_channel(most_messages_channel_id)
-				guilds[guild_id]["most_member"] = "Me" #most_messages_member.display_name if most_messages_member else "Left"
-				guilds[guild_id]["most_channel"] = "Me" #most_messages_channel.name if most_messages_channel else "Deleted"
+				                              "FROM message_logs " \
+				                              "WHERE (guild_id = $1 and time > (CURRENT_DATE - INTERVAL '30 days')) " \
+				                              "GROUP BY channel_id " \
+				                              "ORDER BY COUNT(*) DESC " \
+				                              "LIMIT 1"
+				# most_messages_member_id = await self.bot.pool.fetchval(most_messages_member_query, guild_id)
+				# most_messages_channel_id = await self.bot.pool.fetchval(most_messages_channel_query, guild_id)
+				# most_messages_member = self.bot.get_user(most_messages_member_id)
+				# most_messages_channel = self.bot.get_channel(most_messages_channel_id)
+				guilds[guild_id][
+					"most_member"] = "Me"  # most_messages_member.display_name if most_messages_member else "Left"
+				guilds[guild_id][
+					"most_channel"] = "Me"  # most_messages_channel.name if most_messages_channel else "Deleted"
 
 				query = "SELECT message_log_channel_id FROM log_config WHERE guild_id = $1"
 				message_log_channel_id = await self.bot.pool.fetchval(query, actual_guild.id)
@@ -229,7 +231,6 @@ class Website(Quart):
 					guilds[guild_id]["welcome_channel"] = self.bot.get_channel(welcome_config["channel_id"])
 					guilds[guild_id]["welcome_whisper"] = welcome_config["whisper"]
 
-
 				query = "SELECT text_message FROM welcome_config WHERE guild_id = $1"
 				text_message = await self.bot.pool.fetchval(query, guild_id)
 				guilds[guild_id]["welcome_text"] = text_message
@@ -237,7 +238,6 @@ class Website(Quart):
 				query = "SELECT name, value FROM welcome_fields WHERE guild_id = $1"
 				fields = await self.bot.pool.fetch(query, guild_id)
 				guilds[guild_id]["welcome_fields"] = fields
-
 
 		if request.method == "POST":
 			form = await request.form
@@ -288,8 +288,6 @@ class Website(Quart):
 						await welcome_cog.do_setwelcomechannel(int(guild_id), selected_welcome_channel.id)
 						guilds[int(guild_id)]["welcome_channel"] = selected_welcome_channel
 						await flash("Welcome channel updated")
-
-
 
 				field_names = form.getlist("field-name")
 				field_values = form.getlist("field-value")
@@ -380,8 +378,6 @@ class Website(Quart):
 		query = "SELECT * FROM message_logs WHERE (guild_id = $1) and (author_id = $2)"
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
 		return await render_template("logs.html", logs=logs)
-
-
 
 	def run(self):
 		super().run(host='0.0.0.0', port=self.port)
