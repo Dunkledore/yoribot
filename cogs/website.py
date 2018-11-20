@@ -375,25 +375,7 @@ class Website(Quart):
 				return "This person is higher than you in the hierarchy"
 		query = "SELECT * FROM message_logs WHERE (guild_id = $1) and (author_id = $2)"
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
-		if not logs:
-			return f"No logs for user {user_id}"
-		table = "<table>{}</table>"
-		headers = """<tr>
-						<th>message_id</th>
-						<th>content</th>
-						<th>author_id</th>
-						<th>channel_id</th>
-						<th>guild_id</th>
-						<th>status</th>
-						<th>time</th>
-					"""
-		rows = ""
-		for record in logs:
-			rows += "<tr>"
-			for item in record.values():
-				rows += f"<td>{item}</td>"
-			rows += "</tr>"
-		return table.format(headers+rows)
+		return await render_template("logs.html", logs=logs)
 
 
 

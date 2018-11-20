@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+<table class="yori-table">
+    <tr>
+        <th>message_id</th>
+        <th>content</th>
+        <th>author_id</th>
+        <th>channel_id</th>
+        <th>guild_id</th>
+        <th>status</th>
+        <th>time</th>
+    </tr>
+    {% for record in logs %}
+        <tr>
+            {% for value in record.values() %}
+            value
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
