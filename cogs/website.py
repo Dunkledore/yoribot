@@ -134,12 +134,8 @@ class Website(Quart):
                 BY m LIMIT 5"""
 
 		messages_by_month = await self.bot.pool.fetch(query, 250309924096049164)
-		points = "["
-		for month in messages_by_month:
-			points += "{x:new Date('"+ month['m'] + "')" + ",y:" + str(month['count']) + "},"
-		points += "]"
 
-		return await render_template("stats.html", points=points)
+		return await render_template("stats.html", messages_by_month=messages_by_month)
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
