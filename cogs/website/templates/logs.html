@@ -11,11 +11,11 @@
         <th>time</th>
     </tr>
     {% for record in logs %}
-        <tr>
-            {% for value in record.values() %}
-            value
-            {% endfor %}
-        </tr>
+    <tr>
+        {% for value in record.values() %}
+        <td>{{value}}</td>
+        {% endfor %}
+    </tr>
     {% endfor %}
 </table>
 {% endblock %}
