@@ -371,7 +371,7 @@ class Website(Quart):
 			return "You are not in this guild"
 		target_member = guild.get_member(user_id)
 		if target_member:
-			if not utils.check_hierarchy(target_member, requesting_member):
+			if not utils.check_hierarchy(requesting_member, target_member):
 				return "This person is higher than you in the hierarchy"
 		query = "SELECT * FROM message_logs WHERE (guild_id = $1) and (author_id = $2)"
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
