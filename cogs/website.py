@@ -377,7 +377,24 @@ class Website(Quart):
 		logs = await self.bot.pool.fetch(query, guild_id, user_id)
 		if not logs:
 			return f"No logs for user {user_id}"
-		return "<br><br>".join(["<br>".join([f'{key} : {value}' for key, value in record.items()]) for record in logs])
+		table = "<table>{}</table"
+		headers = """<tr>
+						<th>message_id</th>
+						<th>content</th>
+						<th>author_id</th>
+						<th>channel_id</th>
+						<th>guild_id</th>
+						<th>status</th>
+						<th>time</th>
+					"""
+		rows = "<tr>"
+		for record in logs:
+			for item in record.items():
+				rows += f"<td>{item}</td>"
+		rows += "</tr>"
+		return table.format(headers+rows)
+
+
 
 	def run(self):
 		super().run(host='0.0.0.0', port=self.port)
