@@ -78,6 +78,7 @@ class Website(Quart):
 		self.add_url_rule("/commands", "commands", self.commands)
 		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
 		self.add_url_rule("/servers", "servers", self.guilds, methods=["GET", "POST"])
+		self.add_url_rule("/stats", "stats", self.stats)
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
@@ -122,6 +123,9 @@ class Website(Quart):
 		if await checks.has_level(proxy_ctx, "admin"):
 			return True
 
+
+	async def stats(self):
+		return await render_template("stats.html")
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
