@@ -123,7 +123,23 @@ class Website(Quart):
 			return True
 
 	async def stats(self):
-		return await render_template("stats.html", points="[{x:1,y:2},{x:2,y:4},{x:3,y:5},{x:4,y:8}]")
+		query = """
+				?sql SELECT to_char(time, 'Mon YYYY') as m 
+                    , count(*)
+                FROM message_logs 
+                WHERE guild_id = $1
+				GROUP
+                BY m
+				ORDER
+                BY m LIMIT 5"""
+
+		messages_by_month = await self.bot.pool.fetch(query, 250309924096049164)
+		points = "["
+		for month in messages_by_month:
+			points += "{x:new Date(\"month['m']\")" + ",y:" + month['count'] + "},"
+		points += "]"
+
+		return await render_template("stats.html", points=points)
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
