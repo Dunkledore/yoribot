@@ -168,9 +168,7 @@
 		]
 	});
 	messagesByChannelPieChart.render()
-</script>
-<script>
-
+	
 	var dataMonthlyMessagesByChannel = {
 		{% for channel, details in messages_by_channel.items() %}
 		"{{channel.name}}" : {
