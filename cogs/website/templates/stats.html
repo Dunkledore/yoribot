@@ -228,7 +228,7 @@
 
 		for (var i = 0; i < messagesByChannelPieChart.options.data[0].dataPoints.length; i++)
 			if (messagesByChannelPieChart.options.data[0].dataPoints[i].exploded === true)
-				messagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[messagesByChannelPieChart.options.data[0].dataPoints[i].name] );
+				monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[messagesByChannelPieChart.options.data[0].dataPoints[i].name] );
 
 		if (monthlyMessagesByChannelColumnChart.options.data.length === 0)
 			populateMonthlyMessagesByChannelyChart();
