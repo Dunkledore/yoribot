@@ -164,7 +164,7 @@ class Website(Quart):
                     BY m
 					ORDER
                     BY m"""
-			monthly_breakdown = await self.bot.fetch(query, channel.id)
+			monthly_breakdown = await self.bot.pool.fetch(query, channel.id)
 			messages_by_channel[channel]['monthy_breakdown'] = monthly_breakdown
 
 
