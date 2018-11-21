@@ -252,7 +252,7 @@
 					return e.entries[0].dataPoint.name + ": " + e.entries[0].dataPoint.y + " - " + Math.round(e.entries[0].dataPoint.y / {{total_messages}} * 100) + "%";
 				}
 			},
-			data: {
+			data: [{
 				cursor: "pointer",
 				explodeOnClick: false,
 				innerRadius: "75%",
@@ -266,8 +266,8 @@
 					{ y: {{staff_count}}, name: "Staff", color: "#393f63" },
 					{ y: {{member_count}}, name: "Members", color: "#f98461" }
 				]
-			}
-		})
+			}]
+		});
 		staffVsMembersPieChart.render()
 
 </script>
