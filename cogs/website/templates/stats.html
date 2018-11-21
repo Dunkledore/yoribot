@@ -169,7 +169,8 @@
 	messagesByChannelPieChart.render()
 </script>
 <script>
-	var dataPoints = {
+
+	var dataMonthlyMessagesByChannel = {
 		{% for channel, details in messages_by_channel.items() %}
 		"{{channel.name}}" : {
 			colour: "{{details['colour']}}",
@@ -208,9 +209,16 @@
 			fontStyle: "normal",
 			shared: true
 		},
-		data: dataPoints
+		data: []
 	});
+	populateMonthlyMessagesByChannelChart()
 	monthlyMessagesByChannelColumnChart.render()
+
+	function populateMonthlyMessagesByChannelChart() {
+	for (var prop in dataMonthlyMessagesByChannel)
+		if  (dataMonthlyMessagesByChannel.hasOwnProperty(prop))
+			monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[prop] );
+}
 
 
 
