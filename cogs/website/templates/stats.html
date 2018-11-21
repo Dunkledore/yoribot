@@ -160,19 +160,7 @@
 				markerSize: 0,
 				type: "splineArea",
 				yValueFormatString: "$###,###.##",
-				dataPoints: [
-					{ x: new Date("1 Jan 2015"), y: 173250 },
-					{ x: new Date("1 Feb 2015"), y: 195300 },
-					{ x: new Date("1 Mar 2015"), y: 214200 },
-					{ x: new Date("1 Apr 2015"), y: 207900 },
-					{ x: new Date("1 May 2015"), y: 226800 },
-					{ x: new Date("1 Jun 2015"), y: 220500 },
-					{ x: new Date("1 Jul 2015"), y: 239400 },
-					{ x: new Date("1 Aug 2015"), y: 258300 },
-					{ x: new Date("1 Sep 2015"), y: 252000 },
-					{ x: new Date("1 Oct 2015"), y: 264600 },
-					{ x: new Date("1 Nov 2015"), y: 258300 },
-					{ x: new Date("1 Dec 2015"), y: 270900 }
+				dataPoints: [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
 				]
 			}
 		]
