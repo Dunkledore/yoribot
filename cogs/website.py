@@ -166,6 +166,26 @@ class Website(Quart):
                     BY m"""
 			monthly_breakdown = await self.bot.pool.fetch(query, channel.id)
 			messages_by_channel[channel]['monthly_breakdown'] = monthly_breakdown
+		query = """
+				SELECT to_char(time, 'Mon YYYY') as m 
+                    , count(*)
+                FROM event_logs 
+                WHERE (guild_id = $1) and (action = $2)
+                GROUP
+                BY m
+                ORDER
+                BY m LIMIT 5"""
+		raw_leaves = await self.bot.pool.fetch(query, 250309924096049164, "left")
+		raw_joins = await self.bot.pool.fetch(query, 250309924096049164, "join")
+
+		net_joins = {}
+		for month in raw_leaves:
+			net_joins[month['m']] = month['count']
+		for month in raw_joins:
+			if month['m'] not in net_joins:
+				net_joins[month['m']] = 0
+			net_joins[month['m']] += month['count']
+
 
 		guild = self.bot.get_guild(250309924096049164)
 		admins = [member.id for member in guild.members if (member.guild_permissions.administrator and not member.bot)]
@@ -187,7 +207,8 @@ class Website(Quart):
 		                             total_messages=total_messages,
 		                             messages_by_channel=messages_by_channel,
 		                             staff_count = staff_count,
-		                             member_count = member_count
+		                             member_count = member_count,
+		                             net_joins = net_joins
 		                            )
 
 	async def index(self):
