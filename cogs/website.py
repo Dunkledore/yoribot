@@ -134,8 +134,28 @@ class Website(Quart):
                 BY m LIMIT 5"""
 
 		messages_by_month = await self.bot.pool.fetch(query, 250309924096049164)
+		query = "SELECT count(*) FROM messages_logs WHERE guild_id = $1"
+		total_messages = await self.bot.pool.fetchval(query, 250309924096049164)
+		query = """
+				SELECT channel_id, count(*)
+				FROM message_logs
+				WHERE guild_id = $1
+				GROUP
+				BY channel_id
+				ORDER
+				BY count DESC, channel_id
+				LIMIT 5
+				"""
+		channel_counts = await self.bot.pool.fetch(query, 250309924096049164)
+		messages_by_channel = {}
+		for channel in channel_counts:
+			channel = self.bot.get_channel(channel['channel_id'])
+			messages_by_channel[channel] = channel['count']
 
-		return await render_template("stats.html", messages_by_month=messages_by_month)
+		return await render_template("stats.html",
+		                             messages_by_month=messages_by_month,
+		                             total_messages=total_messages,
+		                             messages_by_channel=messages_by_channel)
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
