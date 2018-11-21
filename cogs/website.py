@@ -148,12 +148,12 @@ class Website(Quart):
 				"""
 		channel_counts = await self.bot.pool.fetch(query, 250309924096049164)
 		messages_by_channel = {}
-		for channel in channel_counts:
-			channel = self.bot.get_channel(channel['channel_id'])
+		for channel_db in channel_counts:
+			channel = self.bot.get_channel(channel_db['channel_id'])
 			if channel:
 				messages_by_channel[channel] = channel['count']
 			else:
-				ch = Object()
+				ch = Object(id=channel_db['channel_id'])
 				ch.name = "#Deleted"
 
 
