@@ -96,12 +96,11 @@
 		animationEnabled: true,
 		backgroundColor: "transparent",
 		axisX: {
-			interval: 2,
+			interval: 1,
 			intervalType: "month",
 			labelFontColor: "#717171",
 			labelFontSize: 16,
 			lineColor: "#a2a2a2",
-			minimum: new Date("1 Jan 2015"),
 			tickColor: "#a2a2a2",
 			valueFormatString: "MMM YYYY"
 		},
@@ -124,7 +123,6 @@
 				color: "#393f63",
 				markerSize: 0,
 				type: "splineArea",
-				yValueFormatString: "$###,###.##",
 				dataPoints: [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
 
 			}
