@@ -252,19 +252,21 @@
 					return e.entries[0].dataPoint.name + ": " + e.entries[0].dataPoint.y + " - " + Math.round(e.entries[0].dataPoint.y / {{total_messages}} * 100) + "%";
 				}
 			},
-			cursor: "pointer",
-			explodeOnClick: false,
-			innerRadius: "75%",
-			legendMarkerType: "square",
-			name: "Staff Vs Members",
-			radius: "100%",
-			showInLegend: true,
-			startAngle: 90,
-			type: "doughnut",
-			dataPoints: [
-				{ y: {{staff_count}}, name: "Staff", color: "#393f63" },
-				{ y: {{member_count}}, name: "Members", color: "#f98461" }
-			]
+			data: {
+				cursor: "pointer",
+				explodeOnClick: false,
+				innerRadius: "75%",
+				legendMarkerType: "square",
+				name: "Staff Vs Members",
+				radius: "100%",
+				showInLegend: true,
+				startAngle: 90,
+				type: "doughnut",
+				dataPoints: [
+					{ y: {{staff_count}}, name: "Staff", color: "#393f63" },
+					{ y: {{member_count}}, name: "Members", color: "#f98461" }
+				]
+			}
 		})
 		staffVsMembersPieChart.render()
 
