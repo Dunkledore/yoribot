@@ -92,6 +92,7 @@
 </body>
 <script>
 		// CanvasJS spline area chart to show revenue from Jan 2015 - Dec 2015
+	dataPoints = [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
 	var revenueSplineAreaChart = new CanvasJS.Chart("revenue-spline-area-chart", {
 		animationEnabled: true,
 		backgroundColor: "transparent",
@@ -101,6 +102,7 @@
 			labelFontColor: "#717171",
 			labelFontSize: 16,
 			lineColor: "#a2a2a2",
+			minimum: dataPoints[0],
 			tickColor: "#a2a2a2",
 			valueFormatString: "MMM YYYY"
 		},
@@ -110,7 +112,6 @@
 			labelFontColor: "#717171",
 			labelFontSize: 16,
 			lineColor: "#a2a2a2",
-			prefix: "$",
 			tickColor: "#a2a2a2"
 		},
 		toolTip: {
@@ -123,7 +124,7 @@
 				color: "#393f63",
 				markerSize: 0,
 				type: "splineArea",
-				dataPoints: [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
+				dataPoints: dataPoints
 
 			}
 		]
