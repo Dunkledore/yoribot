@@ -301,18 +301,6 @@
 				type: "spline",
 				dataPoints: [
 					{% for month, joins in net_joins.items() %}{ x: new Date("1 {{month}}"), y: {{joins}}},{% endfor %}
-					{ x: new Date("1 Jan 2015"), y: 55000 },
-					{ x: new Date("1 Feb 2015"), y: 62000 },
-					{ x: new Date("1 Mar 2015"), y: 68000 },
-					{ x: new Date("1 Apr 2015"), y: 66000 },
-					{ x: new Date("1 May 2015"), y: 72000 },
-					{ x: new Date("1 Jun 2015"), y: 70000 },
-					{ x: new Date("1 Jul 2015"), y: 76000 },
-					{ x: new Date("1 Aug 2015"), y: 82000 },
-					{ x: new Date("1 Sep 2015"), y: 80000 },
-					{ x: new Date("1 Oct 2015"), y: 84000 },
-					{ x: new Date("1 Nov 2015"), y: 82000 },
-					{ x: new Date("1 Dec 2015"), y: 86000 }
 				]
 			}
 		]
