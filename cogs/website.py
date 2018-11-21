@@ -134,7 +134,7 @@ class Website(Quart):
                 BY m LIMIT 5"""
 
 		messages_by_month = await self.bot.pool.fetch(query, 250309924096049164)
-		query = "SELECT count(*) FROM messages_logs WHERE guild_id = $1"
+		query = "SELECT count(*) FROM message_logs WHERE guild_id = $1"
 		total_messages = await self.bot.pool.fetchval(query, 250309924096049164)
 		query = """
 				SELECT channel_id, count(*)
