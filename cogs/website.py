@@ -194,7 +194,7 @@ class Website(Quart):
 			mods = [member.id for member in guild.members if
 			        ((any(role in member.roles for role in mod_roles)) and (member not in admins))]
 		else:
-			mods = None
+			mods = []
 		staff = admins + mods
 		query = "select count(*) from message_logs where author_id  = any($1::BIGINT[])"
 		staff_count = await self.bot.pool.fetchval(query, staff)
