@@ -157,6 +157,7 @@
 		},
 		data: [
 			{
+				click: monthlyMessagesByChannelDrilldownHandler,
 				cursor: "pointer",
 				legendMarkerType: "square",
 				showInLegend: true,
@@ -218,6 +219,19 @@
 	for (var prop in dataMonthlyMessagesByChannel)
 		if  (dataMonthlyMessagesByChannel.hasOwnProperty(prop))
 			monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[prop] );
+
+	function monthlyMessagesByChannelDrilldownHandler(e) {
+		monthlyMessagesByChannelColumnChart.options.data = [];
+
+		for (var i = 0; i < MessagesByChannelPieChart.options.data[0].dataPoints.length; i++)
+			if (MessagesByChannelPieChart.options.data[0].dataPoints[i].exploded === true)
+				monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[MessagesByChannelPieChart.options.data[0].dataPoints[i].name] );
+
+		if (monthlyMessagesByCategoryColumnChart.options.data.length === 0)
+			populateMonthlyMessagesByChannelChart();
+
+		monthlyMessagesByCategoryColumnChart.render();
+	}
 }
 
 
