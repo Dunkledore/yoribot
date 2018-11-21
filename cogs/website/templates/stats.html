@@ -7,20 +7,62 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<title>Web Analytics - Overview</title>
+
 	<!-- stylesheets -->
-	<link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-	<link href="static/css/bootstrap.min.css" rel="stylesheet">
-	<link href="static/css/stats.css" rel="stylesheet">
+	<link href="static/stats/fonts/font-roboto.css" rel="stylesheet">
+	<link href="static/stats/bootstrap/bootstrap4-alpha3.min.css" rel="stylesheet">
+	<link href="static/stats/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="static/stats/web-analytics/style.css" rel="stylesheet">
 
 	<!-- scripts -->
-	<script src="static/js/jquery-1.10.2.js"></script>
-	<script src="static/js/tether.min.js"></script>
-	<script src="static/js/bootstrap.min.js"></script>
-	<script src="static/js/canvasjs.min.js"></script>
+	<script src="static/stats/jquery/jquery-3.1.0.min.js"></script>
+	<script src="static/stats/tether/tether.min.js"></script>
+	<script src="static/stats/bootstrap/bootstrap4-alpha3.min.js"></script>
+	<script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<!--<script src="static/stats/web-analytics/overview.js"></script>-->
 
 </head>
 
 <body>
+	<!-- header -->
+	<nav class="navbar navbar-fixed-top" id="header">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<div id="sidebar-toggle-button">
+					<i class="fa fa-bars" aria-hidden="true"></i>
+				</div>
+				<div class="brand">
+					<a href="web-analytics-overview.html">
+						<span class="hidden-xs-down m-r-3">Web Analytics </span><span class="lead">Overview</span>
+					</a>
+				</div>
+
+			</div>
+		</div>
+	</nav>
+	<!-- /header -->
+
+	<!-- sidebar -->
+	<div class="sidebar-toggle" id="sidebar">
+		<ul class="nav nav-sidebar">
+			<li>
+				<a href="web-analytics-real-time.html">
+					<i class="fa fa-clock-o fa-lg fa-fw" aria-hidden="true"></i>
+					<span>Real Time</span>
+				</a>
+			</li>
+			<li role="separator" class="divider"></li>
+			<li>
+				<a href="web-analytics-overview.html" class="active">
+					<i class="fa fa-newspaper-o fa-lg fa-fw" aria-hidden="true"></i>
+					<span>Overview</span>
+				</a>
+			</li>
+			<li role="separator" class="divider"></li>
+		</ul>
+	</div>
+	<!-- /sidebar -->
+
 	<!-- page-content-wrapper -->
 	<div class="page-content-toggle" id="page-content-wrapper">
 		<div class="container-fluid">
@@ -30,7 +72,7 @@
 				<div class="col-md-12">
 					<div class="card card-block">
 						<h4 class="card-title m-b-2">Revenue - 2015 <span class="tag m-l-1" id="revenue-tag">$2,781,450</span></h4>
-						<div id="messages-spline-area-chart"></div>
+						<div id="revenue-spline-area-chart"></div>
 					</div>
 				</div>
 			</div>
@@ -84,15 +126,19 @@
 
 </body>
 <script>
-var messageSplineAreaChart = new CanvasJS.Chart("messages-spline-area-chart", {
+		// CanvasJS spline area chart to show revenue from Jan 2015 - Dec 2015
+	var revenueSplineAreaChart = new CanvasJS.Chart("revenue-spline-area-chart", {
 		animationEnabled: true,
 		backgroundColor: "transparent",
 		axisX: {
 			interval: 2,
+			intervalType: "month",
 			labelFontColor: "#717171",
 			labelFontSize: 16,
 			lineColor: "#a2a2a2",
+			minimum: new Date("1 Jan 2015"),
 			tickColor: "#a2a2a2",
+			valueFormatString: "MMM YYYY"
 		},
 		axisY: {
 			gridThickness: 0,
@@ -100,6 +146,7 @@ var messageSplineAreaChart = new CanvasJS.Chart("messages-spline-area-chart", {
 			labelFontColor: "#717171",
 			labelFontSize: 16,
 			lineColor: "#a2a2a2",
+			prefix: "$",
 			tickColor: "#a2a2a2"
 		},
 		toolTip: {
@@ -112,12 +159,26 @@ var messageSplineAreaChart = new CanvasJS.Chart("messages-spline-area-chart", {
 				color: "#393f63",
 				markerSize: 0,
 				type: "splineArea",
-				dataPoints: [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
-
+				yValueFormatString: "$###,###.##",
+				dataPoints: [
+					{ x: new Date("1 Jan 2015"), y: 173250 },
+					{ x: new Date("1 Feb 2015"), y: 195300 },
+					{ x: new Date("1 Mar 2015"), y: 214200 },
+					{ x: new Date("1 Apr 2015"), y: 207900 },
+					{ x: new Date("1 May 2015"), y: 226800 },
+					{ x: new Date("1 Jun 2015"), y: 220500 },
+					{ x: new Date("1 Jul 2015"), y: 239400 },
+					{ x: new Date("1 Aug 2015"), y: 258300 },
+					{ x: new Date("1 Sep 2015"), y: 252000 },
+					{ x: new Date("1 Oct 2015"), y: 264600 },
+					{ x: new Date("1 Nov 2015"), y: 258300 },
+					{ x: new Date("1 Dec 2015"), y: 270900 }
+				]
 			}
 		]
 	});
-messageSplineAreaChart.render();
+
+	revenueSplineAreaChart.render();
 
 </script>
 
