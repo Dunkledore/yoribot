@@ -155,6 +155,17 @@ class Website(Quart):
 				channel = Object(id=channel_db['channel_id'])
 				channel.name = "#deleted"
 			messages_by_channel[channel] = {"count": channel_db['count'], "colour": colours.pop()}
+			query = """
+					SELECT to_char(time, 'Mon YYYY') as m 
+                    , count(*)
+                    FROM message_logs 
+                    WHERE channel_id = $1
+					GROUP
+                    BY m
+					ORDER
+                    BY m"""
+			monthly_breakdown = await self.bot.fetch(query, channel.id)
+			messages_by_channel[channel]['monthy_breakdown'] = monthly_breakdown
 
 
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="">
 
 <head>
 	<meta charset="utf-8">
@@ -54,7 +54,7 @@
 								<div id="messages-by-channel-pie-chart"></div>
 							</div>
 							<div class="col-md-8 hidden-sm-down">
-								<div id="monthly-revenue-by-category-column-chart"></div>
+								<div id="monthly-messages-by-channel-column-chart"></div>
 							</div>
 						</div>
 					</div>
@@ -167,6 +167,52 @@
 		]
 	});
 	messagesByChannelPieChart.render()
+</script>
+<script>
+	var dataPoints = {
+		{% for channel, details in messages_by_channel.items() %}
+		"#{{channel.name}} : {
+			colour: {{details['colour']}},
+			markerSize: 0,
+			name: "#{{channel.name}}",
+			type: "column",
+			dataPoints: [
+				{% for month in details['monthly_breakdown'] %}{x: new Date("1 {{month['m']}}"), y: details['count']},{% endfor %}
+				]
+			},
+			{% endfor %}
+
+	var monthlyMessagesByChannelColumnChart = new CanvasJS.Chart("monthly-messages-by-channel-column-chart", {
+		animationEnabled: true,
+		backgroundColor: "transparent",
+		axisX: {
+			interval: 1,
+			intervalType: "month",
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		axisY: {
+			gridThickness: 0,
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		toolTip: {
+			backgroundColor: "#737580",
+			borderThickness: 0,
+			cornerRadius: 0,
+			fontColor: "#ffffff",
+			fontSize: 16,
+			fontStyle: "normal",
+			shared: true
+		},
+		data: dataPoints
+	});
+	monthlyMessagesByChannelColumnChart.render()
+
+
+
 </script>
 
 </html>
