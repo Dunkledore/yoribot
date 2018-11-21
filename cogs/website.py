@@ -148,19 +148,21 @@ class Website(Quart):
 				"""
 		channel_counts = await self.bot.pool.fetch(query, 250309924096049164)
 		messages_by_channel = {}
+		colours = ["#393f63", "#e5d8b0", "#ffb367", "#f98461", "#d9695f"]
 		for channel_db in channel_counts:
 			channel = self.bot.get_channel(channel_db['channel_id'])
-			if channel:
-				messages_by_channel[channel] = channel_db['count']
-			else:
-				ch = Object(id=channel_db['channel_id'])
-				ch.name = "#Deleted"
+			if not channel:
+				channel = Object(id=channel_db['channel_id'])
+				channel.name = "#Deleted"
+			messages_by_channel[channel] = {"count": channel_db['count'], "colour": colours.pop()}
+
 
 
 		return await render_template("stats.html",
 		                             messages_by_month=messages_by_month,
 		                             total_messages=total_messages,
-		                             messages_by_channel=messages_by_channel)
+		                             messages_by_channel=messages_by_channel,
+		                            )
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
