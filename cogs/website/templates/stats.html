@@ -134,7 +134,7 @@
 </script>
 <script>
 
-		dataPoints = [{% for channel, details in messages_by_channel.items() %}{ y:{{details['count']}},name:'{{channel.name}}',color:{{details['colour']}}}{% endfor %}]
+		dataPoints = [{% for channel, details in messages_by_channel.items() %}{ y:{{details['count']}},name:'{{channel.name}}',color:'{{details['colour']}}'}{% endfor %}]
 		var messagesByChannelPieChart = new CanvasJS.Chart("messages-by-channel-pie-chart", {
 		animationEnabled: true,
 		backgroundColor: "transparent",
