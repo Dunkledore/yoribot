@@ -504,7 +504,7 @@ class Logs:
 		await log_channel.send(embed=embed)
 
 	async def on_message(self, message):
-		if message.author.id == self.bot.user.id:
+		if message.author.bot:
 			return
 		if not await self.blacklist_check(message):
 			return
@@ -513,7 +513,7 @@ class Logs:
 		                            message.guild.id, "current")
 
 	async def on_message_delete(self, message):
-		if message.author is self.bot.user:
+		if message.author.bot:
 			return
 		if not await self.blacklist_check(message):
 			return
