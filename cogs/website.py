@@ -150,7 +150,12 @@ class Website(Quart):
 		messages_by_channel = {}
 		for channel in channel_counts:
 			channel = self.bot.get_channel(channel['channel_id'])
-			messages_by_channel[channel] = channel['count']
+			if channel:
+				messages_by_channel[channel] = channel['count']
+			else:
+				ch = Object()
+				ch.name = "#Deleted"
+
 
 		return await render_template("stats.html",
 		                             messages_by_month=messages_by_month,
