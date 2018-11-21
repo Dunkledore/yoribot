@@ -2,6 +2,25 @@
 <html lang="en" xmlns="">
 
 <head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Web Analytics - Overview</title>
+
+	<!-- stylesheets -->
+	<link href="/static/stats/fonts/font-roboto.css" rel="stylesheet">
+	<link href="/static/stats/bootstrap/bootstrap4-alpha3.min.css" rel="stylesheet">
+	<link href="/static/stats/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/static/stats/web-analytics/style.css" rel="stylesheet">
+
+	<!-- scripts -->
+	<script src="/static/stats/jquery/jquery-3.1.0.min.js"></script>
+	<script src="/static/stats/tether/tether.min.js"></script>
+	<script src="/static/stats/bootstrap/bootstrap4-alpha3.min.js"></script>
+	<script src="/static/stats/canvas/jquery.canvasjs.min.js"></script>
+	<!--<script src="/static/stats/web-analytics/overview.js"></script>-->
 	<script>
 		// CanvasJS spline area chart to show revenue from Jan 2015 - Dec 2015
 	dataPoints = [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
@@ -148,24 +167,6 @@
 
 
 </script>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<title>Web Analytics - Overview</title>
-
-	<!-- stylesheets -->
-	<link href="/static/stats/fonts/font-roboto.css" rel="stylesheet">
-	<link href="/static/stats/bootstrap/bootstrap4-alpha3.min.css" rel="stylesheet">
-	<link href="/static/stats/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-	<link href="/static/stats/web-analytics/style.css" rel="stylesheet">
-
-	<!-- scripts -->
-	<script src="/static/stats/jquery/jquery-3.1.0.min.js"></script>
-	<script src="/static/stats/tether/tether.min.js"></script>
-	<script src="/static/stats/bootstrap/bootstrap4-alpha3.min.js"></script>
-	<script src="/static/stats/canvas/jquery.canvasjs.min.js"></script>
-	<!--<script src="/static/stats/web-analytics/overview.js"></script>-->
 
 </head>
 
