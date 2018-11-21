@@ -128,9 +128,9 @@ body {
 /*------ /real time page charts ------*/
 
 /*------ overview page charts ------*/
-#revenue-spline-area-chart,
-#annual-revenue-by-category-pie-chart,
-#monthly-revenue-by-category-column-chart {
+#messages-spline-chart,
+#messages-by-channel-pie-chart,
+#monthly-messages-by-channel-column-chart {
 	height: 300px;
 }
 

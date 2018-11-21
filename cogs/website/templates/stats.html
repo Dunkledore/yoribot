@@ -37,7 +37,7 @@
 				<div class="col-md-12">
 					<div class="card card-block">
 						<h4 class="card-title m-b-2">Total Messages <span class="tag m-l-1" id="revenue-tag">{{ total_messages }}</span></h4>
-						<div id="revenue-spline-area-chart"></div>
+						<div id="messages-spline-chart"></div>
 					</div>
 				</div>
 			</div>
@@ -93,7 +93,7 @@
 <script>
 		// CanvasJS spline area chart to show revenue from Jan 2015 - Dec 2015
 	dataPoints = [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
-	var revenueSplineAreaChart = new CanvasJS.Chart("revenue-spline-area-chart", {
+	var messagesSplineChart = new CanvasJS.Chart("messages-spline-chart", {
 		animationEnabled: true,
 		backgroundColor: "transparent",
 		axisX: {
@@ -129,7 +129,7 @@
 		]
 	});
 
-	revenueSplineAreaChart.render();
+	messagesSplineChart.render();
 
 </script>
 <script>
@@ -219,6 +219,7 @@
 		if  (dataMonthlyMessagesByChannel.hasOwnProperty(prop))
 			monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[prop] );
 }
+
 
 
 
