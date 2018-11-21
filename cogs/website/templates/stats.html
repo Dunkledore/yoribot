@@ -171,8 +171,8 @@
 <script>
 	var dataPoints = {
 		{% for channel, details in messages_by_channel.items() %}
-		"#{{channel.name}} : {
-			colour: {{details['colour']}},
+		"{{channel.name}}" : {
+			colour: "{{details['colour']}}",
 			markerSize: 0,
 			name: "#{{channel.name}}",
 			type: "column",
