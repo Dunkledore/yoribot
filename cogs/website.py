@@ -151,7 +151,7 @@ class Website(Quart):
 		for channel_db in channel_counts:
 			channel = self.bot.get_channel(channel_db['channel_id'])
 			if channel:
-				messages_by_channel[channel] = channel['count']
+				messages_by_channel[channel] = channel_db['count']
 			else:
 				ch = Object(id=channel_db['channel_id'])
 				ch.name = "#Deleted"
