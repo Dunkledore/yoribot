@@ -79,7 +79,7 @@ class Website(Quart):
 		self.add_url_rule("/commands", "commands", self.commands)
 		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
 		self.add_url_rule("/servers", "servers", self.guilds, methods=["GET", "POST"])
-		self.add_url_rule("/stats", "stats", self.stats)
+		self.add_url_rule("/stats/<int:guild_id>", "stats", self.stats)
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
@@ -122,7 +122,7 @@ class Website(Quart):
 		if await checks.has_level(proxy_ctx, "admin"):
 			return True
 
-	async def stats(self):
+	async def stats(self, guild_id):
 		query = """
 				SELECT to_char(time, 'Mon YYYY') as m 
                     , count(*)
@@ -133,9 +133,9 @@ class Website(Quart):
 				ORDER
                 BY m LIMIT 5"""
 
-		messages_by_month = await self.bot.pool.fetch(query, 250309924096049164)
+		messages_by_month = await self.bot.pool.fetch(query, guild_id)
 		query = "SELECT count(*) FROM message_logs WHERE guild_id = $1"
-		total_messages = await self.bot.pool.fetchval(query, 250309924096049164)
+		total_messages = await self.bot.pool.fetchval(query, guild_id)
 		query = """
 				SELECT channel_id, count(*)
 				FROM message_logs
@@ -146,7 +146,7 @@ class Website(Quart):
 				BY count DESC, channel_id
 				LIMIT 5
 				"""
-		channel_counts = await self.bot.pool.fetch(query, 250309924096049164)
+		channel_counts = await self.bot.pool.fetch(query, guild_id)
 		messages_by_channel = {}
 		colours = ["#393f63", "#e5d8b0", "#ffb367", "#f98461", "#d9695f"]
 		for channel_db in channel_counts:
@@ -175,8 +175,8 @@ class Website(Quart):
                 BY m
                 ORDER
                 BY m LIMIT 5"""
-		raw_leaves = await self.bot.pool.fetch(query, 250309924096049164, "left")
-		raw_joins = await self.bot.pool.fetch(query, 250309924096049164, "join")
+		raw_leaves = await self.bot.pool.fetch(query, guild_id, "left")
+		raw_joins = await self.bot.pool.fetch(query, guild_id, "join")
 
 		net_joins = {}
 		for month in raw_leaves:
@@ -187,7 +187,7 @@ class Website(Quart):
 			net_joins[month['m']] += month['count']
 
 
-		guild = self.bot.get_guild(250309924096049164)
+		guild = self.bot.get_guild(guild_id)
 		admins = [member.id for member in guild.members if (member.guild_permissions.administrator and not member.bot)]
 		mod_roles = [role for role in guild.roles if role.name.lower() in ["mod", "moderator"]]
 		if mod_roles:
@@ -208,7 +208,8 @@ class Website(Quart):
 		                             messages_by_channel=messages_by_channel,
 		                             staff_count = staff_count,
 		                             member_count = member_count,
-		                             net_joins = net_joins
+		                             net_joins = net_joins,
+		                             guild_name = guild.name
 		                            )
 
 	async def index(self):
