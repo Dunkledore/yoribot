@@ -153,7 +153,7 @@ class Website(Quart):
 			channel = self.bot.get_channel(channel_db['channel_id'])
 			if not channel:
 				channel = Object(id=channel_db['channel_id'])
-				channel.name = "#Deleted"
+				channel.name = "#deleted"
 			messages_by_channel[channel] = {"count": channel_db['count'], "colour": colours.pop()}
 
 
