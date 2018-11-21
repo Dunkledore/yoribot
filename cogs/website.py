@@ -180,7 +180,7 @@ class Website(Quart):
 
 		net_joins = {}
 		for month in raw_leaves:
-			net_joins[month['m']] = month['count']
+			net_joins[month['m']] = -month['count']
 		for month in raw_joins:
 			if month['m'] not in net_joins:
 				net_joins[month['m']] = 0

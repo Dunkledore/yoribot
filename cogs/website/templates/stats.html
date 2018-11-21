@@ -78,7 +78,7 @@
 				<div class="col-xl-6">
 					<div class="card card-block">
 						<h4 class="card-title m-b-2">Users</h4>
-						<div id="users-spline-chart"></div>
+						<div id="net-joins-spline-chart"></div>
 						{{net_joins}}
 					</div>
 				</div>
@@ -271,6 +271,54 @@
 		});
 		staffVsMembersPieChart.render()
 
+</script>
+<script>
+		var netJoinsSplineChart = new CanvasJS.Chart("net-joins-spline-chart", {
+		animationEnabled: true,
+		backgroundColor: "transparent",
+		axisX: {
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		axisY: {
+			gridThickness: 0,
+			includeZero: false,
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		toolTip: {
+			borderThickness: 1,
+			cornerRadius: 0,
+			fontStyle: "normal"
+		},
+		data: [
+			{
+				color: 	"#393F63",
+				lineThickness: 3,
+				markerSize: 0,
+				type: "spline",
+				dataPoints: [
+					{% for month, joins in net_joins.items() %}{ x: new Date("1 {{month}}"), y: {{joins}}},{% endfor %}
+					{ x: new Date("1 Jan 2015"), y: 55000 },
+					{ x: new Date("1 Feb 2015"), y: 62000 },
+					{ x: new Date("1 Mar 2015"), y: 68000 },
+					{ x: new Date("1 Apr 2015"), y: 66000 },
+					{ x: new Date("1 May 2015"), y: 72000 },
+					{ x: new Date("1 Jun 2015"), y: 70000 },
+					{ x: new Date("1 Jul 2015"), y: 76000 },
+					{ x: new Date("1 Aug 2015"), y: 82000 },
+					{ x: new Date("1 Sep 2015"), y: 80000 },
+					{ x: new Date("1 Oct 2015"), y: 84000 },
+					{ x: new Date("1 Nov 2015"), y: 82000 },
+					{ x: new Date("1 Dec 2015"), y: 86000 }
+				]
+			}
+		]
+	});
+
+	netJoinsSplineChart.render();
 </script>
 
 </body>
