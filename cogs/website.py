@@ -196,8 +196,8 @@ class Website(Quart):
 		else:
 			mods = []
 		staff = admins + mods
-		query = "select count(*) from message_logs where author_id  = any($1::BIGINT[])"
-		staff_count = await self.bot.pool.fetchval(query, staff)
+		query = "select count(*) from message_logs where author_id  = any($1::BIGINT[]) and (guild_id = $2)"
+		staff_count = await self.bot.pool.fetchval(query, staff, guild_id)
 		member_count = total_messages - staff_count
 
 
