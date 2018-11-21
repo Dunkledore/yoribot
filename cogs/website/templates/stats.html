@@ -178,7 +178,7 @@
 			name: "#{{channel.name}}",
 			type: "column",
 			dataPoints: [
-				{% for month in details['monthly_breakdown'] %}{x: new Date("1 {{month['m']}}"), y: {{details['count']}}},{% endfor %}
+				{% for month in details['monthly_breakdown'] %}{x: new Date("1 {{month['m']}}"), y: {{details['count']}}} color:"{{details['colour']}}",{% endfor %}
 				]
 			},
 			{% endfor %}
