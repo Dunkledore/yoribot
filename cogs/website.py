@@ -167,12 +167,27 @@ class Website(Quart):
 			monthly_breakdown = await self.bot.pool.fetch(query, channel.id)
 			messages_by_channel[channel]['monthly_breakdown'] = monthly_breakdown
 
+		guild = self.bot.get_guild(250309924096049164)
+		admins = [member.id for member in guild.members if (member.guild_permissions.administrator and not member.bot)]
+		mod_roles = [role for role in guild.roles if role.name.lower() in ["mod", "moderator"]]
+		if mod_roles:
+			mods = [member.id for member in guild.members if
+			        ((any(role in member.roles for role in mod_roles)) and (member not in admins))]
+		else:
+			mods = None
+		staff = admins + mods
+		query = "select count(*) from message_logs where author_id  = any($1::BIGINT[])"
+		staff_count = await self.bot.pool.fetch(query, staff)
+		member_count = total_messages - staff_count
+
 
 
 		return await render_template("stats.html",
 		                             messages_by_month=messages_by_month,
 		                             total_messages=total_messages,
 		                             messages_by_channel=messages_by_channel,
+		                             staff_count = staff_count,
+		                             member_count = member_count
 		                            )
 
 	async def index(self):

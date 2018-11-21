@@ -49,8 +49,7 @@
 			<div class="row m-b-1">
 				<div class="col-md-12">
 					<div class="card card-block">
-						<h4 class="card-title m-b-2">Revenue By Category</h4>
-						<span class="tag custom-tag hidden-sm-down">Try clicking on any segment</span>
+						<h4 class="card-title m-b-2">Messages By Channel</h4>
 						<div class="row">
 							<div class="col-md-4">
 								<div id="messages-by-channel-pie-chart"></div>
@@ -69,11 +68,11 @@
 				<div class="col-xl-6">
 					<div class="card card-block">
 						<h4 class="card-title m-b-2">
-							<span id="visitors-chart-heading">New vs Returning Visitors </span>
+							<span id="visitors-chart-heading">Staff vs Members </span>
 							<button class="btn pull-right invisible" type="button" id="visitors-chart-back-button"><i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back</button>
 						</h4>
 						<span class="tag custom-tag" id="visitors-chart-tag">Try clicking on any segment</span>
-						<div id="visitors-chart"></div>
+						<div id="staff-vs-members-pie-chart"></div>
 					</div>
 				</div>
 				<div class="col-xl-6">
@@ -234,9 +233,40 @@
 
 		monthlyMessagesByChannelColumnChart.render();
 	}
-
-
-
+</script>
+<script>
+		var staffVsMembersPieChart = new CanvasJS.Chart("staff-vs-members-pie-chart", {
+			animationEnabled: true,
+			backgroundColor: "transparent",
+			legend: {
+				fontFamily: "calibri",
+				fontSize: 14,
+				itemTextFormatter: function (e) {
+					return e.dataPoint.name + ": " + Math.round(e.dataPoint.y / {{total_messages}} * 100) + "%";
+				}
+			},
+			toolTip: {
+				cornerRadius: 0,
+				fontStyle: "normal",
+				contentFormatter: function (e) {
+					return e.entries[0].dataPoint.name + ": " + e.entries[0].dataPoint.y + " - " + Math.round(e.entries[0].dataPoint.y / {{total_messages}} * 100) + "%";
+				}
+			},
+			cursor: "pointer",
+			explodeOnClick: false,
+			innerRadius: "75%",
+			legendMarkerType: "square",
+			name: "Staff Vs Members",
+			radius: "100%",
+			showInLegend: true,
+			startAngle: 90,
+			type: "doughnut",
+			dataPoints: [
+				{ y: {{staff_count}}, name: "Staff", color: "#393f63" },
+				{ y: {{member_count}}, name: "Members", color: "#f98461" }
+			]
+		}
+		staffVsMembersPieChart.render()
 
 </script>
 
