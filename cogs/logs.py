@@ -39,7 +39,7 @@ class Logs:
 		await ctx.send(embed=self.bot.notice("Starting population. This will take some time..."))
 		added = 0
 		for channel in channels:
-			async for message in channel.history(limit=10000):
+			async for message in channel.history(limit=100000):
 				query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status, time) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 
 				try:
