@@ -145,7 +145,7 @@ class Website(Quart):
 				GROUP
 				BY channel_id
 				ORDER
-				BY count DESC, channel_id
+				BY count DESC, channel_id LIMIT 5
 				"""
 		channel_counts = await self.bot.pool.fetch(query, guild_id)
 		messages_by_channel = {}
