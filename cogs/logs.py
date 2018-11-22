@@ -37,10 +37,11 @@ class Logs:
 		if not channels:
 			await ctx.send(embed=self.bot.erorr("No channels mentioned"))
 
+		added = 0
 		for channel in channels:
 			async for message in channel.history(limit=10000):
 				query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status, time) VALUES ($1, $2, $3, $4, $5, $6, $7)"
-				added = 0
+
 				try:
 					await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id,
 				                            message.guild.id, "edited" if message.created_at else "current" , message.created_at)

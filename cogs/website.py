@@ -124,16 +124,19 @@ class Website(Quart):
 
 	async def stats(self, guild_id):
 		query = """
-				SELECT to_char(time, 'Mon YYYY') as m 
+				SELECT to_char(time, 'Mon YYYY') as m, EXTRACT(MONTH FROM time) as num
                     , count(*)
                 FROM message_logs 
                 WHERE guild_id = $1
 				GROUP
-                BY m
+                BY m, num
 				ORDER
-                BY m LIMIT 5"""
+                BY m, num LIMIT 5"""
 
 		messages_by_month = await self.bot.pool.fetch(query, guild_id)
+		messages_by_month = [{"m": month['m'], "count": month['count'], "num": month['num']} for month in messages_by_month]
+		messages_by_month = sorted(messages_by_month, key=lambda dict: dict["num"])
+
 		query = "SELECT count(*) FROM message_logs WHERE guild_id = $1"
 		total_messages = await self.bot.pool.fetchval(query, guild_id)
 		query = """
