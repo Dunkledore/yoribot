@@ -131,7 +131,7 @@ class Website(Quart):
 				GROUP
                 BY year, mon, m
 				ORDER
-                BY year DESC, mon DESC, m  LIMIT 5"""
+                BY year DESC, mon DESC, m"""
 
 		messages_by_month = await self.bot.pool.fetch(query, guild_id)
 
