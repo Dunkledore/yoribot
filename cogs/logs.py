@@ -48,7 +48,7 @@ class Logs:
 				except asyncpg.UniqueViolationError:
 					pass #already in db
 
-				await ctx.send(embed=self.bot.success(f"Added {added} messages to logs"))
+		await ctx.send(embed=self.bot.success(f"Added {added} messages to logs"))
 
 
 
