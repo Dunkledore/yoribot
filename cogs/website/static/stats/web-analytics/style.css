@@ -42,90 +42,23 @@ body {
   text-decoration: none;
 }
 
-#sidebar {
-  background-color: #eceef1;
-  bottom: 0;
-  display: block;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 0;
-  position: fixed;
-  top: 64px;
-  width: 264px;
-  z-index: 1000;
-}
-
-#sidebar > ul {
-  padding-bottom: 24px;
-}
-
-#sidebar > ul > li {
-  margin: 0;
-}
-
-#sidebar > ul > li > a {
-  color: #20252b;
-  display: block;
-  padding: 12px 24px;
-  text-decoration: none;
-}
-
-#sidebar > ul > li > a > span {
-  font-size: 17px;
-  font-weight: 500;
-	margin-left: 17px;
-}
-
-#sidebar > ul > li > a:hover,
-#sidebar > ul > li > a.active {
-	border-right: 4px solid #34495e;
-}
-
-
-#sidebar > ul > .divider {
-  background-color: #ccc;
-  height: 1px;
-  margin: 0;
-  overflow: hidden;
-}
-
 #page-content-wrapper > .container-fluid {
   padding-top: 0.75rem;
 }
 
 /*------ sidebar toggle ------*/
-.sidebar-toggle {
-  display: none !important;
-}
+
 
 .page-content-toggle {
   margin-left: inherit !important;
 }
 
 @media (min-width: 1600px) {
-  #sidebar {
-    display: none;
-  }
-  .sidebar-toggle {
-    display: block !important;
-  }
   .page-content-toggle {
     margin-left: 264px !important;
   }
 }
 /*------ /sidebar toggle ------*/
-
-/*------ real time page charts ------*/
-#users-device-doughnut-chart,
-#users-medium-pie-chart,
-#users-category-pie-chart,
-#page-views-per-second-column-chart,
-#page-views-per-minute-column-chart,
-#users-state-bar-chart {
-  height: 300px;
-}
-/*------ /real time page charts ------*/
 
 /*------ overview page charts ------*/
 #messages-spline-chart,
@@ -135,7 +68,7 @@ body {
 }
 
 #staff-vs-members-pie-chart,
-#users-spline-chart {
+#net-joins-spline-chart {
 	height: 320px;
 }
 /*------ /overview page charts ------*/
@@ -152,21 +85,10 @@ body {
 	font-weight: 300;
 }
 
-#revenue-tag, .custom-tag {
+#messages-tag {
 	background-color: #d9695f;
 	border-radius: 0;
 	font-weight: 400;
 	vertical-align: top;
 }
 
-.custom-tag {
-	font-size: 100%;
-}
-
-#visitors-chart-back-button {
-	padding: 0.3rem 0.6rem;
-}
-
-#visitors-chart-tag {
-	position: absolute;
-}

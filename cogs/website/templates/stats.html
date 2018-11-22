@@ -26,7 +26,7 @@
 </head>
 
 <body>
-
+	{% include 'nav.html' %}
 
 
 
@@ -38,7 +38,7 @@
 			<div class="row m-b-1">
 				<div class="col-md-12">
 					<div class="card card-block">
-						<h4 class="card-title m-b-2">Total Messages <span class="tag m-l-1" id="revenue-tag">{{ total_messages }}</span></h4>
+						<h4 class="card-title m-b-2">Total Messages <span class="tag m-l-1" id="messages-tag">{{ total_messages }}</span></h4>
 						<div id="messages-spline-chart"></div>
 					</div>
 				</div>
