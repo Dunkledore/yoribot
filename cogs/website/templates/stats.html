@@ -91,6 +91,8 @@
 
 	</div>
 	<!-- /page-content-wrapper -->
+	<br>
+	<br>
 {% include 'footer.html' %}
 	<script>
 	dataPoints = [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]

@@ -25,6 +25,37 @@ class Logs:
 
 	# Commands
 
+	@commands.command()
+	@checks.is_admin()
+	@commands.guild_only()
+	async def populate_logs(self, ctx, channels):
+		if channels == "all":
+			channels = ctx.guild.text_channels
+		else:
+			channels = ctx.message.channel_mentions
+
+		if not channels:
+			await ctx.send(embed=self.bot.erorr("No channels mentioned"))
+
+		for channel in channels:
+			async for message in channel.history(limit=10000):
+				query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status, time) VALUES ($1, $2, $3, $4, $5, $6, $7)"
+				added = 0
+				try:
+					await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id,
+				                            message.guild.id, "edited" if message.created_at else "current" , message.created_at)
+					added += 1
+				except asyncpg.UniqueViolationError:
+					pass #already in db
+
+				await ctx.send(embed=self.bot.success(f"Added {added} messages to logs"))
+
+
+
+
+
+
+
 	async def start_message_logs(self, guild_id, channel_id):
 
 		insertquery = "INSERT INTO log_config (guild_id, message_log_channel_id) VALUES ($1, $2)"
