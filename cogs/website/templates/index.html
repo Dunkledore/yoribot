@@ -1,0 +1,103 @@
+{% set active_page = 'index'%}
+{% extends "layout.html" %}
+{% block content %}
+	
+	<!-- Section: intro -->
+	<section id="intro" class="intro hash">
+		<div class="intro-content">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-md-6 col-lg-6">
+						<div class="wow fadeInDown" data-wow-offset="0" data-wow-delay="0.1s">
+							<img src="{{ url_for('static', filename='img/cookie_showcase.png')}}" class="img-responsive" alt=""/>
+						</div>
+					</div>
+					<div class="col-sm-6 col-md-6 col-lg-6 slogan">
+						<div class="wow fadeInUp" data-wow-duration="2s" data-wow-delay="0.2s">
+							<h1>Yori Bot</h1>
+							<p>
+							Yori-Bot is a highly customisable discord bot with a focus on admin and moderations commands. It boasts a powerful logging module with logs available the the YoriBot website and 2 intuitive ways for role management.
+							</p>
+							<p>
+							Yori has a very active development team and, within reasonable limits, we will help you with all aspects of the bot.
+							</p>
+						</div>
+						<div class="buttons">
+							<a href="https://discordapp.com/oauth2/authorize?client_id=378073671014809612&scope=bot&permissions=268823638" class="btn btn-success btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Add Yori<br /> <small>To your server</small></a>
+							<a href="https://discord.gg/nsHVZH9" class="btn btn-info btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Join<br /> <small>The support server</small></a>
+							<a href="/me" class="btn btn-primary btn-lg wow fadeInLeft" data-wow-duration="3s" data-wow-delay="0.2s">Login<br/><small>To your profile</small></a>
+						</div>
+					</div>					
+				</div>		
+			</div>
+		</div>		
+	</section>
+	<section class="counters">
+		<div class="container">
+			<div class="row text-center">
+				<div class="col-md-3 col-xs-6">
+					<h2>Guilds</h2>
+					<h2><span class="glyphicon glyphicon-home"></span></h2>
+					<h2 class="timer count-title count-number" data-to="{{guilds}}" data-speed="2000"></h2>
+				</div>
+				<div class="col-md-3 col-xs-6">
+					<h2>Commands</h2>
+					<h2><span class="glyphicon glyphicon-pencil"></span></h2>
+					<h2 class="timer count-title count-number" data-to="{{commands}}" data-speed="2000"></h2>
+				</div>
+				<div class="col-md-3 col-xs-6">
+					<h2>Users</h2>
+					<h2><span class="glyphicon glyphicon-user"></span></h2>
+					<h2 class="timer count-title count-number" data-to="{{members}}" data-speed="2000"></h2>
+				</div>
+				<div class="col-md-3 col-xs-6">
+					<h2>Channels</h2>
+					<h2><span class="glyphicon glyphicon-align-justify"></span></h2>
+					<h2 class="timer count-title count-number" data-to="{{channels}}" data-speed="2000"></h2>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section id="content1" class="home-section hash">
+		<div class="container">
+			<div class="row text-center heading">
+				<h3>Awesome features</h3>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="wow fadeInLeft" data-wow-delay="0.2s">
+						<img src="{{ url_for('static', filename='img/welcome_showcase.png')}}" alt="" class="img-responsive rounded-corners" />
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="wow fadeInRight" data-wow-delay="0.3s">
+						<div class="features">							
+							<i class="fa fa-check fa-2x circled bg-skin float-left"></i>
+							<h5>Clear command usage</h5>
+							<p>
+							All of our commands are conveniently organised into a help menu which can be looked through using reactions
+							</p>
+						</div>
+						<div class="features">							
+							<i class="fa fa-check fa-2x circled bg-skin float-left"></i>
+							<h5>Customisable</h5>
+							<p>
+							Fully customisable suit of commands including welcome messages, logging and role management
+							</p>
+						</div>
+						<div class="features">							
+							<i class="fa fa-check fa-2x circled bg-skin float-left"></i>
+							<h5>Regular Updates</h5>
+							<p>
+							Development on Yori began in September of 2017 and we released the first version in January 2018. Since then we've aimed for at least monthly updates bringing new features, feature updates and bug fixes. As of the start of November 2018 Yori underwent a full rewrite stripping away all of the old clunky commands. All of the commands in Yori have undergone extensive testing to give users the best experience.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+{% endblock %}
+

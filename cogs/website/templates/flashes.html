@@ -1,0 +1,5 @@
+<script>
+{% for message in get_flashed_messages() %}
+    toastr.info("{{message}}")
+{% endfor %}
+</script>

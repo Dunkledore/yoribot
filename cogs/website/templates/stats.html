@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+	<title>Statistics - {{guild_name}}</title>
+
+	<!-- stylesheets -->
+	<link href="/static/stats/fonts/font-roboto.css" rel="stylesheet">
+	<link href="{{ url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">
+	<link href="/static/stats/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/static/stats/web-analytics/style.css" rel="stylesheet">
+	<link href="{{ url_for('static',filename='css/style.css')}}" rel="stylesheet">
+	<link id="t-colors" href="{{ url_for('static',filename='color/default.css')}}" rel="stylesheet">
+
+	<!-- scripts -->
+	<script src="/static/stats/jquery/jquery-3.1.0.min.js"></script>
+	<script src="/static/stats/tether/tether.min.js"></script>
+	<script src="/static/stats/bootstrap/bootstrap4-alpha3.min.js"></script>
+	<script src="/static/stats/canvas/jquery.canvasjs.min.js"></script>
+
+
+</head>
+
+<body>
+	{% include 'nav.html' %}
+
+
+
+	<!-- page-content-wrapper -->
+	<div class="page-content-toggle" id="page-content-wrapper">
+		<div class="container-fluid">
+			<h4 class="card-title m-b-2">Stats for {{guild_name}}</h4>
+			<!-- 1st row -->
+			<div class="row m-b-1">
+				<div class="col-md-12">
+					<div class="card card-block">
+						<h4 class="card-title m-b-2">Total Messages <span class="tag m-l-1" id="messages-tag">{{ total_messages }}</span></h4>
+						<div id="messages-spline-chart"></div>
+					</div>
+				</div>
+			</div>
+			<!-- /1st row -->
+
+			<!-- 2nd row -->
+			<div class="row m-b-1">
+				<div class="col-md-12">
+					<div class="card card-block">
+						<h4 class="card-title m-b-2">Messages By Channel</h4>
+						<div class="row">
+							<div class="col-md-4">
+								<div id="messages-by-channel-pie-chart"></div>
+							</div>
+							<div class="col-md-8 hidden-sm-down">
+								<div id="monthly-messages-by-channel-column-chart"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /2nd row -->
+
+			<!-- 3rd row -->
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card card-block">
+						<h4 class="card-title m-b-2">
+<<<<<<< Updated upstream
+							<span id="visitors-chart-heading">Staff vs Members </span>
+=======
+							<span id="staff-vs-members-chart-heading">Staff vs Members </span>
+>>>>>>> Stashed changes
+							<button class="btn pull-right invisible" type="button" id="visitors-chart-back-button"><i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back</button>
+						</h4>
+						<div id="staff-vs-members-pie-chart"></div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card card-block">
+						<h4 class="card-title m-b-2">Net Joins per Month</h4>
+						<div id="net-joins-spline-chart"></div>
+					</div>
+				</div>
+			</div>
+			<!-- /3rd row -->
+
+		</div>
+		<!-- /.container-fluid -->
+
+	</div>
+	<!-- /page-content-wrapper -->
+	<br>
+	<br>
+{% include 'footer.html' %}
+	<script>
+	dataPoints = [ {% for month in messages_by_month %} {x: new Date('1 {{month['m']}}'), y: {{month['count']}}},{% endfor %}]
+	var messagesSplineChart = new CanvasJS.Chart("messages-spline-chart", {
+		animationEnabled: true,
+		backgroundColor: "transparent",
+		axisX: {
+			interval: 1,
+			intervalType: "month",
+			labelFontColor: "#717171",
+			labelFontSize: 16,
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2",
+			valueFormatString: "MMM YYYY"
+		},
+		axisY: {
+			gridThickness: 0,
+			includeZero: false,
+			labelFontColor: "#717171",
+			labelFontSize: 16,
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		toolTip: {
+			borderThickness: 0,
+			cornerRadius: 0,
+			fontStyle: "normal"
+		},
+		data: [
+			{
+				color: "#393f63",
+				type: "spline",
+				dataPoints: dataPoints
+
+			}
+		]
+	});
+
+	messagesSplineChart.render();
+
+</script>
+<script>
+
+
+
+	dataPoints = [{% for channel, details in messages_by_channel.items() %}{ y:{{details['count']}},name:'{{channel.name}}',color:'{{details['colour']}}'},{% endfor %}]
+	var messagesByChannelPieChart = new CanvasJS.Chart("messages-by-channel-pie-chart", {
+		animationEnabled: true,
+		backgroundColor: "transparent",
+		legend: {
+			fontFamily: "calibri",
+			fontSize: 14,
+			horizontalAlign: "left",
+			verticalAlign: "center",
+			itemTextFormatter: function (e) {
+				return e.dataPoint.name + ": " + Math.round(e.dataPoint.y / {{ total_messages }} * 100) + "%";
+			}
+		},
+		toolTip: {
+			backgroundColor: "#ffffff",
+			cornerRadius: 0,
+			fontStyle: "normal",
+			contentFormatter: function (e) {
+				return e.entries[0].dataPoint.name + ": " + e.entries[0].dataPoint.y + " - " + Math.round(e.entries[0].dataPoint.y / {{ total_messages }} * 100) + "%";
+			}
+		},
+		data: [
+			{
+				click: monthlyMessagesByChannelDrilldownHandler,
+				cursor: "pointer",
+				legendMarkerType: "square",
+				showInLegend: true,
+				startAngle: 90,
+				type: "pie",
+				dataPoints: dataPoints
+			}
+		]
+	});
+
+
+	var dataMonthlyMessagesByChannel = {
+		{% for channel, details in messages_by_channel.items() %}
+		"{{channel.name}}" : {
+			colour: "{{details['colour']}}",
+			markerSize: 0,
+			name: "{{channel.name}}",
+			type: "column",
+			dataPoints: [
+				{% for month in details['monthly_breakdown'] %}{x: new Date("1 {{month['m']}}"), y: {{month['count']}}, color:"{{details['colour']}}"},{% endfor %}
+				]
+			},
+			{% endfor %}
+			};
+
+	var monthlyMessagesByChannelColumnChart = new CanvasJS.Chart("monthly-messages-by-channel-column-chart", {
+		animationEnabled: true,
+		backgroundColor: "transparent",
+		axisX: {
+			interval: 1,
+			intervalType: "month",
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		axisY: {
+			gridThickness: 0,
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		toolTip: {
+			backgroundColor: "#737580",
+			borderThickness: 0,
+			cornerRadius: 0,
+			fontColor: "#ffffff",
+			fontSize: 16,
+			fontStyle: "normal",
+			shared: true
+		},
+		data: []
+	});
+	populateMonthlyMessagesByChannelChart()
+	monthlyMessagesByChannelColumnChart.render()
+
+
+	function populateMonthlyMessagesByChannelChart() {
+	for (var prop in dataMonthlyMessagesByChannel)
+		if  (dataMonthlyMessagesByChannel.hasOwnProperty(prop))
+			monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[prop] )};
+
+	messagesByChannelPieChart.render()
+
+	function monthlyMessagesByChannelDrilldownHandler(e) {
+		monthlyMessagesByChannelColumnChart.options.data = [];
+
+		for (var i = 0; i < messagesByChannelPieChart.options.data[0].dataPoints.length; i++)
+			if (messagesByChannelPieChart.options.data[0].dataPoints[i].exploded === true)
+				monthlyMessagesByChannelColumnChart.options.data.push( dataMonthlyMessagesByChannel[messagesByChannelPieChart.options.data[0].dataPoints[i].name] );
+
+		if (monthlyMessagesByChannelColumnChart.options.data.length === 0)
+			populateMonthlyMessagesByChannelChart();
+
+		monthlyMessagesByChannelColumnChart.render();
+	}
+</script>
+<script>
+		var staffVsMembersPieChart = new CanvasJS.Chart("staff-vs-members-pie-chart", {
+			animationEnabled: true,
+			backgroundColor: "transparent",
+			legend: {
+				fontFamily: "calibri",
+				fontSize: 14,
+				itemTextFormatter: function (e) {
+					return e.dataPoint.name + ": " + Math.round(e.dataPoint.y / {{total_messages}} * 100) + "%";
+				}
+			},
+			toolTip: {
+				cornerRadius: 0,
+				fontStyle: "normal",
+				contentFormatter: function (e) {
+					return e.entries[0].dataPoint.name + ": " + e.entries[0].dataPoint.y + " - " + Math.round(e.entries[0].dataPoint.y / {{total_messages}} * 100) + "%";
+				}
+			},
+			data: [{
+				cursor: "pointer",
+				explodeOnClick: false,
+				innerRadius: "75%",
+				legendMarkerType: "square",
+				name: "Staff Vs Members",
+				radius: "100%",
+				showInLegend: true,
+				startAngle: 90,
+				type: "doughnut",
+				dataPoints: [
+					{ y: {{staff_count}}, name: "Staff", color: "#393f63" },
+					{ y: {{member_count}}, name: "Members", color: "#f98461" }
+				]
+			}]
+		});
+		staffVsMembersPieChart.render()
+
+</script>
+<script>
+		var netJoinsSplineChart = new CanvasJS.Chart("net-joins-spline-chart", {
+		animationEnabled: true,
+		backgroundColor: "transparent",
+		axisX: {
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2",
+			interval: 1,
+			intervalType: "month"
+		},
+		axisY: {
+			gridThickness: 0,
+			includeZero: false,
+			labelFontColor: "#717171",
+			lineColor: "#a2a2a2",
+			tickColor: "#a2a2a2"
+		},
+		toolTip: {
+			borderThickness: 1,
+			cornerRadius: 0,
+			fontStyle: "normal"
+		},
+		data: [
+			{
+				color: 	"#393F63",
+				lineThickness: 3,
+				markerSize: 0,
+				type: "spline",
+				dataPoints: [
+					{% for month, joins in net_joins.items() %}{ x: new Date("1 {{month}}"), y: {{joins}}},{% endfor %}
+				]
+			}
+		]
+	});
+
+	netJoinsSplineChart.render();
+</script>
+
+</body>
+
+
+</html>

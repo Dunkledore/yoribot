@@ -1,0 +1,32 @@
+{% set active_page = 'commands'%}
+{% extends "layout.html" %}
+{% block content %}
+    <section id="content1" class="home-section">
+	
+		<div class="container">
+			<div class="row text-center heading">
+				<h3>Commands list</h3>
+			</div>
+			
+			
+			<div class="row">
+					<div class="wow fadeInRight" data-wow-delay="0.3s">
+							<table class="commands">
+								<tr>
+									<th>Commands</th>
+									<th>Description</th>
+								</tr>
+								{% for command in commands %}
+									<tr>
+										<td>{{command['signature']}}</td>
+										<td>{{command['description']}}</td>
+									</tr>
+								{% endfor %}
+							</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+	</section>
+{% endblock %}
