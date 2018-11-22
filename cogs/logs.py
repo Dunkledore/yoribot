@@ -606,6 +606,8 @@ class Logs:
 		if message.guild.id not in self.black_list_cache:
 			return True
 		config = self.black_list_cache[message.guild.id]
+		if not config["blacklist"]:
+			return True
 		if config["whitelist"]:
 			return message.channel.id in config["blacklist"]
 		else:
