@@ -36,7 +36,7 @@ class Logs:
 
 		if not channels:
 			await ctx.send(embed=self.bot.erorr("No channels mentioned"))
-
+		await ctx.send(embed=self.bot.notice("Starting population. This will take some time..."))
 		added = 0
 		for channel in channels:
 			async for message in channel.history(limit=10000):
