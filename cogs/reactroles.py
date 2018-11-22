@@ -108,8 +108,8 @@ class ReactRoles:
 	async def add_react_role(self, ctx, message_id: int, role: Role):
 		"""Add a ReactRole. Provide the message ID of the message to be reacted to and the role of the one you want to grant"""
 
-		emoji_from_bot = False
-		while not emoji_from_bot:
+		emoji_to_insert = False
+		while not emoji_to_insert:
 			reaction_request_message = await ctx.send(
 				embed=self.bot.notice(f'React to this message with the desired emoji for {role.mention}'))
 
