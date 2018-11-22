@@ -146,7 +146,6 @@ class Website(Quart):
 				BY channel_id
 				ORDER
 				BY count DESC, channel_id
-				LIMIT 5
 				"""
 		channel_counts = await self.bot.pool.fetch(query, guild_id)
 		messages_by_channel = {}
@@ -158,14 +157,14 @@ class Website(Quart):
 				channel.name = "deleted"
 			messages_by_channel[channel] = {"count": channel_db['count'], "colour": colours.pop()}
 			query = """
-					SELECT to_char(time, 'Mon YYYY') as m 
+					SELECT to_char(time, 'Mon YYYY') as m, EXTRACT(MONTH FROM time) as mon, EXTRACT(YEAR FROM time) as year 
                     , count(*)
                     FROM message_logs 
                     WHERE channel_id = $1
 					GROUP
-                    BY m
+                    BY year, mon, m
 					ORDER
-                    BY m"""
+                    BY year DESC, mon DESC, m"""
 			monthly_breakdown = await self.bot.pool.fetch(query, channel.id)
 			messages_by_channel[channel]['monthly_breakdown'] = monthly_breakdown
 		query = """
