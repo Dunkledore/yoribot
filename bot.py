@@ -185,7 +185,7 @@ class YoriBot(commands.AutoShardedBot):
 			pass
 		else:
 			self.add_check(check, call_once=True)
-
+		print(type(cog))
 		file = inspect.getfile(cog)
 		dir = os.path.dirname(file)
 		category = os.path.basename(dir)
