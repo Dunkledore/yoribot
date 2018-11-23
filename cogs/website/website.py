@@ -8,7 +8,6 @@ from ..utils import checks, utils
 from ..utils import web_commands
 import copy
 
-
 # TODO Minfiy web returns
 
 API_BASE_URL = os.environ.get('API_BASE_URL', 'https://discordapp.com/api')
@@ -133,7 +132,6 @@ class Website(Quart):
 
 		messages_by_month = await self.bot.pool.fetch(query, guild_id)
 
-
 		query = "SELECT count(*) FROM message_logs WHERE guild_id = $1"
 		total_messages = await self.bot.pool.fetchval(query, guild_id)
 		query = """
@@ -147,7 +145,7 @@ class Website(Quart):
 				"""
 		channel_counts = await self.bot.pool.fetch(query, guild_id)
 		messages_by_channel = {}
-		colours = ["#F4CC70","#DE7A22","#20948B","#6AB187","#FF420E","#89DA59"]
+		colours = ["#31A2Ac", "#FF8D3F", "#e1315B", "#B8D20B", "#ca46bf"]
 		for channel_db in channel_counts:
 			channel = self.bot.get_channel(channel_db['channel_id'])
 			if not channel:
@@ -185,7 +183,6 @@ class Website(Quart):
 				net_joins[month['m']] = 0
 			net_joins[month['m']] += month['count']
 
-
 		guild = self.bot.get_guild(guild_id)
 		admins = [member.id for member in guild.members if (member.guild_permissions.administrator and not member.bot)]
 		mod_roles = [role for role in guild.roles if role.name.lower() in ["mod", "moderator"]]
@@ -194,22 +191,20 @@ class Website(Quart):
 			        ((any(role in member.roles for role in mod_roles)) and (member not in admins))]
 		else:
 			mods = []
-		staff = admins + mods
+		staff = admins+mods
 		query = "select count(*) from message_logs where author_id  = any($1::BIGINT[]) and (guild_id = $2)"
 		staff_count = await self.bot.pool.fetchval(query, staff, guild_id)
-		member_count = total_messages - staff_count
-
-
+		member_count = total_messages-staff_count
 
 		return await render_template("stats.html",
 		                             messages_by_month=messages_by_month,
 		                             total_messages=total_messages,
 		                             messages_by_channel=messages_by_channel,
-		                             staff_count = staff_count,
-		                             member_count = member_count,
-		                             net_joins = net_joins,
-		                             guild_name = guild.name
-		                            )
+		                             staff_count=staff_count,
+		                             member_count=member_count,
+		                             net_joins=net_joins,
+		                             guild_name=guild.name
+		                             )
 
 	async def index(self):
 		guilds = len(self.bot.guilds)
