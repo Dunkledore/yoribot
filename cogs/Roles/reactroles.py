@@ -230,7 +230,7 @@ class ReactRoles:
 		message_id = chosen_delete["message_id"]
 		role_id = chosen_delete["role_id"]
 
-		query = "DELETE FROM react_roles WHERE id IN (SELECT id FROM reactroles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
+		query = "DELETE FROM react_roles WHERE id IN (SELECT id FROM react_roles WHERE message_id = $1 and role_id = $2 LIMIT 1)"
 		await self.bot.pool.execute(query, message_id, role_id)
 		await ctx.send(embed=self.bot.success("ReactRole Removed"))
 
