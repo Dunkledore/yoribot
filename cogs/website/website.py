@@ -147,7 +147,7 @@ class Website(Quart):
 				"""
 		channel_counts = await self.bot.pool.fetch(query, guild_id)
 		messages_by_channel = {}
-		colours = ["#393f63", "#e5d8b0", "#ffb367", "#f98461", "#d9695f"]
+		colours = ["#F4CC70","#DE7A22","#20948B","#6AB187","#FF420E","#89DA59"]
 		for channel_db in channel_counts:
 			channel = self.bot.get_channel(channel_db['channel_id'])
 			if not channel:
