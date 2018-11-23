@@ -185,8 +185,7 @@ class YoriBot(commands.AutoShardedBot):
 			pass
 		else:
 			self.add_check(check, call_once=True)
-		print(type(cog))
-		category = cog.split(".")[1]
+		category = str(cog).split(".")[1]
 		if not (category == "Hidden"):
 			if category in self.categories:
 				self.categories[category].append(type(cog).__name__)
@@ -238,7 +237,7 @@ class YoriBot(commands.AutoShardedBot):
 		else:
 			self.remove_check(check)
 
-		category = cog.split(".")[1]
+		category = str(cog).split(".")[1]
 		if not (category == "Hidden"):
 			self.categories[category].remove(type(cog).__name__)
 			if not self.categories[category]:
