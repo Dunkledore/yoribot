@@ -76,7 +76,7 @@ class YoriBot(commands.AutoShardedBot):
 
 	async def __ainit__(self):
 
-		self.pool = await asyncpg.create_pool(db_uri)
+		#self.pool = await asyncpg.create_pool(db_uri)
 
 		print("started")
 
@@ -186,9 +186,7 @@ class YoriBot(commands.AutoShardedBot):
 		else:
 			self.add_check(check, call_once=True)
 		print(type(cog))
-		file = inspect.getfile(cog)
-		dir = os.path.dirname(file)
-		category = os.path.basename(dir)
+		category = cog.split(".")[1]
 		if not (category == "Hidden"):
 			if category in self.categories:
 				self.categories[category].append(type(cog).__name__)
@@ -240,9 +238,7 @@ class YoriBot(commands.AutoShardedBot):
 		else:
 			self.remove_check(check)
 
-		file = inspect.getfile(cog)
-		dir = os.path.dirname(file)
-		category = os.path.basename(dir)
+		category = cog.split(".")[1]
 		if not (category == "Hidden"):
 			self.categories[category].remove(type(cog).__name__)
 			if not self.categories[category]:
