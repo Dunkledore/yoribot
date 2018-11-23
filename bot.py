@@ -14,20 +14,21 @@ from discord import Embed, Forbidden
 from discord.ext import commands
 
 from cogs.utils import utils, dataIO
-from cogs.website import Website
+from cogs.website.website import Website
 from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port, client_id, redirect
 
-initial_cogs = ["automod",
-                "clear",
-                "developers",
-                "logs",
-                "moderation",
-                "prefix",
-                "reactroles",
-                "specialroles",
-                "utilities",
-                "weather",
-                "welcome"
+initial_cogs = ["Admin and Moderation.automod",
+                "Admin and Moderation.clear",
+                "Hidden.developers",
+                "Admin and Moderation.logs",
+                "Admin and Moderation.moderation",
+                "Admin and Moderation.prefix",
+                "Roles.reactroles",
+                "Roles.specialroles",
+                "Misc.utilities",
+                "Tools.weather",
+                "Admin and Moderation.welcome",
+                "Games.hangman",
                 ]
 
 
@@ -185,14 +186,15 @@ class YoriBot(commands.AutoShardedBot):
 		else:
 			self.add_check(check, call_once=True)
 
-		try:
-			category = getattr(cog, "category")
+		file = inspect.getfile(cog)
+		dir = os.path.dirname(file)
+		category = os.path.basename(dir)
+		if not (category == "Hidden"):
 			if category in self.categories:
 				self.categories[category].append(type(cog).__name__)
 			else:
 				self.categories[category] = [type(cog).__name__]
-		except AttributeError:
-			pass
+
 
 		members = inspect.getmembers(cog)
 		for name, member in members:
@@ -238,13 +240,14 @@ class YoriBot(commands.AutoShardedBot):
 		else:
 			self.remove_check(check)
 
-		try:
-			category = getattr(cog, "category")
+		file = inspect.getfile(cog)
+		dir = os.path.dirname(file)
+		category = os.path.basename(dir)
+		if not (category == "Hidden"):
 			self.categories[category].remove(type(cog).__name__)
 			if not self.categories[category]:
 				self.categories.pop(category)
-		except AttributeError:
-			pass
+
 
 		unloader_name = '_{0.__class__.__name__}__unload'.format(cog)
 		try:

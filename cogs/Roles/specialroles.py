@@ -2,7 +2,7 @@ from discord import Role, Embed
 from discord.ext import commands
 from discord.ext.commands.errors import BadArgument
 import asyncio
-from .utils.checks import is_admin
+from ..utils.checks import is_admin
 from prettytable import PrettyTable
 
 

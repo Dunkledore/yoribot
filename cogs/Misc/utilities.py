@@ -1,5 +1,5 @@
 from discord.ext import commands
-from .utils.paginator import HelpPaginator, Pages
+from ..utils.paginator import HelpPaginator, Pages
 from discord import Permissions, utils
 
 

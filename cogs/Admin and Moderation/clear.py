@@ -1,5 +1,5 @@
 from discord.ext import commands
-from .utils import checks
+from ..utils import checks
 from discord import Object
 from datetime import datetime, timedelta
 

@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from .utils import checks
+from ..utils import checks
 
 
 class Embed:
@@ -9,7 +9,7 @@ class Embed:
 
 	def __init__(self, bot: commands.Bot):
 		self.bot = bot
-		self.category = "tools"
+		self.category = "Tools"
 
 	@commands.command()
 	@commands.guild_only()

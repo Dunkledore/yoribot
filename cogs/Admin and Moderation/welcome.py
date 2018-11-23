@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 import asyncio
 
-from .utils import checks
+from ..utils import checks
 
 
 class Welcome:

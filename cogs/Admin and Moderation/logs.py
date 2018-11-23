@@ -1,5 +1,5 @@
 from discord.ext import commands
-from .utils import checks, utils as yoriutils
+from ..utils import checks, utils as yoriutils
 from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction, Member, Object
 import asyncpg
 import datetime

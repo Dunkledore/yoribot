@@ -1,5 +1,5 @@
 from discord.ext import commands
-from .utils import checks
+from ..utils import checks
 import aiohttp
 from discord import Embed
 
@@ -10,7 +10,7 @@ class Weather:
 
 	def __init__(self, bot):
 		self.bot = bot
-		self.category = "tools"
+		self.category = "Tools"
 		self.key = None
 		self.bot.loop.create_task(self.update_key())
 		self.countries = {'AF': 'Afghanistan', 'AL': 'Albania', 'DZ': 'Algeria', 'AS': 'American Samoa',

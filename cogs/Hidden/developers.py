@@ -10,7 +10,7 @@ from discord import File, Game, Embed
 from discord.ext import commands
 from prettytable import PrettyTable
 
-from .utils import checks
+from ..utils import checks
 
 
 class Developers:

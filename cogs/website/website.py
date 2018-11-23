@@ -4,12 +4,10 @@ from functools import wraps
 from discord import Object
 from quart import Quart, session, redirect, request, render_template, flask_patch, flash
 from requests_oauthlib import OAuth2Session
-from .utils import checks, utils
-from .utils import web_commands
-from .utils import forms
+from ..utils import checks, utils
+from ..utils import web_commands
 import copy
-import asyncpg
-import htmlmin
+
 
 # TODO Minfiy web returns
 
@@ -59,7 +57,7 @@ def get_command_signature(cmd):  # taken from rdanny
 class Website(Quart):
 
 	def __init__(self, client_secret, client_id, redirect_uri, port, bot):
-		super().__init__(__name__, static_folder="website/static", template_folder="website/templates")
+		super().__init__(__name__, static_folder="static", template_folder="templates")
 		self.config['SERCRET_KEY'] = client_secret
 		self.secret_key = client_secret
 		self.client_secret = client_secret

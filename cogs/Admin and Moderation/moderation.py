@@ -1,8 +1,8 @@
 from discord import Member, TextChannel
 from discord.ext import commands
 
-from .utils import checks
-from .utils.utils import check_hierarchy
+from ..utils import checks
+from ..utils.utils import check_hierarchy
 
 
 class Moderation:

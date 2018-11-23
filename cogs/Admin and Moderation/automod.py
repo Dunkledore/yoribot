@@ -1,7 +1,7 @@
 from discord.ext import commands
 from discord import Embed, Object, Member, Forbidden
-from .utils import checks
-from .utils import cooldown
+from ..utils import checks
+from ..utils import cooldown
 from itertools import groupby
 import re
 import asyncpg

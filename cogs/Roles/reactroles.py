@@ -1,6 +1,6 @@
 from discord import Embed, Role, utils
 from discord.ext import commands
-from .utils import checks
+from ..utils import checks
 import itertools
 import operator
 
