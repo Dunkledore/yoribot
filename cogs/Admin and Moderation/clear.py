@@ -114,11 +114,13 @@ class Clear:
 		def check(message):
 			return message.author not in message.guild.members
 
-		await ctx.send(embed=self.bot.notice("Starting clearing. This could take some time..."))
+		msg = await ctx.send(embed=self.bot.notice("Starting clearing. This could take some time..."))
 		for channel in ctx.guild.text_channels:
 			await channel.purge(limit=2000, check=check)
+			await msg.edit(embed=self.bot.notice(f"Cleared {channel.mention}"))
 
-		await ctx.send(embed=self.bot.success("Cleared all messages from non-members"))
+
+		await msg.edit(embed=self.bot.success("Cleared all messages from non-members"))
 
 	@cleargone.error
 	async def cleargoneerror(self, ctx, error):
