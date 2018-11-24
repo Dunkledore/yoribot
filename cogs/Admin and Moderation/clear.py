@@ -82,7 +82,7 @@ class Clear:
 	@checks.is_mod()
 	@commands.guild_only()
 	async def cleartext(self, ctx, number_to_delete: int = 2000):
-		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
+		"""Clear specified number of messages (default 2000) containing only text in the channel the command is run in."""
 
 		def check(message):
 			return len(message.attachments) == 0
@@ -93,7 +93,7 @@ class Clear:
 	@checks.is_mod()
 	@commands.guild_only()
 	async def clearimages(self, ctx, number_to_delete: int = 2000):
-		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
+		"""Clear specified number of messages (default 2000) containing images in the channel the command is run in."""
 
 		def check(message):
 			has_image = False
@@ -114,10 +114,11 @@ class Clear:
 		def check(message):
 			return message.author not in message.guild.members
 
+		await ctx.send(embed=self.bot.notice("Starting clearing. This could take some time..."))
 		for channel in ctx.guild.text_channels:
 			await channel.purge(limit=2000, check=check)
 
-		await ctx.send(embed=self.bot.success("Clear all messages from non-members"))
+		await ctx.send(embed=self.bot.success("Cleared all messages from non-members"))
 
 	@cleargone.error
 	async def cleargoneerror(self, ctx, error):
