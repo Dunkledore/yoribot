@@ -1,7 +1,8 @@
 from discord.ext import commands
 from ..utils import checks
-from discord import Object
+from discord import Object, TextChannel
 from datetime import datetime, timedelta
+
 
 class Clear:
 	"""Commands to delete messages, invites and redundant permissions. Requires mod perms"""
@@ -76,6 +77,32 @@ class Clear:
 		if isinstance(error, commands.CommandOnCooldown):
 			if await checks.has_level(ctx, "developer"):
 				await ctx.reinvoke()
+
+	@commands.command()
+	@checks.is_mod()
+	@commands.guild_only()
+	async def cleartext(self, ctx, number_to_delete: int = 2000):
+		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
+
+		def check(message):
+			return len(message.attachments) == 0
+
+		await ctx.channel.purge(limit=number_to_delete, check=check)
+
+	@commands.command()
+	@checks.is_mod()
+	@commands.guild_only()
+	async def clearimages(self, ctx, number_to_delete: int = 2000):
+		"""Clear specified number of messages (default 2000) from bots in the channel the command is run in."""
+
+		def check(message):
+			has_image = False
+			for attachment in message.attachments:
+				if attachment.heigth:
+					has_image = True
+			return has_image
+
+		await ctx.channel.purge(limit=number_to_delete, check=check)
 
 	@commands.command()
 	@checks.is_mod()
