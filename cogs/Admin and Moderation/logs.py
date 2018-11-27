@@ -64,7 +64,7 @@ class Logs:
 			if await checks.has_level(ctx, "developer"):
 				await ctx.reinvoke()
 			else:
-				await ctx.send(embed=self.bot.error(f"On cooldown. Retry in {error.retry_after} seconds"))
+				await ctx.send(embed=self.bot.error(f"On cooldown. Retry in {error.retry_after:.0f} seconds"))
 
 	async def start_message_logs(self, guild_id, channel_id):
 
