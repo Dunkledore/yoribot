@@ -287,14 +287,12 @@ class Website(Quart):
 				                              "GROUP BY channel_id " \
 				                              "ORDER BY COUNT(*) DESC " \
 				                              "LIMIT 1"
-				# most_messages_member_id = await self.bot.pool.fetchval(most_messages_member_query, guild_id)
-				# most_messages_channel_id = await self.bot.pool.fetchval(most_messages_channel_query, guild_id)
-				# most_messages_member = self.bot.get_user(most_messages_member_id)
-				# most_messages_channel = self.bot.get_channel(most_messages_channel_id)
-				guilds[guild_id][
-					"most_member"] = "Me"  # most_messages_member.display_name if most_messages_member else "Left"
-				guilds[guild_id][
-					"most_channel"] = "Me"  # most_messages_channel.name if most_messages_channel else "Deleted"
+				most_messages_member_id = await self.bot.pool.fetchval(most_messages_member_query, guild_id)
+				most_messages_channel_id = await self.bot.pool.fetchval(most_messages_channel_query, guild_id)
+				most_messages_member = self.bot.get_user(most_messages_member_id)
+				most_messages_channel = self.bot.get_channel(most_messages_channel_id)
+				guilds[guild_id]["most_member"] = most_messages_member.display_name if most_messages_member else "Left"
+				guilds[guild_id]["most_channel"] = most_messages_channel.name if most_messages_channel else "Deleted"
 
 				query = "SELECT message_log_channel_id FROM log_config WHERE guild_id = $1"
 				message_log_channel_id = await self.bot.pool.fetchval(query, actual_guild.id)
