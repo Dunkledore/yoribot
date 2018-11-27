@@ -124,6 +124,7 @@ class Website(Quart):
 		if await checks.has_level(proxy_ctx, "admin"):
 			return True
 
+	@require_login
 	async def stats(self, guild_id):
 		guild = self.bot.get_guild(guild_id)
 		if not guild:
