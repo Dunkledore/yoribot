@@ -98,7 +98,7 @@ class Clear:
 		def check(message):
 			has_image = False
 			for attachment in message.attachments:
-				if attachment.heigth:
+				if attachment.height:
 					has_image = True
 			return has_image
 
