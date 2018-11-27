@@ -38,7 +38,7 @@ class Logs:
 
 		if not channels:
 			await ctx.send(embed=self.bot.erorr("No channels mentioned"))
-		await ctx.send(
+		msg = await ctx.send(
 			embed=self.bot.notice("Starting population. I will update you as I go. This will take some time..."))
 		added = 0
 		for channel in channels:
@@ -54,6 +54,7 @@ class Logs:
 						added += 1
 					except asyncpg.UniqueViolationError:
 						pass  # already in db
+			await msg.edit(embed=f"{channel.mention} done")
 
 		await ctx.send(embed=self.bot.success(f"Added {added} messages to logs"))
 
