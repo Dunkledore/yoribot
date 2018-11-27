@@ -47,14 +47,14 @@ class SpecialRoles:
 			give_role_id = role["give_role_id"]
 			give_role = message.guild.get_role(give_role_id)
 			if not give_role:
-				return
+				continue
 			if give_role not in message.author.roles:
-				return
+				continue
 
 			applied_role_id = role["applied_role_id"]
 			role = message.guild.get_role(applied_role_id)
 			if not role:
-				return
+				continue
 			roles_to_add.append(role)
 
 
