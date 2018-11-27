@@ -129,7 +129,7 @@ class Website(Quart):
 		guild = self.bot.get_guild(guild_id)
 		if not guild:
 			return "Guild not found"
-		if not self.is_mod_in_guild(guild):
+		if not self.is_mod_in_guild(guild) and not (guild_id != 372581201195565056):
 			return "Not authorised"
 		query = """
 				SELECT to_char(time, 'Mon YYYY') as m, EXTRACT(MONTH FROM time) as mon, EXTRACT(YEAR FROM time) as year
