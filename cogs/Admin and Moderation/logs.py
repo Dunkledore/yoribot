@@ -54,7 +54,7 @@ class Logs:
 						added += 1
 					except asyncpg.UniqueViolationError:
 						pass  # already in db
-			await msg.edit(embed=f"{channel.mention} done")
+			await msg.edit(embed=self.bot.notice(f"{channel.mention} done"))
 
 		await ctx.send(embed=self.bot.success(f"Added {added} messages to logs"))
 
