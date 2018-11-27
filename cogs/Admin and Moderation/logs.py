@@ -28,7 +28,9 @@ class Logs:
 	@commands.command()
 	@checks.is_admin()
 	@commands.guild_only()
+	@commands.cooldown(1, 604800, commands.BucketType.guild)
 	async def populate_logs(self, ctx, channels):
+		"""Add message logs for specified channels. If all will check each channels. Note this is an incredibly intensive process and comes with a hefty cooldown"""
 		if channels == "all":
 			channels = ctx.guild.text_channels
 		else:
@@ -36,26 +38,32 @@ class Logs:
 
 		if not channels:
 			await ctx.send(embed=self.bot.erorr("No channels mentioned"))
-		await ctx.send(embed=self.bot.notice("Starting population. This will take some time..."))
+		await ctx.send(
+			embed=self.bot.notice("Starting population. I will update you as I go. This will take some time..."))
 		added = 0
 		for channel in channels:
 			async for message in channel.history(limit=100000):
-				query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status, time) VALUES ($1, $2, $3, $4, $5, $6, $7)"
+				if not message.author.bot:
+					query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status, time) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 
-				try:
-					await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id,
-				                            message.guild.id, "edited" if message.created_at else "current" , message.created_at)
-					added += 1
-				except asyncpg.UniqueViolationError:
-					pass #already in db
+					try:
+						await self.bot.pool.execute(query, message.id, message.content, message.author.id,
+						                            message.channel.id,
+						                            message.guild.id, "edited" if message.created_at else "current",
+						                            message.created_at)
+						added += 1
+					except asyncpg.UniqueViolationError:
+						pass  # already in db
 
 		await ctx.send(embed=self.bot.success(f"Added {added} messages to logs"))
 
-
-
-
-
-
+	@populate_logs.error
+	async def populatelogserror(self, ctx, error):
+		if isinstance(error, commands.CommandOnCooldown):
+			if await checks.has_level(ctx, "developer"):
+				await ctx.reinvoke()
+			else:
+				await ctx.send(embed=self.bot.error(f"On cooldown. Retry in {error.retry_after} seconds"))
 
 	async def start_message_logs(self, guild_id, channel_id):
 
