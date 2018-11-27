@@ -125,6 +125,11 @@ class Website(Quart):
 			return True
 
 	async def stats(self, guild_id):
+		guild = self.bot.get_guild(guild_id)
+		if not guild:
+			return "Guild not found"
+		if not self.is_mod_in_guild(guild):
+			return "Not authorised"
 		query = """
 				SELECT to_char(time, 'Mon YYYY') as m, EXTRACT(MONTH FROM time) as mon, EXTRACT(YEAR FROM time) as year
                     , count(*)
@@ -188,7 +193,7 @@ class Website(Quart):
 				net_joins[month['m']] = 0
 			net_joins[month['m']] += month['count']
 
-		guild = self.bot.get_guild(guild_id)
+
 		admins = [member.id for member in guild.members if (member.guild_permissions.administrator and not member.bot)]
 		mod_roles = [role for role in guild.roles if role.name.lower() in ["mod", "moderator"]]
 		if mod_roles:
