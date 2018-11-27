@@ -1,7 +1,8 @@
 from discord.ext import commands
 from ..utils import checks
-from discord import Object, TextChannel
+from discord import Object
 from datetime import datetime, timedelta
+import asyncio
 
 
 class Clear:
@@ -119,7 +120,6 @@ class Clear:
 			await channel.purge(limit=2000, check=check)
 			await msg.edit(embed=self.bot.notice(f"Cleared {channel.mention}"))
 
-
 		await msg.edit(embed=self.bot.success("Cleared all messages from non-members"))
 
 	@cleargone.error
@@ -176,8 +176,7 @@ class Clear:
 		reaction = None
 		try:
 			reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=120.0)
-		except Exception as e:
-			await ctx.send(embed=self.bot.success(str(e)))
+		except asyncio.TimeoutError as e:
 			await message.clear_reactions()
 			return
 
