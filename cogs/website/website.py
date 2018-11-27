@@ -77,6 +77,11 @@ class Website(Quart):
 		self.add_url_rule("/commands_list", "commands_list", self.commands_list)
 		self.add_url_rule("/servers", "servers", self.guilds, methods=["GET", "POST"])
 		self.add_url_rule("/stats/<int:guild_id>", "stats", self.stats)
+		self.add_url_rule("/robots.txt", "robots.txt", self.robots)
+
+	async def robots(self):
+		return "User-agent: *" \
+		       "Disallow:"
 
 	async def errorhandler(self, error):
 		webhook = self.bot.error_hook
