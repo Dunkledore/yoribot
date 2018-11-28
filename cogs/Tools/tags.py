@@ -13,6 +13,7 @@ class Tags:
 
 	@commands.command(aliases=["tag_add",'addtag','tagadd'])
 	async def add_tag(self, ctx, tag_name, *, tag_content = None):
+		"""Add a guild tag. Note the tag_name should contain no spaces"""
 		if not ctx.message.attachments:
 			file_name = None
 		else:
@@ -38,6 +39,7 @@ class Tags:
 	@commands.command(aliases=["tag_remove","tagremove","removetag","tagdelete","deletetag","delete_tag","deltag","tagdel"])
 	@checks.is_mod()
 	async def remove_tag(self, ctx, tag_name):
+		"""Remove guild tag"""
 		query = "DELETE FROM tags WHERE (guild_id = $1) and (tag_name = $2)"
 		file_name = await self.bot.pool.fetchval(query, ctx.guild.id, tag_name)
 		if file_name:
@@ -46,6 +48,7 @@ class Tags:
 
 	@commands.command(aliases=["view_tag", "tag_list","list_tag","taglist"])
 	async def tags(self, ctx):
+		"""List all tags for the guild"""
 		query = "SELECT tag_name FROM tags WHERE guild_id = $1"
 		tags = await self.bot.pool.fetch(query, ctx.guild.id)
 		await ctx.send(embed=Embed(title=f"Tags for {ctx.guild.name}", description="\n".join([tag['tag_name'] for tag in tags])))

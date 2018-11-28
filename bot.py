@@ -27,6 +27,7 @@ initial_cogs = ["Admin and Moderation.automod",
                 "Roles.specialroles",
                 "Misc.utilities",
                 "Tools.weather",
+                "Tools.tags",
                 "Admin and Moderation.welcome",
                 "Games.hangman",
                 ]
