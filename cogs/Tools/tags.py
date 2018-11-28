@@ -20,7 +20,7 @@ class Tags:
 			file_name = file.filename
 			file_name_in_use = True
 			while file_name_in_use:
-				query = "SELECT file_name FROM tag WHERE file_name = $1"
+				query = "SELECT file_name FROM tags WHERE file_name = $1"
 				file = await self.bot.pool.fetch(query, file_name)
 				if file:
 					file_name = file_name + str(random.randint(10))
@@ -70,7 +70,7 @@ class Tags:
 		tag = await self.bot.pool.fetchrow(query, message.guild.id, tag_name)
 		if not tag:
 			return
-		tag_name = tag['tag_name']
+		tag_content = tag['tag_content']
 		file_name = tag['file_name']
 		await ctx.send(tag_name or None, file=File(f"../tag_files/{file_name}") if file_name else None)
 
