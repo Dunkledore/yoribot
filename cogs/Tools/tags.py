@@ -72,7 +72,7 @@ class Tags:
 			return
 		tag_content = tag['tag_content']
 		file_name = tag['file_name']
-		await ctx.send(tag_name or None, file=File(f"tag_files/{file_name}") if file_name else None)
+		await ctx.send(tag_content or None, file=File(f"tag_files/{file_name}") if file_name else None)
 
 
 def setup(bot):
