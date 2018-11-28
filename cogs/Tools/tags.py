@@ -35,14 +35,14 @@ class Tags:
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("The tag is already in use in your guild. Pick another name"))
 
-	@commands.command(aliases=["tag_remove","tagremove","removetag","tagdelete","deletetag","deltag","tagdel"])
+	@commands.command(aliases=["tag_remove","tagremove","removetag","tagdelete","deletetag","delete_tag","deltag","tagdel"])
 	@checks.is_mod()
 	async def remove_tag(self, ctx, tag_name):
 		query = "DELETE FROM tags WHERE (guild_id = $1) and (tag_name = $2)"
 		file_name = await self.bot.pool.fetchval(query, ctx.guild.id, tag_name)
 		if file_name:
 			os.remove(f"tag_files/{file_name}")
-		await ctx.send(embed=self.bot.succes(f"Removed {tag_name}"))
+		await ctx.send(embed=self.bot.success(f"Removed {tag_name}"))
 
 	@commands.command(aliases=["view_tag", "tag_list","list_tag","taglist"])
 	async def tags(self, ctx):
