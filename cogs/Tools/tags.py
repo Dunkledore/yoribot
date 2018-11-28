@@ -13,10 +13,10 @@ class Tags:
 
 	@commands.command(aliases=["tag_add",'addtag','tagadd'])
 	async def add_tag(self, ctx, tag_name, *, tag_content = None):
-		if not ctx.message.attachemnets:
+		if not ctx.message.attachments:
 			file_name = None
 		else:
-			file = ctx.message.attachemnets[0]
+			file = ctx.message.attachments[0]
 			file_name = file.filename
 			file_name_in_use = True
 			while file_name_in_use:
