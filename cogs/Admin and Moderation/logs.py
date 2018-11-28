@@ -449,7 +449,7 @@ class Logs:
 		await self.bot.pool.execute(query, muter.id, reason, report_message.id, log_id)
 		await report_message.add_reaction("🔊")
 
-		async def check(reaction, user):
+		def check(reaction, user):
 			if reaction.emoji != "🔊":
 				return False
 
