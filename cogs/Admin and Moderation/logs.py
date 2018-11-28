@@ -455,6 +455,10 @@ class Logs:
 
 			if reaction.message is not report_message:
 				return False
+
+			if user.bot:
+				return False
+
 			return True
 
 		reaction, user = await self.bot.wait_for("reaction_add", check=check)
