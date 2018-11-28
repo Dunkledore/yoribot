@@ -30,7 +30,7 @@ class Tags:
 
 		query = "INSERT INTO tags (guild_id, tag_name, tag_content, file_name) VALUES ($1,$2,$3,$4)"
 		try:
-			await self.bot.pool.exexute(query, ctx.guild.id, tag_name, tag_content or "", file_name or "")
+			await self.bot.pool.execute(query, ctx.guild.id, tag_name, tag_content or "", file_name or "")
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("The tag is already in use in your guild. Pick another name"))
 
