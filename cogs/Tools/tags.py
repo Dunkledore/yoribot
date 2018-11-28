@@ -70,8 +70,9 @@ class Tags:
 		tag = await self.bot.pool.fetchrow(query, message.guild.id, tag_name)
 		if not tag:
 			return
-
-		await ctx.send(tag_name or None, file=File(f"../tag_files/{file_name}"))
+		tag_name = tag['tag_name']
+		file_name = tag['file_name']
+		await ctx.send(tag_name or None, file=File(f"../tag_files/{file_name}") if file_name else None)
 
 
 def setup(bot):
