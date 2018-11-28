@@ -23,7 +23,7 @@ class Tags:
 				query = "SELECT file_name FROM tags WHERE file_name = $1"
 				db_file = await self.bot.pool.fetch(query, file_name)
 				if db_file:
-					file_name = file_name + str(random.randint(10))
+					file_name = file_name + str(random.randint(0,10))
 				else:
 					file_name_in_use = False
 					await file.save(f"tag_files/{file_name}")
@@ -31,6 +31,7 @@ class Tags:
 		query = "INSERT INTO tags (guild_id, tag_name, tag_content, file_name) VALUES ($1,$2,$3,$4)"
 		try:
 			await self.bot.pool.execute(query, ctx.guild.id, tag_name, tag_content or "", file_name or "")
+			await ctx.send(embed=self.bot.success(f"Tag {tag_name} added"))
 		except asyncpg.UniqueViolationError:
 			await ctx.send(embed=self.bot.error("The tag is already in use in your guild. Pick another name"))
 
@@ -70,9 +71,10 @@ class Tags:
 		tag = await self.bot.pool.fetchrow(query, message.guild.id, tag_name)
 		if not tag:
 			return
-		tag_content = tag['tag_content']
+		tag_content = tag['tag_content'] or None
 		file_name = tag['file_name']
-		await ctx.send(tag_content or None, file=File(f"tag_files/{file_name}") if file_name else None)
+		file = File(f"tag_files/{file_name}") if file_name else None
+		await ctx.send(tag_content, file=file)
 
 
 def setup(bot):
