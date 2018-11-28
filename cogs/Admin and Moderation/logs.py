@@ -453,7 +453,7 @@ class Logs:
 			if reaction.emoji != "🔊":
 				return False
 
-			if reaction.message is not report_message:
+			if reaction.message.id != report_message.id:
 				return False
 
 			if user.bot:
