@@ -26,7 +26,7 @@ class Tags:
 					file_name = file_name + str(random.randint(10))
 				else:
 					file_name_in_use = False
-					await file.save(f"../tag_files/{file_name}")
+					await file.save(f"tag_files/{file_name}")
 
 		query = "INSERT INTO tags (guild_id, tag_name, tag_content, file_name) VALUES ($1,$2,$3,$4)"
 		try:
@@ -40,7 +40,7 @@ class Tags:
 		query = "DELETE FROM tags WHERE (guild_id = $1) and (tag_name = $2)"
 		file_name = await self.bot.pool.fetchval(query, ctx.guild.id, tag_name)
 		if file_name:
-			os.remove(f"../tag_files/{file_name}")
+			os.remove(f"tag_files/{file_name}")
 		await ctx.send(embed=self.bot.succes(f"Removed {tag_name}"))
 
 	@commands.command(aliases=["view_tag", "tag_list","list_tag","taglist"])
@@ -72,7 +72,7 @@ class Tags:
 			return
 		tag_content = tag['tag_content']
 		file_name = tag['file_name']
-		await ctx.send(tag_name or None, file=File(f"../tag_files/{file_name}") if file_name else None)
+		await ctx.send(tag_name or None, file=File(f"tag_files/{file_name}") if file_name else None)
 
 
 def setup(bot):
