@@ -67,7 +67,7 @@ class Tags:
 			return
 
 		query = "SELECT * FROM tags WHERE (guild_id = $1) and (tag_name = $2)"
-		tag = await self.bot.fetchrow(query, message.guild.id, tag_name)
+		tag = await self.bot.pool.fetchrow(query, message.guild.id, tag_name)
 		if not tag:
 			return
 
