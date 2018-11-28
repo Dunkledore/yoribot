@@ -21,8 +21,8 @@ class Tags:
 			file_name_in_use = True
 			while file_name_in_use:
 				query = "SELECT file_name FROM tags WHERE file_name = $1"
-				file = await self.bot.pool.fetch(query, file_name)
-				if file:
+				db_file = await self.bot.pool.fetch(query, file_name)
+				if db_file:
 					file_name = file_name + str(random.randint(10))
 				else:
 					file_name_in_use = False
