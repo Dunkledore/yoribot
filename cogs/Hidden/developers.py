@@ -163,7 +163,8 @@ class Developers:
 		              "CREATE TABLE IF NOT EXISTS welcome_config (guild_id BIGINT PRIMARY KEY, channel_id BIGINT, text_message TEXT, whisper BOOL DEFAULT False)",
 		              "CREATE TABLE IF NOT EXISTS welcome_fields (id SERIAL, guild_id BIGINT, name TEXT, value Text)",
 		              "CREATE TABLE IF NOT EXISTS special_roles (guild_id BIGINT, name TEXT, applied_role_id BIGINT, give_role_id BIGINT)",
-		              "CREATE TABLE IF NOT EXISTS tags (guild_id BIGINT, tag_name TEXT, tag_content TEXT, file_name TEXT, PRIMARY KEY (guild_id, tag_name))"
+		              "CREATE TABLE IF NOT EXISTS tags (guild_id BIGINT, tag_name TEXT, tag_content TEXT, file_name TEXT, PRIMARY KEY (guild_id, tag_name))",
+		              "CREATE TABLE IF NOT EXISTS streamrole (guild_id BIGINT PRIMARY KEY, role_id BIGINT)"
 		              ]
 
 		for statement in statements:
