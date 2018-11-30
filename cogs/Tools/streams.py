@@ -9,34 +9,51 @@ import asyncio
 
 class WatchingStream:
 
-	def __init__(self, channel, close_on_end, user_login):
+	def __init__(self, channel, close_on_end, user_login, guild_id):
 		self.channel = channel
 		self.user_login = user_login
 		self.close_on_end = close_on_end
 		self.stream_data = None
 		self.message = None
 		self.live = False
+		self.guild_id = guild_id
 
-		async def make_live(self, data):
-			self.stream_data = data
-			if self.live:
-				await self.message.edit(embed=self.stream_embed(self.stream_data))
-			else:
-				self.message = await self.channel.send(embed=self.stream_embed(self.stream_data))
-			self.live = True
+	async def make_live(self, data):
+		self.stream_data = data
+		if self.live:
+			await self.message.edit(embed=self.stream_embed(self.stream_data))
+		else:
+			self.message = await self.channel.send(embed=self.stream_embed(self.stream_data))
+		self.live = True
 
-		async def make_not_live(self):
-			self.stream_data = None
-			if close_on_end:
-				if self.message:
-					try:
-						await self.message.delete()
-					except Forbidden:
-						pass
-			self.live = False
+	async def make_not_live(self):
+		self.stream_data = None
+		if self.close_on_end:
+			if self.message:
+				try:
+					await self.message.delete()
+				except Forbidden:
+					pass
+		self.live = False
 
-		def stream_embed(stream_data):
-			return Embed(title=stream_data["title"])
+	def stream_embed(self, stream_data):
+		return Embed(title=stream_data["title"])
+
+	def __hash__(self):
+		return hash((self.channel.id, self.user_login))
+
+	def __eq__(self, other):
+		return (self.user_login == other.user_login) and (self.channel.id == other.channel.id)
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
+
+	def __str__(self):
+		return f"{self.user_login} : {self.channel.mention}"
+
+
+
+
 
 
 class Stream:
@@ -58,7 +75,7 @@ class Stream:
 			if not channel:
 				continue
 			user_login = stream['user_login']
-			self.watching_streams.append(WatchingStream(channel, stream["close_on_end"], user_login))
+			self.watching_streams.append(WatchingStream(channel, stream["close_on_end"], user_login, stream['guild_id']))
 
 	async def cycle_streams(self):
 
@@ -109,15 +126,57 @@ class Stream:
 
 	async def make_request(self, endpoint, params=None):
 		async with aiohttp.ClientSession() as cs:
-			async with cs.get("https://api.twitch.tv/helix/", params=params) as r:
+			async with cs.get(f"https://api.twitch.tv/helix/{endpoint}", params=params) as r:
 				return await r.json()
 
 	@commands.command()
 	@checks.is_admin()
+	async def view_streams(self, ctx):
+		streams = [watching_stream for watching_stream in self.watching_streams if watching_stream.guild_id == ctx.guild.id]
+		embed = Embed(title=f"Stream watched in {ctx.guild.name}", descriptin="\n".join([str(stream) for stream in streams]))
+		await ctx.send(embed=embed)
+
+	@commands.command()
+	@checks.is_admin()
 	async def watch_stream(self, ctx, stream_name, channel: TextChannel, delete_on_close=False):
-		query = "INSERT INTO streams (user_login, channel_id, delete_on_close) VALUES ($1,$2,$3)"
-		await self.bot.pool.execute(query, stream_name, channel.id, delete_on_close)
-		self.watching_streams.append(WatchingStream(channel, delete_on_close, stream_name))
+		stream_object = WatchingStream(channel, delete_on_close, stream_name, ctx.guild.id)
+		if stream_object in self.watching_streams:
+			await ctx.send(embed=self.bot.error("Alreayd watching this stream in this channel"))
+			return
+
+		query = "INSERT INTO streams (user_login, channel_id, delete_on_close, guild_id) VALUES ($1,$2,$3,$4)"
+		await self.bot.pool.execute(query, stream_name, channel.id, delete_on_close, ctx.guild.id)
+		self.watching_streams.append(stream_object)
+		await ctx.send(embed=self.bot.success(f"Watching {stream_name} in {channel.mention}"))
+
+	@commands.command()
+	@checks.is_admin()
+	async def unwatch_stream(self, ctx, stream_name, channel: TextChannel = None):
+
+		if channel:
+			matching_streams = [watching_stream for watching_stream in self.watching_streams if
+			                    (watching_stream.channel_id == channel.id) and (
+						                    watching_stream.user_login == stream_name)]
+			if not matching_streams:
+				await ctx.send(embed=self.bot.error("Not watching that stream in this channel"))
+				return
+			query = "DELETE FROM streams WHERE (user_login = $1) and (channel_id = $2)"
+			await self.bot.pool.execute(stream_name, channel.id)
+			for stream in matching_streams:
+				self.watching_streams.remove(stream)
+			await ctx.send(embed=self.bot.success(f"No longer watching {stream_name} in {channel.mention}"))
+		else:
+			matching_streams = [watching_stream for watching_stream in self.watching_streams if
+			                    (watching_stream.guild_id == ctx.guild.id) and (
+						                    watching_stream.user_login == stream_name)]
+			if not matching_streams:
+				await ctx.send(embed=self.bot.error("Not watching that stream in this guild"))
+				return
+			query = "DELETE FROM streams WHERE (user_login = $1) and (guild_id = $2)"
+			await self.bot.pool.execute(stream_name, ctx.guild.id)
+			for stream in matching_streams:
+				self.watching_streams.remove(stream)
+			await ctx.send(embed=self.bot.success(f"No longer watching {stream_name} in any channel"))
 
 	@commands.command()
 	@checks.is_admin()

@@ -164,7 +164,9 @@ class Developers:
 		              "CREATE TABLE IF NOT EXISTS welcome_fields (id SERIAL, guild_id BIGINT, name TEXT, value Text)",
 		              "CREATE TABLE IF NOT EXISTS special_roles (guild_id BIGINT, name TEXT, applied_role_id BIGINT, give_role_id BIGINT)",
 		              "CREATE TABLE IF NOT EXISTS tags (guild_id BIGINT, tag_name TEXT, tag_content TEXT, file_name TEXT, PRIMARY KEY (guild_id, tag_name))",
-		              "CREATE TABLE IF NOT EXISTS streamrole (guild_id BIGINT PRIMARY KEY, role_id BIGINT)"
+		              "CREATE TABLE IF NOT EXISTS streamrole (guild_id BIGINT PRIMARY KEY, role_id BIGINT)",
+		              "CREATE TABLE IF NOT EXISTS twitch (client_id TEXT)",
+		              "CREATE TABLE IF NOT EXISTS streams (guild_id BIGINT, user_login TEXT, channel_id BIGINT, close_on_end BOOL)",
 		              ]
 
 		for statement in statements:
