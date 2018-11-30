@@ -97,7 +97,7 @@ class Stream:
 
 					online_streams_objects = []  # Turns the raw data into a list of objects
 					for online_stream in online_streams:
-						user_login = online_stream.user_login
+						user_login = online_stream["user_name"]
 						watching_streams = [watching_stream for watching_stream in self.watching_streams if
 						                    watching_stream.user_login == user_login]
 						for watching_stream in watching_streams:
