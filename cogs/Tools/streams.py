@@ -9,10 +9,10 @@ import asyncio
 
 class WatchingStream:
 
-	def __init__(self, channel, close_on_end, user_login, guild_id):
+	def __init__(self, channel, delete_on_close, user_login, guild_id):
 		self.channel = channel
 		self.user_login = user_login
-		self.close_on_end = close_on_end
+		self.delete_on_close = delete_on_close
 		self.stream_data = None
 		self.message = None
 		self.live = False
@@ -28,7 +28,7 @@ class WatchingStream:
 
 	async def make_not_live(self):
 		self.stream_data = None
-		if self.close_on_end:
+		if self.delete_on_close:
 			if self.message:
 				try:
 					await self.message.delete()
@@ -76,7 +76,7 @@ class Stream:
 			if not channel:
 				continue
 			user_login = stream['user_login']
-			self.watching_streams.append(WatchingStream(channel, stream["close_on_end"], user_login, stream['guild_id']))
+			self.watching_streams.append(WatchingStream(channel, stream["delete_on_close"], user_login, stream['guild_id']))
 
 	async def cycle_streams(self):
 
