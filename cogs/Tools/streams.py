@@ -25,7 +25,7 @@ class WatchingStream:
 				await self.message.edit(embed=self.stream_embed(self.stream_data))
 			else:
 				self.message = await self.channel.send(embed=self.stream_embed(self.stream_data))
-		except (Forbidden, HTTPException):
+		except (Forbidden, HTTPException): #If they dont allow us access to post or edit then its out of our control
 			pass
 		self.live = True
 
@@ -36,7 +36,7 @@ class WatchingStream:
 				try:
 					await self.message.delete()
 					self.message = None
-				except (Forbidden, HTTPException):
+				except (Forbidden, HTTPException): #If the dont allow delete access or have already deleted the message then its out of our control
 					pass
 		self.live = False
 
@@ -56,11 +56,7 @@ class WatchingStream:
 		return f"{self.user_login} : {self.channel.mention}"
 
 	def __repr__(self):
-		return self.__str__() + f" : {self.guild_id}"
-
-
-
-
+		return self.__str__()+f" : {self.guild_id}"
 
 
 class Stream:
@@ -84,7 +80,8 @@ class Stream:
 			if not channel:
 				continue
 			user_login = stream['user_login']
-			self.watching_streams.append(WatchingStream(channel, stream["delete_on_close"], user_login, stream['guild_id']))
+			self.watching_streams.append(
+				WatchingStream(channel, stream["delete_on_close"], user_login, stream['guild_id']))
 
 	async def cycle_streams(self):
 		while True:
@@ -144,8 +141,10 @@ class Stream:
 	@commands.command()
 	@checks.is_admin()
 	async def view_streams(self, ctx):
-		streams = [watching_stream for watching_stream in self.watching_streams if watching_stream.guild_id == ctx.guild.id]
-		embed = Embed(title=f"Stream watched in {ctx.guild.name}", description="\n".join([str(stream) for stream in streams]))
+		streams = [watching_stream for watching_stream in self.watching_streams if
+		           watching_stream.guild_id == ctx.guild.id]
+		embed = Embed(title=f"Stream watched in {ctx.guild.name}",
+		              description="\n".join([str(stream) for stream in streams]))
 		await ctx.send(embed=embed)
 
 	@commands.command()
@@ -168,7 +167,7 @@ class Stream:
 		if channel:
 			matching_streams = [watching_stream for watching_stream in self.watching_streams if
 			                    (watching_stream.channel_id == channel.id) and (
-						                    watching_stream.user_login == stream_name)]
+					                    watching_stream.user_login == stream_name)]
 			if not matching_streams:
 				await ctx.send(embed=self.bot.error("Not watching that stream in this channel"))
 				return
@@ -180,7 +179,7 @@ class Stream:
 		else:
 			matching_streams = [watching_stream for watching_stream in self.watching_streams if
 			                    (watching_stream.guild_id == ctx.guild.id) and (
-						                    watching_stream.user_login == stream_name)]
+					                    watching_stream.user_login == stream_name)]
 			if not matching_streams:
 				await ctx.send(embed=self.bot.error("Not watching that stream in this guild"))
 				return
@@ -232,7 +231,7 @@ class Stream:
 			return
 
 		query = "SELECT role_id FROM streamrole WHERE guild_id = $1"
-		role_id = self.bot.pool.fetchval(query, after.guild.id)
+		role_id = await self.bot.pool.fetchval(query, after.guild.id)
 		if not role_id:
 			return
 		role = after.guild.get_role(role_id)
