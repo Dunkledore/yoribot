@@ -93,7 +93,7 @@ class Stream:
 						logins = [stream.user_login for stream in chunk]
 						params = [("user_login", login) for login in logins]
 						data = await self.make_request("stream", params)
-						online_streams.extend(data)
+						online_streams.extend(data["data"])
 
 					online_streams_objects = []  # Turns the raw data into a list of objects
 					for online_stream in online_streams:
