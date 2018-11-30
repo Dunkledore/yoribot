@@ -47,11 +47,11 @@ class Polls:
             pass
 
 
-        embed = Embed(title=question, description="\n".join(f"{counter}\U000020e3 : {answer}" for counter, answer in enumerate(answers)))
+        embed = Embed(title=question, description="\n".join(f"{counter+1}\U000020e3 : {answer}" for counter, answer in enumerate(answers)))
         embed.set_author(name=ctx.author.name,icon_url=ctx.author.avatar_url)
         poll_message = await ctx.send(embed=embed)
         for counter, answer in enumerate(answers):
-            await poll_message.add_reaction(str(counter)+"\U000020e3")
+            await poll_message.add_reaction(str(counter+1)+"\U000020e3")
 
 def setup(bot):
     bot.add_cog(Polls(bot))
