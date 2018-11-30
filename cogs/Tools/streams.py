@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Role, Streaming, Forbidden, Embed, TextChannel
+from discord import Role, Streaming, Forbidden, Embed, TextChannel, HTTPException
 from ..utils import checks
 import asyncpg
 import aiohttp
@@ -20,10 +20,13 @@ class WatchingStream:
 
 	async def make_live(self, data):
 		self.stream_data = data
-		if self.live:
-			await self.message.edit(embed=self.stream_embed(self.stream_data))
-		else:
-			self.message = await self.channel.send(embed=self.stream_embed(self.stream_data))
+		try:
+			if self.live:
+				await self.message.edit(embed=self.stream_embed(self.stream_data))
+			else:
+				self.message = await self.channel.send(embed=self.stream_embed(self.stream_data))
+		except (Forbidden, HTTPException):
+			pass
 		self.live = True
 
 	async def make_not_live(self):
@@ -33,7 +36,7 @@ class WatchingStream:
 				try:
 					await self.message.delete()
 					self.message = None
-				except Forbidden:
+				except (Forbidden, HTTPException):
 					pass
 		self.live = False
 
