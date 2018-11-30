@@ -28,7 +28,7 @@ initial_cogs = ["Admin and Moderation.automod",
                 "Misc.utilities",
                 "Tools.weather",
                 "Tools.tags",
-                "Tools.streams"
+                "Tools.streams",
                 "Admin and Moderation.welcome",
                 "Games.hangman",
                 ]
