@@ -36,7 +36,7 @@ class Polls:
 
             to_delete.append(entry)
 
-            if entry.content.startswith ==f"{ctx.prefix}cancel":
+            if entry.content ==f"{ctx.prefix}cancel":
                 break
 
             answers.append(entry.clean_content)
