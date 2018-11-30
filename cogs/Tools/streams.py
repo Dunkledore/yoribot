@@ -73,7 +73,7 @@ class Stream:
 		query = "SELECT * FROM streams"
 		streams = await self.bot.pool.fetch(query)
 		for stream in streams:
-			channel = await self.bot.get_channel(stream["channel_id"])
+			channel = self.bot.get_channel(stream["channel_id"])
 			if not channel:
 				continue
 			user_login = stream['user_login']
