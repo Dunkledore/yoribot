@@ -64,6 +64,7 @@ class Stream:
 		self.bot.loop.create_task(self.set_client_id())
 		self.twitch_base = "https://api.twitch.tv/helix/"
 		self.watching_streams = []
+		self.bot.loop.create_task(self.load_watching_streams())
 		self.online_streams = []
 		self.bot.loop.create_task(self.cycle_streams())
 
