@@ -182,7 +182,7 @@ class Stream:
 				await ctx.send(embed=self.bot.error("Not watching that stream in this guild"))
 				return
 			query = "DELETE FROM streams WHERE (user_login = $1) and (guild_id = $2)"
-			await self.bot.pool.execute(stream_name, ctx.guild.id)
+			await self.bot.pool.execute(query, stream_name, ctx.guild.id)
 			for stream in matching_streams:
 				self.watching_streams.remove(stream)
 			await ctx.send(embed=self.bot.success(f"No longer watching {stream_name} in any channel"))
