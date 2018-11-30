@@ -122,7 +122,7 @@ class Stream:
 		query = "SELECT client_id FROM twitch"
 		id = await self.bot.pool.fetchval(query)
 		if id:
-			self.headers = {"client_id": id}
+			self.headers = {"client-id": id}
 
 	async def get_game_data_by_id(self, id):
 		return await self.make_request("games", {"id": id})
