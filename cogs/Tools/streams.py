@@ -65,6 +65,7 @@ class Stream:
 		self.twitch_base = "https://api.twitch.tv/helix/"
 		self.watching_streams = []
 		self.online_streams = []
+		self.bot.loop.create_task(self.cycle_streams())
 
 	async def load_watching_streams(self):
 		await self.bot.wait_until_ready()
