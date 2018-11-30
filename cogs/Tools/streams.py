@@ -129,7 +129,7 @@ class Stream:
 
 	async def make_request(self, endpoint, params=None):
 		async with aiohttp.ClientSession() as cs:
-			async with cs.get(f"https://api.twitch.tv/helix/{endpoint}", params=params) as r:
+			async with cs.get(f"https://api.twitch.tv/helix/{endpoint}", params=params, headers=self.headers) as r:
 				return await r.json()
 
 	@commands.command()
