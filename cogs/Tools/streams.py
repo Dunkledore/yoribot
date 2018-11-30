@@ -60,6 +60,7 @@ class WatchingStream:
 
 
 class Stream:
+	"""Commands related to streaming"""
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -141,6 +142,7 @@ class Stream:
 	@commands.command()
 	@checks.is_admin()
 	async def view_streams(self, ctx):
+		"""View the streams being watched in this guild"""
 		streams = [watching_stream for watching_stream in self.watching_streams if
 		           watching_stream.guild_id == ctx.guild.id]
 		embed = Embed(title=f"Stream watched in {ctx.guild.name}",
@@ -150,8 +152,9 @@ class Stream:
 	@commands.command()
 	@checks.is_admin()
 	async def watch_stream(self, ctx, stream_name, channel: TextChannel, delete_on_close=False):
+		"""Set a channel to receive notifications when a twitch stream is live"""
 		stream_object = WatchingStream(channel, delete_on_close, stream_name, ctx.guild.id)
-		if stream_object in self.watching_streams:
+		if stream_object in self.watchings_streams:
 			await ctx.send(embed=self.bot.error("Alreayd watching this stream in this channel"))
 			return
 
@@ -163,6 +166,7 @@ class Stream:
 	@commands.command()
 	@checks.is_admin()
 	async def unwatch_stream(self, ctx, stream_name, channel: TextChannel = None):
+		"""Stop a channel from receiving notifications when a twitch steam starts"""
 
 		if channel:
 			matching_streams = [watching_stream for watching_stream in self.watching_streams if

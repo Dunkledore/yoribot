@@ -30,6 +30,7 @@ initial_cogs = ["Hidden.developers",
                 "Tools.weather",
                 "Tools.tags",
                 "Tools.streams",
+                "Tools.polls",
                 "Games.hangman",
                 ]
 
