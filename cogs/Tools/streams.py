@@ -32,6 +32,7 @@ class WatchingStream:
 			if self.message:
 				try:
 					await self.message.delete()
+					self.message = None
 				except Forbidden:
 					pass
 		self.live = False
@@ -83,7 +84,6 @@ class Stream:
 			self.watching_streams.append(WatchingStream(channel, stream["delete_on_close"], user_login, stream['guild_id']))
 
 	async def cycle_streams(self):
-
 		while True:
 			if self.watching_streams:
 				try:
@@ -92,6 +92,7 @@ class Stream:
 					                                100)]  # Twitch only allows 100 at a time
 
 					online_streams = []  # Turns the chunks into a list of online streams containing raw data from twitch
+					print(watching_stream_chunks)
 					for chunk in watching_stream_chunks:
 						logins = [stream.user_login for stream in chunk]
 						params = [("user_login", login) for login in logins]
@@ -99,19 +100,21 @@ class Stream:
 						print(params)
 						online_streams.extend(data["data"])
 
+					print(online_streams)
+
 					online_streams_objects = []  # Turns the raw data into a list of objects
 					for online_stream in online_streams:
 						user_login = online_stream["user_name"]
 						watching_streams = [watching_stream for watching_stream in self.watching_streams if
 						                    watching_stream.user_login == user_login]
 						for watching_stream in watching_streams:
-							watching_stream.make_live(online_stream)
+							await watching_stream.make_live(online_stream)
 							online_streams_objects.append(watching_stream)
 
 					streams_to_make_offline = set(self.online_streams)-set(
 						online_streams_objects)  # Take the old stream objects and subtracts the new to leave the ones that stopped
 					for stream in streams_to_make_offline:
-						stream.make_not_live()
+						await stream.make_not_live()
 
 					self.online_streams = online_streams_objects
 				except Exception as e:
@@ -139,7 +142,7 @@ class Stream:
 	@checks.is_admin()
 	async def view_streams(self, ctx):
 		streams = [watching_stream for watching_stream in self.watching_streams if watching_stream.guild_id == ctx.guild.id]
-		embed = Embed(title=f"Stream watched in {ctx.guild.name}", descriptin="\n".join([str(stream) for stream in streams]))
+		embed = Embed(title=f"Stream watched in {ctx.guild.name}", description="\n".join([str(stream) for stream in streams]))
 		await ctx.send(embed=embed)
 
 	@commands.command()
