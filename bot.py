@@ -17,19 +17,19 @@ from cogs.utils import utils, dataIO
 from cogs.website.website import Website
 from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port, client_id, redirect
 
-initial_cogs = ["Admin and Moderation.automod",
+initial_cogs = ["Hidden.developers",
+                "Admin and Moderation.automod",
                 "Admin and Moderation.clear",
-                "Hidden.developers",
                 "Admin and Moderation.logs",
                 "Admin and Moderation.moderation",
                 "Admin and Moderation.prefix",
+                "Admin and Moderation.welcome",
                 "Roles.reactroles",
                 "Roles.specialroles",
                 "Misc.utilities",
                 "Tools.weather",
                 "Tools.tags",
                 "Tools.streams",
-                "Admin and Moderation.welcome",
                 "Games.hangman",
                 ]
 
