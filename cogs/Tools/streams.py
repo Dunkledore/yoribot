@@ -106,7 +106,7 @@ class Stream:
 					for online_stream in online_streams:
 						user_login = online_stream["user_name"]
 						watching_streams = [watching_stream for watching_stream in self.watching_streams if
-						                    watching_stream.user_login == user_login]
+						                    watching_stream.user_login.lower() == user_login.lower()]
 						for watching_stream in watching_streams:
 							await watching_stream.make_live(online_stream)
 							online_streams_objects.append(watching_stream)
