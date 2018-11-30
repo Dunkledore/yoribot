@@ -120,7 +120,7 @@ class Stream:
 
 	async def set_client_id(self):
 		query = "SELECT client_id FROM twitch"
-		id = self.bot.pool.fetchval(query)
+		id = await self.bot.pool.fetchval(query)
 		if id:
 			self.headers = {"client_id": id}
 
