@@ -52,7 +52,7 @@ class WatchingStream:
 		return f"{self.user_login} : {self.channel.mention}"
 
 	def __repr__(self):
-		return self.__str__() + f" : {self.guild.id}"
+		return self.__str__() + f" : {self.guild_id}"
 
 
 
