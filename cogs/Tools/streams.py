@@ -70,7 +70,10 @@ class Stream:
 		self.watching_streams = []
 		self.bot.loop.create_task(self.load_watching_streams())
 		self.online_streams = []
-		self.bot.loop.create_task(self.cycle_streams())
+		self.cycle_task = self.bot.loop.create_task(self.cycle_streams())
+
+	def __unload(self):
+		self.cycle_task.cancel()
 
 	async def load_watching_streams(self):
 		await self.bot.wait_until_ready()
