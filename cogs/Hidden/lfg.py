@@ -12,14 +12,18 @@ class LFG:
 			return
 		if reaction.message.guild.id != 250309924096049164:
 			return
+		await self.bot.error_hook("pre chceck")
 		proxy_ctx = Object(id=None)
 		proxy_ctx.guild = reaction.message.guild
 		proxy_ctx.author = user
 		proxy_ctx.bot = self.bot
 		if not await checks.has_level(proxy_ctx, "mod"):
 			return
+		await self.bot.error_hook("here")
 		role = reaction.message.guild.get_role(346083000372428811)
+		await self.bot.error_hook.send(role)
 		await reaction.message.author.add_roles(role)
+		await self.bot.error_hook("end")
 
 def setup(bot):
 	bot.add_cog(LFG(bot))
