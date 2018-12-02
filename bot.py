@@ -19,6 +19,7 @@ from instance import token, new_server_hook, error_hook, db_uri, root_website, c
 from cogs.utils.paginator import CannotPaginate
 
 initial_cogs = ["Hidden.developers",
+                "Hidden.lfg",
                 "Admin and Moderation.automod",
                 "Admin and Moderation.clear",
                 "Admin and Moderation.logs",
