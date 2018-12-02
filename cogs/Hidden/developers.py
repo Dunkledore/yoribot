@@ -47,7 +47,6 @@ class Developers:
 			embed.timestamp = guild.me.joined_at
 
 		message = await self.bot.new_server_hook.send(embed=embed)
-		await self.bot.new_server_hook.send(message)
 		await message.add_reaction('❌')
 
 		def check(reaction, user):

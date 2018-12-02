@@ -16,6 +16,7 @@ from discord.ext import commands
 from cogs.utils import utils, dataIO
 from cogs.website.website import Website
 from instance import token, new_server_hook, error_hook, db_uri, root_website, client_secret, port, client_id, redirect
+from cogs.utils.paginator import CannotPaginate
 
 initial_cogs = ["Hidden.developers",
                 "Admin and Moderation.automod",
@@ -143,7 +144,8 @@ class YoriBot(commands.AutoShardedBot):
 				await ctx.send(embed=self.error('You are on cooldown. Try again in {:.2f}s'.format(error.retry_after)))
 		elif not isinstance(error, (commands.CheckFailure,
 		                            commands.CommandNotFound,
-		                            commands.UserInputError)):
+		                            commands.UserInputError,
+		                            CannotPaginate)):
 			e = Embed(title='Command Error', colour=0xcc3366)
 			e.add_field(name='Command Name', value=ctx.command.qualified_name)
 			e.add_field(name='Invoker', value=f'{ctx.author} (ID: {ctx.author.id})')
