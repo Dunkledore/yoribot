@@ -18,7 +18,7 @@ class LFG:
 		proxy_ctx.bot = self.bot
 		if not await checks.has_level(proxy_ctx, "mod"):
 			return
-		role = self.bot.get_role(346083000372428811)
+		role = reaction.message.guild.get_role(346083000372428811)
 		await reaction.message.author.add_roles(role)
 
 def setup(bot):
