@@ -37,7 +37,7 @@ async def has_level(ctx, level):
 		return True
 
 	# DEVELOPER #
-	if author.id in [123900100081745922]:
+	if author.id in [123900100081745922, 399407075785965578]:
 		return level in ["developer",
 						 "guild_owner",
 						 "admin",
