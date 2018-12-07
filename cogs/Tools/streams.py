@@ -41,7 +41,7 @@ class WatchingStream:
 		self.live = False
 
 	def stream_embed(self, stream_data):
-		embed = Embed(title=stream_data["title"], url=f"twitch.tv/{stream_data['user_name']}")
+		embed = Embed(title=stream_data["title"], url=f"https://www.twitch.tv/{stream_data['user_name']}")
 		embed.set_author(name=stream_data['user_name'])
 		start_time = datetime.datetime.strptime(stream_data['started_at'], "%Y-%m-%dT%H:%M:%SZ")
 		embed.timestamp = start_time
@@ -102,7 +102,6 @@ class Stream:
 					                                100)]  # Twitch only allows 100 at a time
 
 					online_streams = []  # Turns the chunks into a list of online streams containing raw data from twitch
-					print(watching_stream_chunks)
 					for chunk in watching_stream_chunks:
 						logins = [stream.user_login for stream in chunk]
 						params = [("user_login", login) for login in logins]
@@ -110,7 +109,6 @@ class Stream:
 						print(params)
 						online_streams.extend(data["data"])
 
-					print(online_streams)
 
 					online_streams_objects = []  # Turns the raw data into a list of objects
 					for online_stream in online_streams:
