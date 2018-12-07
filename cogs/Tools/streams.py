@@ -25,8 +25,8 @@ class WatchingStream:
 				await self.message.edit(embed=self.stream_embed(self.stream_data))
 			else:
 				self.message = await self.channel.send(embed=self.stream_embed(self.stream_data))
-		except (Forbidden, HTTPException): #If they dont allow us access to post or edit then its out of our control
-			pass
+		except (Forbidden, HTTPException) as e: #If they dont allow us access to post or edit then its out of our control
+			print(e)
 		self.live = True
 
 	async def make_not_live(self):
