@@ -47,7 +47,7 @@ class WatchingStream:
 		embed.timestamp = start_time
 		embed.set_thumbnail(url=stream_data['thumbnail_url'].replace("{height}", "128").replace("{width}", "128"))
 		embed.set_footer(text="Started at", icon_url="http://yoribot.com/static/img/connections/twitch.png")
-		return Embed(title=stream_data["title"])
+		return embed
 
 	def __hash__(self):
 		return hash((self.channel.id, self.user_login))
