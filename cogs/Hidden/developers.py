@@ -47,16 +47,6 @@ class Developers:
 			embed.timestamp = guild.me.joined_at
 
 		message = await self.bot.new_server_hook.send(embed=embed)
-		await message.add_reaction('❌')
-
-		def check(reaction, user):
-			return (not user.bot) and (reaction.message.id == message.id) and (reaction.emoji == '❌')
-
-		try:
-			reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=86400)
-			await guild.leave()
-		except asyncio.TimeoutError:
-			pass
 
 	async def on_guild_remove(self, guild):
 		embed = Embed(colour=0xdd5f53, title='Left Guild')
