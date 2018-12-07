@@ -163,7 +163,7 @@ class Stream:
 	async def watch_stream(self, ctx, stream_name, channel: TextChannel, delete_on_close=False):
 		"""Set a channel to receive notifications when a twitch stream is live"""
 		stream_object = WatchingStream(channel, delete_on_close, stream_name, ctx.guild.id)
-		if stream_object in self.watchings_streams:
+		if stream_object in self.watching_streams:
 			await ctx.send(embed=self.bot.error("Alreayd watching this stream in this channel"))
 			return
 
