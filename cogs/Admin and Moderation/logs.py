@@ -146,7 +146,7 @@ class Logs:
 	@checks.is_mod()
 	@commands.guild_only()
 	async def warn(self, ctx, member: Member, reason):
-		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4) RETURNING ID"
+		query = "INSERT into event_logs (action, target_id, user_id, guild_id, reason) VALUES ($1, $2, $3, $4, $5) RETURNING ID"
 		log_id = await self.bot.pool.fetchval(query, "warn", member.id, ctx.author.id, ctx.guild.id, reason)
 
 		await ctx.message.add_reaction("\N{Thumbs Up Sign}")
