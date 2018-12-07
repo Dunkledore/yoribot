@@ -5,7 +5,7 @@ import asyncpg
 import aiohttp
 import traceback
 import asyncio
-
+import datetime
 
 class WatchingStream:
 
@@ -41,6 +41,12 @@ class WatchingStream:
 		self.live = False
 
 	def stream_embed(self, stream_data):
+		embed = Embed(title=stream_data["title"], url=f"twitch.tv/{stream_data['user_name']}")
+		embed.set_author(name=stream_data['user_name'])
+		start_time = datetime.datetime.strptime(stream_data['started_at'], "%Y-%m-%dT%H:%M:%SZ")
+		embed.timestamp = start_time
+		embed.set_thumbnail(url=stream_data['thumbnail_url'].replace("{height}", 128).replace("{width}", 128))
+		embed.set_footer(text="Started at", icon_url="http://yoribot.com/static/img/connections/twitch.png")
 		return Embed(title=stream_data["title"])
 
 	def __hash__(self):

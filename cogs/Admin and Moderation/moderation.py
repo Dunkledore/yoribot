@@ -45,14 +45,14 @@ class Moderation:
 		else:
 			await ctx.send(embed=self.bot.error("This is not a banned user"))
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_mod()
 	@commands.guild_only()
 	async def tempban(self, ctx, user: Member, reason=None):  # TODO
 		"""Temporarily ban a member from the guild"""
 		pass
 
-	@commands.command()
+	@commands.command(hidden=True)
 	@checks.is_mod()
 	@commands.guild_only()
 	async def softban(self, ctx, user: Member, reason):  # TODO
