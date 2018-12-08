@@ -156,7 +156,7 @@ class Developers:
 		              "CREATE TABLE IF NOT EXISTS streamrole (guild_id BIGINT PRIMARY KEY, role_id BIGINT)",
 		              "CREATE TABLE IF NOT EXISTS twitch (client_id TEXT)",
 		              "CREATE TABLE IF NOT EXISTS streams (guild_id BIGINT, user_login TEXT, channel_id BIGINT, close_on_end BOOL)",
-		              "CREATE TABLE IF NOT EXISTS message_attachments (message_id BIGINT, attachment_name)",
+		              "CREATE TABLE IF NOT EXISTS message_attachments (message_id BIGINT, attachment_name TEXT)",
 		              ]
 
 		for statement in statements:

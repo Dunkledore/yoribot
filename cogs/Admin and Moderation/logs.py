@@ -609,7 +609,7 @@ class Logs:
 		embed.add_field(name="Channel ID", value=f'{message.channel.id}')
 		embed.add_field(name="Message Content", value=f"{message.content[:1024]}" if message.content else "*empty*",
 		                inline=False)
-		query = "SELECT * FROM message__attachments WHERE message_id = $1"
+		query = "SELECT * FROM message_attachments WHERE message_id = $1"
 		attachments = await self.bot.pool.execute(query, message.id)
 		if attachments:
 			embed.add_field(name="Attachments", value="\n".join([f"{self.bot.root_website}/static/image_logs/{attachment['attachment_name']}" for attachment in attachments]))
