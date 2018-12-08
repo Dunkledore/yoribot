@@ -559,7 +559,7 @@ class Logs:
 			string = secrets.token_urlsafe(8)
 			filename = f"{attachment.filename}"
 			await attachment.save(f"{folder}{string}{filename}")
-			attachment.append(f"{string}{filename}")
+			attachments.append(f"{string}{filename}")
 
 		for embed in message.embeds:
 			if embed.thumbnail:
