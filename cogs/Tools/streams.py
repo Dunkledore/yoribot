@@ -47,6 +47,7 @@ class WatchingStream:
 		embed.timestamp = start_time
 		embed.set_thumbnail(url=stream_data['thumbnail_url'].replace("{height}", "128").replace("{width}", "128"))
 		embed.set_footer(text="Started at", icon_url="http://yoribot.com/static/img/connections/twitch.png")
+		embed.add_field(name="Viewers", value=str(stream_data['viewer_count']))
 		return embed
 
 	def __hash__(self):
@@ -162,7 +163,7 @@ class Stream:
 		"""Set a channel to receive notifications when a twitch stream is live"""
 		stream_object = WatchingStream(channel, delete_on_close, stream_name, ctx.guild.id)
 		if stream_object in self.watching_streams:
-			await ctx.send(embed=self.bot.error("Alreayd watching this stream in this channel"))
+			await ctx.send(embed=self.bot.error("Already watching this stream in this channel"))
 			return
 
 		query = "INSERT INTO streams (user_login, channel_id, delete_on_close, guild_id) VALUES ($1,$2,$3,$4)"

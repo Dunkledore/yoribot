@@ -4,6 +4,10 @@ from discord import TextChannel, Embed, Forbidden, utils, AuditLogAction, Member
 import asyncpg
 import datetime
 import asyncio
+import secrets
+import os
+import aiohttp
+import aiofiles
 
 
 class Logs:
@@ -548,6 +552,28 @@ class Logs:
 		embed.add_field(name="Offending message", value=reason)
 		await log_channel.send(embed=embed)
 
+	async def process_attachments(self, message):
+		attachments = []
+		folder = "cogs/website/static/image_logs/"
+		for attachment in message.attachments:
+			string = secrets.token_urlsafe(8)
+			filename = f"{attachment.filename}"
+			await attachment.save(f"{folder}{string}{filename}")
+			attachment.append(f"{string}{filename}")
+
+		for embed in message.embeds:
+			if embed.thumbnail:
+				url = embed.thumbnail.url
+				filename = os.path.basename(url)
+				string = secrets.token_urlsafe(8)
+				async with aiohttp.ClientSession() as cs:
+					async with cs.get(url) as r:
+						with open(f"{folder}{string}{filename}", mode='wb') as f:
+							f.write(await r.read())
+				attachments.append(f"{string}{filename}")
+
+		return attachments
+
 	async def on_message(self, message):
 		if message.author.bot:
 			return
@@ -556,6 +582,10 @@ class Logs:
 		query = "INSERT INTO message_logs (message_id, content, author_id, channel_id, guild_id, status) VALUES ($1, $2, $3, $4, $5, $6)"
 		await self.bot.pool.execute(query, message.id, message.content, message.author.id, message.channel.id,
 		                            message.guild.id, "current")
+		attachments = await self.process_attachments(message)
+		query = "INSERT INTO message_attachments (message_id, attachment_name) VALUES ($1, $2)"
+		for attachment in attachments:
+			await self.bot.pool.execute(query, message.id, attachment)
 
 	async def on_message_delete(self, message):
 		if message.author.bot:
@@ -579,6 +609,12 @@ class Logs:
 		embed.add_field(name="Channel ID", value=f'{message.channel.id}')
 		embed.add_field(name="Message Content", value=f"{message.content[:1024]}" if message.content else "*empty*",
 		                inline=False)
+		query = "SELECT * FROM message__attachments WHERE message_id = $1"
+		attachments = await self.bot.pool.execute(query, message.id)
+		if attachments:
+			embed.add_field(name="Attachments", value="\n".join([f"{self.bot.root_website}/static/image_logs/{attachment['attachment_name']}" for attachment in attachments]))
+
+		embed.set_footer(text="Deleted at")
 		embed.timestamp = datetime.datetime.utcnow()
 
 		await log_channel.send(embed=embed)
