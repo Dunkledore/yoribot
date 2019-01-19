@@ -11,7 +11,7 @@ class LFG:
 	async def whoplays(self, ctx, game):
 		players = []
 		for member in ctx.guild.members:
-			for activ in member.activities + [member.activity]:
+			for activ in list(member.activities) + [member.activity]:
 				if activ.name == game:
 					players.append(member)
 		if not players:
