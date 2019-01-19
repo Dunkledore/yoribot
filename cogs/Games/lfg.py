@@ -12,8 +12,9 @@ class LFG:
 		players = []
 		for member in ctx.guild.members:
 			for activ in list(member.activities) + [member.activity]:
-				if activ.name == game:
-					players.append(member)
+				if activ:
+					if activ.name == game:
+						players.append(member)
 		if not players:
 			embed = self.bot.error("No players playing this game")
 		else:
