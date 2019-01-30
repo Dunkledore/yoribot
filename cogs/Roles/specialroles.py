@@ -57,7 +57,8 @@ class SpecialRoles:
 				continue
 			roles_to_add.append(role)
 
-
+		if not roles_to_add:
+			return
 		await member_to_give.add_roles(*roles_to_add)
 		fmt = ",".join(role.name for role in roles_to_add)
 		await ctx.send(embed=self.bot.success(f"{member_to_give.name} given {fmt}"))
