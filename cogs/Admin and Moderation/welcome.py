@@ -179,7 +179,7 @@ class Welcome:
 
 	async def on_member_join(self, member):
 
-		if member.guild.id == "250309924096049164":   #LFG anti-bot
+		if member.guild.id == 250309924096049164:   #LFG anti-bot
 			created = (datetime.datetime.utcnow()-member.created_at).total_seconds()//60
 			if created < 60:
 				avatars = [f"https://cdn.discordapp.com/embed/avatars/{x}.png" for x in range(0, 10)]
