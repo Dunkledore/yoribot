@@ -2,6 +2,7 @@ import asyncpg
 import discord
 from discord.ext import commands
 import asyncio
+import datetime
 
 from ..utils import checks
 
@@ -139,6 +140,34 @@ class Welcome:
 
 		return whisper
 
+	@commands.command(hidden=True)
+	@checks.is_admin()
+	@commands.guild_only()
+	async def captcha_role(self, ctx, role: discord.Role):
+		"""Set the role to be assigned when the emoji is clicked"""
+
+		alterquery = "UPDATE welcome_config SET captcha_role = $1 WHERE guild_id = $2"
+		insertquery = "INSERT INTO welcome_config (guild_id, captcha_role) VALUES ($1,$2)"
+		try:
+			await self.bot.pool.fetchval(insertquery, role.id, ctx.guild.id)
+		except asyncpg.UniqueViolationError:
+			await self.bot.pool.fetchval(alterquery, ctx.guild.id, role.id)
+
+		await ctx.send(embed=self.bot.success(f"Role set to {role.mention}"))
+
+	@commands.command(hidden=True)
+	@checks.is_admin()
+	@commands.guild_only()
+	async def toggle_captcha(self, ctx):
+		"""Toggles whether captcha is on or off"""
+		alterquery = "UPDATE welcome_config SET whisper = NOT whisper WHERE guild_id = $1 RETURNING whisper"
+		insertquery = "INSERT INTO welcome_config (guild_id, whisper) VALUES ($1,True) RETURNING whisper"
+		try:
+			whisper = await self.bot.pool.fetchval(insertquery, ctx.guild_id)
+		except asyncpg.UniqueViolationError:
+			whisper = await self.bot.pool.fetchval(alterquery, ctx.guild_id)
+
+		return whisper
 
 	@commands.command(aliases=["welcome_whisper", "whisperwelcome", "whisper_welcome"])
 	@checks.is_admin()
@@ -149,6 +178,15 @@ class Welcome:
 		await ctx.send(embed=self.bot.success(f"Whisper set to {whisper}"))
 
 	async def on_member_join(self, member):
+
+		if member.guild.id == "250309924096049164":   #LFG anti-bot
+			created = (datetime.datetime.utcnow()-member.created_at).total_seconds()//60
+			if created < 60:
+				avatars = [f"https://cdn.discordapp.com/embed/avatars/{x}.png" for x in range(0, 10)]
+				if member.avatar_url in avatars:
+					await member.send(f"Hi {member.mention}\n\nTerribly sorry, however for security reasons we require people joining LFG to have at least added a profile picture to their Discord account. \n\nOnce you add a profile picture please feel free to rejoin at: https://discord.gg/sm87x3F")
+					await member.kick()
+					return
 
 		query = "SELECT * FROM welcome_config WHERE guild_id = $1"
 		config = await self.bot.pool.fetchrow(query, member.guild.id)
