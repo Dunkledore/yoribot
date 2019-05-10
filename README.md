@@ -8,11 +8,11 @@ Advanced logs with web downloads
 Detailed statistics of user data and commands  
 A local website
 
-## Instrctions - Ubuntu
+## Instructions - Ubuntu
 
 
 
-1- **Set up the virtual enviroment**
+1- **Set up the virtual environment**
 
 This isolates python so multiple bots can run at once
 
